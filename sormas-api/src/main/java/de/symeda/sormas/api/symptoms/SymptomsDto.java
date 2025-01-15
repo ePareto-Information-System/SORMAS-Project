@@ -994,9 +994,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean lesionsLegs;
 
 	@Diseases({
-		ANTHRAX })
-	@DependantOn(LESIONS)
-	@HideForCountries
+		ANTHRAX,
+		MEASLES})
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private Date lesionsOnsetDate;
 

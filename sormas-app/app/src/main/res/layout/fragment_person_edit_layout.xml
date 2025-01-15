@@ -369,7 +369,7 @@
                 android:id="@+id/person_passportNumber"
                 app:value="@={data.passportNumber}"
                 app:goneIfVariable="@{caseData.caseOrigin}"
-                app:goneIfValue="@{CaseOrigin.POINT_OF_ENTRY}"
+                app:goneIfValue="@{CaseOrigin.IN_COUNTRY}"
                 style="@style/ControlSingleColumnStyle" />
 
 

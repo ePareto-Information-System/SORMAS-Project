@@ -1843,6 +1843,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 tfReportLon.setVisible(true);
                 tfReportAccuracy.setVisible(true);
                 investigationstatus.setVisible(true);
+                notifiedByList.setVisible(true);
 
                 //get the number of doses field
                 if (getContent().getComponent(CaseDataDto.NUMBER_OF_DOSES) == null) {
@@ -1851,7 +1852,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
                 //update outcome value alive,dead,unknown using the outcome field and updateEnumData method
                 FieldHelper.updateEnumData(outcome, CaseOutcome.getMeaslesOutcomes());
-                setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT, CaseDataDto.INVESTIGATED_DATE, CaseDataDto.NOTIFIED_BY);
+                setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT, CaseDataDto.INVESTIGATED_DATE);
                 setVisible(false, CaseDataDto.CLINICAL_CONFIRMATION, CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION);
             }
 

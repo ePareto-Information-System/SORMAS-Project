@@ -261,7 +261,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
 			fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
 			fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
-			fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
+			fluidRowLocs(4, SampleDto.FIELD_SAMPLE_ID) +
+			fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL, 6, SampleDto.SAMPLE_MATERIAL_TEXT) +
 			fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_HIGHER_LEVEL, SampleDto.PERSON_COMPLETING_FORM) +
 			locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
 			fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
@@ -1183,13 +1184,15 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 					.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
-			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_SOURCE, SampleDto.LAB_LOCATION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN);
+			setVisible(false, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_SOURCE, SampleDto.LAB_LOCATION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN);
 
 			laboratoryDateResultsSentDSD.setVisible(true);
-			setVisible(true, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT);
+			setVisible(true, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, SampleDto.FIELD_SAMPLE_ID);
 			dateFormReceivedAtDistrict.setVisible(true);
 			dateFormSentToDistrict.setVisible(false);
 
+		FieldHelper
+				.setVisibleWhen(getFieldGroup(), SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL, Arrays.asList(SampleMaterial.OTHER), true);
 		dateSurveillanceSentResultsToDistrict.setVisible(true);
 		dateFormSentToHigherLevel.setVisible(true);
 		personCompletingForm.setVisible(true);

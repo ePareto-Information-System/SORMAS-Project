@@ -89,11 +89,13 @@ public class SampleEditForm extends AbstractSampleForm {
 		addValueChangeListener(e -> {
 			defaultValueChangeListener();
 
-			if (FacadeProvider.getPathogenTestFacade().hasPathogenTest(getValue().toReference())) {
-				getField(SampleDto.PATHOGEN_TEST_RESULT).setRequired(true);
-			} else {
-				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
-			}
+//			if (FacadeProvider.getPathogenTestFacade().hasPathogenTest(getValue().toReference())) {
+//				getField(SampleDto.PATHOGEN_TEST_RESULT).setRequired(true);
+//			} else {
+//				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+//			}
+			getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+
 
 //			fillPathogenTestResult();
 

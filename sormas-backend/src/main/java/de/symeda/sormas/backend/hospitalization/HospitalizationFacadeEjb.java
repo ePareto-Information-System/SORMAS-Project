@@ -168,6 +168,8 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setSoughtDistrict(districtService.getByReferenceDto(source.getSoughtDistrict()));
 		target.setSoughtCommunity(communityService.getByReferenceDto(source.getSoughtCommunity()));
 
+		target.setSeenAtAHealthFacility(source.getSeenAtAHealthFacility());
+
 
 		return target;
 	}
@@ -203,6 +205,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
 		target.setWasPatientAdmitted(source.getWasPatientAdmitted());
+		target.setSeenAtAHealthFacility(source.getSeenAtAHealthFacility());
 
 		return target;
 	}
@@ -360,6 +363,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setPatientConditionOnAdmission(source.getPatientConditionOnAdmission());
 		target.setDescription(source.getDescription());
 		target.setHealthFacilityRecordNumber(source.getHealthFacilityRecordNumber());
+		target.setSeenAtAHealthFacility(source.getSeenAtAHealthFacility());
 
 		return target;
 	}
@@ -389,6 +393,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnit(source.getIntensiveCareUnit());
 		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+		target.setSeenAtAHealthFacility(source.getSeenAtAHealthFacility());
 
 		return target;
 	}
