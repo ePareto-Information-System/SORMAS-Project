@@ -211,6 +211,7 @@ import de.symeda.sormas.app.backend.vaccination.Vaccination;
 import de.symeda.sormas.app.backend.vaccination.VaccinationDao;
 import de.symeda.sormas.app.backend.visit.Visit;
 import de.symeda.sormas.app.backend.visit.VisitDao;
+import de.symeda.sormas.app.backend.disease.DiseaseFacility;
 
 /**
  * Database helper class used to manage the creation and upgrading of your database. This class also usually provides
@@ -228,7 +229,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
 	// public static final int DATABASE_VERSION = 410;
-	public static final int DATABASE_VERSION = 428;
+	public static final int DATABASE_VERSION = 429;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -339,6 +340,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				TableUtils.clearTable(connectionSource, FormField.class);
 				TableUtils.clearTable(connectionSource, FormBuilder.class);
 				TableUtils.clearTable(connectionSource, FormBuilderFormField.class);
+				TableUtils.clearTable(connectionSource, DiseaseFacility.class);
 
 				ConfigProvider.init(instance.context);
 			}
@@ -794,6 +796,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, AfpImmunization.class);
 			TableUtils.createTable(connectionSource, SixtyDay.class);
 			TableUtils.createTable(connectionSource, PatientSymptomsPrecedence.class);
+			TableUtils.createTable(connectionSource, DiseaseFacility.class);
+
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
 			throw new RuntimeException(e);
@@ -4452,7 +4456,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					currentVersion = 427;
 					getDao(Facility.class).executeRaw(
 							"UPDATE facility SET type = 'HOSPITAL' WHERE type = null AND uuid NOT IN ('SORMAS-CONSTID-NOTBASED-FACILITY','SORMAS-CONSTID-NOTSET-FACILITY');");
-
+				case 428:
+					currentVersion = 428;
+					getDao(DiseaseConfiguration.class).executeRaw("CREATE TABLE IF NOT EXISTS facility_diseaseconfiguration(diseaseConfiguration_id integer, facility_id integer);");
 					// ATTENTION: break should only be done after last version
 				break;
 			default:
@@ -5337,7 +5343,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				} else if (type.equals(UserRole.class)) {
 					dao = (AbstractAdoDao<ADO>) new UserRoleDao((Dao<UserRole, Long>) innerDao);
 				} else if (type.equals(DiseaseConfiguration.class)) {
-					dao = (AbstractAdoDao<ADO>) new DiseaseConfigurationDao((Dao<DiseaseConfiguration, Long>) innerDao);
+					dao = (AbstractAdoDao<ADO>) new DiseaseConfigurationDao((Dao<DiseaseConfiguration, Long>) innerDao, super.getDao(DiseaseFacility.class));
 				} else if (type.equals(CustomizableEnumValue.class)) {
 					dao = (AbstractAdoDao<ADO>) new CustomizableEnumValueDao((Dao<CustomizableEnumValue, Long>) innerDao);
 				} else if (type.equals(FeatureConfiguration.class)) {
