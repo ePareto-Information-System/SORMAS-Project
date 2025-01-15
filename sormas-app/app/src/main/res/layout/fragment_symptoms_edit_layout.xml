@@ -1735,21 +1735,6 @@
                 app:YesNoUnknownClass="@{YesNoUnknownClass}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/symptoms_otherConditions"
-                app:value="@={data.otherConditions}"
-                app:inputType="textMultiLine"
-                app:textAlignment="gravity"
-                app:gravity="top|start"
-                app:singleLine="false"
-                app:maxLines="3"
-                app:textArea="true"
-                style="@style/ControlSingleColumnStyle" />
-
-
-
-            <!-- comments, etc. -->
-
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/symptoms_symptomsComments"
                 app:value="@={data.symptomsComments}"
                 style="@style/ControlSingleColumnStyle" />

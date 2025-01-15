@@ -182,6 +182,17 @@
             app:value="@={data.cancer}"
             style="@style/ControlSingleColumnStyle" />
 
+        <de.symeda.sormas.app.component.controls.ControlTextEditField
+            android:id="@+id/symptoms_otherConditions"
+            app:value="@={data.otherConditions}"
+            app:inputType="textMultiLine"
+            app:textAlignment="gravity"
+            app:gravity="top|start"
+            app:singleLine="false"
+            app:maxLines="3"
+            app:textArea="true"
+            style="@style/ControlSingleColumnStyle" />
+
         <de.symeda.sormas.app.component.controls.ControlSwitchField
             android:id="@+id/symptoms_pregnant"
             app:enumClass="@{YesNoClass}"
@@ -201,7 +212,6 @@
             app:enumClass="@{YesNoClass}"
             app:value="@={data.postpartum}"
             style="@style/ControlSingleColumnStyle" />
-
 
     </LinearLayout>
 
