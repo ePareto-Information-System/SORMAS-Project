@@ -103,6 +103,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.TEST_RESULT, PathogenTestDto.TEST_RESULT_VERIFIED) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_VARIANT, PathogenTestDto.VARIANT_OTHER_SPECIFY) +
 			fluidRowLocs(PathogenTestDto.SECOND_TESTED_DISEASE, PathogenTestDto.TEST_RESULT_FOR_SECOND_DISEASE) +
+			fluidRowLocs(PathogenTestDto.THIRD_PATHOGEN_TESTED, PathogenTestDto.TEST_RESULT_FOR_THIRD_PATHOGEN) +
+			fluidRowLocs(6,PathogenTestDto.POSITIVE_SUBTYPES) +
 			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
 			fluidRowLocs(PathogenTestDto.SEROTYPE, "") + 
@@ -198,6 +200,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox testResultVariant;
 	private ComboBox secondTestedDisease;
 	private ComboBox TestResultForSecondDisease;
+	private TextField thirdPathogenTested;
+	private ComboBox testResultForThirdPathogen;
+	private ComboBox positiveSubtypes;
 	OptionGroup tickTestField;
 	private TextField virusDetectionGenotypeField;
 	private ComboBox finalClassificationField;
@@ -420,6 +425,12 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		TestResultForSecondDisease.setVisible(false);
 		variantOther.setVisible(false);
 
+		thirdPathogenTested = addField(PathogenTestDto.THIRD_PATHOGEN_TESTED, TextField.class);
+		testResultForThirdPathogen = addField(PathogenTestDto.TEST_RESULT_FOR_THIRD_PATHOGEN, ComboBox.class);
+		positiveSubtypes = addField(PathogenTestDto.POSITIVE_SUBTYPES, ComboBox.class);
+
+		setVisible(false, thirdPathogenTested, testResultForThirdPathogen, positiveSubtypes);
+
 		virusDetectionGenotypeField = addField(PathogenTestDto.VIRUS_DETECTION_GENOTYPE, TextField.class);
 		virusDetectionGenotypeField.setVisible(false);
 
@@ -600,11 +611,11 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !choleraPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 			}
-			else if(disease == Disease.CSM) {
+			/*else if(disease == Disease.CSM) {
 				List<FinalClassification> measlesClass = FinalClassification.measlesClass;
-				FieldHelper.updateEnumData(finalClassificationField, measlesClass);
+				FieldHelper.updateEnumData(finalClassificationField, measlesClass);}*/
 
-			} else if(disease == Disease.CSM) {
+			else if(disease == Disease.CSM) {
 				List<PathogenTestType> csmPathogenTests = PathogenTestType.getCSMTestTypes();
 				Arrays.stream(PathogenTestType.values())
 						.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
@@ -633,9 +644,24 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				secondTestedDisease.setValue(Disease.CORONAVIRUS);
 				secondTestedDisease.setEnabled(false);
 
+				setVisible(true, thirdPathogenTested, testResultForThirdPathogen);
+				thirdPathogenTested.setValue("HRSV");
+				thirdPathogenTested.setEnabled(false);
+
+
 				TestResultForSecondDisease.setVisible(true);
-				TestResultForSecondDisease.removeItem(PathogenTestResultType.PENDING);
-				TestResultForSecondDisease.removeItem(PathogenTestResultType.NOT_DONE);
+				removeTestResultTypes(TestResultForSecondDisease, PathogenTestResultType.PENDING, PathogenTestResultType.NOT_DONE);
+				removeTestResultTypes(testResultForThirdPathogen, PathogenTestResultType.PENDING, PathogenTestResultType.NOT_DONE);
+
+				testResultForThirdPathogen.addValueChangeListener(e -> {
+					PathogenTestResultType testResultThird = (PathogenTestResultType) e.getProperty().getValue();
+					if(testResultThird == PathogenTestResultType.POSITIVE){
+						positiveSubtypes.setVisible(true);
+					}else {
+						positiveSubtypes.setVisible(false);
+						positiveSubtypes.clear();
+					}
+				});
 			}
 			else {
 				testTypeField.addItems(PathogenTestType.values());
@@ -1051,15 +1077,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		diseaseField.setValue(disease);
 	}
 
-	//not implemented
-	public void getAssociatedDisease() {
-		final ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(sample.getAssociatedContact().getUuid());
-		contactDto.getDisease();
-
-		final EventDto eventDto = FacadeProvider.getEventFacade().getEventByUuid(sample.getAssociatedEventParticipant().getUuid(), false);
-		eventDto.getDisease();
-
-	}
 	private Disease getDiseaseFromCase(String caseUuid) {
 		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
 		if (caseDataDto != null) {
@@ -1090,6 +1107,12 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		label.addStyleName(h4);
 		getContent().addComponent(label, location);
 		return label;
+	}
+
+	private void removeTestResultTypes(ComboBox comboBox, PathogenTestResultType... typesToRemove) {
+		for (PathogenTestResultType type : typesToRemove) {
+			comboBox.removeItem(type);
+		}
 	}
 
 }

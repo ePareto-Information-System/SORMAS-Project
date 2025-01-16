@@ -21,6 +21,8 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.patientsymptomsprecedence.PatientSymptomsPrecedenceField;
+import de.symeda.sormas.ui.patienttraveldetailsduring.PatientTravelDetailsDuringField;
+import de.symeda.sormas.ui.patienttraveldetailsprior.PatientTravelDetailsPriorField;
 import de.symeda.sormas.ui.utils.*;
 import com.vaadin.ui.Label;
 
@@ -85,8 +87,10 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
                     //MONKEYPOX
                     fluidRowLocs(RiskFactorDto.PATIENT_SPOX_VACCINATION_SCAR_PRESENT) +
                     fluidRowLocs(RiskFactorDto.PATIENT_TRAVELLED_ANYWHERE_3WEEKS_PRIOR) +
+                    fluidRowLocs(RiskFactorDto.PATIENT_TRAVEL_DETAILS_PRIOR) +
                     fluidRowLocs(RiskFactorDto.PATIENT_TRAVELLED_3WEEKS_IF_YES_INDICATE) +
                     fluidRowLocs(RiskFactorDto.PATIENT_TRAVELLED_PERIOD_OF_ILLNESS) +
+                    fluidRowLocs(RiskFactorDto.PATIENT_TRAVEL_DETAILS_DURING) +
                     fluidRowLocs(RiskFactorDto.PATIENT_TRAVELLED_ILLNESS_IF_YES_INDICATE) +
                     fluidRowLocs(RiskFactorDto.OTHER_PLACES) +
                     fluidRowLocs(RiskFactorDto.DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS) +
@@ -129,6 +133,8 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
         if (parentClass == CaseDataDto.class) {
             addPatientSymptomsPrecedenceFields();
+            addPatientTravelDetailsPriorFields();
+            addPatientTravelDetailsDuringFields();
         }
 
         Label riskFactorHeadingLabel = new Label(I18nProperties.getString(Strings.headingRiskFactor));
@@ -238,11 +244,11 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
             addField(RiskFactorDto.PATIENT_SPOX_VACCINATION_SCAR_PRESENT, NullableOptionGroup.class);
             NullableOptionGroup travelled3weeks = addField(RiskFactorDto.PATIENT_TRAVELLED_ANYWHERE_3WEEKS_PRIOR, NullableOptionGroup.class);
-            TextArea indicatePlaces = addField(RiskFactorDto.PATIENT_TRAVELLED_3WEEKS_IF_YES_INDICATE, TextArea.class);
-            indicatePlaces.setRows(3);
+            /*TextArea indicatePlaces = addField(RiskFactorDto.PATIENT_TRAVELLED_3WEEKS_IF_YES_INDICATE, TextArea.class);
+            indicatePlaces.setRows(3);*/
             NullableOptionGroup travelledIllness = addField(RiskFactorDto.PATIENT_TRAVELLED_PERIOD_OF_ILLNESS, NullableOptionGroup.class);
-            TextArea indicateTravel = addField(RiskFactorDto.PATIENT_TRAVELLED_ILLNESS_IF_YES_INDICATE, TextArea.class);
-            indicateTravel.setRows(3);
+            /*TextArea indicateTravel = addField(RiskFactorDto.PATIENT_TRAVELLED_ILLNESS_IF_YES_INDICATE, TextArea.class);
+            indicateTravel.setRows(3);*/
             TextArea otherPlaces = addField(RiskFactorDto.OTHER_PLACES, TextArea.class);
             otherPlaces.setRows(3);
             NullableOptionGroup weeksSymptoms = addField(RiskFactorDto.DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
@@ -250,14 +256,28 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
             NullableOptionGroup patientTouch = addField(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL, NullableOptionGroup.class);
             TextArea patientTouchYes = addField(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES, TextArea.class);
 
-            FieldHelper.setVisibleWhen(travelled3weeks, Arrays.asList(indicatePlaces), Arrays.asList(YesNo.YES), true);
-            FieldHelper.setVisibleWhen(travelledIllness, Arrays.asList(indicateTravel), Arrays.asList(YesNo.YES), true);
+//            FieldHelper.setVisibleWhen(travelled3weeks, Arrays.asList(indicatePlaces), Arrays.asList(YesNo.YES), true);
+//            FieldHelper.setVisibleWhen(travelledIllness, Arrays.asList(indicateTravel), Arrays.asList(YesNo.YES), true);
             FieldHelper.setVisibleWhen(patientTouch, Arrays.asList(patientTouchYes), Arrays.asList(YesNo.YES), true);
 
             FieldHelper.setVisibleWhen(
                     getFieldGroup(),
                     RiskFactorDto.PATIENT_SYMPTOMS_PRECEDENCE,
                     RiskFactorDto.DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS,
+                    Collections.singletonList(YesNo.YES),
+                    true);
+
+            FieldHelper.setVisibleWhen(
+                    getFieldGroup(),
+                    RiskFactorDto.PATIENT_TRAVEL_DETAILS_PRIOR,
+                    RiskFactorDto.PATIENT_TRAVELLED_ANYWHERE_3WEEKS_PRIOR,
+                    Collections.singletonList(YesNo.YES),
+                    true);
+
+            FieldHelper.setVisibleWhen(
+                    getFieldGroup(),
+                    RiskFactorDto.PATIENT_TRAVEL_DETAILS_DURING,
+                    RiskFactorDto.PATIENT_TRAVELLED_PERIOD_OF_ILLNESS,
                     Collections.singletonList(YesNo.YES),
                     true);
 
@@ -269,6 +289,18 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
         PatientSymptomsPrecedenceField patientSymptomsPrecedenceField = addField(RiskFactorDto.PATIENT_SYMPTOMS_PRECEDENCE, PatientSymptomsPrecedenceField.class);
         patientSymptomsPrecedenceField.setWidthFull();
         patientSymptomsPrecedenceField.setPseudonymized(isPseudonymized);
+    }
+
+    private void addPatientTravelDetailsPriorFields() {
+        PatientTravelDetailsPriorField patientTravelDetailsPriorField = addField(RiskFactorDto.PATIENT_TRAVEL_DETAILS_PRIOR, PatientTravelDetailsPriorField.class);
+        patientTravelDetailsPriorField.setWidthFull();
+        patientTravelDetailsPriorField.setPseudonymized(isPseudonymized);
+    }
+
+    private void addPatientTravelDetailsDuringFields() {
+        PatientTravelDetailsDuringField patientTravelDetailsDuringField = addField(RiskFactorDto.PATIENT_TRAVEL_DETAILS_DURING, PatientTravelDetailsDuringField.class);
+        patientTravelDetailsDuringField.setWidthFull();
+        patientTravelDetailsDuringField.setPseudonymized(isPseudonymized);
     }
 
     private void setComponentsVisibilityFalse(Component... components) {

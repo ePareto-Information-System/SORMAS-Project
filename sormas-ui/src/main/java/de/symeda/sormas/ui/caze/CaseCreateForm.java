@@ -277,10 +277,10 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
             } else {
                 personCreateForm.showPassportNumber();
             }
-            personCreateForm.showFields();
-            personCreateForm.makePersonDataRequired();
 
         });
+        personCreateForm.showFields();
+        personCreateForm.makePersonDataRequired();
         facilityOrHome =
                 addCustomField(FACILITY_OR_HOME_LOC, TypeOfPlace.class, NullableOptionGroup.class, I18nProperties.getCaption(Captions.casePlaceOfStay));
         facilityOrHome.setVisible(false);
@@ -308,6 +308,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         getContent().addComponent(facilityType, CaseDataDto.FACILITY_TYPE);
         facilityCombo = addInfrastructureField(CaseDataDto.HEALTH_FACILITY);
         facilityCombo.setImmediate(true);
+        facilityCombo.setRequired(true);
         TextField facilityDetails = addField(CaseDataDto.HEALTH_FACILITY_DETAILS, TextField.class);
         facilityDetails.setVisible(false);
         ComboBox cbPointOfEntry = addInfrastructureField(CaseDataDto.POINT_OF_ENTRY);
@@ -663,7 +664,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         getContent().addComponent(personInfoLabel, PERSON_INFO_LABEL);
 
         addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
-        addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
+        addFields(CaseDataDto.NATIONALITY);
         addField(CaseDataDto.OCCUPATION);
         ComboBox regionOfResidence  = addInfrastructureField(CaseDataDto.REGION_OF_RESIDENCE);
         ComboBox districtOfResidence  = addInfrastructureField(CaseDataDto.DISTRICT_OF_RESIDENCE);

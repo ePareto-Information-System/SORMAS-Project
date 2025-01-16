@@ -35,6 +35,8 @@ import de.symeda.sormas.ui.exposure.ExposuresField;
 import de.symeda.sormas.ui.hospitalization.PreviousHospitalizationsField;
 import de.symeda.sormas.ui.location.LocationEditForm;
 import de.symeda.sormas.ui.patientsymptomsprecedence.PatientSymptomsPrecedenceField;
+import de.symeda.sormas.ui.patienttraveldetailsduring.PatientTravelDetailsDuringField;
+import de.symeda.sormas.ui.patienttraveldetailsprior.PatientTravelDetailsPriorField;
 import de.symeda.sormas.ui.person.LocationsField;
 import de.symeda.sormas.ui.person.PersonContactDetailsField;
 import de.symeda.sormas.ui.user.UserRoleNotificationCheckboxSet;
@@ -181,6 +183,11 @@ public class SormasFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 			return (T) new AffectedPersonField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
 		}else if (PatientSymptomsPrecedenceField.class.isAssignableFrom(fieldType)) {
 			return (T) new PatientSymptomsPrecedenceField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
+		}else if (PatientTravelDetailsPriorField.class.isAssignableFrom(fieldType)) {
+			return (T) new PatientTravelDetailsPriorField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
+		}
+		else if (PatientTravelDetailsDuringField.class.isAssignableFrom(fieldType)) {
+			return (T) new PatientTravelDetailsDuringField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
 		}
 		return super.createField(type, fieldType);
 	}

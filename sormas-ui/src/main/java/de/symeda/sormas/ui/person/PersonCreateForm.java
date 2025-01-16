@@ -27,18 +27,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.ui.*;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.v7.data.validator.EmailValidator;
-import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
@@ -139,7 +136,12 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		addField(PersonDto.LAST_NAME, TextField.class);
 		addField(PersonDto.OTHER_NAME, TextField.class);
 
-		addFields(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE);
+		TextField approximateAgeField = addField(PersonDto.APPROXIMATE_AGE, TextField.class);
+		ComboBox approximateAgeTypeField = addField(PersonDto.APPROXIMATE_AGE_TYPE, ComboBox.class);
+
+		setRequiredWithValidation(approximateAgeField, "Age is required.");
+		setRequiredWithValidation(approximateAgeTypeField, "Unit is required.");
+
 		setVisible(false, PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE);
 
 		if (showPersonSearchButton) {
@@ -518,7 +520,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		setVisible(true, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
 	}
 	public void makePersonDataRequired(){
-		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
+		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
 	}
 	public void showPresentCondition(){
 		setVisible(true, PersonDto.PRESENT_CONDITION);
@@ -616,4 +618,14 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		setVisible(true, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
 		setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.EMAIL_ADDRESS, PersonDto.PHONE, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD);
 	}
+
+	private void setRequiredWithValidation(AbstractField<?> field, String errorMessage) {
+		field.setRequired(true);
+		field.addValidator(value -> {
+			if (value == null || value.toString().trim().isEmpty()) {
+				throw new Validator.InvalidValueException(errorMessage);
+			}
+		});
+	}
+
 }

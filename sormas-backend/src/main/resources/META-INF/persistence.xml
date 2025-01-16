@@ -31,6 +31,8 @@
 		<class>de.symeda.sormas.backend.foodhistory.FoodHistory</class>
 		<class>de.symeda.sormas.backend.affectedperson.AffectedPerson</class>
 		<class>de.symeda.sormas.backend.patientsymptomsprecedence.PatientSymptomsPrecedence</class>
+		<class>de.symeda.sormas.backend.patienttraveldetailsprior.PatientTravelDetailsPrior</class>
+		<class>de.symeda.sormas.backend.patienttraveldetailsduring.PatientTravelDetailsDuring</class>
 		<class>de.symeda.sormas.backend.hospitalization.PreviousHospitalization</class>
 		<class>de.symeda.sormas.backend.location.Location</class>
 		<class>de.symeda.sormas.backend.outbreak.Outbreak</class>
