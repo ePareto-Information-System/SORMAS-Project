@@ -277,10 +277,10 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
             } else {
                 personCreateForm.showPassportNumber();
             }
-            personCreateForm.showFields();
-            personCreateForm.makePersonDataRequired();
 
         });
+        personCreateForm.showFields();
+        personCreateForm.makePersonDataRequired();
         facilityOrHome =
                 addCustomField(FACILITY_OR_HOME_LOC, TypeOfPlace.class, NullableOptionGroup.class, I18nProperties.getCaption(Captions.casePlaceOfStay));
         facilityOrHome.setVisible(false);
