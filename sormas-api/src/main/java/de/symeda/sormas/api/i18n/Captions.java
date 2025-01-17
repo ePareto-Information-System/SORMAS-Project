@@ -1590,6 +1590,10 @@ public interface Captions {
 	String Ebs_verified= "Ebs.verified";
 	String Ebs_cases= "Ebs.cases";
 	String Ebs_death= "Ebs.death";
+	String Ebs_Active_Signals="EbsActiveSignals";
+	String Ebs_Archived_Signals="EbsArchivedSignals";
+	String Ebs_All_Active_And_Archived_Signals="EbsAllActiveAndArchivedSignals";
+	String Ebs_Deleted_Signals="EbsDeletedSignals";
 	String Triaging_potentialRisk = "Triaging.potentialRisk";
 	String Triaging_categoryDetails = "Triaging.categoryDetails";
 	String Triaging_specificSignal = "Triaging.specificSignal";
