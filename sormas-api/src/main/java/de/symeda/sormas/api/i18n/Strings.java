@@ -898,6 +898,7 @@ public interface Strings {
 	String infoArchivedContacts = "infoArchivedContacts";
 	String infoArchivedEventParticipants = "infoArchivedEventParticipants";
 	String infoArchivedEvents = "infoArchivedEvents";
+	String infoArchivedEbs = "infoArchivedEbs";
 	String infoArchivedTravelEntries = "infoArchivedTravelEntries";
 	String infoAssigneeMissingEmail = "infoAssigneeMissingEmail";
 	String infoAssigneeMissingEmailOrPhoneNumber = "infoAssigneeMissingEmailOrPhoneNumber";
