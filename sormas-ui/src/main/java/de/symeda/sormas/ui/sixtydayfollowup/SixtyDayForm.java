@@ -42,6 +42,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
+import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_4;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
@@ -85,6 +86,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
     private final Disease disease;
     private final Class<? extends EntityDto> parentClass;
     private final boolean isPseudonymized;
+    private Label headingProvide;
 
     public SixtyDayForm(Disease disease, Class<? extends EntityDto> parentClass,
                         boolean isPseudonymized,
@@ -190,7 +192,11 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
                     SixtyDayDto.SIGNATURE, SixtyDayDto.DATE_SUBMISSION_FORMS);
             sixtyDayHeadingLabel.setVisible(false);
 
-            createLabel(I18nProperties.getString(Strings.headingProvide), H3, PROVIDE_HEADING_LOC);
+            headingProvide = new Label(I18nProperties.getString(Strings.headingProvide));
+            CssStyles.style(headingProvide, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+            getContent().addComponent(headingProvide, PROVIDE_HEADING_LOC);
+            headingProvide.setVisible(false);
+
             createLabel(I18nProperties.getString(Strings.headingofficialUse), H3, OFFICIAL_HEADING_LOC);
 
             setVisible(true,
@@ -205,6 +211,15 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
             boolean isOther = event.getProperty().getValue() == PackagingType.OTHER;
             packagingTypeOther.setVisible(isOther);
         });
+
+        foodAvailable.addValueChangeListener(field -> {
+            Object rawValue = ((NullableOptionGroup)field.getProperty()).getNullableValue();
+            YesNoUnknown value = (YesNoUnknown) rawValue;
+
+            boolean provideTrue = value == YesNoUnknown.YES;
+            headingProvide.setVisible(provideTrue);
+        });
+
     }
 
     private Label createLabel(String text, String h4, String location) {

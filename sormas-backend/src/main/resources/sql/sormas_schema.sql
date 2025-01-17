@@ -15160,3 +15160,42 @@ INSERT INTO schema_version (version_number, comment) VALUES (717, 'Added a few f
 ALTER TABLE externalshareinfo ADD COLUMN ebs_id BIGINT;
 ALTER TABLE externalshareinfo_history ADD COLUMN ebs_id BIGINT;
 INSERT INTO schema_version (version_number, comment) VALUES (718, 'Added ebs_id field to externalshare');
+
+ALTER TABLE pathogentest ADD COLUMN thirdpathogentested VARCHAR(512);
+ALTER TABLE pathogentest ADD COLUMN testresultforthirdpathogen VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN positivesubtypes VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (719, 'Added thirdpathogentested,testresultforthirdpathogen, positivesubtypesfield to pathogentest');
+
+CREATE TABLE patienttraveldetailsprior (
+                                           id BIGINT PRIMARY KEY NOT NULL,
+                                           uuid varchar(36) not null unique,
+                                           changedate timestamp not null,
+                                           creationdate timestamp not null,
+                                           riskfactor_id bigint not null,
+                                           dateOfTravel DATE,
+                                           placeOfTravel VARCHAR(255)
+);
+ALTER TABLE patienttraveldetailsprior OWNER TO sormas_user;
+ALTER TABLE patienttraveldetailsprior ADD CONSTRAINT fk_patienttraveldetailsprior_riskfactor_id FOREIGN KEY (riskfactor_id) REFERENCES riskfactor(id);
+ALTER TABLE patienttraveldetailsprior ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+
+CREATE TABLE patienttraveldetailsduring (
+                                           id BIGINT PRIMARY KEY NOT NULL,
+                                           uuid varchar(36) not null unique,
+                                           changedate timestamp not null,
+                                           creationdate timestamp not null,
+                                           riskfactor_id bigint not null,
+                                           dateOfTravel DATE,
+                                           placeOfTravel VARCHAR(255)
+);
+ALTER TABLE patienttraveldetailsduring OWNER TO sormas_user;
+ALTER TABLE patienttraveldetailsduring ADD CONSTRAINT fk_patienttraveldetailsduring_riskfactor_id FOREIGN KEY (riskfactor_id) REFERENCES riskfactor(id);
+ALTER TABLE patienttraveldetailsduring ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+
+INSERT INTO schema_version(version_number, comment) VALUES (720, 'Created tables patienttraveldetailsprior,patienttraveldetailsduring and added fields dateoftravel and placeoftravel');

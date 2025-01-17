@@ -112,6 +112,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		sample = record.getSample();
 		testTypeList = DataUtils.getEnumItems(PathogenTestType.class, true, getFieldVisibilityCheckers());
 		pcrTestSpecificationList = DataUtils.getEnumItems(PCRTestSpecification.class, true);
+		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 		Disease incomingDisease = record.getSample().getAssociatedCase().getDisease();
 		Disease incomingTestedDisease = record.getTestedDisease();
 		testResultVariationList = DataUtils.getEnumItems(PathogenTestResultVariant.class, true);
@@ -140,7 +141,6 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		testResultList = DataUtils.toItems(
 			Arrays.stream(PathogenTestResultType.values()).filter(type -> type != PathogenTestResultType.NOT_DONE).collect(Collectors.toList()),
 			true);
-		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 
 		finalClassificationList = DataUtils.toItems(Arrays.asList(FinalClassification.values()));
 	}
@@ -178,6 +178,10 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		contentBinding.pathogenTestLaboratoryDatePcrPerformed.initializeDateField(getFragmentManager());
 		contentBinding.pathogenTestLaboratoryDateResultsSentDSD.initializeDateTimeField(getFragmentManager());
 		contentBinding.pathogenTestDateSampleSentRegLab.initializeDateField(getFragmentManager());
+		if (contentBinding.pathogenTestTestedDisease.getValue() != null) {
+			labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease((Disease) contentBinding.pathogenTestTestedDisease.getValue(), true);
+			contentBinding.pathogenTestLab.setSpinnerData(DataUtils.toItems(labList));
+		}
 
 	}
 
@@ -223,6 +227,13 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				}
 
 				updateDiseaseVariantsField(contentBinding);
+				if (contentBinding.pathogenTestTestedDisease.getValue() != null) {
+					labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease((Disease) contentBinding.pathogenTestTestedDisease.getValue(), true);
+					contentBinding.pathogenTestLab.setSpinnerData(DataUtils.toItems(labList));
+				}
+				if (this.currentDisease == null || contentBinding.pathogenTestTestedDisease.getValue() != currentDisease) {
+					updateDiseaseVariantsField(contentBinding);
+				}
 			if(caseDisease != Disease.NEW_INFLUENZA){
 				testTypeList = DataUtils.toItems(
 						Arrays.asList(PathogenTestType.values()),

@@ -212,10 +212,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	//@formatter:on
 	public static final String MEASLES_LAYOUT =
 			fluidRowLocs(4, FEVER, 4, GENERALIZED_RASH ) +
-			fluidRowLocs(4, "", 4, LESIONS_ONSET_DATE) +
 			fluidRowLocs(4, COUGH, 4, RUNNY_NOSE) +
 			fluidRowLocs(4, RED_EYES, 4, SWOLLEN_LYMPH_NODES_BEHIND_EARS) +
-			fluidRowLocs(4, JOINT_PAIN) +
+			fluidRowLocs(4, JOINT_PAIN, 4, LESIONS_ONSET_DATE) +
 			fluidRowLocs(6,OTHER_COMPLICATIONS) +
 			fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
 //			fluidRowLocsCss(VSPACE_3) +
@@ -407,6 +406,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         foodHistoryHeadingLabel.setVisible(false);
 
         DateField onsetDateField = addField(ONSET_DATE, DateField.class);
+		onsetDateField.setRequired(true);
         ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
         if (symptomsContext == SymptomsContext.CASE) {
             // If the symptom onset date is after the hospital admission date, show a warning but don't prevent the user from saving
@@ -985,8 +985,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		if (disease != Disease.MEASLES) {
 			FieldHelper.setVisibleWhen(getFieldGroup(), lesionsLocationFieldIds, RASHES, Arrays.asList(SymptomState.YES), true);
+//			FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, LESIONS, Arrays.asList(SymptomState.YES), true);
 		} else {
-			FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, GENERALIZED_RASH, Arrays.asList(SymptomState.YES), true);
+//			FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, GENERALIZED_RASH, Arrays.asList(SymptomState.YES), true);
+			setVisible(true, LESIONS_ONSET_DATE);
 		}
         FieldHelper
                 .setVisibleWhen(getFieldGroup(), OTHER_HEMORRHAGIC_SYMPTOMS_TEXT, OTHER_HEMORRHAGIC_SYMPTOMS, Arrays.asList(SymptomState.YES), true);
@@ -1004,7 +1006,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
         FieldHelper.setVisibleWhen(getFieldGroup(), lesionsLocationFieldIds, LESIONS, Arrays.asList(SymptomState.YES), true);
 
-        FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, LESIONS, Arrays.asList(SymptomState.YES), true);
 
         FieldHelper.setVisibleWhen(getFieldGroup(), CONGENITAL_HEART_DISEASE_TYPE, CONGENITAL_HEART_DISEASE, Arrays.asList(SymptomState.YES), true);
         FieldHelper.setVisibleWhen(
@@ -1272,6 +1273,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		if(disease == Disease.MEASLES) {
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
+			outcome.setRequired(true);
 		} else if(disease == Disease.CHOLERA) {
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
 		}else if (disease == Disease.GUINEA_WORM) {

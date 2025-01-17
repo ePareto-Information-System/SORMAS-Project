@@ -2212,6 +2212,9 @@ public interface Captions {
 	String PathogenTest_variantOtherSpecify = "PathogenTest.variantOtherSpecify";
 	String PathogenTest_testResultVariant = "PathogenTest.testResultVariant";
 	String PathogenTest_secondTestedDisease = "PathogenTest.secondTestedDisease";
+	String PathogenTest_thirdPathogenTested = "PathogenTest.thirdPathogenTested";
+	String PathogenTest_testResultForThirdPathogen = "PathogenTest.testResultForThirdPathogen";
+	String PathogenTest_positiveSubtypes = "PathogenTest.positiveSubtypes";
 	String PathogenTest_testResultForSecondDisease = "PathogenTest.testResultForSecondDisease";
 	String PathogenTest_testType = "PathogenTest.testType";
 	String PathogenTest_testTypeText = "PathogenTest.testTypeText";
@@ -3011,6 +3014,12 @@ public interface Captions {
 	String PatientSymptomsPrecedence_name = "name";
 	String PatientSymptomsPrecedence_phone = "phone";
 	String PatientSymptomsPrecedence_contactAddress = "contactAddress";
+	String RiskFactor_patientTravelDetailsPrior = "patientTravelDetailsPrior";
+	String RiskFactor_patientTravelDetailsDuring = "patientTravelDetailsDuring";
+	String PatientTravelDetailsPrior_dateOfTravel = "PatientTravelDetailsPrior.dateOfTravel";
+	String PatientTravelDetailsPrior_placeOfTravel = "PatientTravelDetailsPrior.placeOfTravel";
+	String PatientTravelDetailsDuring_dateOfTravel = "PatientTravelDetailsDuring.dateOfTravel";
+	String PatientTravelDetailsDuring_placeOfTravel = "PatientTravelDetailsDuring.placeOfTravel";
 
 
 	String sormasToSormasCaseNotShared = "sormasToSormasCaseNotShared";

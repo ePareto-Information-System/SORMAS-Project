@@ -89,11 +89,13 @@ public class SampleEditForm extends AbstractSampleForm {
 		addValueChangeListener(e -> {
 			defaultValueChangeListener();
 
-			if (FacadeProvider.getPathogenTestFacade().hasPathogenTest(getValue().toReference())) {
-				getField(SampleDto.PATHOGEN_TEST_RESULT).setRequired(true);
-			} else {
-				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
-			}
+//			if (FacadeProvider.getPathogenTestFacade().hasPathogenTest(getValue().toReference())) {
+//				getField(SampleDto.PATHOGEN_TEST_RESULT).setRequired(true);
+//			} else {
+//				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+//			}
+			getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+
 
 //			fillPathogenTestResult();
 
@@ -179,6 +181,9 @@ public class SampleEditForm extends AbstractSampleForm {
 					break;
 				case CHOLERA:
 					SELECTED_LAYOUT = loc(LABORATORY_SAMPLE_HEADING_LOC)  + CHOLERA_HTML_LAYOUT;
+					break;
+				case AHF:
+					SELECTED_LAYOUT = loc(LABORATORY_SAMPLE_HEADING_LOC)  + AHF_LAYOUT;
 					break;
 				default:
 					SELECTED_LAYOUT = HTML_LAYOUT;

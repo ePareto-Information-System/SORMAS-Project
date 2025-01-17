@@ -48,6 +48,9 @@ public class SampleCreateForm extends AbstractSampleForm {
 				case CHOLERA:
 					SELECTED_LAYOUT = CHOLERA_HTML_LAYOUT;
 					break;
+				case AHF:
+					SELECTED_LAYOUT = AHF_LAYOUT;
+					break;
 				default:
 					SELECTED_LAYOUT = SAMPLE_COMMON_HTML_LAYOUT;
 					break;

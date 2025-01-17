@@ -288,16 +288,19 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		}
 		//TODO: CHANGE FROM IF TO SWITCH AND REMOVE REDUNDANCY CODE
 
-		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.MONKEYPOX){
+		if (Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.MONKEYPOX, Disease.MEASLES).contains(disease)){
 
 			Set<CaseOutcome> outcomesToRemove = Set.of(
 					CaseOutcome.NO_OUTCOME,
 					CaseOutcome.ON_TREATMENT,
 					CaseOutcome.REFERRED,
-					CaseOutcome.UNKNOWN,
 					CaseOutcome.OTHER,
 					CaseOutcome.RECOVERED
 			);
+
+			if (disease != Disease.MEASLES) {
+				outcomesToRemove.add(CaseOutcome.UNKNOWN);
+			}
 
 			outcomeList.removeIf(item -> outcomesToRemove.contains(item.getValue()));
 

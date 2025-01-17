@@ -64,6 +64,9 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String SAMPLE = "sample";
 	public static final String TESTED_DISEASE = "testedDisease";
 	public static final String SECOND_TESTED_DISEASE = "secondTestedDisease";
+	public static final String THIRD_PATHOGEN_TESTED = "thirdPathogenTested";
+	public static final String TEST_RESULT_FOR_THIRD_PATHOGEN = "testResultForThirdPathogen";
+	public static final String POSITIVE_SUBTYPES = "positiveSubtypes";
 	public static final String TESTED_DISEASE_VARIANT = "testedDiseaseVariant";
 	public static final String TESTED_DISEASE_VARIANT_DETAILS = "testedDiseaseVariantDetails";
 	public static final String TYPING_ID = "typingId";
@@ -327,6 +330,9 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private Date sampleTestResultIGGDate;
 	private PosNeg sampleTestResultImmuno;
 	private Date sampleTestResultImmunoDate;
+	private String thirdPathogenTested;
+	private PathogenTestResultType testResultForThirdPathogen;
+	private Subtype positiveSubtypes;
 
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
@@ -1220,5 +1226,29 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setSampleTestResultImmunoDate(Date sampleTestResultImmunoDate) {
 		this.sampleTestResultImmunoDate = sampleTestResultImmunoDate;
+	}
+
+	public String getThirdPathogenTested() {
+		return thirdPathogenTested;
+	}
+
+	public void setThirdPathogenTested(String thirdPathogenTested) {
+		this.thirdPathogenTested = thirdPathogenTested;
+	}
+
+	public PathogenTestResultType getTestResultForThirdPathogen() {
+		return testResultForThirdPathogen;
+	}
+
+	public void setTestResultForThirdPathogen(PathogenTestResultType testResultForThirdPathogen) {
+		this.testResultForThirdPathogen = testResultForThirdPathogen;
+	}
+
+	public Subtype getPositiveSubtypes() {
+		return positiveSubtypes;
+	}
+
+	public void setPositiveSubtypes(Subtype positiveSubtypes) {
+		this.positiveSubtypes = positiveSubtypes;
 	}
 }

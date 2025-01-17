@@ -292,6 +292,8 @@ public interface Strings {
 	String entityContainmentMeasure = "entityContainmentMeasure";
 	String entityAffectedPerson = "entityAffectedPerson";
 	String entityPatientSymptomsPrecedence = "entityPatientSymptomsPrecedence";
+	String entityPatientTravelDetailsPrior = "entityPatientTravelDetailsPrior";
+	String entityPatientTravelDetailsDuring = "entityPatientTravelDetailsDuring";
 	String entityPersonTravelHistory = "entityPersonTravelHistory";
 	String entityContaminationSource = "entityContaminationSource";
 
