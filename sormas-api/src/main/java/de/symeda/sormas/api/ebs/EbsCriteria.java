@@ -1,5 +1,7 @@
 package de.symeda.sormas.api.ebs;
 
+import de.symeda.sormas.api.EntityRelevanceStatus;
+import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
@@ -42,6 +44,7 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     private YesNo actionInitiated;
     private ResponseStatus responseStatus;
     private Boolean deleted = Boolean.FALSE;
+    private EntityRelevanceStatus relevanceStatus;
     private RegionReferenceDto region;
     private DistrictReferenceDto district;
     private CommunityReferenceDto community;
@@ -93,6 +96,16 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     @IgnoreForUrl
     public Boolean getDeleted() {
         return deleted;
+    }
+
+    public EbsCriteria relevanceStatus(EntityRelevanceStatus relevanceStatus) {
+        this.relevanceStatus = relevanceStatus;
+        return this;
+    }
+
+    @IgnoreForUrl
+    public EntityRelevanceStatus getRelevanceStatus() {
+        return relevanceStatus;
     }
 
     public EbsCriteria region(RegionReferenceDto region) {

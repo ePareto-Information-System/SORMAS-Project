@@ -17,6 +17,7 @@ package de.symeda.sormas.backend.ebs;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
+import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.RequestContextHolder;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
@@ -494,6 +495,22 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		}
 		if (ebsCriteria.getCommunity() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getCommunity().get(Community.UUID), ebsCriteria.getCommunity().getUuid()));
+		}
+		if (ebsCriteria.getRelevanceStatus() == null) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.or(cb.equal(from.get(Ebs.ARCHIVED), false), cb.isNull(from.get(Ebs.ARCHIVED))));
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.or(cb.equal(from.get(Ebs.DELETED), false), cb.isNull(from.get(Ebs.DELETED))));
+			}
+		if (ebsCriteria.getRelevanceStatus() != null) {
+			if (ebsCriteria.getRelevanceStatus() == EntityRelevanceStatus.ACTIVE) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.or(cb.equal(from.get(Ebs.ARCHIVED), false), cb.isNull(from.get(Ebs.ARCHIVED))));
+			} else if (ebsCriteria.getRelevanceStatus() == EntityRelevanceStatus.ARCHIVED) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.ARCHIVED), true));
+			} else if (ebsCriteria.getRelevanceStatus() == EntityRelevanceStatus.DELETED) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.DELETED), true));
+			}
+		}
+		if (ebsCriteria.getRelevanceStatus() != EntityRelevanceStatus.DELETED) {
+			filter = CriteriaBuilderHelper.and(cb, filter, createDefaultFilter(cb, from));
 		}
 		if (CollectionUtils.isNotEmpty(ebsCriteria.getExcludedUuids())) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.not(from.get(AbstractDomainObject.UUID).in(ebsCriteria.getExcludedUuids())));

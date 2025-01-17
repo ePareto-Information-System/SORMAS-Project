@@ -22,7 +22,6 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 
-import static com.vaadin.ui.Notification.Type.ERROR_MESSAGE;
 import static com.vaadin.ui.Notification.Type.WARNING_MESSAGE;
 
 
@@ -40,7 +39,7 @@ public class SignalVerificationView extends AbstractEbsView {
 			ControllerProvider.getEbsController().navigateToIndex();
 		}
 		CommitDiscardWrapperComponent<SignalVerificationDataForm> signalVerficationForm = ControllerProvider.getEbsController()
-				.getEbsCreateSignalVerficationComponent(getEbsRef().getUuid(),
+				.getEbsCreateSignalVerificationComponent(getEbsRef().getUuid(),
                         UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
 		setSubComponent(signalVerficationForm);
 	}

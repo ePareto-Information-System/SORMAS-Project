@@ -2,8 +2,17 @@ package de.symeda.sormas.ui.ebs;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Set;
-
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Label;
+import de.symeda.sormas.api.EntityRelevanceStatus;
+import de.symeda.sormas.api.common.CoreEntityType;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.feature.FeatureTypeProperty;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
+import de.symeda.sormas.ui.utils.LayoutUtil;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import com.vaadin.icons.VaadinIcons;
@@ -46,19 +55,20 @@ public class EBSView extends AbstractView {
 
 	private static final long serialVersionUID = -3048977745713631500L;
 	public static final String VIEW_NAME = "ebs";
-	private EbsCriteria ebsCriteria;
+	private final EbsCriteria ebsCriteria;
 	private final EbsViewConfiguration viewConfiguration;
 	public static String currentview = "signallist";
 
 	private FilteredGrid<?, ?> grid;
 	private Button createButton;
-	private HashMap<Button, String> srcButtons;
 	private Button activeStatusButton;
 	// Filter
 	private EbsFilterForm ebsFilterForm;
-	private ComboBox contactCountMethod;
 
 	private VerticalLayout gridLayout;
+	private HashMap<Button, String> statusButtons;
+	private Label relevanceStatusInfoLabel;
+	private ComboBox relevanceStatusFilter;
 
 	public EBSView() {
 		super(VIEW_NAME);
@@ -78,6 +88,7 @@ public class EBSView extends AbstractView {
 		}
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
+		gridLayout.addComponent(createStatusFilterBar());
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
@@ -205,6 +216,90 @@ public class EBSView extends AbstractView {
 		}
 	}
 
+	public HorizontalLayout createStatusFilterBar() {
+		HorizontalLayout statusFilterLayout = new HorizontalLayout();
+		statusFilterLayout.setSpacing(true);
+		statusFilterLayout.setMargin(false);
+		statusFilterLayout.setWidth(100, Unit.PERCENTAGE);
+		statusFilterLayout.addStyleName(CssStyles.VSPACE_3);
+
+		statusButtons = new HashMap<>();
+
+		Button statusAll = ButtonHelper.createButton(Captions.all, e -> {
+			ebsCriteria.sourceInformation(null);
+			navigateTo(ebsCriteria);
+		}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
+		statusAll.setCaptionAsHtml(true);
+
+		statusFilterLayout.addComponent(statusAll);
+		statusButtons.put(statusAll, I18nProperties.getCaption(Captions.all));
+		activeStatusButton = statusAll;
+
+		for (EbsSourceType source : EbsSourceType.values()) {
+			Button statusButton = ButtonHelper.createButton(source.toString(), e -> {
+				ebsCriteria.sourceInformation(source);
+				navigateTo(ebsCriteria);
+			}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT);
+			statusButton.setData(source);
+			statusButton.setCaptionAsHtml(true);
+
+			statusFilterLayout.addComponent(statusButton);
+			statusButtons.put(statusButton, source.toString());
+		}
+
+		HorizontalLayout actionButtonsLayout = new HorizontalLayout();
+		actionButtonsLayout.setSpacing(true);
+		{
+
+			// Show active/archived/all dropdown
+			if (Objects.nonNull(UserProvider.getCurrent()) && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
+
+				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.AUTOMATIC_ARCHIVING, CoreEntityType.EVENT)) {
+					int daysAfterCaseGetsArchived = FacadeProvider.getFeatureConfigurationFacade()
+							.getProperty(FeatureType.AUTOMATIC_ARCHIVING, CoreEntityType.EBS, FeatureTypeProperty.THRESHOLD_IN_DAYS, Integer.class);
+					if (daysAfterCaseGetsArchived > 0) {
+						relevanceStatusInfoLabel = new Label(
+								VaadinIcons.INFO_CIRCLE.getHtml() + " "
+										+ String.format(I18nProperties.getString(Strings.infoArchivedEbs), daysAfterCaseGetsArchived),
+								ContentMode.HTML);
+						relevanceStatusInfoLabel.setVisible(false);
+						relevanceStatusInfoLabel.addStyleName(CssStyles.LABEL_VERTICAL_ALIGN_SUPER);
+						actionButtonsLayout.addComponent(relevanceStatusInfoLabel);
+						actionButtonsLayout.setComponentAlignment(relevanceStatusInfoLabel, Alignment.MIDDLE_RIGHT);
+					}
+				}
+				relevanceStatusFilter = ComboBoxHelper.createComboBoxV7();
+				relevanceStatusFilter.setId("relevanceStatus");
+				relevanceStatusFilter.setWidth(210, Unit.PIXELS);
+				relevanceStatusFilter.setNullSelectionAllowed(false);
+				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
+				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.Ebs_Active_Signals));
+				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.Ebs_Archived_Signals));
+				relevanceStatusFilter
+						.setItemCaption(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED, I18nProperties.getCaption(Captions.Ebs_All_Active_And_Archived_Signals));
+
+				if (UserProvider.getCurrent().hasUserRight(UserRight.CASE_DELETE)) {
+					relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.DELETED, I18nProperties.getCaption(Captions.Ebs_Deleted_Signals));
+				} else {
+					relevanceStatusFilter.removeItem(EntityRelevanceStatus.DELETED);
+				}
+				relevanceStatusFilter.addValueChangeListener(e -> {
+					if (relevanceStatusInfoLabel != null) {
+						relevanceStatusInfoLabel.setVisible(EntityRelevanceStatus.ARCHIVED.equals(e.getProperty().getValue()));
+					}
+					ebsCriteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
+					navigateTo(ebsCriteria);
+				});
+				actionButtonsLayout.addComponent(relevanceStatusFilter);
+			}
+		}
+		statusFilterLayout.addComponent(actionButtonsLayout);
+		statusFilterLayout.setComponentAlignment(actionButtonsLayout, Alignment.TOP_RIGHT);
+		statusFilterLayout.setExpandRatio(actionButtonsLayout, 1);
+
+		return statusFilterLayout;
+	}
+
 	private boolean isDefaultViewType() {
 		return viewConfiguration.getViewType() == EbsViewType.DEFAULT;
 	}
@@ -245,7 +340,14 @@ public class EBSView extends AbstractView {
 
 		// TODO replace with Vaadin 8 databinding
 		applyingCriteria = true;
+		updateStatusButtons();
+		if (relevanceStatusFilter != null) {
+			relevanceStatusFilter.setValue(ebsCriteria.getRelevanceStatus());
+		} if ( ebsCriteria.getRelevanceStatus() == null) {
+			relevanceStatusFilter.setValue(EntityRelevanceStatus.ACTIVE);
+			ebsCriteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 
+		}
 		ebsFilterForm.setValue(ebsCriteria);
 
 		applyingCriteria = false;
@@ -281,6 +383,28 @@ public class EBSView extends AbstractView {
 
 		return filterLayout;
 	}
+	private void updateStatusButtons() {
+		long dataCount;
+		statusButtons.keySet().forEach(b -> {
+			CssStyles.style(b, CssStyles.BUTTON_FILTER_LIGHT);
+			b.setCaption(statusButtons.get(b));
+			if (b.getData() == ebsCriteria.getSourceInformation()) {
+				activeStatusButton = b;
+			}
+		});
+		CssStyles.removeStyles(activeStatusButton, CssStyles.BUTTON_FILTER_LIGHT);
+
+		if (isDefaultViewType()){
+			dataCount = FacadeProvider.getEbsFacade().count(ebsCriteria);
+		}else {
+			dataCount = FacadeProvider.getEbsFacade().eventCount(ebsCriteria);
+		}
+
+		if (activeStatusButton != null) {
+			activeStatusButton
+					.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(dataCount)));
+		}
+	}
 
 	@Override
 	public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -289,7 +413,6 @@ public class EBSView extends AbstractView {
 			params = params.substring(1);
 		}
 		if (isDefaultViewType()) {
-
 			updateFilterComponents();
 			((EbsSignalGrid) grid).reload();
 		} else {
@@ -301,45 +424,5 @@ public class EBSView extends AbstractView {
 
 	private Set<String> getSelectedRowUuids() {
 		return viewConfiguration.isInEagerMode() ? (Set<String>) grid.asMultiSelect().getSelectedItems() : Collections.emptySet();
-	}
-
-	public HorizontalLayout createStatusFilterBar() {
-
-		HorizontalLayout srcFilterLayout = new HorizontalLayout();
-		srcFilterLayout.setSpacing(true);
-		srcFilterLayout.setMargin(false);
-		srcFilterLayout.setWidth(100, Unit.PERCENTAGE);
-		srcFilterLayout.addStyleName(CssStyles.VSPACE_3);
-		srcButtons = new HashMap<>();
-
-		if (isDefaultViewType()) {
-			Button srcAll = ButtonHelper.createButton(Captions.all, e -> {
-				ebsCriteria.setSourceInformation(null);
-				ebsCriteria.setTriagingDecision(null);
-				navigateTo(ebsCriteria);
-			}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
-			srcAll.setCaptionAsHtml(true);
-
-			srcFilterLayout.addComponent(srcAll);
-
-			srcButtons.put(srcAll, I18nProperties.getCaption(Captions.all));
-			activeStatusButton = srcAll;
-
-			for (EbsSourceType src : EbsSourceType.values()) {
-				Button srcButton = ButtonHelper.createButton("status-" + src, src.toString(), e -> {
-					ebsCriteria.setSourceInformation(src);
-					navigateTo(ebsCriteria);
-				}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT);
-				srcButton.setCaptionAsHtml(true);
-				srcButton.setData(src);
-
-				srcFilterLayout.addComponent(srcButton);
-
-				srcButtons.put(srcButton, src.toString());
-			}
-		}
-
-		return srcFilterLayout;
-
 	}
 }

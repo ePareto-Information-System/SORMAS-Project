@@ -52,6 +52,7 @@ import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.ebs.SignalVerificationDto;
 import de.symeda.sormas.api.ebs.TriagingDto;
+import de.symeda.sormas.backend.event.EventParticipant;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -221,6 +222,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setEbsLatLon(source.getEbsLatLon());
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
+		target.setOtherDeletionReason(source.getOtherDeletionReason());
 		if (source.getTriaging() != null) {
 			target.setTriaging(TriagingFacadeEjb.toDto(source.getTriaging()));
 		}
@@ -346,6 +348,11 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			});
 		}
 		return deletedEbsUuids;
+	}
+	@Override
+	@RightsAllowed(UserRight._EVENT_DELETE)
+	public void restore(String uuid) {
+		super.restore(uuid);
 	}
 
 	@Override
@@ -878,6 +885,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setResponsibleUser(userService.getByReferenceDto(source.getResponsibleUser()));
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
+		target.setOtherDeletionReason(source.getOtherDeletionReason());
 		target.setEbsLatLon(source.getEbsLatLon());
 		target.setAutomaticScanningType(source.getAutomaticScanningType());
 		target.setManualScanningType(source.getManualScanningType());
@@ -917,6 +925,24 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	public void archiveAllArchivableEbss(int daysAfterEbsGetsArchived) {
 
 		archiveAllArchivableEbss(daysAfterEbsGetsArchived, LocalDate.now());
+	}
+
+	@Override
+	@RightsAllowed(UserRight._EVENT_ARCHIVE)
+	public void archive(String eventUuid, Date endOfProcessingDate) {
+		super.archive(eventUuid, endOfProcessingDate);
+	}
+
+	@Override
+	@RightsAllowed(UserRight._EVENT_ARCHIVE)
+	public void archive(List<String> eventUuids) {
+		super.archive(eventUuids);
+	}
+
+	@Override
+	@RightsAllowed(UserRight._EVENT_ARCHIVE)
+	public void dearchive(List<String> eventUuids, String dearchiveReason) {
+		super.dearchive(eventUuids, dearchiveReason);
 	}
 
 	@Override
