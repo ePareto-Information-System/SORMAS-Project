@@ -291,6 +291,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.HAS_SAMPLE_BEEN_COLLECTED) +
 					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 					fluidRowLocs(SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_MATERIAL_TEXT) +
+					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID) +
 					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
 					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
 					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
