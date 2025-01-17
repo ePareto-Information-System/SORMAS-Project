@@ -20,9 +20,14 @@ package de.symeda.sormas.ui.ebs;
 import static com.vaadin.ui.Notification.Type.TRAY_NOTIFICATION;
 import static de.symeda.sormas.api.utils.DataHelper.isNullOrEmpty;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.vaadin.ui.UI;
+import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -67,14 +72,7 @@ import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.components.automaticdeletion.DeletionLabel;
 import de.symeda.sormas.ui.utils.components.page.title.TitleLayout;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Consumer;
-
-import static com.vaadin.ui.Notification.Type.TRAY_NOTIFICATION;
 
 public class EbsController {
 
@@ -170,7 +168,7 @@ public class EbsController {
 
 		final CommitDiscardWrapperComponent<EbsDataForm> component =
 			new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasAllUserRights(), form.getFieldGroup());
-		component.getDiscardButton().setCaption("Cancel");
+		component.getDiscardButton().setCaption(Captions.actionCancel);
 		component.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {
 				EbsDto newEvent = form.getValue();
@@ -193,19 +191,17 @@ public class EbsController {
 
 		final CommitDiscardWrapperComponent<TriagingDataForm> editView =
 			new CommitDiscardWrapperComponent<TriagingDataForm>(triagingDataForm, triagingDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption("Cancel");
-		TriagingDto newEvent = triagingDataForm.getValue();
+		editView.getDiscardButton().setCaption(Captions.actionCancel);
 		editView.addCommitListener(() -> {
 			ebs.setTriaging(triagingDataForm.getValue());
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
 			navigateToSignalVerification(ebs.getUuid(), false);
 		});
-
 		return editView;
 	}
 
-	public CommitDiscardWrapperComponent<SignalVerificationDataForm> getEbsCreateSignalVerficationComponent(
+	public CommitDiscardWrapperComponent<SignalVerificationDataForm> getEbsCreateSignalVerificationComponent(
 		final String ebsUuid,
 		boolean isEditAllowed) {
 		EbsDto ebs = findEbs(ebsUuid);
@@ -214,7 +210,7 @@ public class EbsController {
 		signalVerificationDataForm.setValue(ebs.getSignalVerification());
 		final CommitDiscardWrapperComponent<SignalVerificationDataForm> editView =
 			new CommitDiscardWrapperComponent<SignalVerificationDataForm>(signalVerificationDataForm, signalVerificationDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption("Cancel");
+		editView.getDiscardButton().setCaption(Captions.actionCancel);
 		editView.addCommitListener(() -> {
 			ebs.setSignalVerification(signalVerificationDataForm.getValue());
 			callDeathCount(signalVerificationDataForm);
@@ -246,7 +242,7 @@ public class EbsController {
 		riskAssessmentDataForm.setValue(riskAssessmentDto);
 		final CommitDiscardWrapperComponent<RiskAssessmentDataForm> editView =
 			new CommitDiscardWrapperComponent<RiskAssessmentDataForm>(riskAssessmentDataForm, riskAssessmentDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption("Cancel");
+		editView.getDiscardButton().setCaption(Captions.actionCancel);
 		editView.addCommitListener(() -> {
 			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
 			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
@@ -379,7 +375,7 @@ public class EbsController {
 		alertDataForm.setValue(ebsAlertDto);
 		final CommitDiscardWrapperComponent<EbsAlertDataForm> editView =
 			new CommitDiscardWrapperComponent<EbsAlertDataForm>(alertDataForm, alertDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption("Cancel");
+		editView.getDiscardButton().setCaption(Captions.actionCancel);
 		editView.addCommitListener(() -> {
 			ebs.setAlert(alertDataForm.getValue());
 			ebsAlertDto.setAlertIssued(alertDataForm.getValue().getAlertIssued());
@@ -397,10 +393,8 @@ public class EbsController {
 
 	private String getDeleteConfirmationDetails(List<String> eventUuids) {
 //		boolean hasPendingRequest = FacadeProvider.getSormasToSormasEbsFacade().hasPendingRequest(eventUuids);
-//
-//		return hasPendingRequest ? "<br/>" + I18nProperties.getString(Strings.messageDeleteWithPendingShareRequest) + "<br/>" : "";
 
-		return "";
+		return "<br/>" + I18nProperties.getString(Strings.messageDeleteWithPendingShareRequest) + "<br/>";
 	}
 
 	private Consumer<List<EbsIndexDto>> bulkOperationCallback(EbsSignalGrid eventGrid, Window popupWindow) {
@@ -471,27 +465,35 @@ public class EbsController {
 		});
 
 		final String uuid = event.getUuid();
-//		if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_DELETE)) {
-//			editView.addDeleteWithReasonOrRestoreListener((deleteDetails) -> {
-//					VaadinUiUtil.showSimplePopupWindow(
-//							I18nProperties.getString(Strings.headingEventNotDeleted),
-//							I18nProperties.getString(Strings.messageEventsNotDeletedLinkedEntitiesReason));
-//				UI.getCurrent().getNavigator().navigateTo(EventsView.VIEW_NAME);
-//			},
-//					getDeleteConfirmationDetails(Collections.singletonList(eventUuid)), (deleteDetails) -> {
-//				FacadeProvider.getEbsFacade().restore(uuid);
-//				UI.getCurrent().getNavigator().navigateTo(EBSView.VIEW_NAME);
-//			},
-//					I18nProperties.getString(Strings.entityEvent), uuid, FacadeProvider.getEbsFacade());
-//		}
+		if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_DELETE)) {
+			editView.addDeleteWithReasonOrRestoreListener((deleteDetails) -> {
+				try {
+					FacadeProvider.getEbsFacade().delete(uuid, deleteDetails);
+				} catch (ExternalSurveillanceToolRuntimeException e) {
+					Notification.show(
+							String.format(
+									I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationEntryNotDeleted),
+									DataHelper.getShortUuid(uuid)),
+							"",
+							Type.ERROR_MESSAGE);
 
-		// Initialize 'Archive' button
-//		if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_ARCHIVE)) {
-//			ControllerProvider.getArchiveController().addArchivingButton(event, ArchiveHandlers.forEbs(), editView, () -> {
-//				navigateToData(uuid);
-//			});
-//		}
-		editView.getDiscardButton().setCaption("Cancel");
+					VaadinUiUtil.showSimplePopupWindow(
+							I18nProperties.getString(Strings.headingEventNotDeleted),
+							I18nProperties.getString(Strings.messageEventsNotDeletedLinkedEntitiesReason));
+				}
+				UI.getCurrent().getNavigator().navigateTo(EBSView.VIEW_NAME);
+			}, getDeleteConfirmationDetails(Collections.singletonList(eventUuid)), (deleteDetails) -> {
+				FacadeProvider.getEbsFacade().restore(uuid);
+				UI.getCurrent().getNavigator().navigateTo(EBSView.VIEW_NAME);
+			}, I18nProperties.getString(Strings.entityEvent), uuid, FacadeProvider.getEbsFacade());
+		}
+
+//		 Initialize 'Archive' button
+		if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_ARCHIVE)) {
+			ControllerProvider.getArchiveController()
+					.addArchivingButton(event, ArchiveHandlers.forEbs(), editView, () -> navigateToData(uuid));
+		}
+		editView.getDiscardButton().setCaption(Captions.actionCancel);
 
 		return editView;
 	}
@@ -506,7 +508,7 @@ public class EbsController {
 		riskAssessmentDataForm.setValue(riskAssessmentDto);
 		final CommitDiscardWrapperComponent<RiskAssessmentDataForm> editView =
 			new CommitDiscardWrapperComponent<RiskAssessmentDataForm>(riskAssessmentDataForm, riskAssessmentDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption("Cancel");
+		editView.getDiscardButton().setCaption(Captions.actionCancel);
 		editView.addCommitListener(() -> {
 			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
 			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
@@ -532,7 +534,7 @@ public class EbsController {
 		alertDataForm.setValue(ebsAlertDto);
 		final CommitDiscardWrapperComponent<EbsAlertDataForm> editView =
 			new CommitDiscardWrapperComponent<EbsAlertDataForm>(alertDataForm, alertDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption("Cancel");
+		editView.getDiscardButton().setCaption(Captions.actionCancel);
 		editView.addCommitListener(() -> {
 			ebs.setAlert(alertDataForm.getValue());
 			ebsAlertDto.setAlertIssued(alertDataForm.getValue().getAlertIssued());
