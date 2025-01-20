@@ -30,7 +30,7 @@ public class DiseaseMenuCaptionHandler {
         switch (disease) {
             case FOODBORNE_ILLNESS:
                 updateMenuCaption(menuItems, personInfoIndex, R.string.caption_patient_client, context);
-                updateMenuCaption(menuItems, foodSampleIndex, R.string.caption_food_sample_testing, context);
+                updateMenuCaption(menuItems, foodSampleIndex, R.string.caption_case_food_sample_testing, context);
                 break;
             case NEW_INFLUENZA:
                  updateMenuCaption(menuItems, personInfoIndex, R.string.caption_demographic_details, context);

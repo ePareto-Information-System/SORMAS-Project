@@ -50,22 +50,6 @@
 
             <requestFocus/>
 
-            <TextView
-                android:id="@+id/heading_sixtyday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/heading_sixtyday"
-                android:textColor="@color/lightBlue"
-                style="@style/HeadingStyle" />
-
-            <TextView
-                android:id="@+id/heading_foodsample"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/heading_foodsample"
-                android:textColor="@color/lightBlue"
-                style="@style/HeadingStyle" />
-
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/sixtyDay_personExamineCase"
