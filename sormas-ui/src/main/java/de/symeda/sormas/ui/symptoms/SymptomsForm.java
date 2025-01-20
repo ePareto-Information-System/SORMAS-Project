@@ -1271,6 +1271,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		}
 
+		onsetSymptom.addValueChangeListener(f -> {
+			if (f.getProperty().getValue() != null) {
+				setRequired(true, ONSET_DATE);
+			} else {
+				setRequired(false, ONSET_DATE);
+			}
+		});
+
 		if(disease == Disease.MEASLES) {
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
 			outcome.setRequired(true);

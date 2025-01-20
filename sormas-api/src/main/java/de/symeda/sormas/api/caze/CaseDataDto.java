@@ -445,6 +445,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		Disease.DENGUE,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,
+		Disease.CHOLERA,
 		Disease.OTHER })
 	@Outbreaks
 	private VaccinationStatus vaccinationStatus;

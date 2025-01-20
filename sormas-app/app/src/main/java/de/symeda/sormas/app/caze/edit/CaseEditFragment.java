@@ -518,7 +518,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		});
 		contentBinding.caseDataDisease.setEnabled(false);
 
-		if (record.getDisease() ==Disease.MEASLES || record.getDisease() == Disease.CORONAVIRUS) {
+		if (Arrays.asList(Disease.MEASLES, Disease.CORONAVIRUS, Disease.CHOLERA).contains(record.getDisease())) {
 			Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
 					VaccinationStatus.VACCINATED,
 					VaccinationStatus.UNVACCINATED
@@ -932,6 +932,9 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				handleCoronavirus();
 				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCoronavirus());
 				break;
+			case CHOLERA:
+				handleCholera();
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCholera());
 			default:
 				break;
 		}
@@ -1103,6 +1106,22 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		} else {
 			getContentBinding().caseDataVaccinationDate.setEnabled(false);
 			getContentBinding().caseDataSecondVaccinationDate.setEnabled(false);
+		}
+	}
+
+	private void handleCholera() {
+		if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+		}
+
+		if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD) {
+			getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+			getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+			getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
 		}
 	}
 

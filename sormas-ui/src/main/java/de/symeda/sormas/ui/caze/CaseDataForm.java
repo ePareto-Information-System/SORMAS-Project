@@ -261,7 +261,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
 					fluidRowLocs(CaseDataDto.VACCINATION_ROUTINE, CaseDataDto.VACCINATION_ROUTINE_DATE) +
-					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE, CaseDataDto.VACCINATION_DATE) +
+					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE) +
 					fluidRowLocs(CaseDataDto.MOTHER_VACCINATED_WITH_TT, CaseDataDto.MOTHER_HAVE_CARD) +
                     fluidRowLocs(CaseDataDto.MOTHER_VACCINATION_STATUS, CaseDataDto.MOTHER_NUMBER_OF_DOSES) +
 					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_ONE, CaseDataDto.MOTHER_TT_DATE_TWO) +
@@ -1534,6 +1534,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                         Arrays.asList();
 
                 FieldHelper.updateItems(outcome, Arrays.asList(CaseOutcome.DECEASED, CaseOutcome.ALIVE, CaseOutcome.UNKNOWN));
+                vaccinationStatus.setVisible(true);
+                FieldHelper.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
+                FieldHelper.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField, numberOfDoses), Arrays.asList(CardOrHistory.CARD), true);
+
 			/*if (cbCaseClassification != null) {
 				FieldHelper.updateItems(cbCaseClassification, Arrays.asList(CaseClassification.NO_CASE, CaseClassification.SUSPECT, CaseClassification.PROBABLE, CaseClassification.CONFIRMED_BY_LAB, CaseClassification.CONFIRMED_BY_EPI_LINK));
 

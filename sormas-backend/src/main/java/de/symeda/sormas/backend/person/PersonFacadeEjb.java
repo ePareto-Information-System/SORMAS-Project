@@ -748,6 +748,9 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		if (source.getSex() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.specifySex));
 		}
+		if (source.getApproximateAge() == null || source.getApproximateAgeType() == null) {
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.approximateAgeAndType));
+		}
 		if (source.getPersonContactDetails()
 			.stream()
 			.filter(cd -> cd.isPrimaryContact() && cd.getPersonContactDetailType() == PersonContactDetailType.PHONE)

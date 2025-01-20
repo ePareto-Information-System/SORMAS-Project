@@ -23,12 +23,10 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 import java.time.Month;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import com.vaadin.v7.data.Validator;
-import com.vaadin.v7.ui.*;
+import de.symeda.sormas.api.person.*;
+import de.symeda.sormas.api.utils.DataHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.icons.VaadinIcons;
@@ -44,9 +42,6 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.person.SimilarPersonDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.LocationHelper;
@@ -61,7 +56,6 @@ import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.PhoneNumberValidator;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
-import de.symeda.sormas.api.person.Sex;
 
 public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
@@ -242,6 +236,21 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
 		hideValidationUntilNextCommit();
+
+		addFieldListeners(PersonDto.BIRTH_DATE_DD, e -> {
+			updateApproximateAge();
+			updateReadyOnlyApproximateAge();
+		});
+
+		addFieldListeners(PersonDto.BIRTH_DATE_MM, e -> {
+			updateApproximateAge();
+			updateReadyOnlyApproximateAge();
+		});
+
+		addFieldListeners(PersonDto.BIRTH_DATE_YYYY, e -> {
+			updateApproximateAge();
+			updateReadyOnlyApproximateAge();
+		});
 	}
 
 	private void setItemCaptionsForMonths(AbstractSelect months) {
@@ -498,6 +507,53 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		} else {
 			getField(SymptomsDto.ONSET_DATE).clear();
 		}
+	}
+
+	private void updateReadyOnlyApproximateAge() {
+		boolean readonly = false;
+		if (getFieldGroup().getField(PersonDto.BIRTH_DATE_YYYY).getValue() != null) {
+			readonly = true;
+		}
+		getFieldGroup().getField(PersonDto.APPROXIMATE_AGE).setReadOnly(readonly);
+		getFieldGroup().getField(PersonDto.APPROXIMATE_AGE_TYPE).setReadOnly(readonly);
+	}
+
+	private void updateApproximateAge() {
+		String approximateAge = null;
+		ApproximateAgeType approximateAgeType = null;
+		Date birthDate = calcBirthDateValue();
+		if (birthDate != null) {
+			DataHelper.Pair<Integer, ApproximateAgeType> pair =
+					ApproximateAgeType.ApproximateAgeHelper.getApproximateAge(birthDate, (Date) null);
+			if (pair.getElement0() != null) {
+				approximateAge = String.valueOf(pair.getElement0());
+			}
+			approximateAgeType = pair.getElement1();
+		}
+		TextField approximateAgeField = (TextField) getFieldGroup().getField(PersonDto.APPROXIMATE_AGE);
+		approximateAgeField.setReadOnly(false);
+		approximateAgeField.setValue(approximateAge);
+		approximateAgeField.setReadOnly(true);
+		AbstractSelect approximateAgeTypeSelect = (AbstractSelect) getFieldGroup().getField(PersonDto.APPROXIMATE_AGE_TYPE);
+		approximateAgeTypeSelect.setReadOnly(false);
+		approximateAgeTypeSelect.setValue(approximateAgeType);
+		approximateAgeTypeSelect.setReadOnly(true);
+	}
+
+	private Date calcBirthDateValue() {
+		if (getFieldGroup().getField(PersonDto.BIRTH_DATE_YYYY).getValue() != null) {
+			Calendar birthDateCalendar = new GregorianCalendar();
+			birthDateCalendar.set(
+					(Integer) getFieldGroup().getField(PersonDto.BIRTH_DATE_YYYY).getValue(),
+					getFieldGroup().getField(PersonDto.BIRTH_DATE_MM).getValue() != null
+							? (Integer) getFieldGroup().getField(PersonDto.BIRTH_DATE_MM).getValue() - 1
+							: 0,
+					getFieldGroup().getField(PersonDto.BIRTH_DATE_DD).getValue() != null
+							? (Integer) getFieldGroup().getField(PersonDto.BIRTH_DATE_DD).getValue()
+							: 1);
+			return birthDateCalendar.getTime();
+		}
+		return null;
 	}
 
 	public void hidePersonalEmail(){
