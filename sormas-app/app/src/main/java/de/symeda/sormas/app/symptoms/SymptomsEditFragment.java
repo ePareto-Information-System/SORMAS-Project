@@ -21,6 +21,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -290,13 +291,13 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		if (Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.MONKEYPOX, Disease.MEASLES).contains(disease)){
 
-			Set<CaseOutcome> outcomesToRemove = Set.of(
+			Set<CaseOutcome> outcomesToRemove = new HashSet<>(Arrays.asList(
 					CaseOutcome.NO_OUTCOME,
 					CaseOutcome.ON_TREATMENT,
 					CaseOutcome.REFERRED,
 					CaseOutcome.OTHER,
 					CaseOutcome.RECOVERED
-			);
+			));
 
 			if (disease != Disease.MEASLES) {
 				outcomesToRemove.add(CaseOutcome.UNKNOWN);

@@ -170,6 +170,7 @@
     <string name="caption_case_investigation_notes">Investigation Notes</string>
     <string name="caption_case_afp_immunization">Immunization History</string>
     <string name="caption_case_sixy_day">Sixty Day</string>
+    <string name="caption_case_food_sample_testing">Food Sample Testing</string>
     <string name="caption_case_treatments">Treatments</string>
     <string name="caption_case_similarity_create">Create a new case</string>
     <string name="caption_changed_data_lost">Changed data lost during re-sync.</string>
@@ -241,7 +242,6 @@
     <string name="caption_person_information">Person Information</string>
     <string name="caption_case_person">Case Person</string>
     <string name="caption_patient_client">Patient/Client</string>
-    <string name="caption_food_sample_testing">Food Sample Testing</string>
     <string name="caption_demographic_details">Demographic Details</string>
     <string name="caption_person_involved">Person Involved</string>
     <string name="caption_positive">Positive</string>
@@ -399,10 +399,10 @@
     <string name="heading_risk_mapping_edit">Edit Risk Mapping</string>
     <string name="heading_afp_Immunization">AFP Immunization</string>
     <string name="heading_afp_Immunization_edit">Edit AFP Immunization</string>
-    <string name="heading_foodsample">Food Sample Testing</string>
-    <string name="heading_foodsample_edit">Edit Food Sample Testing</string>
-    <string name="heading_sixtyday">Sixty Day</string>
-    <string name="heading_sixtyday_edit">Edit Sixty Day</string>
+   <!-- <string name="heading_foodsample">Food Sample Testing</string>
+    <string name="heading_foodsample_edit">Edit Food Sample Testing</string>-->
+    <!--<string name="heading_sixtyday">Sixty Day</string>
+    <string name="heading_sixtyday_edit">Edit Sixty Day</string>-->
     <string name="heading_event_read">Read Event</string>
     <string name="heading_event_summary">Event Summary</string>
     <string name="heading_events_list">Event Listing</string>

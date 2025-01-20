@@ -16,6 +16,7 @@
 package de.symeda.sormas.app.caze.read;
 
 
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import de.symeda.sormas.api.Disease;
@@ -79,7 +80,12 @@ public class CaseReadSixtyDayFragment extends BaseReadFragment<FragmentCaseReadS
 
 	@Override
 	protected String getSubHeadingTitle() {
-		return getResources().getString(R.string.caption_case_sixy_day);
+		Resources r = getResources();
+		if (caze.getDisease() == Disease.FOODBORNE_ILLNESS) {
+			return r.getString(R.string.caption_case_food_sample_testing);
+		} else {
+			return r.getString(R.string.caption_case_sixy_day);
+		}
 	}
 
 	@Override

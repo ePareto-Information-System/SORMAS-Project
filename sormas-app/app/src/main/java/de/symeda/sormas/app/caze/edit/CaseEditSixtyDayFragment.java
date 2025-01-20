@@ -22,6 +22,7 @@ import android.content.res.Resources;
 
 import java.util.List;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.NormalWasted;
@@ -69,8 +70,13 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 	@Override
 	protected String getSubHeadingTitle() {
 		Resources r = getResources();
-		return r.getString(R.string.caption_case_sixy_day);
+		if (caze.getDisease() == Disease.FOODBORNE_ILLNESS) {
+			return r.getString(R.string.caption_case_food_sample_testing);
+		} else {
+			return r.getString(R.string.caption_case_sixy_day);
+		}
 	}
+
 
 	@Override
 	public SixtyDay getPrimaryData() {
