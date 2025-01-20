@@ -20,23 +20,17 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
-import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.Trimester;
-import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
-import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.person.ApproximateAgeType;
-import de.symeda.sormas.api.sample.IpSampleTestType;
-import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom;
 import de.symeda.sormas.api.symptoms.SymptomState;
@@ -288,15 +282,15 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		}
 		//TODO: CHANGE FROM IF TO SWITCH AND REMOVE REDUNDANCY CODE
 
-		if (Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.MONKEYPOX, Disease.MEASLES).contains(disease)){
+		if (Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.MONKEYPOX, Disease.MEASLES, Disease.CHOLERA).contains(disease)){
 
-			Set<CaseOutcome> outcomesToRemove = Set.of(
+			HashSet<CaseOutcome> outcomesToRemove = new HashSet<>(Arrays.asList(
 					CaseOutcome.NO_OUTCOME,
 					CaseOutcome.ON_TREATMENT,
 					CaseOutcome.REFERRED,
 					CaseOutcome.OTHER,
 					CaseOutcome.RECOVERED
-			);
+			));
 
 			if (disease != Disease.MEASLES) {
 				outcomesToRemove.add(CaseOutcome.UNKNOWN);
