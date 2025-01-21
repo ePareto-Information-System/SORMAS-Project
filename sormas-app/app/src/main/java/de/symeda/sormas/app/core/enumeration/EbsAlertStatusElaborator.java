@@ -18,7 +18,6 @@ package de.symeda.sormas.app.core.enumeration;
 import android.content.Context;
 
 import de.symeda.sormas.api.ebs.ResponseStatus;
-import de.symeda.sormas.api.ebs.RiskAssesment;
 import de.symeda.sormas.app.R;
 
 public class EbsAlertStatusElaborator implements StatusElaborator {
@@ -41,12 +40,10 @@ public class EbsAlertStatusElaborator implements StatusElaborator {
 	@Override
 	public int getColorIndicatorResource() {
 		switch (responseStatus) {
-			case NOT_STARTED:
-				return R.color.indicatorConfirmedContact;
-			case ON_GOING:
-				return R.color.indicatorSignal;
-			case COMPLETED:
-				return R.color.indicatorNoContact;
+		case ON_GOING:
+			return R.color.indicatorSignal;
+		case COMPLETED:
+			return R.color.indicatorNoContact;
 		}
 
 		return R.color.noColor;
@@ -60,13 +57,11 @@ public class EbsAlertStatusElaborator implements StatusElaborator {
 	@Override
 	public int getIconResourceId() {
 		switch (responseStatus) {
-			case NOT_STARTED:
-				return R.drawable.ic_lp_possible_alerts_192dp;
-			case ON_GOING:
-			case COMPLETED:
-				return R.drawable.ic_lp_confirmed_alerts_192dp;
-			default:
-				throw new IllegalArgumentException("Unknown response Status: " + responseStatus);
+		case ON_GOING:
+		case COMPLETED:
+			return R.drawable.ic_lp_confirmed_alerts_192dp;
+		default:
+			throw new IllegalArgumentException("Unknown response Status: " + responseStatus);
 		}
 	}
 }

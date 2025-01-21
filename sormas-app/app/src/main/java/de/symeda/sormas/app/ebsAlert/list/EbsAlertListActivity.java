@@ -27,7 +27,6 @@ public class EbsAlertListActivity extends PagedBaseListActivity {
 
 	public static ResponseStatus[] responseStatuses = new ResponseStatus[] {
 		null,
-		ResponseStatus.NOT_STARTED,
 		ResponseStatus.ON_GOING,
 		ResponseStatus.COMPLETED };
 	private EbsAlertListViewModel model;

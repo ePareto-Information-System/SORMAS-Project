@@ -15,10 +15,10 @@
 
 package de.symeda.sormas.app.ebs.edit;
 
-import android.content.res.Resources;
-
 import java.util.List;
 
+import android.content.res.Resources;
+import android.view.View;
 
 import de.symeda.sormas.api.ebs.ResponseStatus;
 import de.symeda.sormas.api.utils.YesNo;
@@ -30,7 +30,6 @@ import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.databinding.FragmentEbsAlertEditLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
-
 
 public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditLayoutBinding, EbsAlert, EbsAlert> {
 
@@ -48,6 +47,7 @@ public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditL
 			null,
 			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
+
 	public static EbsAlertEditFragment newInstance(EbsAlert activityRootData) {
 		return newInstanceWithFieldCheckers(
 			EbsAlertEditFragment.class,
@@ -73,7 +73,7 @@ public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditL
 	@Override
 	protected void prepareFragmentData() {
 		record = getActivityRootData();
-		statuses = DataUtils.getEnumItems(ResponseStatus.class,true);
+		statuses = DataUtils.getEnumItems(ResponseStatus.class, true);
 	}
 
 	@Override
@@ -88,6 +88,23 @@ public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditL
 		// Initialize ControlDateFields
 		contentBinding.ebsAlertAlertDate.initializeDateField(getFragmentManager());
 		contentBinding.ebsAlertResponseDate.initializeDateField(getFragmentManager());
+		contentBinding.ebsAlertActionInitiated.addValueChangedListener(e -> {
+			updateAlertUI(contentBinding, e.getValue() == YesNo.YES);
+		});
+
+		updateAlertUI(contentBinding, record.getActionInitiated() == YesNo.YES);
+
+	}
+
+	private void updateAlertUI(FragmentEbsAlertEditLayoutBinding contentBinding, boolean isYes) {
+		int visibility = isYes ? View.VISIBLE : View.GONE;
+		contentBinding.ebsAlertResponseStatus.setVisibility(visibility);
+		contentBinding.ebsAlertDetailsResponseActivities.setVisibility(visibility);
+
+		if (!isYes) {
+			contentBinding.ebsAlertDetailsResponseActivities.setValue(null);
+			contentBinding.ebsAlertResponseStatus.setValue(null);
+		}
 	}
 
 	@Override

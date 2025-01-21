@@ -15199,3 +15199,11 @@ ALTER TABLE patienttraveldetailsduring ADD COLUMN change_user_id BIGINT,
                                    REFERENCES users (id);
 
 INSERT INTO schema_version(version_number, comment) VALUES (720, 'Created tables patienttraveldetailsprior,patienttraveldetailsduring and added fields dateoftravel and placeoftravel');
+UPDATE ebsalert
+SET responsestatus =
+        CASE
+            WHEN responsestatus = '1' THEN '0'
+            WHEN responsestatus = '2' THEN '1'
+            ELSE responsestatus
+            END;
+INSERT INTO schema_version(version_number, comment) VALUES (721, 'removed not started enum');
