@@ -24,7 +24,10 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 import java.time.Month;
 import java.util.*;
+import java.util.Calendar;
 
+import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.person.*;
 import de.symeda.sormas.api.utils.DataHelper;
 import org.apache.commons.lang3.StringUtils;

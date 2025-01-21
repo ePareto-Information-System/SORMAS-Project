@@ -614,7 +614,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		);
 		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(sampleMaterialList));
 
-		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(PathogenTestType.getMeaslesTestTypes()));
+		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(PathogenTestType.getCholeraPathogenTests()));
 		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty()); // Remove empty names
 		getContentBinding().sampleRequestedPathogenTests.initializeCheckBoxGroup(compatibleItems);
 	}
