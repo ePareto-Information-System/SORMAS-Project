@@ -213,7 +213,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 			EbsDto.DESCRIPTION_OCCURRENCE,
 			EbsDto.PERSON_DESIGNATION,
 			EbsDto.PERSON_REGISTERING,
-			EbsDto.PERSON_PHONE);
+			EbsDto.PERSON_PHONE,
+				EbsDto.OTHER_INFORMANT,
+				EbsDto.OTHER);
 
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),

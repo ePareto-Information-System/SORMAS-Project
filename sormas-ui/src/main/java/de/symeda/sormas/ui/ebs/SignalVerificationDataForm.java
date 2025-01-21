@@ -34,7 +34,7 @@ import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.NumberNumericValueValidator;
 
-;
+;import javax.enterprise.inject.New;
 
 public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificationDto> {
 
@@ -372,7 +372,11 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 	}
 
 	private Date clearTime(Date date) {
+		assert date != null;
 		Calendar calendar = Calendar.getInstance();
+		if (date == null) {
+			date = new Date();
+		}
 		calendar.setTime(date);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);

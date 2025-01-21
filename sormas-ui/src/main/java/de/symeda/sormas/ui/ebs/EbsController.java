@@ -168,7 +168,7 @@ public class EbsController {
 
 		final CommitDiscardWrapperComponent<EbsDataForm> component =
 			new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasAllUserRights(), form.getFieldGroup());
-		component.getDiscardButton().setCaption(Captions.actionCancel);
+		component.getDiscardButton().setCaption(I18nProperties.getCaption(Captions.actionCancel));
 		component.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {
 				EbsDto newEvent = form.getValue();
@@ -191,7 +191,7 @@ public class EbsController {
 
 		final CommitDiscardWrapperComponent<TriagingDataForm> editView =
 			new CommitDiscardWrapperComponent<TriagingDataForm>(triagingDataForm, triagingDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption(Captions.actionCancel);
+		editView.getDiscardButton().setCaption(I18nProperties.getCaption(Captions.actionCancel));
 		editView.addCommitListener(() -> {
 			ebs.setTriaging(triagingDataForm.getValue());
 			FacadeProvider.getEbsFacade().save(ebs);
@@ -210,7 +210,7 @@ public class EbsController {
 		signalVerificationDataForm.setValue(ebs.getSignalVerification());
 		final CommitDiscardWrapperComponent<SignalVerificationDataForm> editView =
 			new CommitDiscardWrapperComponent<SignalVerificationDataForm>(signalVerificationDataForm, signalVerificationDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption(Captions.actionCancel);
+		editView.getDiscardButton().setCaption(I18nProperties.getCaption(Captions.actionCancel));
 		editView.addCommitListener(() -> {
 			ebs.setSignalVerification(signalVerificationDataForm.getValue());
 			callDeathCount(signalVerificationDataForm);
@@ -242,7 +242,7 @@ public class EbsController {
 		riskAssessmentDataForm.setValue(riskAssessmentDto);
 		final CommitDiscardWrapperComponent<RiskAssessmentDataForm> editView =
 			new CommitDiscardWrapperComponent<RiskAssessmentDataForm>(riskAssessmentDataForm, riskAssessmentDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption(Captions.actionCancel);
+		editView.getDiscardButton().setCaption(I18nProperties.getCaption(Captions.actionCancel));
 		editView.addCommitListener(() -> {
 			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
 			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
@@ -375,7 +375,7 @@ public class EbsController {
 		alertDataForm.setValue(ebsAlertDto);
 		final CommitDiscardWrapperComponent<EbsAlertDataForm> editView =
 			new CommitDiscardWrapperComponent<EbsAlertDataForm>(alertDataForm, alertDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption(Captions.actionCancel);
+		editView.getDiscardButton().setCaption(I18nProperties.getCaption(Captions.actionCancel));
 		editView.addCommitListener(() -> {
 			ebs.setAlert(alertDataForm.getValue());
 			ebsAlertDto.setAlertIssued(alertDataForm.getValue().getAlertIssued());
@@ -493,7 +493,7 @@ public class EbsController {
 			ControllerProvider.getArchiveController()
 					.addArchivingButton(event, ArchiveHandlers.forEbs(), editView, () -> navigateToData(uuid));
 		}
-		editView.getDiscardButton().setCaption(Captions.actionCancel);
+		editView.getDiscardButton().setCaption(I18nProperties.getCaption(Captions.actionCancel));
 
 		return editView;
 	}
@@ -508,7 +508,7 @@ public class EbsController {
 		riskAssessmentDataForm.setValue(riskAssessmentDto);
 		final CommitDiscardWrapperComponent<RiskAssessmentDataForm> editView =
 			new CommitDiscardWrapperComponent<RiskAssessmentDataForm>(riskAssessmentDataForm, riskAssessmentDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption(Captions.actionCancel);
+		editView.getDiscardButton().setCaption(I18nProperties.getCaption(Captions.actionCancel));
 		editView.addCommitListener(() -> {
 			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
 			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
@@ -534,7 +534,7 @@ public class EbsController {
 		alertDataForm.setValue(ebsAlertDto);
 		final CommitDiscardWrapperComponent<EbsAlertDataForm> editView =
 			new CommitDiscardWrapperComponent<EbsAlertDataForm>(alertDataForm, alertDataForm.getFieldGroup());
-		editView.getDiscardButton().setCaption(Captions.actionCancel);
+		editView.getDiscardButton().setCaption(I18nProperties.getCaption(Captions.actionCancel));
 		editView.addCommitListener(() -> {
 			ebs.setAlert(alertDataForm.getValue());
 			ebsAlertDto.setAlertIssued(alertDataForm.getValue().getAlertIssued());

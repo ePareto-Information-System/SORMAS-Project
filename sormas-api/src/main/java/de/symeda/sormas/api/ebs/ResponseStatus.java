@@ -3,7 +3,7 @@ package de.symeda.sormas.api.ebs;
 import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum ResponseStatus {
-    NOT_STARTED,
+//    NOT_STARTED,
     ON_GOING,
     COMPLETED;
 
