@@ -48,7 +48,7 @@ public enum Disease
 	YELLOW_FEVER(true, true, true, false, false,6, true, false, false),
 	RABIES(false, false, false, false, false,6, false, false, false),
 	ANTHRAX(false, false, false, false, false,0, false, false, false),
-	CORONAVIRUS(true, true, true, true, false,14, true, true, true),
+	CORONAVIRUS(true, true, true, true, true,14, true, true, true),
 	PNEUMONIA(true, false, true, false, false,0, true, false, false),
 	MALARIA(true, false, false, false, false,0, true, false, false),
 	TYPHOID_FEVER(true, false, false, false, false,0, true, false, false),
