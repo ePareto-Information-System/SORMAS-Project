@@ -834,7 +834,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			generalCommentLabel.setVisible(false);
 			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
 			setVisible(false, PersonDto.MOTHERS_MAIDEN_NAME);
-			setVisible(false, PersonDto.NICKNAME, OCCUPATION_HEADER);
+			setVisible(false, PersonDto.NICKNAME);
 			setVisible(true, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 		}
 
