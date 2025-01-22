@@ -182,6 +182,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			fluidRowLocs(PersonDto.UUID, "") +
 			fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.FATHERS_NAME) +
 			fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.SEX, PersonDto.OCCUPATION_DETAILS, PersonDto.ETHNICITY)
+			+ fluidRowLocs(4, PersonDto.PASSPORT_NUMBER)
 			+ loc(ADDRESS_HEADER)
 			+ fluidRowLocs(PersonDto.ADDRESS)
 			+ fluidRowLocs(PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS) +
@@ -837,9 +838,13 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(true, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 		}
 
+		if (caseOrigin == CaseOrigin.POINT_OF_ENTRY) {
+			setVisible(true, PersonDto.PASSPORT_NUMBER);
+		}
+
 		if (disease == Disease.GUINEA_WORM) {
 			generalCommentLabel.setVisible(false);
-			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,
+			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.BIRTH_DATE_YYYY,
 					PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.ADDITIONAL_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS, PersonDto.MOTHERS_NAME);
 			setVisible(true, PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, PersonDto.ETHNICITY);
 		}
