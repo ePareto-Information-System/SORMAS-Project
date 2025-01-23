@@ -89,6 +89,9 @@ public enum SampleMaterial {
 	@Diseases(value = {
 		Disease.CORONAVIRUS, MEASLES }, hide = true)
 	NUCHAL_SKIN_BIOPSY,
+	@Diseases(value = {
+			MEASLES,
+	}, hide = true)
 	SPUTUM,
 	@Diseases(value = {
 			MEASLES,

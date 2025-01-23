@@ -241,6 +241,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				fluidRowLocs(SampleDto.LAB_LOCAL) +
 				fluidRowLocs(6, SampleDto.LAB_LOCAL_DETAILS) +
 				fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+				fluidRowLocs(4, SampleDto.FIELD_SAMPLE_ID) +
 //				fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
 				loc(HEADING_SPECIMEN_HANDLING) +
 				fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL) +

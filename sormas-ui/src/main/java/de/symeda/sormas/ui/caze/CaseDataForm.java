@@ -1824,14 +1824,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             if (disease == Disease.MEASLES) {
                 vaccinationStatus.setRequired(true);
                 outcome.setVisible(false);
-                FieldHelper.setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, vaccinationRoutine, lastVaccinationDate), Arrays.asList(VaccinationStatus.VACCINATED), true);
-            }
-
-            //measles
-            if (disease == Disease.MEASLES) {
+                FieldHelper.setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, vaccinationRoutine), Arrays.asList(VaccinationStatus.VACCINATED), true);
                 FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
                         vaccinatedByCardOrHistory
                 ), false);
+                FieldHelper.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
+                lastVaccinationDate.setVisible(false);
 
                 setVaccinatedByCardOrHistoryVisibility();
 
