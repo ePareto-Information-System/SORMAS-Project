@@ -245,6 +245,29 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			null,
 			false);
 
+		InfrastructureFieldsDependencyHandler.instance.initializeFacilityFields(
+				record,
+				contentBinding.locationTypeRegion,
+				initialPlaceOfRegions,
+				record.getSoughtRegion(),
+				contentBinding.locationTypeDistrict,
+				initialPlaceOfDistricts,
+				record.getSoughtDistrict(),
+				contentBinding.locationTypeCommunity,
+				initialPlaceOfCommunities,
+				record.getSoughtCommunity(),
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				contentBinding.caseHospitalizationNameOfFacility,
+				initialPlaceOfFacilities,
+				record.getNameOfFacility(),
+				null,
+				false);
+
 		if (disease == Disease.MONKEYPOX) {
 			InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
 				contentBinding.locationTypeRegion,

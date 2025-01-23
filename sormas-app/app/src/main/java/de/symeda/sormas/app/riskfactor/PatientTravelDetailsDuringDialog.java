@@ -55,7 +55,6 @@ public class PatientTravelDetailsDuringDialog extends FormDialog {
     @Override
     protected void setContentBinding(Context context, ViewDataBinding binding, String layoutName) {
         contentBinding = (DialogPatientTravelDetailsDuringEditLayoutBinding) binding;
-
         binding.setVariable(BR.data, data);
     }
 
@@ -74,8 +73,14 @@ public class PatientTravelDetailsDuringDialog extends FormDialog {
         setLiveValidationDisabled(false);
         try {
             FragmentValidator.validate(getContext(), contentBinding);
-//            this.data.setDateOfTravel(contentBinding.patientTravelDetailsDuringDateOfTravel.getValue());
-//            this.data.setPlaceOfTravel(contentBinding.patientTravelDetailsDuringPlaceOfTravel.getValue());
+            this.data.setDateOfTravel(contentBinding.patientTravelDetailsDuringDateOfTravel.getValue());
+
+            Object placeOfTravelValue = contentBinding.patientTravelDetailsDuringPlaceOfTravel.getValue();
+            if (placeOfTravelValue instanceof TravelLocation) {
+                this.data.setPlaceOfTravel((TravelLocation) placeOfTravelValue);
+            } else {
+                throw new ValidationException("Invalid type for place of travel. Expected TravelLocation.");
+            }
         } catch (ValidationException e) {
             NotificationHelper.showDialogNotification(PatientTravelDetailsDuringDialog.this, ERROR, e.getMessage());
             return;
