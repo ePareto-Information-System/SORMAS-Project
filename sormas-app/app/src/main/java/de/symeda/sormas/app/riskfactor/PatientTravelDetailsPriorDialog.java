@@ -72,6 +72,14 @@ public class PatientTravelDetailsPriorDialog extends FormDialog {
         setLiveValidationDisabled(false);
         try {
             FragmentValidator.validate(getContext(), contentBinding);
+            this.data.setDateOfTravel(contentBinding.patientTravelDetailsPriorDateOfTravel.getValue());
+
+            Object placeOfTravelValue = contentBinding.patientTravelDetailsPriorPlaceOfTravel.getValue();
+            if (placeOfTravelValue instanceof TravelLocation) {
+                this.data.setPlaceOfTravel((TravelLocation) placeOfTravelValue);
+            } else {
+                throw new ValidationException("Invalid type for place of travel. Expected TravelLocation.");
+            }
         } catch (ValidationException e) {
             NotificationHelper.showDialogNotification(PatientTravelDetailsPriorDialog.this, ERROR, e.getMessage());
             return;
