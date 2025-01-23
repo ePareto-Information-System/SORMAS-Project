@@ -8,6 +8,7 @@ import android.content.Context;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.FragmentActivity;
 
+import de.symeda.sormas.api.utils.TravelLocation;
 import de.symeda.sormas.api.utils.ValidationException;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -58,6 +59,8 @@ public class PatientTravelDetailsPriorDialog extends FormDialog {
 
     @Override
     protected void initializeContentView(ViewDataBinding rootBinding, ViewDataBinding buttonPanelBinding) {
+        contentBinding.patientTravelDetailsPriorDateOfTravel.initializeDateField(getFragmentManager());
+        contentBinding.setTravelClass(TravelLocation.class);
 
         if (data.getId() == null) {
             setLiveValidationDisabled(true);
@@ -69,8 +72,6 @@ public class PatientTravelDetailsPriorDialog extends FormDialog {
         setLiveValidationDisabled(false);
         try {
             FragmentValidator.validate(getContext(), contentBinding);
-//            this.data.setDateOfTravel(contentBinding.patientTravelDetailsPriorDateOfTravel.getValue());
-//            this.data.setPlaceOfTravel(contentBinding.patientTravelDetailsPriorPlaceOfTravel.getValue());
         } catch (ValidationException e) {
             NotificationHelper.showDialogNotification(PatientTravelDetailsPriorDialog.this, ERROR, e.getMessage());
             return;

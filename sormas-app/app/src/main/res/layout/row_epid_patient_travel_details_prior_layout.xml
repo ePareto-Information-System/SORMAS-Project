@@ -8,7 +8,6 @@
 
         <variable name="data" type="de.symeda.sormas.app.backend.patienttraveldetailsprior.PatientTravelDetailsPrior" />
         <variable name="index" type="java.lang.Integer" />
-
         <variable name="callback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
     </data>
 

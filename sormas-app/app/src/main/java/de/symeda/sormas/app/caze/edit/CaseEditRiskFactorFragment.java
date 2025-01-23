@@ -111,7 +111,7 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 						.setFieldVisibilitiesAndAccesses(PatientTravelDetailsDuring.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
 
 		contentBinding.setPatientTravelDetailsPriorList(getPatientTravelDetailsPriors());
-		contentBinding.setPatientTravelDetailsPriorItemClickCallback(onPatientTravelDetailsDuringItemClickListener);
+		contentBinding.setPatientTravelDetailsPriorItemClickCallback(onPatientTravelDetailsPriorItemClickListener);
 		contentBinding.setPatientTravelDetailsPriorListBindCallback(
 				v -> FieldVisibilityAndAccessHelper
 						.setFieldVisibilitiesAndAccesses(PatientTravelDetailsPrior.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));

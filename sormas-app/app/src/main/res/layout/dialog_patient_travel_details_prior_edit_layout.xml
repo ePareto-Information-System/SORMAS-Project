@@ -9,6 +9,7 @@
         <import type="de.symeda.sormas.api.i18n.Strings" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.patienttraveldetailsprior.PatientTravelDetailsPrior" />
+        <variable name="TravelClass" type="Class" />
     </data>
 
     <ScrollView
@@ -43,6 +44,7 @@
                 android:id="@+id/patientTravelDetailsPrior_placeOfTravel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:enumClass="@{TravelClass}"
                 app:value="@{data.placeOfTravel}"
                 style="@style/ControlSingleColumnStyle" />
 

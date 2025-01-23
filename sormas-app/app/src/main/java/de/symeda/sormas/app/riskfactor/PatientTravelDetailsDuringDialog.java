@@ -8,6 +8,7 @@ import android.content.Context;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.FragmentActivity;
 
+import de.symeda.sormas.api.utils.TravelLocation;
 import de.symeda.sormas.api.utils.ValidationException;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -60,6 +61,8 @@ public class PatientTravelDetailsDuringDialog extends FormDialog {
 
     @Override
     protected void initializeContentView(ViewDataBinding rootBinding, ViewDataBinding buttonPanelBinding) {
+        contentBinding.patientTravelDetailsDuringDateOfTravel.initializeDateField(getFragmentManager());
+        contentBinding.setTravelClass(TravelLocation.class);
 
         if (data.getId() == null) {
             setLiveValidationDisabled(true);
