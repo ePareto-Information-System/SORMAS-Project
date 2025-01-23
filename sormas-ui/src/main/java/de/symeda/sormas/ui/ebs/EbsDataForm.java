@@ -62,6 +62,8 @@ import de.symeda.sormas.ui.utils.EbsPhoneNumberValidator;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 
+import javax.print.attribute.standard.MediaSize;
+
 @SuppressWarnings("deprecation")
 public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
@@ -150,7 +152,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		getContent().addComponent(locationHeadingLabel, PLACE_DETECTION_HEADING_LOC);
 		addField(EbsDto.INFORMANT_NAME, TextField.class);
 		TextField contactPhone = addField(EbsDto.INFORMANT_TEL, TextField.class);
-		addField(EbsDto.OTHER_INFORMANT, TextField.class);
+		TextField otherInformant = addField(EbsDto.OTHER_INFORMANT, TextField.class);
 		contactPhone
 			.addValidator(new EbsPhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, contactPhone.getCaption())));
 		Label contactPhoneLabel = new Label(I18nProperties.getString(Strings.messageEventExternalTokenWarning));
@@ -213,9 +215,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 			EbsDto.DESCRIPTION_OCCURRENCE,
 			EbsDto.PERSON_DESIGNATION,
 			EbsDto.PERSON_REGISTERING,
-			EbsDto.PERSON_PHONE,
-				EbsDto.OTHER_INFORMANT,
-				EbsDto.OTHER);
+			EbsDto.PERSON_PHONE);
 
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
@@ -336,6 +336,11 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 				itemsToAdd = Arrays.asList(MediaScannningType.MANUAL);
 			} else {
 				itemsToAdd = Arrays.asList(MediaScannningType.MANUAL, MediaScannningType.AUTOMATIC);
+			}
+			if (value == PersonReporting.OTHER){
+				otherInformant.setRequired(true);
+			}else {
+				otherInformant.setRequired(false);
 			}
 			Arrays.stream(MediaScannningType.values())
 				.filter(scanType -> !itemsToAdd.contains(scanType))

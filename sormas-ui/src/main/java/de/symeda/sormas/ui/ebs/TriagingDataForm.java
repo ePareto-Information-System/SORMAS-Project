@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
+import com.vaadin.v7.ui.AbstractField;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.OptionGroup;
@@ -435,46 +436,64 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
 	private void setVisibility(String level, SignalCategory category) {
 		// Hide all category details by default
-		humanCommCategoryDetails.setVisible(false);
-		humanFacCategoryDetails.setVisible(false);
-		humanLabCategoryDetails.setVisible(false);
-		animalCommCategoryDetails.setVisible(false);
-		animalFacCategoryDetails.setVisible(false);
-		animalLabCategoryDetails.setVisible(false);
-		environmentalCategoryDetails.setVisible(false);
-		poeCategoryDetails.setVisible(false);
+		hideField(humanCommCategoryDetails);
+		hideField(humanFacCategoryDetails);
+		hideField(humanLabCategoryDetails);
+		hideField(animalCommCategoryDetails);
+		hideField(animalFacCategoryDetails);
+		hideField(animalLabCategoryDetails);
+		hideField(environmentalCategoryDetails);
+		hideField(poeCategoryDetails);
 
+		// Exit early if either parameter is null
 		if (level == null || category == null) {
 			return;
 		}
 
+		// Determine level flags
 		boolean isCommunityLevel = "[Community]".equals(level);
 		boolean isFacilityLevel = "[Facility]".equals(level);
 		boolean isLaboratoryLevel = "[Laboratory]".equals(level);
 
 		switch (category) {
 			case HUMAN:
-				humanCommCategoryDetails.setVisible(isCommunityLevel);
-				humanFacCategoryDetails.setVisible(isFacilityLevel);
-				humanLabCategoryDetails.setVisible(isLaboratoryLevel);
-				categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
+				setFieldVisibilityByLevel(humanCommCategoryDetails, humanFacCategoryDetails, humanLabCategoryDetails, isCommunityLevel, isFacilityLevel, isLaboratoryLevel);
+				setCategoryLevelCaption();
 				break;
 			case ANIMAL:
-				animalCommCategoryDetails.setVisible(isCommunityLevel);
-				animalFacCategoryDetails.setVisible(isFacilityLevel);
-				animalLabCategoryDetails.setVisible(isLaboratoryLevel);
-				categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
+				setFieldVisibilityByLevel(animalCommCategoryDetails, animalFacCategoryDetails, animalLabCategoryDetails, isCommunityLevel, isFacilityLevel, isLaboratoryLevel);
+				setCategoryLevelCaption();
 				break;
 			case ENVIRONMENT:
 				environmentalCategoryDetails.setVisible(true);
-				categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
+				setCategoryLevelCaption();
 				break;
 			case POE:
 				poeCategoryDetails.setVisible(true);
-				categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
+				setCategoryLevelCaption();
 				break;
 		}
 	}
+
+	// Helper method to hide a field
+	private void hideField(AbstractField field) {
+		field.setVisible(false);
+		field.setValue(null);
+	}
+
+	// Helper method to set visibility for level-specific fields
+	private void setFieldVisibilityByLevel(AbstractField commField, AbstractField facField, AbstractField labField,
+										   boolean isCommunity, boolean isFacility, boolean isLaboratory) {
+		commField.setVisible(isCommunity);
+		facField.setVisible(isFacility);
+		labField.setVisible(isLaboratory);
+	}
+
+	// Helper method to set the category level caption consistently
+	private void setCategoryLevelCaption() {
+		categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
+	}
+
 
 	public static void reviewSignal(String captionsText) {
 		Label notificationType = new Label(String.format(I18nProperties.getString(captionsText), 50, 50), ContentMode.HTML);

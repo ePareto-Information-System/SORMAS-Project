@@ -15,8 +15,6 @@
 
 package de.symeda.sormas.app.ebs.edit;
 
-import java.util.List;
-
 import android.content.res.Resources;
 import android.view.View;
 
@@ -27,17 +25,13 @@ import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert;
-import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.databinding.FragmentEbsAlertEditLayoutBinding;
-import de.symeda.sormas.app.util.DataUtils;
 
 public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditLayoutBinding, EbsAlert, EbsAlert> {
 
 	public static final String TAG = EbsAlertEditFragment.class.getSimpleName();
 
 	private EbsAlert record;
-	private List<Item> statuses;
-	// Static methods
 
 	public static EbsAlertEditFragment newInstance(Ebs activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -73,7 +67,6 @@ public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditL
 	@Override
 	protected void prepareFragmentData() {
 		record = getActivityRootData();
-		statuses = DataUtils.getEnumItems(ResponseStatus.class, true);
 	}
 
 	@Override

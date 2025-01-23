@@ -17,11 +17,6 @@ package de.symeda.sormas.app.ebs.edit;
 
 import static android.view.View.GONE;
 
-import android.view.View;
-import android.widget.Toast;
-
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -29,6 +24,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.jetbrains.annotations.Nullable;
+
+import android.view.View;
+import android.widget.Toast;
 
 import de.symeda.sormas.api.ebs.AnimalCommunityCategoryDetails;
 import de.symeda.sormas.api.ebs.AnimalFacilityCategoryDetails;
@@ -54,67 +54,71 @@ import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.controls.ControlDateField;
-import de.symeda.sormas.app.component.controls.ControlDateTimeField;
 import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
-import de.symeda.sormas.app.component.dialog.ConfirmationInputDialog;
-import de.symeda.sormas.app.databinding.FragmentEbsEditLayoutBinding;
 import de.symeda.sormas.app.databinding.FragmentTriagingEditLayoutBinding;
-import de.symeda.sormas.app.rest.SynchronizeDataAsync;
-import de.symeda.sormas.app.triaging.edit.TriagingEditActivity;
-import de.symeda.sormas.app.util.Callback;
 import de.symeda.sormas.app.util.DataUtils;
 
 public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditLayoutBinding, Triaging, Triaging> {
-	public final String THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE = "The Date of Decision cannot be earlier than the Date of Report or Date of Occurrence.";
+
+	public final String THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE =
+		"The Date of Decision cannot be earlier than the Date of Report or Date of Occurrence.";
 	private Triaging record;
 
-	private List<Item> signalCategory;
-	private List<Item> categoryDetailsLevel;
-	private List<Item> humanCommunityCategoryDetails;
-	private List<Item> humanLaboratoryCategoryDetails;
-	private List<Item> humanFacilityCategoryDetails;
-	private List<Item> animalCommunityCategoryDetails;
-	private List<Item> animalLaboratoryCategoryDetails;
-	private List<Item> animalFacilityCategoryDetails;
-	private List<Item> environmentCategoryDetails;
-	private List<Item> poeCategoryDetails;
-	private List<Item> triagingDecision;
 	private List<Item> triagingOutComeSupervisor;
-
 
 	public static TriagingEditFragment newInstance(Ebs activityRootData) {
 		TriagingEditFragment fragment = newInstanceWithFieldCheckers(
-				TriagingEditFragment.class,
-				null,
-				activityRootData,
-				FieldVisibilityCheckers.withCountry(ConfigProvider.getServerCountryCode()),
-				UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
+			TriagingEditFragment.class,
+			null,
+			activityRootData,
+			FieldVisibilityCheckers.withCountry(ConfigProvider.getServerCountryCode()),
+			UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
 
 		return fragment;
 	}
+
 	public static TriagingEditFragment newInstance(Triaging activityRootData) {
 		TriagingEditFragment fragment = newInstanceWithFieldCheckers(
-				TriagingEditFragment.class,
-				null,
-				activityRootData,
-				FieldVisibilityCheckers.withCountry(ConfigProvider.getServerCountryCode()),
-				UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
+			TriagingEditFragment.class,
+			null,
+			activityRootData,
+			FieldVisibilityCheckers.withCountry(ConfigProvider.getServerCountryCode()),
+			UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
 
 		return fragment;
 	}
+
 	public static TriagingEditFragment newInstance(SignalVerification activityRootData) {
 		TriagingEditFragment fragment = newInstanceWithFieldCheckers(
-				TriagingEditFragment.class,
-				null,
-				activityRootData,
-				FieldVisibilityCheckers.withCountry(ConfigProvider.getServerCountryCode()),
-				UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
+			TriagingEditFragment.class,
+			null,
+			activityRootData,
+			FieldVisibilityCheckers.withCountry(ConfigProvider.getServerCountryCode()),
+			UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
 
 		return fragment;
 	}
 
-
 	// Overrides
+
+	private static @Nullable SignalCategory getSignalCategory(String propertyValue) {
+		SignalCategory category = null;
+		switch (propertyValue) {
+		case "Human":
+			category = SignalCategory.HUMAN;
+			break;
+		case "Environment":
+			category = SignalCategory.ENVIRONMENT;
+			break;
+		case "Animal":
+			category = SignalCategory.ANIMAL;
+			break;
+		case "POE":
+			category = SignalCategory.POE;
+			break;
+		}
+		return category;
+	}
 
 	@Override
 	protected String getSubHeadingTitle() {
@@ -134,20 +138,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 	@Override
 	protected void prepareFragmentData() {
 		record = getActivityRootData();
-		signalCategory = DataUtils.getEnumItems(SignalCategory.class,true);
-		categoryDetailsLevel = DataUtils.getEnumItems(CategoryDetailsLevel.class,true);
-		humanCommunityCategoryDetails = DataUtils.getEnumItems(HumanCommunityCategoryDetails.class,true);
-		humanLaboratoryCategoryDetails = DataUtils.getEnumItems(HumanLaboratoryCategoryDetails.class,true);
-		humanFacilityCategoryDetails = DataUtils.getEnumItems(HumanFaclityCategoryDetails.class,true);
-		humanFacilityCategoryDetails = DataUtils.getEnumItems(HumanFaclityCategoryDetails.class,true);
-		humanFacilityCategoryDetails = DataUtils.getEnumItems(HumanFaclityCategoryDetails.class,true);
-		animalCommunityCategoryDetails = DataUtils.getEnumItems(AnimalCommunityCategoryDetails.class,true);
-		animalLaboratoryCategoryDetails = DataUtils.getEnumItems(AnimalLaboratoryCategoryDetails.class,true);
-		animalFacilityCategoryDetails = DataUtils.getEnumItems(AnimalFacilityCategoryDetails.class,true);
-		environmentCategoryDetails = DataUtils.getEnumItems(EnvironmentalCategoryDetails.class,true);
-		poeCategoryDetails = DataUtils.getEnumItems(POE.class,true);
-		triagingDecision = DataUtils.getEnumItems(EbsTriagingDecision.class,true);
-		triagingOutComeSupervisor = DataUtils.getEnumItems(OutComeSupervisor.class,true);
+		triagingOutComeSupervisor = DataUtils.getEnumItems(OutComeSupervisor.class, true);
 
 	}
 
@@ -178,30 +169,30 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		super.onAfterLayoutBinding(contentBinding);
 		contentBinding.triagingDecisionDate.initializeDateField(getFragmentManager());
 		contentBinding.triagingOutcomeSupervisor.initializeSpinner(triagingOutComeSupervisor);
-		if (contentBinding.triagingSpecificSignal.getValue() != null && contentBinding.triagingSpecificSignal.getValue() == YesNo.YES){
+		if (contentBinding.triagingSpecificSignal.getValue() != null && contentBinding.triagingSpecificSignal.getValue() == YesNo.YES) {
 			contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
 		} else if (contentBinding.triagingSpecificSignal.getValue() != null && contentBinding.triagingSpecificSignal.getValue() == YesNo.NO) {
 			contentBinding.triagingOccurrencePreviously.setVisibility(GONE);
 		}
-		if (contentBinding.triagingSignalCategory.getValue() == null){
+		if (contentBinding.triagingSignalCategory.getValue() == null) {
 			contentBinding.triagingCategoryDetailsLevel.setVisibility(GONE);
 		}
-		contentBinding.triagingSpecificSignal.addValueChangedListener(e->{
+		contentBinding.triagingSpecificSignal.addValueChangedListener(e -> {
 			contentBinding.triagingDecisionDate.setVisibility(View.VISIBLE);
 			contentBinding.triagingTriagingDecision.setVisibility(View.VISIBLE);
 			var value = e.getValue();
-			if(value == YesNo.YES){
+			if (value == YesNo.YES) {
 				contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
-			}else {
+			} else {
 				contentBinding.triagingOccurrencePreviously.setVisibility(GONE);
 				contentBinding.triagingDecisionDate.setVisibility(View.VISIBLE);
 				contentBinding.triagingTriagingDecision.setVisibility(View.VISIBLE);
 				reviewSignal(R.string.message_review_signal);
 			}
 		});
-		contentBinding.triagingSupervisorReview.addValueChangedListener(e->{
+		contentBinding.triagingSupervisorReview.addValueChangedListener(e -> {
 			var value = e.getValue();
-			if(value == YesNo.NO){
+			if (value == YesNo.NO) {
 				reviewSignal(R.string.message_review_signal);
 			}
 		});
@@ -209,14 +200,13 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 			contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
 			contentBinding.triagingDecisionDate.setVisibility(View.VISIBLE);
 			contentBinding.triagingTriagingDecision.setVisibility(View.VISIBLE);
-		}else if (contentBinding.triagingSpecificSignal.getValue() == null){
+		} else if (contentBinding.triagingSpecificSignal.getValue() == null) {
 			contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
 			contentBinding.triagingDecisionDate.setVisibility(GONE);
 			contentBinding.triagingTriagingDecision.setVisibility(GONE);
 		}
 
-
-		contentBinding.triagingSignalCategory.addValueChangedListener(e->{
+		contentBinding.triagingSignalCategory.addValueChangedListener(e -> {
 			final Set<String> validCategories = new HashSet<>(Set.of("Human", "Environment", "Animal", "POE"));
 			contentBinding.triagingCategoryDetailsLevel.setValue(null);
 			String propertyValue = (e.getValue() != null) ? e.getValue().toString() : null;
@@ -229,50 +219,50 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 				try {
 //					contentBinding.triagingCategoryDetailsLevel.setValue(CategoryDetailsLevel.COMMUNITY);
 					SignalCategory category = getSignalCategory(propertyValue);
-					setVisibility(contentBinding.triagingCategoryDetailsLevel.getValue().toString(), category,contentBinding);
-				}catch (Exception exception){
+					setVisibility(contentBinding.triagingCategoryDetailsLevel.getValue().toString(), category, contentBinding);
+				} catch (Exception exception) {
 					System.out.println(exception.getMessage());
 				}
 
 			}
 			try {
-				displayCategories(e.getValue().toString(),contentBinding);
-			}catch (Exception exception){
+				displayCategories(e.getValue().toString(), contentBinding);
+			} catch (Exception exception) {
 				System.out.println(exception.getMessage());
 			}
 		});
 
-		contentBinding.triagingOutcomeSupervisor.addValueChangedListener(e->{
-			if (e.getValue() == OutComeSupervisor.ISSIGNAL){
+		contentBinding.triagingOutcomeSupervisor.addValueChangedListener(e -> {
+			if (e.getValue() == OutComeSupervisor.ISSIGNAL) {
 				contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
 			}
 		});
 
-		contentBinding.triagingHealthConcern.addValueChangedListener(e->{
-			if (e.getValue() == YesNo.YES){
+		contentBinding.triagingHealthConcern.addValueChangedListener(e -> {
+			if (e.getValue() == YesNo.YES) {
 				reviewSignal(R.string.message_relevant_focal);
 			}
 		});
 		contentBinding.triagingCategoryDetailsLevel.addValueChangedListener(e -> {
 			var level = (e.getValue() != null) ? e.getValue().toString() : "";
-			var category =  contentBinding.triagingSignalCategory.getValue();
-			setVisibility(level, (SignalCategory) category,contentBinding);
+			var category = contentBinding.triagingSignalCategory.getValue();
+			setVisibility(level, (SignalCategory) category, contentBinding);
 		});
 
 		Ebs selectedEbs = EbsEditActivity.getParentEbs();
 		Triaging selectedTriaging = selectedEbs.getTriaging();
-		if(selectedTriaging.getCategoryDetailsLevel() != null) {
-			setVisibility(selectedTriaging.getCategoryDetailsLevel().toString(), selectedTriaging.getSignalCategory(),contentBinding);
+		if (selectedTriaging.getCategoryDetailsLevel() != null) {
+			setVisibility(selectedTriaging.getCategoryDetailsLevel().toString(), selectedTriaging.getSignalCategory(), contentBinding);
 		}
-		contentBinding.triagingOccurrencePreviously.addValueChangedListener(e->{
+		contentBinding.triagingOccurrencePreviously.addValueChangedListener(e -> {
 			var value = e.getValue();
-			if(value == YesNo.YES || value == null){
+			if (value == YesNo.YES || value == null) {
 				contentBinding.triagingTriagingDecision.setValue(EbsTriagingDecision.DISCARD);
-			}else {
+			} else {
 				contentBinding.triagingTriagingDecision.setValue(EbsTriagingDecision.VERIFY);
 			}
 		});
-		contentBinding.triagingDecisionDate.addValueChangedListener(e->{
+		contentBinding.triagingDecisionDate.addValueChangedListener(e -> {
 			validateDateFields(contentBinding);
 		});
 		validateDateFields(contentBinding);
@@ -286,13 +276,21 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 	public void setVisibility(String level, SignalCategory category, FragmentTriagingEditLayoutBinding contentBinding) {
 		// Hide all category details by default
 		contentBinding.triagingHumanCommunityCategoryDetails.setVisibility(View.GONE);
+		contentBinding.triagingHumanCommunityCategoryDetails.setValue(null);
 		contentBinding.triagingHumanFacilityCategoryDetails.setVisibility(View.GONE);
+		contentBinding.triagingHumanFacilityCategoryDetails.setValue(null);
 		contentBinding.triagingHumanLaboratoryCategoryDetails.setVisibility(View.GONE);
+		contentBinding.triagingHumanLaboratoryCategoryDetails.setValue(null);
 		contentBinding.triagingAnimalCommunityCategoryDetails.setVisibility(View.GONE);
+		contentBinding.triagingAnimalCommunityCategoryDetails.setValue(null);
 		contentBinding.triagingAnimalFacilityCategoryDetails.setVisibility(View.GONE);
+		contentBinding.triagingAnimalFacilityCategoryDetails.setValue(null);
 		contentBinding.triagingAnimalLaboratoryCategoryDetails.setVisibility(View.GONE);
+		contentBinding.triagingAnimalLaboratoryCategoryDetails.setValue(null);
 		contentBinding.triagingEnvironmentalCategoryDetails.setVisibility(View.GONE);
+		contentBinding.triagingEnvironmentalCategoryDetails.setValue(null);
 		contentBinding.triagingPoeCategoryDetails.setVisibility(View.GONE);
+		contentBinding.triagingPoeCategoryDetails.setValue(null);
 
 		if (level == null || category == null) {
 			return;
@@ -303,76 +301,54 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		boolean isLaboratoryLevel = "Laboratory".equals(level);
 
 		switch (category) {
-			case HUMAN:
-				contentBinding.triagingHumanCommunityCategoryDetails.setVisibility(isCommunityLevel ? View.VISIBLE : View.GONE);
-				contentBinding.triagingHumanFacilityCategoryDetails.setVisibility(isFacilityLevel ? View.VISIBLE : View.GONE);
-				contentBinding.triagingHumanLaboratoryCategoryDetails.setVisibility(isLaboratoryLevel ? View.VISIBLE : View.GONE);
-				break;
-			case ANIMAL:
-				contentBinding.triagingAnimalCommunityCategoryDetails.setVisibility(isCommunityLevel ? View.VISIBLE : View.GONE);
-				contentBinding.triagingAnimalFacilityCategoryDetails.setVisibility(isFacilityLevel ? View.VISIBLE : View.GONE);
-				contentBinding.triagingAnimalLaboratoryCategoryDetails.setVisibility(isLaboratoryLevel ? View.VISIBLE : View.GONE);
-				break;
-			case ENVIRONMENT:
-				contentBinding.triagingEnvironmentalCategoryDetails.setVisibility(View.VISIBLE);
-				break;
-			case POE:
-				contentBinding.triagingPoeCategoryDetails.setVisibility(View.VISIBLE);
-				break;
+		case HUMAN:
+			contentBinding.triagingHumanCommunityCategoryDetails.setVisibility(isCommunityLevel ? View.VISIBLE : View.GONE);
+			contentBinding.triagingHumanFacilityCategoryDetails.setVisibility(isFacilityLevel ? View.VISIBLE : View.GONE);
+			contentBinding.triagingHumanLaboratoryCategoryDetails.setVisibility(isLaboratoryLevel ? View.VISIBLE : View.GONE);
+			break;
+		case ANIMAL:
+			contentBinding.triagingAnimalCommunityCategoryDetails.setVisibility(isCommunityLevel ? View.VISIBLE : View.GONE);
+			contentBinding.triagingAnimalFacilityCategoryDetails.setVisibility(isFacilityLevel ? View.VISIBLE : View.GONE);
+			contentBinding.triagingAnimalLaboratoryCategoryDetails.setVisibility(isLaboratoryLevel ? View.VISIBLE : View.GONE);
+			break;
+		case ENVIRONMENT:
+			contentBinding.triagingEnvironmentalCategoryDetails.setVisibility(View.VISIBLE);
+			break;
+		case POE:
+			contentBinding.triagingPoeCategoryDetails.setVisibility(View.VISIBLE);
+			break;
 		}
 	}
 
-	private static @Nullable SignalCategory getSignalCategory(String propertyValue) {
-		SignalCategory category = null;
-		switch (propertyValue) {
-			case "Human":
-				category = SignalCategory.HUMAN;
-				break;
-			case "Environment":
-				category = SignalCategory.ENVIRONMENT;
-				break;
-			case "Animal":
-				category = SignalCategory.ANIMAL;
-				break;
-			case "POE":
-				category = SignalCategory.POE;
-				break;
-		}
-		return category;
-	}
-
-	public void displayCategories(String property,FragmentTriagingEditLayoutBinding contentBinding){
+	public void displayCategories(String property, FragmentTriagingEditLayoutBinding contentBinding) {
 		List<CategoryDetailsLevel> categories;
 		contentBinding.triagingCategoryDetailsLevel.setVisibility(View.VISIBLE);
 		switch (property) {
-			case "Environment":
-			case "POE":
-				categories = Arrays.asList();
-				contentBinding.triagingCategoryDetailsLevel.setVisibility(GONE);
-				break;
-			case "Animal":
-			case "Human":
-				categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY,CategoryDetailsLevel.LABORATORY);
-				break;
-			default:
-				categories = Collections.emptyList();
-				contentBinding.triagingCategoryDetailsLevel.setCaption("");
-				break;
+		case "Environment":
+		case "POE":
+			categories = Arrays.asList();
+			contentBinding.triagingCategoryDetailsLevel.setVisibility(GONE);
+			break;
+		case "Animal":
+		case "Human":
+			categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY, CategoryDetailsLevel.LABORATORY);
+			break;
+		default:
+			categories = Collections.emptyList();
+			contentBinding.triagingCategoryDetailsLevel.setCaption("");
+			break;
 		}
 		try {
 			contentBinding.triagingCategoryDetailsLevel.setValue(categories);
 //			FieldHelper.updateEnumData(categoryLevel, categories);
-		}catch (Exception exception){
+		} catch (Exception exception) {
 			System.out.println(exception.getMessage());
 		}
 	}
 
 	private void reviewSignal(int message) {
-			final ConfirmationDialog signalReviewDialog = new ConfirmationDialog(
-					getActivity(),
-					R.string.heading_general_notice,
-                    message);
-					signalReviewDialog.show();
+		final ConfirmationDialog signalReviewDialog = new ConfirmationDialog(getActivity(), R.string.heading_general_notice, message);
+		signalReviewDialog.show();
 	}
 
 	public void validateDateFields(FragmentTriagingEditLayoutBinding contentBinding) {
@@ -389,21 +365,27 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 
 		Date dateOfReportDate = clearTime(dateOfReport);
 		Date dateOfOccurrenceDate = clearTime(dateOfOccurrence);
-		if (dateOfDecisionDate != null){
+		if (dateOfDecisionDate != null) {
 			dateOfDecisionDate = clearTime(dateOfDecisionDate);
-		if (dateOfDecisionDate.before(dateOfReportDate)) {
-			if (!dateOfReportDate.toString().equals(dateOfDecisionDate.toString())) {
-				showError(THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE);
-				dateOfDecision.setValidationCallback(() -> {
-					dateOfDecision.enableErrorState(I18nProperties.getValidationError(THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE));
-					return true;
-				});
-			}else {
+			if (dateOfDecisionDate.before(dateOfReportDate)) {
+				if (!dateOfReportDate.toString().equals(dateOfDecisionDate.toString())) {
+					showError(THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE);
+					dateOfDecision.setValidationCallback(() -> {
+						dateOfDecision.enableErrorState(
+							I18nProperties.getValidationError(
+								THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE,
+								THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE));
+						return true;
+					});
+				} else {
+					dateOfDecision.setValidationCallback(() -> false);
+				}
+			} else {
 				dateOfDecision.setValidationCallback(() -> false);
 			}
-		}else{dateOfDecision.setValidationCallback(() -> false);}
 		}
 	}
+
 	private Date clearTime(Date date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
@@ -413,6 +395,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar.getTime();
 	}
+
 	private void showError(String message) {
 		Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
 	}
