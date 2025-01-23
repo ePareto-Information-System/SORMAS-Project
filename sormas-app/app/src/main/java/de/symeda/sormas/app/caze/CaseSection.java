@@ -31,7 +31,9 @@ public enum CaseSection
 	PORT_HEALTH_INFO(R.string.caption_case_port_health_info, R.drawable.ic_transfer_case_24dp),
 	SYMPTOMS(R.string.caption_symptoms, R.drawable.ic_healing_black_24dp),
 	HEALTH_CONDITIONS(R.string.caption_case_health_conditions, R.drawable.ic_dvr_black_24dp),
+	FOOD_HISTORY(R.string.caption_case_food_history, R.drawable.ic_dvr_black_24dp),
 	EPIDEMIOLOGICAL_DATA(R.string.caption_case_epidemiological_data, R.drawable.ic_pets_black_24dp),
+	SIXTY_DAY_FOLLOW_UP(R.string.caption_case_sixy_day, R.drawable.ic_keyboard_arrow_up_24dp),
 	SAMPLES(R.string.caption_case_samples, R.drawable.ic_drawer_sample_blue_24dp),
 	CONTACTS(R.string.caption_case_contacts, R.drawable.ic_drawer_contact_blue_24dp),
 	PRESCRIPTIONS(R.string.caption_case_prescriptions, R.drawable.ic_receipt_black_24dp),
@@ -42,10 +44,8 @@ public enum CaseSection
 	IMMUNIZATIONS(R.string.caption_case_immunizations, R.drawable.ic_drawer_immunization_24dp),
 	VACCINATIONS(R.string.caption_case_vaccinations, R.drawable.ic_drawer_vaccines_24),
 	RISK_FACTORS(R.string.caption_case_risk_factors, R.drawable.ic_warning_black_24dp),
-	FOOD_HISTORY(R.string.caption_case_food_history, R.drawable.ic_dvr_black_24dp),
 	INVESTIGATION_NOTES(R.string.caption_case_investigation_notes, R.drawable.ic_drawer_case_blue_24dp),
-	AFP_IMMUNIZATION(R.string.caption_case_afp_immunization, R.drawable.ic_drawer_immunization_24dp),
-	SIXTY_DAY_FOLLOW_UP(R.string.caption_case_sixy_day, R.drawable.ic_keyboard_arrow_up_24dp);
+	AFP_IMMUNIZATION(R.string.caption_case_afp_immunization, R.drawable.ic_drawer_immunization_24dp);
 
 	private int friendlyNameResourceId;
 	private int iconResourceId;

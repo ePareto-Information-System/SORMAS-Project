@@ -347,6 +347,7 @@
             <de.symeda.sormas.app.component.controls.ControlDateTimeField
                 android:id="@+id/caseHospitalization_onsetOfSymptomDatetime"
                 app:value="@={data.onsetOfSymptomDatetime}"
+                app:required="true"
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
