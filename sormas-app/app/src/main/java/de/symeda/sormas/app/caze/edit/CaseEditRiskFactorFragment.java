@@ -41,12 +41,16 @@ import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
+import de.symeda.sormas.app.backend.patienttraveldetailsduring.PatientTravelDetailsDuring;
+import de.symeda.sormas.app.backend.patienttraveldetailsprior.PatientTravelDetailsPrior;
 import de.symeda.sormas.app.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentCaseEditRiskfactorLayoutBinding;
 import de.symeda.sormas.app.epidata.PersonTravelHistoryDialog;
 import de.symeda.sormas.app.riskfactor.PatientSymptomsPrecedenceDialog;
+import de.symeda.sormas.app.riskfactor.PatientTravelDetailsDuringDialog;
+import de.symeda.sormas.app.riskfactor.PatientTravelDetailsPriorDialog;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 
@@ -56,6 +60,8 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 	private Case caze;
 	private List<Item> listDrinkingWaterSources;
 	private IEntryItemOnClickListener onPatientSymptomsPrecedenceItemClickListener;
+	private IEntryItemOnClickListener onPatientTravelDetailsDuringItemClickListener;
+	private IEntryItemOnClickListener onPatientTravelDetailsPriorItemClickListener;
 
 	public static CaseEditRiskFactorFragment newInstance(Case activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -98,6 +104,18 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 				v -> FieldVisibilityAndAccessHelper
 						.setFieldVisibilitiesAndAccesses(PatientSymptomsPrecedence.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
 
+		contentBinding.setPatientTravelDetailsDuringList(getPatientTravelDetailsDurings());
+		contentBinding.setPatientTravelDetailsDuringItemClickCallback(onPatientTravelDetailsDuringItemClickListener);
+		contentBinding.setPatientTravelDetailsDuringListBindCallback(
+				v -> FieldVisibilityAndAccessHelper
+						.setFieldVisibilitiesAndAccesses(PatientTravelDetailsDuring.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
+
+		contentBinding.setPatientTravelDetailsPriorList(getPatientTravelDetailsPriors());
+		contentBinding.setPatientTravelDetailsPriorItemClickCallback(onPatientTravelDetailsPriorItemClickListener);
+		contentBinding.setPatientTravelDetailsPriorListBindCallback(
+				v -> FieldVisibilityAndAccessHelper
+						.setFieldVisibilitiesAndAccesses(PatientTravelDetailsPrior.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
+
 		if (caze.getDisease() != null) {
 			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.RISK_FACTOR_EDIT);
 		}
@@ -130,6 +148,12 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 		if (getActivityRootData() == null) {
 			contentBinding.patientSymptomsPrecedenceLayout.setVisibility(GONE);
 		}
+		if (getActivityRootData() == null) {
+			contentBinding.patientTravelDetailsDuringLayout.setVisibility(GONE);
+		}
+		if (getActivityRootData() == null) {
+			contentBinding.patientTravelDetailsPriorLayout.setVisibility(GONE);
+		}
 		contentBinding.riskFactorWaterUsedForDrinking.initializeSpinner(listDrinkingWaterSources);
 	}
 
@@ -146,6 +170,20 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 			dialog.setPositiveCallback(() -> addPatientSymptomsPrecedence(patientSymptomsPrecedence));
 			dialog.show();
 		});
+		contentBinding.btnAddPatientTravelDetailsDuring.setOnClickListener(v -> {
+			final PatientTravelDetailsDuring patientTravelDetailsDuring = DatabaseHelper.getPatientTravelDetailsDuringDao().build();
+			final PatientTravelDetailsDuringDialog dialog =
+					new PatientTravelDetailsDuringDialog(CaseEditActivity.getActiveActivity(), patientTravelDetailsDuring, getActivityRootData(), true);
+			dialog.setPositiveCallback(() -> addPatientTravelDetailsDuring(patientTravelDetailsDuring));
+			dialog.show();
+		});
+		contentBinding.btnAddPatientTravelDetailsPrior.setOnClickListener(v -> {
+			final PatientTravelDetailsPrior patientTravelDetailsPrior = DatabaseHelper.getPatientTravelDetailsPriorDao().build();
+			final PatientTravelDetailsPriorDialog dialog =
+					new PatientTravelDetailsPriorDialog(CaseEditActivity.getActiveActivity(), patientTravelDetailsPrior, getActivityRootData(), true);
+			dialog.setPositiveCallback(() -> addPatientTravelDetailsPrior(patientTravelDetailsPrior));
+			dialog.show();
+		});
 		contentBinding.riskFactorDuring3WeeksPatientContactWithSimilarSymptoms.addValueChangedListener(field -> {
 			YesNo value = (YesNo) field.getValue();
 			contentBinding.patientSymptomsPrecedenceLayout.setVisibility(value == YesNo.YES ? VISIBLE : GONE);
@@ -154,6 +192,25 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 			}
 
 			getContentBinding().riskFactorDuring3WeeksPatientContactWithSimilarSymptoms.setEnabled(getPatientSymptomsPrecedenceList().isEmpty());
+		});
+
+		contentBinding.riskFactorPatientTravelledAnywhere3WeeksPrior.addValueChangedListener(field -> {
+			YesNo value = (YesNo) field.getValue();
+			contentBinding.patientTravelDetailsPriorLayout.setVisibility(value == YesNo.YES ? VISIBLE : GONE);
+			if (value != YesNo.YES) {
+				clearPatientTravelDetailsPriors();
+			}
+
+			getContentBinding().riskFactorPatientTravelledAnywhere3WeeksPrior.setEnabled(getPatientTravelDetailsPriorList().isEmpty());
+		});
+		contentBinding.riskFactorPatientTravelledPeriodOfIllness.addValueChangedListener(field -> {
+			YesNo value = (YesNo) field.getValue();
+			contentBinding.patientTravelDetailsDuringLayout.setVisibility(value == YesNo.YES ? VISIBLE : GONE);
+			if (value != YesNo.YES) {
+				clearPatientTravelDetailsDurings();
+			}
+
+			getContentBinding().riskFactorPatientTravelledPeriodOfIllness.setEnabled(getPatientTravelDetailsDuringList().isEmpty());
 		});
 
 		onPatientSymptomsPrecedenceItemClickListener = (v, item) -> {
@@ -176,6 +233,46 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 			dialog.show();
 		};
 		contentBinding.setPatientSymptomsPrecedenceItemClickCallback(onPatientSymptomsPrecedenceItemClickListener);
+
+		onPatientTravelDetailsDuringItemClickListener = (v, item) -> {
+			PatientTravelDetailsDuring patientTravelDetailsDuring = (PatientTravelDetailsDuring) item;
+			final PatientTravelDetailsDuring patientTravelDetailsDuringClone = (PatientTravelDetailsDuring) patientTravelDetailsDuring.clone();
+			final PatientTravelDetailsDuringDialog dialog =
+					new PatientTravelDetailsDuringDialog(CaseEditActivity.getActiveActivity(), patientTravelDetailsDuringClone, getActivityRootData(), false);
+			dialog.setPositiveCallback(() -> {
+				patientTravelDetailsDuring.setDateOfTravel(dialog.getData().getDateOfTravel());
+				patientTravelDetailsDuring.setPlaceOfTravel(dialog.getData().getPlaceOfTravel());
+
+				record.getPatientTravelDetailsDurings().set(record.getPatientTravelDetailsDurings().indexOf(patientTravelDetailsDuring), patientTravelDetailsDuringClone);
+				updatePatientTravelDetailsDurings();
+			});
+			dialog.setDeleteCallback(() -> {
+				removePatientTravelDetailsDuring(patientTravelDetailsDuring);
+				dialog.dismiss();
+			});
+			dialog.show();
+		};
+		contentBinding.setPatientTravelDetailsDuringItemClickCallback(onPatientTravelDetailsDuringItemClickListener);
+
+		onPatientTravelDetailsPriorItemClickListener = (v, item) -> {
+			PatientTravelDetailsPrior patientTravelDetailsPrior = (PatientTravelDetailsPrior) item;
+			final PatientTravelDetailsPrior patientTravelDetailsPriorClone = (PatientTravelDetailsPrior) patientTravelDetailsPrior.clone();
+			final PatientTravelDetailsPriorDialog dialog =
+					new PatientTravelDetailsPriorDialog(CaseEditActivity.getActiveActivity(), patientTravelDetailsPriorClone, getActivityRootData(), false);
+			dialog.setPositiveCallback(() -> {
+				patientTravelDetailsPrior.setDateOfTravel(dialog.getData().getDateOfTravel());
+				patientTravelDetailsPrior.setPlaceOfTravel(dialog.getData().getPlaceOfTravel());
+
+				record.getPatientTravelDetailsPriors().set(record.getPatientTravelDetailsPriors().indexOf(patientTravelDetailsPrior), patientTravelDetailsPriorClone);
+				updatePatientTravelDetailsPriors();
+			});
+			dialog.setDeleteCallback(() -> {
+				removePatientTravelDetailsPrior(patientTravelDetailsPrior);
+				dialog.dismiss();
+			});
+			dialog.show();
+		};
+		contentBinding.setPatientTravelDetailsPriorItemClickCallback(onPatientTravelDetailsPriorItemClickListener);
 	}
 
 	private void addPatientSymptomsPrecedence(PatientSymptomsPrecedence patientSymptomsPrecedence) {
@@ -204,5 +301,63 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 		ObservableArrayList<PatientSymptomsPrecedence> patientSymptomsPrecedence = new ObservableArrayList<>();
 		patientSymptomsPrecedence.addAll(record.getPatientSymptomsPrecedences());
 		return patientSymptomsPrecedence;
+	}
+
+	//during
+	private void addPatientTravelDetailsDuring(PatientTravelDetailsDuring patientTravelDetailsDuring) {
+		record.getPatientTravelDetailsDurings().add(0, patientTravelDetailsDuring);
+		updatePatientTravelDetailsDurings();
+	}
+	private void updatePatientTravelDetailsDurings() {
+		getContentBinding().setPatientTravelDetailsDuringList(getPatientTravelDetailsDurings());
+	}
+	private ObservableArrayList<PatientTravelDetailsDuring> getPatientTravelDetailsDurings() {
+		ObservableArrayList<PatientTravelDetailsDuring> patientTravelDetailsDurings = new ObservableArrayList<>();
+		patientTravelDetailsDurings.addAll(record.getPatientTravelDetailsDurings());
+		return patientTravelDetailsDurings;
+	}
+	private void removePatientTravelDetailsDuring(PatientTravelDetailsDuring patientTravelDetailsDuring) {
+		record.getPatientTravelDetailsDurings().remove(patientTravelDetailsDuring);
+		updatePatientTravelDetailsDurings();
+	}
+
+	private void clearPatientTravelDetailsDurings() {
+		record.getPatientTravelDetailsDurings().clear();
+		updatePatientTravelDetailsDurings();
+	}
+
+	private ObservableArrayList<PatientTravelDetailsDuring> getPatientTravelDetailsDuringList() {
+		ObservableArrayList<PatientTravelDetailsDuring> patientTravelDetailsDuring = new ObservableArrayList<>();
+		patientTravelDetailsDuring.addAll(record.getPatientTravelDetailsDurings());
+		return patientTravelDetailsDuring;
+	}
+
+	//prior
+	private void addPatientTravelDetailsPrior(PatientTravelDetailsPrior patientTravelDetailsPrior) {
+		record.getPatientTravelDetailsPriors().add(0, patientTravelDetailsPrior);
+		updatePatientTravelDetailsPriors();
+	}
+	private void updatePatientTravelDetailsPriors() {
+		getContentBinding().setPatientTravelDetailsPriorList(getPatientTravelDetailsPriors());
+	}
+	private ObservableArrayList<PatientTravelDetailsPrior> getPatientTravelDetailsPriors() {
+		ObservableArrayList<PatientTravelDetailsPrior> patientTravelDetailsPriors = new ObservableArrayList<>();
+		patientTravelDetailsPriors.addAll(record.getPatientTravelDetailsPriors());
+		return patientTravelDetailsPriors;
+	}
+	private void removePatientTravelDetailsPrior(PatientTravelDetailsPrior patientTravelDetailsPrior) {
+		record.getPatientTravelDetailsPriors().remove(patientTravelDetailsPrior);
+		updatePatientTravelDetailsPriors();
+	}
+
+	private void clearPatientTravelDetailsPriors() {
+		record.getPatientTravelDetailsPriors().clear();
+		updatePatientTravelDetailsPriors();
+	}
+
+	private ObservableArrayList<PatientTravelDetailsPrior> getPatientTravelDetailsPriorList() {
+		ObservableArrayList<PatientTravelDetailsPrior> patientTravelDetailsPrior = new ObservableArrayList<>();
+		patientTravelDetailsPrior.addAll(record.getPatientTravelDetailsPriors());
+		return patientTravelDetailsPrior;
 	}
 }

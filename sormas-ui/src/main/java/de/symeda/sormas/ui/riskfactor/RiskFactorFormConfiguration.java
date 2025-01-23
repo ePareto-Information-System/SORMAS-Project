@@ -49,6 +49,9 @@ public class RiskFactorFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_FUNERAL, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_SOCIAL_EVENT, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.OTHER_SOCIAL_EVENT_DETAILS, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.PATIENT_SYMPTOMS_PRECEDENCE, new HashSet<>(Arrays.asList(Disease.CHOLERA)));
+        DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.PATIENT_TRAVEL_DETAILS_PRIOR, new HashSet<>(Arrays.asList(Disease.CHOLERA)));
+        DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.PATIENT_TRAVEL_DETAILS_DURING, new HashSet<>(Arrays.asList(Disease.CHOLERA)));
 
     }
 

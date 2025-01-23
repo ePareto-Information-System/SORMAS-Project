@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/base_layout"
+    android:descendantFocusability="beforeDescendants">
+
+    <data>
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
+
+        <variable name="data" type="de.symeda.sormas.app.backend.patienttraveldetailsduring.PatientTravelDetailsDuring" />
+        <variable name="TravelClass" type="Class" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/rowListItemHorizontalMargin"
+            android:paddingRight="@dimen/rowListItemHorizontalMargin">
+
+            <requestFocus/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/patientTravelDetailsDuring_uuid"
+                app:shortUuidValue="@{data.uuid}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/patientTravelDetailsDuring_dateOfTravel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:value="@{data.dateOfTravel}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/patientTravelDetailsDuring_placeOfTravel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:enumClass="@{TravelClass}"
+                app:value="@{data.placeOfTravel}"
+                style="@style/ControlSingleColumnStyle" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>

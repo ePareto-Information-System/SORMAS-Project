@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Captions" />
+
+        <variable name="data" type="de.symeda.sormas.app.backend.patienttraveldetailsduring.PatientTravelDetailsDuring" />
+        <variable name="index" type="java.lang.Integer" />
+        <variable name="callback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/row_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/controlReadTextMarginBottom"
+        android:background="@drawable/selector_list_section_row_background"
+        android:elevation="2dp"
+        android:onClickListener="@{(view) -> callback.onClick(view, data)}"
+        android:orientation="vertical"
+        android:padding="@dimen/rowListItemPadding">
+
+        <de.symeda.sormas.app.component.controls.ControlTextReadField
+            android:id="@+id/patientTravelDetailsDuring_dateOfTravel"
+            android:textAlignment="viewEnd"
+            app:value="@{data.dateOfTravel}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlTextReadField
+            android:id="@+id/patientTravelDetailsDuring_placeOfTravel"
+            android:textAlignment="viewEnd"
+            app:value="@{data.placeOfTravel}"
+            style="@style/ControlSingleColumnStyle" />
+
+
+    </LinearLayout>
+
+</layout>

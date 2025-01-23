@@ -41,12 +41,15 @@ import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
+import de.symeda.sormas.app.backend.affectedperson.AffectedPerson;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
 import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
+import de.symeda.sormas.app.backend.patienttraveldetailsduring.PatientTravelDetailsDuring;
+import de.symeda.sormas.app.backend.patienttraveldetailsprior.PatientTravelDetailsPrior;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
@@ -150,6 +153,9 @@ public class RiskFactor extends PseudonymizableAdo {
 	private String patientTouchDomesticWildAnimalIfYes;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String during3WeeksPatientContactWithSimilarSymptomsIfYes;
+
+	private List<PatientTravelDetailsDuring> patientTravelDetailsDurings = new ArrayList<>();
+	private List<PatientTravelDetailsPrior> patientTravelDetailsPriors = new ArrayList<>();
 
 	private List<PatientSymptomsPrecedence> patientSymptomsPrecedences = new ArrayList<>();
 
@@ -510,6 +516,22 @@ public class RiskFactor extends PseudonymizableAdo {
 
 	public void setDuring3WeeksPatientContactWithSimilarSymptomsIfYes(String during3WeeksPatientContactWithSimilarSymptomsIfYes) {
 		this.during3WeeksPatientContactWithSimilarSymptomsIfYes = during3WeeksPatientContactWithSimilarSymptomsIfYes;
+	}
+
+	public List<PatientTravelDetailsDuring> getPatientTravelDetailsDurings() {
+		return patientTravelDetailsDurings;
+	}
+
+	public void setPatientTravelDetailsDurings(List<PatientTravelDetailsDuring> patientTravelDetailsDurings) {
+		this.patientTravelDetailsDurings = patientTravelDetailsDurings;
+	}
+
+	public List<PatientTravelDetailsPrior> getPatientTravelDetailsPriors() {
+		return patientTravelDetailsPriors;
+	}
+
+	public void setPatientTravelDetailsPriors(List<PatientTravelDetailsPrior> patientTravelDetailsPriors) {
+		this.patientTravelDetailsPriors = patientTravelDetailsPriors;
 	}
 
 

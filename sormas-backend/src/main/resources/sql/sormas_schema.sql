@@ -15207,3 +15207,24 @@ SET responsestatus =
             ELSE responsestatus
             END;
 INSERT INTO schema_version(version_number, comment) VALUES (721, 'removed not started enum');
+
+ALTER TABLE afpimmunization DROP COLUMN IF EXISTS opvdoseatbirth;
+ALTER TABLE afpimmunization DROP COLUMN IF EXISTS seconddose;
+ALTER TABLE afpimmunization DROP COLUMN IF EXISTS fourthdose;
+ALTER TABLE afpimmunization DROP COLUMN IF EXISTS firstdose;
+ALTER TABLE afpimmunization DROP COLUMN IF EXISTS thirddose;
+ALTER TABLE afpimmunization DROP COLUMN IF EXISTS lastdose;
+ALTER TABLE afpimmunization DROP COLUMN IF EXISTS dateLastOpvDosesReceivedThroughSia;
+ALTER TABLE afpimmunization DROP COLUMN IF EXISTS dateLastIpvDosesReceivedThroughSia;
+ALTER TABLE afpimmunization DROP COLUMN IF EXISTS datelastipvreceivedthroughsia;
+
+ALTER TABLE afpimmunization ADD COLUMN opvdoseatbirth DATE;
+ALTER TABLE afpimmunization ADD COLUMN seconddose DATE;
+ALTER TABLE afpimmunization ADD COLUMN fourthdose DATE;
+ALTER TABLE afpimmunization ADD COLUMN firstdose DATE;
+ALTER TABLE afpimmunization ADD COLUMN thirddose DATE;
+ALTER TABLE afpimmunization ADD COLUMN lastdose DATE;
+ALTER TABLE afpimmunization ADD COLUMN dateLastOpvDosesReceivedThroughSia DATE;
+ALTER TABLE afpimmunization ADD COLUMN dateLastIpvDosesReceivedThroughSia DATE;
+
+INSERT INTO schema_version(version_number, comment) VALUES (722, 'Dropped and added columns in afpimmunization to change types to date');

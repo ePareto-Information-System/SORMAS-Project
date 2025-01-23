@@ -21,19 +21,29 @@ import java.util.List;
 import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.riskfactor.PatientSymptomsPrecedenceDto;
+import de.symeda.sormas.api.riskfactor.PatientTravelDetailsDuringDto;
+import de.symeda.sormas.api.riskfactor.PatientTravelDetailsPriorDto;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
 import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedenceDtoHelper;
+import de.symeda.sormas.app.backend.patienttraveldetailsduring.PatientTravelDetailsDuring;
+import de.symeda.sormas.app.backend.patienttraveldetailsduring.PatientTravelDetailsDuringDtoHelper;
+import de.symeda.sormas.app.backend.patienttraveldetailsprior.PatientTravelDetailsPrior;
+import de.symeda.sormas.app.backend.patienttraveldetailsprior.PatientTravelDetailsPriorDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import retrofit2.Call;
 
 public class RiskFactorDtoHelper extends AdoDtoHelper<RiskFactor, RiskFactorDto> {
 
 	private final PatientSymptomsPrecedenceDtoHelper patientSymptomsPrecedenceDtoHelper;
+	private final PatientTravelDetailsDuringDtoHelper patientTravelDetailsDuringDtoHelper;
+	private final PatientTravelDetailsPriorDtoHelper patientTravelDetailsPriorDtoHelper;
 	public RiskFactorDtoHelper() {
 		patientSymptomsPrecedenceDtoHelper = new PatientSymptomsPrecedenceDtoHelper();
+		patientTravelDetailsDuringDtoHelper = new PatientTravelDetailsDuringDtoHelper();
+		patientTravelDetailsPriorDtoHelper = new PatientTravelDetailsPriorDtoHelper();
 	}
 
 	@Override
@@ -119,6 +129,26 @@ public class RiskFactorDtoHelper extends AdoDtoHelper<RiskFactor, RiskFactorDto>
 		}
 		target.setPatientSymptomsPrecedences(patientSymptomsPrecedences);
 
+		List<PatientTravelDetailsDuring> patientTravelDetailsDurings = new ArrayList<>();
+		if (!source.getPatientTravelDetailsDuring().isEmpty()) {
+			for (PatientTravelDetailsDuringDto patientTravelDetailsDuringDto : source.getPatientTravelDetailsDuring()) {
+				PatientTravelDetailsDuring patientTravelDetailsDuring = patientTravelDetailsDuringDtoHelper.fillOrCreateFromDto(null, patientTravelDetailsDuringDto);
+				patientTravelDetailsDuring.setRiskFactor(target);
+				patientTravelDetailsDurings.add(patientTravelDetailsDuring);
+			}
+		}
+		target.setPatientTravelDetailsDurings(patientTravelDetailsDurings);
+
+		List<PatientTravelDetailsPrior> patientTravelDetailsPriors = new ArrayList<>();
+		if (!source.getPatientTravelDetailsPrior().isEmpty()) {
+			for (PatientTravelDetailsPriorDto patientTravelDetailsPriorDto : source.getPatientTravelDetailsPrior()) {
+				PatientTravelDetailsPrior patientTravelDetailsPrior = patientTravelDetailsPriorDtoHelper.fillOrCreateFromDto(null, patientTravelDetailsPriorDto);
+				patientTravelDetailsPrior.setRiskFactor(target);
+				patientTravelDetailsPriors.add(patientTravelDetailsPrior);
+			}
+		}
+		target.setPatientTravelDetailsPriors(patientTravelDetailsPriors);
+
 	}
 
 	@Override
@@ -177,6 +207,24 @@ public class RiskFactorDtoHelper extends AdoDtoHelper<RiskFactor, RiskFactorDto>
 			}
 		}
 		target.setPatientSymptomsPrecedence(patientSymptomsPrecedenceDtos);
+
+		List<PatientTravelDetailsDuringDto> patientTravelDetailsDuringDtos = new ArrayList<>();
+		if (!source.getPatientTravelDetailsDurings().isEmpty()) {
+			for (PatientTravelDetailsDuring patientTravelDetailsDuring : source.getPatientTravelDetailsDurings()) {
+				PatientTravelDetailsDuringDto patientTravelDetailsDuringDto = patientTravelDetailsDuringDtoHelper.adoToDto(patientTravelDetailsDuring);
+				patientTravelDetailsDuringDtos.add(patientTravelDetailsDuringDto);
+			}
+		}
+		target.setPatientTravelDetailsDuring(patientTravelDetailsDuringDtos);
+
+		List<PatientTravelDetailsPriorDto> patientTravelDetailsPriorDtos = new ArrayList<>();
+		if (!source.getPatientTravelDetailsPriors().isEmpty()) {
+			for (PatientTravelDetailsPrior patientTravelDetailsPrior : source.getPatientTravelDetailsPriors()) {
+				PatientTravelDetailsPriorDto patientTravelDetailsPriorDto = patientTravelDetailsPriorDtoHelper.adoToDto(patientTravelDetailsPrior);
+				patientTravelDetailsPriorDtos.add(patientTravelDetailsPriorDto);
+			}
+		}
+		target.setPatientTravelDetailsPrior(patientTravelDetailsPriorDtos);
 
 	}
 

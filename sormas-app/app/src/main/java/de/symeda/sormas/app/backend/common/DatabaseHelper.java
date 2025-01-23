@@ -152,6 +152,10 @@ import de.symeda.sormas.app.backend.outbreak.Outbreak;
 import de.symeda.sormas.app.backend.outbreak.OutbreakDao;
 import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
 import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedenceDao;
+import de.symeda.sormas.app.backend.patienttraveldetailsduring.PatientTravelDetailsDuring;
+import de.symeda.sormas.app.backend.patienttraveldetailsduring.PatientTravelDetailsDuringDao;
+import de.symeda.sormas.app.backend.patienttraveldetailsprior.PatientTravelDetailsPrior;
+import de.symeda.sormas.app.backend.patienttraveldetailsprior.PatientTravelDetailsPriorDao;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.person.PersonContactDetail;
 import de.symeda.sormas.app.backend.person.PersonContactDetailDao;
@@ -318,6 +322,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, AfpImmunization.class);
 			TableUtils.clearTable(connectionSource, SixtyDay.class);
 			TableUtils.clearTable(connectionSource, PatientSymptomsPrecedence.class);
+			TableUtils.clearTable(connectionSource, PatientTravelDetailsDuring.class);
+			TableUtils.clearTable(connectionSource, PatientTravelDetailsPrior.class);
 
 			if (clearInfrastructure) {
 				TableUtils.clearTable(connectionSource, UserUserRole.class);
@@ -678,6 +684,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		return (PatientSymptomsPrecedenceDao) getAdoDao(PatientSymptomsPrecedence.class);
 	}
 
+	public static PatientTravelDetailsDuringDao getPatientTravelDetailsDuringDao() {
+		return (PatientTravelDetailsDuringDao) getAdoDao(PatientTravelDetailsDuring.class);
+	}
+
+	public static PatientTravelDetailsPriorDao getPatientTravelDetailsPriorDao() {
+		return (PatientTravelDetailsPriorDao) getAdoDao(PatientTravelDetailsPrior.class);
+	}
+
 	// TODO [vaccination info] integrate vaccination info
 //	public static VaccinationInfoDao getVaccinationInfoDao() {
 //		return (VaccinationInfoDao) getAdoDao(VaccinationInfo.class);
@@ -796,6 +810,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, AfpImmunization.class);
 			TableUtils.createTable(connectionSource, SixtyDay.class);
 			TableUtils.createTable(connectionSource, PatientSymptomsPrecedence.class);
+			TableUtils.createTable(connectionSource, PatientTravelDetailsPrior.class);
+			TableUtils.createTable(connectionSource, PatientTravelDetailsDuring.class);
 			TableUtils.createTable(connectionSource, DiseaseFacility.class);
 
 		} catch (SQLException e) {
@@ -4459,6 +4475,44 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				case 428:
 					currentVersion = 428;
 					getDao(DiseaseConfiguration.class).executeRaw("CREATE TABLE IF NOT EXISTS facility_diseaseconfiguration(diseaseConfiguration_id integer, facility_id integer);");
+
+				case 429:
+					currentVersion = 429;
+					getDao(PatientTravelDetailsDuring.class).executeRaw(
+							"CREATE TABLE patienttraveldetailsduring ("
+									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+									+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+									+ "    changedate BIGINT NOT NULL,"
+									+ "    creationdate BIGINT NOT NULL,"
+									+ "    riskfactor_id BIGINT NOT NULL,"
+									+ "    dateOfTravel DATE,"
+									+ "    placeOfTravel VARCHAR(255),"
+									+ "    pseudonymized SMALLINT,"
+									+ "    lastOpenedDate BIGINT,"
+									+ "    localChangeDate BIGINT NOT NULL,"
+									+ "    modified SMALLINT,"
+									+ "    snapshot SMALLINT,"
+									+ "    UNIQUE (snapshot ASC, uuid ASC)"
+									+ ");"
+					);
+
+					getDao(PatientTravelDetailsPrior.class).executeRaw(
+							"CREATE TABLE patienttraveldetailsprior ("
+									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+									+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+									+ "    changedate BIGINT NOT NULL,"
+									+ "    creationdate BIGINT NOT NULL,"
+									+ "    riskfactor_id BIGINT NOT NULL,"
+									+ "    dateOfTravel DATE,"
+									+ "    placeOfTravel VARCHAR(255),"
+									+ "    pseudonymized SMALLINT,"
+									+ "    lastOpenedDate BIGINT,"
+									+ "    localChangeDate BIGINT NOT NULL,"
+									+ "    modified SMALLINT,"
+									+ "    snapshot SMALLINT,"
+									+ "    UNIQUE (snapshot ASC, uuid ASC)"
+									+ ");"
+					);
 					// ATTENTION: break should only be done after last version
 				break;
 			default:
@@ -5277,6 +5331,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, ContaminationSource.class, true);
 			TableUtils.dropTable(connectionSource, ContainmentMeasure.class, true);
 			TableUtils.dropTable(connectionSource, AffectedPerson.class, true);
+			TableUtils.dropTable(connectionSource, PatientTravelDetailsDuring.class, true);
+			TableUtils.dropTable(connectionSource, PatientTravelDetailsPrior.class, true);
 			TableUtils.dropTable(connectionSource, SixtyDay.class, true);
 			TableUtils.dropTable(connectionSource, PatientSymptomsPrecedence.class, true);
 
@@ -5446,6 +5502,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new SixtyDayDao((Dao<SixtyDay, Long>) innerDao);
 				} else if (type.equals(PatientSymptomsPrecedence.class)) {
 					dao = (AbstractAdoDao<ADO>) new PatientSymptomsPrecedenceDao((Dao<PatientSymptomsPrecedence, Long>) innerDao);
+				} else if (type.equals(PatientTravelDetailsDuring.class)) {
+					dao = (AbstractAdoDao<ADO>) new PatientTravelDetailsDuringDao((Dao<PatientTravelDetailsDuring, Long>) innerDao);
+				} else if (type.equals(PatientTravelDetailsPrior.class)) {
+					dao = (AbstractAdoDao<ADO>) new PatientTravelDetailsPriorDao((Dao<PatientTravelDetailsPrior, Long>) innerDao);
 				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
