@@ -83,6 +83,8 @@ import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.app.backend.investigationnotes.InvestigationNotes;
 import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
+import de.symeda.sormas.app.backend.patienttraveldetailsduring.PatientTravelDetailsDuring;
+import de.symeda.sormas.app.backend.patienttraveldetailsprior.PatientTravelDetailsPrior;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.region.Community;
@@ -250,6 +252,16 @@ public class CaseDao extends AbstractAdoDao<Case> {
 		Date affectedPersonDate = getLatestChangeDateSubJoin(FoodHistory.TABLE_NAME, Case.FOOD_HISTORY, AffectedPerson.TABLE_NAME);
 		if (affectedPersonDate != null && affectedPersonDate.after(date)) {
 			date = affectedPersonDate;
+		}
+
+		Date patientTravelDetailsDuringDate = getLatestChangeDateSubJoin(RiskFactor.TABLE_NAME, Case.RISK_FACTOR, PatientTravelDetailsDuring.TABLE_NAME);
+		if (patientTravelDetailsDuringDate != null && patientTravelDetailsDuringDate.after(date)) {
+			date = patientTravelDetailsDuringDate;
+		}
+
+		Date patientTravelDetailsPriorDate = getLatestChangeDateSubJoin(RiskFactor.TABLE_NAME, Case.RISK_FACTOR, PatientTravelDetailsPrior.TABLE_NAME);
+		if (patientTravelDetailsPriorDate != null && patientTravelDetailsPriorDate.after(date)) {
+			date = patientTravelDetailsPriorDate;
 		}
 
 		Date investigationNotesDate = getLatestChangeDateJoin(InvestigationNotes.TABLE_NAME, Case.INVESTIGATION_NOTES);

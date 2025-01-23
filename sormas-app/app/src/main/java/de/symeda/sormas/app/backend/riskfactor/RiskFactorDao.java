@@ -69,6 +69,8 @@ public class RiskFactorDao extends AbstractAdoDao<RiskFactor> {
 
 	private RiskFactor initLazyData(RiskFactor riskFactor) {
 		riskFactor.setPatientSymptomsPrecedences(DatabaseHelper.getPatientSymptomsPrecedenceDao().getByRiskFactor(riskFactor));
+		riskFactor.setPatientTravelDetailsDurings(DatabaseHelper.getPatientTravelDetailsDuringDao().getByRiskFactor(riskFactor));
+		riskFactor.setPatientTravelDetailsPriors(DatabaseHelper.getPatientTravelDetailsPriorDao().getByRiskFactor(riskFactor));
 		return riskFactor;
 	}
 
@@ -78,6 +80,12 @@ public class RiskFactorDao extends AbstractAdoDao<RiskFactor> {
 		RiskFactor snapshot = super.saveAndSnapshot(ado);
 		DatabaseHelper.getPatientSymptomsPrecedenceDao().saveCollectionWithSnapshot(DatabaseHelper.getPatientSymptomsPrecedenceDao().getByRiskFactor(ado),
 				ado.getPatientSymptomsPrecedences(), ado);
+
+		DatabaseHelper.getPatientTravelDetailsDuringDao().saveCollectionWithSnapshot(DatabaseHelper.getPatientTravelDetailsDuringDao().getByRiskFactor(ado),
+				ado.getPatientTravelDetailsDurings(), ado);
+
+		DatabaseHelper.getPatientTravelDetailsPriorDao().saveCollectionWithSnapshot(DatabaseHelper.getPatientTravelDetailsPriorDao().getByRiskFactor(ado),
+				ado.getPatientTravelDetailsPriors(), ado);
 
 		return snapshot;
 	}
@@ -89,6 +97,8 @@ public class RiskFactorDao extends AbstractAdoDao<RiskFactor> {
 			return null;
 		}
 		date = DateHelper.getLatestDate(date, DatabaseHelper.getPatientSymptomsPrecedenceDao().getLatestChangeDate());
+		date = DateHelper.getLatestDate(date, DatabaseHelper.getPatientTravelDetailsDuringDao().getLatestChangeDate());
+		date = DateHelper.getLatestDate(date, DatabaseHelper.getPatientTravelDetailsPriorDao().getLatestChangeDate());
 
 		return date;
 	}
