@@ -481,6 +481,8 @@
     <string name="heading_tasks_list">Task Listing</string>
     <string name="heading_transfer_case">Transfer Case</string>
     <string name="heading_travel">Travel</string>
+    <string name="heading_contamination_sources">Contamination Sources</string>
+    <string name="heading_containment_measures">Containment Measures</string>
     <string name="heading_patient_symptom">Patient Symptoms Precedence</string>
     <string name="heading_travel_information">Patient Travel Information</string>
     <string name="heading_affected_person_details">Affected Person Details</string>

@@ -407,6 +407,8 @@
     <string name="heading_transfer_case">Transfer Case</string>
     <string name="heading_travel">Travel</string>
     <string name="heading_travels">Travels</string>
+    <string name="heading_contamination_sources">Contamination Sources</string>
+    <string name="heading_containment_measures">Containment Measures</string>
     <string name="heading_treatment">Treatment</string>
     <string name="heading_treatment_edit">Edit Treatment</string>
     <string name="heading_treatment_new">New Treatment</string>

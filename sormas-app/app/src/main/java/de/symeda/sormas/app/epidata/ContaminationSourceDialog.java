@@ -35,7 +35,7 @@ public class ContaminationSourceDialog extends FormDialog {
 			R.layout.dialog_root_layout,
 			R.layout.dialog_contamination_source_edit_layout,
 			R.layout.dialog_root_three_button_panel_layout,
-			R.string.heading_travel,
+			R.string.heading_contamination_sources,
 			-1,
 			false,
 			UiFieldAccessCheckers.forSensitiveData(contaminationSource.isPseudonymized()),
