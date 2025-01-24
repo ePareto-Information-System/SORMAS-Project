@@ -203,6 +203,14 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
 
             setVisible(true,
                     SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED);
+
+            foodAvailable.addValueChangeListener(field -> {
+                Object rawValue = ((NullableOptionGroup)field.getProperty()).getNullableValue();
+                YesNoUnknown value = (YesNoUnknown) rawValue;
+
+                boolean provideTrue = value == YesNoUnknown.YES;
+                headingProvide.setVisible(provideTrue);
+            });
         }
 
         FieldHelper.setVisibleWhen(
@@ -212,14 +220,6 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         packagingType.addValueChangeListener(event -> {
             boolean isOther = event.getProperty().getValue() == PackagingType.OTHER;
             packagingTypeOther.setVisible(isOther);
-        });
-
-        foodAvailable.addValueChangeListener(field -> {
-            Object rawValue = ((NullableOptionGroup)field.getProperty()).getNullableValue();
-            YesNoUnknown value = (YesNoUnknown) rawValue;
-
-            boolean provideTrue = value == YesNoUnknown.YES;
-            headingProvide.setVisible(provideTrue);
         });
 
     }
