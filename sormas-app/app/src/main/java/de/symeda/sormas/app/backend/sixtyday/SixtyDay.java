@@ -144,6 +144,8 @@ public class SixtyDay extends PseudonymizableAdo {
 	private Date dateOfCompletionOfForm;
 	@Column
 	private String nameOfHealthFacility;
+	@Column
+	private String barcode;
 
 	public String getPersonExamineCase() {
 		return personExamineCase;
@@ -488,6 +490,14 @@ public class SixtyDay extends PseudonymizableAdo {
 
 	public void setNameOfHealthFacility(String nameOfHealthFacility) {
 		this.nameOfHealthFacility = nameOfHealthFacility;
+	}
+
+	public String getBarcode() {
+		return barcode;
+	}
+
+	public void setBarcode(String barcode) {
+		this.barcode = barcode;
 	}
 
 	@Transient

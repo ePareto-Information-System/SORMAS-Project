@@ -18,7 +18,13 @@ package de.symeda.sormas.app.caze.edit;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.content.Intent;
 import android.content.res.Resources;
+import android.view.View;
+
+import androidx.annotation.Nullable;
+
+import com.google.android.gms.common.api.CommonStatusCodes;
 
 import java.util.List;
 
@@ -37,6 +43,7 @@ import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.sixtyday.SixtyDay;
+import de.symeda.sormas.app.barcode.BarcodeActivity;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.databinding.FragmentCaseEditSixtydayLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
@@ -107,6 +114,7 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 		contentBinding.sixtyDayDateOfManufacture.initializeDateField(getFragmentManager());
 		contentBinding.sixtyDayExpirationDate.initializeDateField(getFragmentManager());
 		contentBinding.sixtyDayPackagingType.initializeSpinner(packageTypeList);
+		contentBinding.sixtyDaySpecifySources.setVisibility(GONE);
 
 		if (caze.getDisease() != null) {
 			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.SIXTY_DAY_FOLLOW_UP_EDIT);
@@ -130,6 +138,9 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 			getContentBinding().sixtyDayPackagingTypeOther.setVisibility(VISIBLE);
 		}
 
+		getContentBinding().buttonScanFieldSixtyDayId.setVisibility(GONE);
+		getContentBinding().sixtyDayHeadingProvide.setVisibility(GONE);
+
 		getContentBinding().sixtyDayFoodAvailableTesting.addValueChangedListener( field ->{
 			YesNoUnknown value = (YesNoUnknown) field.getValue();
 			if (value == YesNoUnknown.YES) {
@@ -139,13 +150,29 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 			}
 		});
 
-		if (getContentBinding().sixtyDaySpecifySources.getValue() != null) {
+		/*if (getContentBinding().sixtyDaySpecifySources.getValue() != null) {
 			getContentBinding().sixtyDaySpecifySources.setVisibility(VISIBLE);
-		}
+		}*/
+
+		contentBinding.buttonScanFieldSixtyDayId.setOnClickListener((View v) -> {
+			Intent intent = new Intent(getContext(), BarcodeActivity.class);
+			startActivityForResult(intent, BarcodeActivity.RC_BARCODE_CAPTURE);
+		});
 	}
 
 	@Override
 	public int getEditLayout() {
 		return R.layout.fragment_case_edit_sixtyday_layout;
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (requestCode == BarcodeActivity.RC_BARCODE_CAPTURE) {
+			if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
+				getContentBinding().sixtyDayBarcode.setValue(data.getStringExtra(BarcodeActivity.BARCODE_RESULT));
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 }

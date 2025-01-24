@@ -15228,3 +15228,6 @@ ALTER TABLE afpimmunization ADD COLUMN dateLastOpvDosesReceivedThroughSia DATE;
 ALTER TABLE afpimmunization ADD COLUMN dateLastIpvDosesReceivedThroughSia DATE;
 
 INSERT INTO schema_version(version_number, comment) VALUES (722, 'Dropped and added columns in afpimmunization to change types to date');
+
+ALTER TABLE sixtyday ADD COLUMN barcode VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (723, 'Added barcode to sixtyday(food sample testing)');

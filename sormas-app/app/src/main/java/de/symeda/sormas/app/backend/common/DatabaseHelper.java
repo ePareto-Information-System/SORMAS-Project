@@ -233,7 +233,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
 	// public static final int DATABASE_VERSION = 410;
-	public static final int DATABASE_VERSION = 429;
+	public static final int DATABASE_VERSION = 431;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4513,6 +4513,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									+ "    UNIQUE (snapshot ASC, uuid ASC)"
 									+ ");"
 					);
+
+				case 430:
+					currentVersion = 430;
+					getDao(Sample.class).executeRaw("ALTER TABLE sixtyday ADD barcode varchar(255)");
 					// ATTENTION: break should only be done after last version
 				break;
 			default:

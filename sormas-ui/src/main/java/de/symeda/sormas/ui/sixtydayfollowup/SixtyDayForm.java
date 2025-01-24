@@ -78,6 +78,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
                     loc(PROVIDE_HEADING_LOC)+
                     fluidRowLocs(SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.SPECIFY_SOURCES) +
                     fluidRowLocs(SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER) +
+                    fluidRowLocs(6, SixtyDayDto.BARCODE) +
                     fluidRowLocs(SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE) +
                     fluidRowLocs(SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER) +
                     fluidRowLocs(SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER) +
@@ -164,6 +165,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         TextField sources =  addField(SixtyDayDto.SPECIFY_SOURCES, TextField.class);
         TextField productName = addField(SixtyDayDto.PRODUCT_NAME, TextField.class);
         TextField batchNumber = addField(SixtyDayDto.BATCH_NUMBER, TextField.class);
+        TextField barcode = addField(SixtyDayDto.BARCODE, TextField.class);
         DateField dateOfManufacture = addField(SixtyDayDto.DATE_OF_MANUFACTURE, DateField.class);
         DateField expirationDate = addField(SixtyDayDto.EXPIRATION_DATE, DateField.class);
         TextField packageSize = addField(SixtyDayDto.PACKAGE_SIZE, TextField.class);
@@ -175,7 +177,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         TextField foodTel = addField(SixtyDayDto.FOOD_TEL, TextField.class);
 
         setVisible(false,
-                SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.SPECIFY_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER, SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL);
+                SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.SPECIFY_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.BARCODE, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER, SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL);
 
 
         initializeVisibilitiesAndAllowedVisibilities();
@@ -201,23 +203,23 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
 
             setVisible(true,
                     SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED);
+
+            foodAvailable.addValueChangeListener(field -> {
+                Object rawValue = ((NullableOptionGroup)field.getProperty()).getNullableValue();
+                YesNoUnknown value = (YesNoUnknown) rawValue;
+
+                boolean provideTrue = value == YesNoUnknown.YES;
+                headingProvide.setVisible(provideTrue);
+            });
         }
 
         FieldHelper.setVisibleWhen(
                 foodAvailable,
                 Arrays.asList(food, sources, productName, batchNumber, dateOfManufacture, expirationDate, packageSize, packagingType, placeOfPurchase, nameOfManufacturer,
-                        address, foodTel),Arrays.asList(YesNoUnknown.YES),true);
+                        address, foodTel, barcode),Arrays.asList(YesNoUnknown.YES),true);
         packagingType.addValueChangeListener(event -> {
             boolean isOther = event.getProperty().getValue() == PackagingType.OTHER;
             packagingTypeOther.setVisible(isOther);
-        });
-
-        foodAvailable.addValueChangeListener(field -> {
-            Object rawValue = ((NullableOptionGroup)field.getProperty()).getNullableValue();
-            YesNoUnknown value = (YesNoUnknown) rawValue;
-
-            boolean provideTrue = value == YesNoUnknown.YES;
-            headingProvide.setVisible(provideTrue);
         });
 
     }

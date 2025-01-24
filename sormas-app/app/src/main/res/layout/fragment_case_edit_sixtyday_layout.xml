@@ -290,6 +290,28 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/sixtyDay_scan_field_fieldSixtyDayLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlButton
+                    android:id="@+id/button_scan_field_sixtyDay_id"
+                    android:textColor="@color/whiteOpaque"
+                    android:text="@string/scan_field_sample_id"
+                    app:buttonType="@{ControlButtonType.PRIMARY}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/sixtyDay_barcode"
+                    app:value="@={data.barcode}"
+                    app:dependencyParentField="@{sixtyDayFoodAvailableTesting}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/sixtyDay_manufactureExpirationDate_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -256,12 +256,6 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 			EbsDto.MANUAL_SCANNING_TYPE,
 			Arrays.asList(ManualScanningType.ONLINE),
 			true);
-		FieldHelper.setVisibleWhen(
-			getFieldGroup(),
-			Arrays.asList(EbsDto.OTHER_INFORMANT),
-			EbsDto.CATEGORY_OF_INFORMANT,
-			Arrays.asList(PersonReporting.OTHER),
-			true);
 
 		regionField.addValueChangeListener(e -> {
 			RegionReferenceDto region = (RegionReferenceDto) regionField.getValue();
@@ -339,8 +333,10 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 			}
 			if (value == PersonReporting.OTHER){
 				otherInformant.setRequired(true);
+				otherInformant.setVisible(true);
 			}else {
 				otherInformant.setRequired(false);
+				otherInformant.setVisible(false);
 			}
 			Arrays.stream(MediaScannningType.values())
 				.filter(scanType -> !itemsToAdd.contains(scanType))

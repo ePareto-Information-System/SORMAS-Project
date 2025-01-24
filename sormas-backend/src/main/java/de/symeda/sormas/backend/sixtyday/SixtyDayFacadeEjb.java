@@ -96,6 +96,7 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setAddress(source.getAddress());
         target.setFoodTel(source.getFoodTel());
         target.setSpecifySources(source.getSpecifySources());
+        target.setBarcode(source.getBarcode());
 
         return target;
     }
@@ -150,6 +151,7 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setAddress(source.getAddress());
         target.setFoodTel(source.getFoodTel());
         target.setSpecifySources(source.getSpecifySources());
+        target.setBarcode(source.getBarcode());
 
 
         return target;

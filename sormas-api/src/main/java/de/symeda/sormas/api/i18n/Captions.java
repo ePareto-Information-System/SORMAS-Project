@@ -2882,6 +2882,7 @@ public interface Captions {
 	String SixtyDay_specifySources = "specifySources";
 	String SixtyDay_productName = "productName";
 	String SixtyDay_batchNumber = "batchNumber";
+	String SixtyDay_barcode = "barcode";
 	String SixtyDay_dateOfManufacture = "dateOfManufacture";
 	String SixtyDay_expirationDate = "expirationDate";
 	String SixtyDay_packageSize = "packageSize";

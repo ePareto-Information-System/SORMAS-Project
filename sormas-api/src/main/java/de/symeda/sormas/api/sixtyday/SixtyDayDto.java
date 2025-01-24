@@ -46,6 +46,7 @@ public class SixtyDayDto extends PseudonymizableDto {
     public static final String SPECIFY_SOURCES = "specifySources";
     public static final String PRODUCT_NAME = "productName";
     public static final String BATCH_NUMBER = "batchNumber";
+    public static final String BARCODE = "barcode";
     public static final String DATE_OF_MANUFACTURE = "dateOfManufacture";
     public static final String EXPIRATION_DATE = "expirationDate";
     public static final String PACKAGE_SIZE = "packageSize";
@@ -91,6 +92,7 @@ public class SixtyDayDto extends PseudonymizableDto {
     private String specifySources;
     private String productName;
     private String batchNumber;
+    private String barcode;
     private Date dateOfManufacture;
     private Date expirationDate;
     private String packageSize;
@@ -404,5 +406,13 @@ public class SixtyDayDto extends PseudonymizableDto {
 
     public void setSpecifySources(String specifySources) {
         this.specifySources = specifySources;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 }
