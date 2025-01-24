@@ -126,6 +126,7 @@ public class EbsDto extends PseudonymizableDto {
 	private SignalVerificationDto signalVerification;
 	private RiskAssessmentDto riskAssessment;
 	private EbsAlertDto alert;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String otherInformant;
 
 

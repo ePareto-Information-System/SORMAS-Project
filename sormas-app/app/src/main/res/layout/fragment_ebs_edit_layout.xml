@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
   ~ Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
   ~
@@ -20,26 +19,50 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="contentDescription"
+    android:id="@+id/base_layout"
     android:descendantFocusability="beforeDescendants"
-    android:id="@+id/base_layout">
+    tools:ignore="contentDescription">
 
 
     <data>
+
         <import type="android.view.View" />
-        <import type="de.symeda.sormas.api.ebs.EbsSourceType"/>
-        <import type="de.symeda.sormas.api.ebs.PersonReporting"/>
-        <import type="de.symeda.sormas.api.ebs.ManualScanningType"/>
-        <import type="de.symeda.sormas.api.ebs.MediaScannningType"/>
-        <import type="de.symeda.sormas.api.ebs.AutomaticScanningType"/>
+
+        <import type="de.symeda.sormas.api.ebs.EbsSourceType" />
+
+        <import type="de.symeda.sormas.api.ebs.PersonReporting" />
+
+        <import type="de.symeda.sormas.api.ebs.ManualScanningType" />
+
+        <import type="de.symeda.sormas.api.ebs.MediaScannningType" />
+
+        <import type="de.symeda.sormas.api.ebs.AutomaticScanningType" />
 
 
-        <variable name="data" type="de.symeda.sormas.app.backend.ebs.Ebs"/>
-        <variable name="ebsSourceTypeClass" type="Class" />
-        <variable name="manualScanningTypeClass" type="Class" />
-        <variable name="mediaScannningTypeClass" type="Class" />
-        <variable name="mobileScannningTypeClass" type="Class" />
-        <variable name="automaticScanningTypeClass" type="Class" />
+        <variable
+            name="data"
+            type="de.symeda.sormas.app.backend.ebs.Ebs" />
+
+        <variable
+            name="ebsSourceTypeClass"
+            type="Class" />
+
+        <variable
+            name="manualScanningTypeClass"
+            type="Class" />
+
+        <variable
+            name="mediaScannningTypeClass"
+            type="Class" />
+
+        <variable
+            name="mobileScannningTypeClass"
+            type="Class" />
+
+        <variable
+            name="automaticScanningTypeClass"
+            type="Class" />
+
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
     </data>
 
@@ -66,76 +89,84 @@
 
             </LinearLayout>
 
-            <ImageView style="@style/FullHorizontalDividerStyle"/>
+            <ImageView style="@style/FullHorizontalDividerStyle" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/ebs_sourceInformation"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:required="true"
-                    app:value="@={data.sourceInformation}"/>
+                    app:value="@={data.sourceInformation}" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/ebs_categoryOfInformant"
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:required="true"
-                    app:value="@={data.categoryOfInformant}"/>
+                    app:value="@={data.categoryOfInformant}" />
             </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlDateField
                 android:id="@+id/ebs_reportDateTime"
-                app:required="true"
                 style="@style/ControlSingleColumnStyle"
                 app:allowedDaysInFuture="0"
+                app:required="true"
                 app:value="@={data.reportDateTime}" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebs_informantTel"
                     style="@style/ControlFirstOfTwoColumnsStyle"
-                    app:required="true"
                     app:inputType="number"
+                    app:required="true"
                     app:value="@={data.informantTel}" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebs_informantName"
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:value="@={data.informantName}" />
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebs_otherInformant"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{ebsCategoryOfInformant}"
                     app:dependencyParentValue="@{PersonReporting.OTHER}"
-                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:required="true"
                     app:value="@={data.otherInformant}" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/ebs_scanningType"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:dependencyParentField="@{ebsSourceInformation}"
                     app:dependencyParentValue="@{EbsSourceType.MEDIA_NEWS}"
-                    app:value="@={data.scanningType}"/>
+                    app:value="@={data.scanningType}" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/ebs_automaticScanningType"
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{ebsScanningType}"
                     app:dependencyParentValue="@{MediaScannningType.AUTOMATIC}"
-                    app:value="@={data.automaticScanningType}"/>
+                    app:value="@={data.automaticScanningType}" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebs_sourceName"
                     style="@style/ControlFirstOfTwoColumnsStyle"
@@ -148,7 +179,7 @@
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:dependencyParentField="@{ebsScanningType}"
                     app:dependencyParentValue="@{MediaScannningType.MANUAL}"
-                    app:value="@={data.manualScanningType}"/>
+                    app:value="@={data.manualScanningType}" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebs_sourceUrl"
@@ -157,6 +188,7 @@
                     app:dependencyParentValue="@{ManualScanningType.ONLINE}"
                     app:inputType="textUri"
                     app:value="@={data.sourceUrl}" />
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebs_other"
                     style="@style/ControlSecondOfTwoColumnsStyle"
@@ -164,6 +196,7 @@
                     app:dependencyParentValue="@{ManualScanningType.OTHER}"
                     app:value="@={data.other}" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -176,100 +209,111 @@
 
                     <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                         android:id="@+id/ebs_region"
-                        app:value="@={data.ebsLocation.region}"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
                         app:required="true"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
+                        app:value="@={data.ebsLocation.region}" />
 
                     <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                         android:id="@+id/ebs_district"
-                        app:value="@={data.ebsLocation.district}"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:required="true"
-                        style="@style/ControlSecondOfTwoColumnsStyle" />
+                        app:value="@={data.ebsLocation.district}" />
+
                     <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                         android:id="@+id/ebs_community"
-                        app:value="@={data.ebsLocation.community}"
-                        style="@style/ControlSecondOfTwoColumnsStyle" />
+                        style="@style/ControlSecondOfTwoColumnsStyle"
+                        app:value="@={data.ebsLocation.community}" />
+
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/ebs_city"
-                        app:value="@={data.ebsLocation.city}"
-                        style="@style/ControlSecondOfTwoColumnsStyle" />
+                        style="@style/ControlSecondOfTwoColumnsStyle"
+                        app:value="@={data.ebsLocation.city}" />
 
                 </LinearLayout>
             </LinearLayout>
+
             <de.symeda.sormas.app.component.controls.ControlButton
                 android:id="@+id/pick_gps_coordinates"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/buttonControlMarginBottom"
-                app:slim="true"
-                app:iconStart="@drawable/ic_gps_fixed_black_24dp"
+                android:text="@string/action_pick_gps"
                 app:buttonType="@{ControlButtonType.SECONDARY}"
-                android:text="@string/action_pick_gps" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/ebs_ebsLatitude"
-                style="@style/ControlFirstOfTwoColumnsStyle"
-                app:inputType="numberDecimal"
-                app:value="@={data.ebsLatitude}" />
+                app:iconStart="@drawable/ic_gps_fixed_black_24dp"
+                app:slim="true" />
 
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/ebs_ebsLongitude"
-                style="@style/ControlSecondOfTwoColumnsStyle"
-                app:inputType="numberDecimal"
-                app:value="@={data.ebsLongitude}" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/ebs_ebsLatLon"
-                style="@style/ControlSecondOfTwoColumnsStyle"
-                app:inputType="numberDecimal"
-                app:value="@={data.ebsLatLon}" />
-        </LinearLayout>
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/ebs_ebsLatitude"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:inputType="numberDecimal"
+                    app:value="@={data.ebsLatitude}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/ebs_ebsLongitude"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:inputType="numberDecimal"
+                    app:value="@={data.ebsLongitude}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/ebs_ebsLatLon"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:inputType="numberDecimal"
+                    app:value="@={data.ebsLatLon}" />
+            </LinearLayout>
+
             <de.symeda.sormas.app.component.controls.ControlDateTimeField
                 android:id="@+id/ebs_dateOnset"
                 style="@style/ControlSingleColumnStyle"
                 app:allowedDaysInFuture="0"
                 app:value="@={data.dateOnset}" />
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/ebs_descriptionOccurrence"
-                app:inputType="textMultiLine"
-                app:textAlignment="gravity"
-                app:gravity="top|start"
-                app:textArea="true"
-                app:singleLine="false"
-                app:required="true"
-                app:maxLines="5"
-                app:value="@={data.descriptionOccurrence}"
-                style="@style/ControlSingleColumnStyle" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/ebs_personDesignation"
-                style="@style/ControlFirstOfTwoColumnsStyle"
-                app:required="true"
-                app:value="@={data.personDesignation}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/ebs_personRegistering"
-                style="@style/ControlSecondOfTwoColumnsStyle"
+                android:id="@+id/ebs_descriptionOccurrence"
+                style="@style/ControlSingleColumnStyle"
+                app:gravity="top|start"
+                app:inputType="textMultiLine"
+                app:maxLines="5"
                 app:required="true"
-                app:value="@={data.personRegistering}" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/ebs_personPhone"
-                style="@style/ControlFirstOfTwoColumnsStyle"
-                app:required="true"
-                app:inputType="number"
-                app:value="@={data.personPhone}" />
-        </LinearLayout>
+                app:singleLine="false"
+                app:textAlignment="gravity"
+                app:textArea="true"
+                app:value="@={data.descriptionOccurrence}" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/ebs_personDesignation"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:required="true"
+                    app:value="@={data.personDesignation}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/ebs_personRegistering"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:required="true"
+                    app:value="@={data.personRegistering}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/ebs_personPhone"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:inputType="number"
+                    app:required="true"
+                    app:value="@={data.personPhone}" />
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>

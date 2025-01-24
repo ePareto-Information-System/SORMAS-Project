@@ -51,6 +51,7 @@ import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.EbsDateValidator;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.FutureDateValidator;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
@@ -623,6 +624,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		} else {
 			dateDecision.removeAllValidators();
 		}
+		dateOfDecision.addValidator(new FutureDateValidator(dateOfDecision, 0, I18nProperties.getCaption(Captions.Triaging_decisionDate)));
 	}
 
 	private Date clearTime(Date date) {

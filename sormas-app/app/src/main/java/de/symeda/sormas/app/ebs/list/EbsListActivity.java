@@ -16,15 +16,12 @@ import de.symeda.sormas.api.ebs.EbsSourceType;
 import de.symeda.sormas.api.ebs.EbsTriagingDecision;
 import de.symeda.sormas.api.ebs.SignalCategory;
 import de.symeda.sormas.api.ebs.SignalOutcome;
-import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.app.BaseListActivity;
 import de.symeda.sormas.app.PagedBaseListActivity;
 import de.symeda.sormas.app.PagedBaseListFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
-import de.symeda.sormas.app.backend.region.District;
-import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
@@ -32,7 +29,6 @@ import de.symeda.sormas.app.databinding.FilterEbsListLayoutBinding;
 import de.symeda.sormas.app.ebs.edit.EbsNewActivity;
 import de.symeda.sormas.app.util.Callback;
 import de.symeda.sormas.app.util.DataUtils;
-import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 
 public class EbsListActivity extends PagedBaseListActivity {
 
@@ -158,15 +154,15 @@ public class EbsListActivity extends PagedBaseListActivity {
 		filterBinding.ebsSourceInformationFilter.initializeSpinner(sourceInformation);
 		filterBinding.triagingSignalCategoryFilter.initializeSpinner(signalCategory);
 		filterBinding.triagingTriagingDecisionFilter.initializeSpinner(triagingDecision);
-		if (currentUser.getJurisdictionLevel() == JurisdictionLevel.NATION) {
-			filterBinding.ebsRegionFilter.initializeSpinner(InfrastructureDaoHelper.loadRegionsByServerCountry());
-			filterBinding.ebsRegionFilter.addValueChangedListener(e -> {
-				filterBinding.ebsDistrictFilter.initializeSpinner(InfrastructureDaoHelper.loadDistricts((Region) e.getValue()));
-			});
-			filterBinding.ebsDistrictFilter.addValueChangedListener(e -> {
-				filterBinding.ebsCommunityFilter.initializeSpinner(InfrastructureDaoHelper.loadCommunities((District) e.getValue()));
-			});
-		}
+//		if (currentUser.getJurisdictionLevel() == JurisdictionLevel.NATION) {
+//			filterBinding.ebsRegionFilter.initializeSpinner(InfrastructureDaoHelper.loadRegionsByServerCountry());
+//			filterBinding.ebsRegionFilter.addValueChangedListener(e -> {
+//				filterBinding.ebsDistrictFilter.initializeSpinner(InfrastructureDaoHelper.loadDistricts((Region) e.getValue()));
+//			});
+//			filterBinding.ebsDistrictFilter.addValueChangedListener(e -> {
+//				filterBinding.ebsCommunityFilter.initializeSpinner(InfrastructureDaoHelper.loadCommunities((District) e.getValue()));
+//			});
+//		}
 
 		filterBinding.ebsReportDateTimeFilter.initializeDateField(getSupportFragmentManager());
 		filterBinding.triagingDecisionDateFilter.initializeDateField(getSupportFragmentManager());
