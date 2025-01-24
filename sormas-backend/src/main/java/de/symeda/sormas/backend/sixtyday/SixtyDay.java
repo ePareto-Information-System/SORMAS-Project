@@ -81,6 +81,7 @@ public class SixtyDay extends AbstractDomainObject {
     private String address;
     private String foodTel;
     private String specifySources;
+    private String barcode;
 
 
     public String getPersonExamineCase() {
@@ -406,5 +407,13 @@ public class SixtyDay extends AbstractDomainObject {
 
     public void setSpecifySources(String specifySources) {
         this.specifySources = specifySources;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 }
