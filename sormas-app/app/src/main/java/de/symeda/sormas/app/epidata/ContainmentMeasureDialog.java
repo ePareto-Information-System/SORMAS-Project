@@ -37,7 +37,7 @@ public class ContainmentMeasureDialog extends FormDialog {
 			R.layout.dialog_root_layout,
 			R.layout.dialog_containment_measure_edit_layout,
 			R.layout.dialog_root_three_button_panel_layout,
-			R.string.heading_travel,
+			R.string.heading_containment_measures,
 			-1,
 			false,
 			UiFieldAccessCheckers.forSensitiveData(containmentMeasure.isPseudonymized()),
