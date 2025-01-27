@@ -25,10 +25,13 @@ import android.webkit.WebView;
 
 import androidx.fragment.app.FragmentActivity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -67,11 +70,14 @@ import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CardOrHistory;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.VaccineTypes;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -96,6 +102,7 @@ import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
 import de.symeda.sormas.app.component.dialog.InfoDialog;
 import de.symeda.sormas.app.databinding.DialogClassificationRulesLayoutBinding;
 import de.symeda.sormas.app.databinding.FragmentCaseEditLayoutBinding;
+import de.symeda.sormas.app.databinding.FragmentPersonEditLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 //import de.symeda.sormas.app.util.InfrastructureHelper;
@@ -143,6 +150,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	private List<Item> vaccineList;
 	private List<Item> vaccinationList;
 	private List<Item> surveillanceOfficerList;
+
+	private List<Item> approximateAgeTypeList;
+	private List<Item> monthList;
+	private List<Item> yearList;
 
 	// Static methods
 
@@ -439,6 +450,9 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		vaccineList = DataUtils.getEnumItems(VaccineTypes.class, true);
 		List<User> surveillanceOfficersList = DatabaseHelper.getUserDao().getUsersByUserRoleCaption(I18nProperties.getEnumCaption(DefaultUserRole.SURVEILLANCE_OFFICER));
 		surveillanceOfficerList = DataUtils.toItems(surveillanceOfficersList, true);
+		approximateAgeTypeList = DataUtils.getEnumItems(ApproximateAgeType.class, true);
+		monthList = DataUtils.getMonthItems(true);
+		yearList = DataUtils.toItems(DateHelper.getYearsToNow(), true);
 	}
 
 	@Override
@@ -654,6 +668,44 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataIdsrDiagnosis.initializeSpinner(idsrTypeList);
 		contentBinding.caseDataNotifiedByList.initializeSpinner(notifyByList);
 		contentBinding.caseDataVaccineType.initializeSpinner(vaccineList);
+
+		contentBinding.personBirthdateDD.initializeSpinner(new ArrayList<>(), field -> updateApproximateAgeField(contentBinding));
+		contentBinding.personBirthdateMM.initializeSpinner(monthList, field -> {
+			updateApproximateAgeField(contentBinding);
+			DataUtils.updateListOfDays(
+					contentBinding.personBirthdateDD,
+					(Integer) contentBinding.personBirthdateYYYY.getValue(),
+					(Integer) field.getValue());
+		});
+		contentBinding.personBirthdateYYYY.initializeSpinner(yearList, field -> {
+			updateApproximateAgeField(contentBinding);
+			DataUtils.updateListOfDays(
+					contentBinding.personBirthdateDD,
+					(Integer) field.getValue(),
+					(Integer) contentBinding.personBirthdateMM.getValue());
+		});
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		contentBinding.personBirthdateYYYY.setSelectionOnOpen(year - 35);
+		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
+
+		contentBinding.personApproximateAge.addValueChangedListener(field -> {
+			if (DataHelper.isNullOrEmpty((String) field.getValue())) {
+				contentBinding.personApproximateAgeType.setRequired(false);
+				contentBinding.personApproximateAgeType.setValue(null);
+			} else {
+				contentBinding.personApproximateAgeType.setRequired(true);
+				if (contentBinding.personApproximateAgeType.getValue() == null) {
+					contentBinding.personApproximateAgeType.setValue(ApproximateAgeType.YEARS);
+				}
+			}
+		});
+
+		if (!DataHelper.isNullOrEmpty(contentBinding.personApproximateAge.getValue())) {
+			contentBinding.personApproximateAgeType.setRequired(true);
+			if (contentBinding.personApproximateAgeType.getValue() == null) {
+				contentBinding.personApproximateAgeType.setValue(ApproximateAgeType.YEARS);
+			}
+		}
 
 		contentBinding.caseDataQuarantineTo.addValueChangedListener(new ValueChangeListener() {
 
@@ -1122,6 +1174,44 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		} else {
 			getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
 			getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+		}
+	}
+
+	public static Date calculateBirthDateValue(FragmentCaseEditLayoutBinding contentBinding) {
+		Integer birthYear = (Integer) contentBinding.personBirthdateYYYY.getValue();
+
+		if (birthYear != null) {
+			contentBinding.personApproximateAge.setEnabled(false);
+			contentBinding.personApproximateAgeType.setEnabled(false);
+
+			Integer birthDay = (Integer) contentBinding.personBirthdateDD.getValue();
+			Integer birthMonth = (Integer) contentBinding.personBirthdateMM.getValue();
+
+			Calendar birthDate = new GregorianCalendar();
+			birthDate.set(birthYear, birthMonth != null ? birthMonth - 1 : 0, birthDay != null ? birthDay : 1);
+			return birthDate.getTime();
+		}
+		return null;
+	}
+
+	private static void updateApproximateAgeField(FragmentCaseEditLayoutBinding contentBinding) {
+
+		Date birthDate = calculateBirthDateValue(contentBinding);
+		if (birthDate != null) {
+			contentBinding.personApproximateAge.setEnabled(false);
+			contentBinding.personApproximateAgeType.setEnabled(false);
+
+			DataHelper.Pair<Integer, ApproximateAgeType> approximateAge = ApproximateAgeType.ApproximateAgeHelper.getApproximateAge(birthDate);
+			ApproximateAgeType ageType = approximateAge.getElement1();
+			contentBinding.personApproximateAge.setValue(String.valueOf(approximateAge.getElement0()));
+			contentBinding.personApproximateAgeType.setValue(ageType);
+		} else {
+			if (contentBinding.personApproximateAge.isEnabled() == false && contentBinding.personApproximateAgeType.isEnabled() == false) {
+				contentBinding.personApproximateAge.setValue(null);
+				contentBinding.personApproximateAgeType.setValue(null);
+			}
+			contentBinding.personApproximateAge.setEnabled(true);
+			contentBinding.personApproximateAgeType.setEnabled(true);
 		}
 	}
 
