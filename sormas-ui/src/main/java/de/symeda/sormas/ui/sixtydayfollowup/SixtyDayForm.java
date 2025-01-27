@@ -157,6 +157,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         TextField contactDetailsEmailField = addField(SixtyDayDto.CONTACT_DETAILS_EMAIL, TextField.class);
         TextField signatureField = addField(SixtyDayDto.SIGNATURE, TextField.class);
         DateField dateSubmissionFormsField = addField(SixtyDayDto.DATE_SUBMISSION_FORMS, DateField.class);
+        dateSubmissionFormsField.setVisible(false);
 
         NullableOptionGroup foodAvailable = addField(SixtyDayDto.FOOD_AVAILABLE_TESTING, NullableOptionGroup.class);
         addField(SixtyDayDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
@@ -189,7 +190,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
                    SixtyDayDto.PATIENT_FOUND_REASON ,SixtyDayDto.LOCATE_CHILD_ATTEMPT ,SixtyDayDto.PARALYSIS_WEAKNESS_PRESENT ,SixtyDayDto.PARALYSIS_WEAKNESS_PRESENT_SITE, SixtyDayDto.PARALYZED_PART_OTHER,
             SixtyDayDto.PARALYSIS_WEAKNESS_FLOPPY ,SixtyDayDto.PARALYZED_PART ,SixtyDayDto.OTHER_PART_BODY ,SixtyDayDto.DEEP_TENDON_REFLEX_SELECTION ,SixtyDayDto.MUSCLE_VOLUME_SELECTION,
                     SixtyDayDto.SENSORY_LOSS_SELECTION , SixtyDayDto.PROVISIONAL_DIAGNOSIS ,SixtyDayDto.COMMENTS , SixtyDayDto.CONTACT_DETAILS_NUMBER, SixtyDayDto.CONTACT_DETAILS_EMAIL,
-                    SixtyDayDto.SIGNATURE, SixtyDayDto.DATE_SUBMISSION_FORMS);
+                    SixtyDayDto.SIGNATURE);
             sixtyDayHeadingLabel.setVisible(false);
 
             headingProvide = new Label(I18nProperties.getString(Strings.headingProvide));
@@ -198,6 +199,14 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
             headingProvide.setVisible(false);
 
             createLabel(I18nProperties.getString(Strings.headingofficialUse), H3, OFFICIAL_HEADING_LOC);
+
+            foodAvailable.addValueChangeListener(field -> {
+                Object rawValue = ((NullableOptionGroup)field.getProperty()).getNullableValue();
+                YesNoUnknown value = (YesNoUnknown) rawValue;
+
+                boolean provideTrue = value == YesNoUnknown.YES;
+                headingProvide.setVisible(provideTrue);
+            });
 
             setVisible(true,
                     SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED);
@@ -212,13 +221,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
             packagingTypeOther.setVisible(isOther);
         });
 
-        foodAvailable.addValueChangeListener(field -> {
-            Object rawValue = ((NullableOptionGroup)field.getProperty()).getNullableValue();
-            YesNoUnknown value = (YesNoUnknown) rawValue;
 
-            boolean provideTrue = value == YesNoUnknown.YES;
-            headingProvide.setVisible(provideTrue);
-        });
 
     }
 
