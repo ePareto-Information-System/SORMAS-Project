@@ -170,6 +170,9 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 		case CONTACTS:
 			fragment = CaseReadContactListFragment.newInstance(activityRootData);
 			break;
+		case SIXTY_DAY_FOLLOW_UP:
+			fragment = CaseReadSixtyDayFragment.newInstance(activityRootData);
+			break;
 		case SAMPLES:
 			fragment = CaseReadSampleListFragment.newInstance(activityRootData);
 			break;
@@ -202,9 +205,6 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 			break;
 		case AFP_IMMUNIZATION:
 			fragment = CaseReadAfpImmunizationFragment.newInstance(activityRootData);
-			break;
-		case SIXTY_DAY_FOLLOW_UP:
-			fragment = CaseReadSixtyDayFragment.newInstance(activityRootData);
 			break;
 		case FOOD_HISTORY:
 			fragment = CaseReadFoodHistoryFragment.newInstance(activityRootData);
