@@ -20,8 +20,10 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -372,6 +374,12 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		});
 
 		contentBinding.symptomsSkinRashNew.setCaption("Skin Rash");
+
+		List<InjectionSite> symptomsSiteOfParalysisAllowed = Arrays.asList(InjectionSite.LEFT_ARM,InjectionSite.RIGHT_ARM,InjectionSite.LEFT_LEG,InjectionSite.RIGHT_LEG);
+		List<Item> filteredInjectionSitesAllowed = injectionSiteList.stream()
+				.filter(item -> symptomsSiteOfParalysisAllowed.contains(item.getValue()))
+				.collect(Collectors.toList());
+		contentBinding.symptomsSiteOfParalysis.initializeCheckBoxGroup(filteredInjectionSitesAllowed);
 	}
 
 	private void initSymptomFields(FragmentSymptomsEditLayoutBinding contentBinding) {
