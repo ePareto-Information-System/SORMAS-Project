@@ -561,7 +561,12 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 
 	@Override
 	protected String getSubHeadingTitle() {
-		return getResources().getString(R.string.caption_person_information);
+		if(caseDisease == Disease.FOODBORNE_ILLNESS){
+			return getResources().getString(R.string.caption_patient_client);
+		}else {
+			return getResources().getString(R.string.caption_person_information);
+
+		}
 	}
 
 	@Override

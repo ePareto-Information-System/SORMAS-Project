@@ -159,7 +159,12 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	@Override
 	protected String getSubHeadingTitle() {
 		Resources r = getResources();
-		return r.getString(R.string.caption_case_hospitalization);
+		if(caze.getDisease() == Disease.FOODBORNE_ILLNESS){
+			return r.getString(R.string.caption_symptoms);
+		}else{
+			return r.getString(R.string.caption_case_hospitalization);
+
+		}
 	}
 
 	@Override

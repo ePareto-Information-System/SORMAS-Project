@@ -110,8 +110,8 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 
 		Disease disease = caze != null ? caze.getDisease() : null;
 		if (disease != null) {
-			menuItems = DiseaseMenuCaptionHandler.updateMenuCaptionsForDisease(menuItems, disease, getContext());
-			menuItems = DiseaseFieldHandler.handleMenuDataForDisease(menuItems, disease);
+			DiseaseFieldHandler.handleMenuDataForDisease(menuItems, disease);
+			DiseaseMenuCaptionHandler.updateMenuCaptionsForDisease(menuItems, disease, getContext());
 		}
 		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.TASK_MANAGEMENT)) {
 			menuItems.set(CaseSection.TASKS.ordinal(), null);
