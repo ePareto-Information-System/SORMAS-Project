@@ -148,32 +148,14 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 			YesNoUnknown value = (YesNoUnknown) field.getValue();
 			if (value == YesNoUnknown.YES) {
 				getContentBinding().sixtyDaySpecifySources.setVisibility(VISIBLE);
+				getContentBinding().sixtyDayHeadingProvide.setVisibility(VISIBLE);
+				getContentBinding().buttonScanFieldSixtyDayId.setVisibility(VISIBLE);
 			} else {
 				getContentBinding().sixtyDaySpecifySources.setVisibility(GONE);
+				getContentBinding().sixtyDayHeadingProvide.setVisibility(GONE);
+				getContentBinding().buttonScanFieldSixtyDayId.setVisibility(GONE);
 			}
 		});
-
-		/*if (getContentBinding().sixtyDaySpecifySources.getValue() != null) {
-			getContentBinding().sixtyDaySpecifySources.setVisibility(VISIBLE);
-		}
-
-		applySampleTestsVisibility(getContentBinding().sixtyDayParalysisWeaknessPresentSite.getSelectedValues());
-
-		getContentBinding().sixtyDayParalysisWeaknessPresentSite.setOnValueChangeListener(selectedValues -> {
-			applySampleTestsVisibility(getContentBinding().sixtyDayParalysisWeaknessPresentSite.getSelectedValues());
-		});
-	}
-
-	private void applySampleTestsVisibility(List<String> selectedItems) {
-		if (selectedItems == null) {
-			selectedItems = Collections.emptyList();
-		}
-
-		boolean other = selectedItems.contains(ParalysisSite.OTHER.toString());
-		getContentBinding().sixtyDayParalyzedPartOther.setVisibility(other ? View.VISIBLE : View.GONE);
-
-
-		}*/
 
 		contentBinding.buttonScanFieldSixtyDayId.setOnClickListener((View v) -> {
 			Intent intent = new Intent(getContext(), BarcodeActivity.class);

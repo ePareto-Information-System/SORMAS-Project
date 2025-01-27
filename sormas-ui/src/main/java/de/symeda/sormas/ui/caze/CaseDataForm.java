@@ -1791,30 +1791,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     break;
                 case MONKEYPOX:
                     handleMonkeyPox();
+                    break;
                 default:
                     break;
             }
 
-            if (disease == Disease.CORONAVIRUS) {
-                FieldHelper
-                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-            }
-            if (disease == Disease.CORONAVIRUS) {
-                FieldHelper
-                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-            }if (disease == Disease.CORONAVIRUS) {
-                FieldHelper
-                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-            }if (disease == Disease.CORONAVIRUS) {
-                FieldHelper
-                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-            }if (disease == Disease.CORONAVIRUS) {
-                FieldHelper
-                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-            }if (disease == Disease.CORONAVIRUS) {
-                FieldHelper
-                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-            }
             //CORONAVIRUS
             if (disease == Disease.CORONAVIRUS) {
                 FieldHelper
