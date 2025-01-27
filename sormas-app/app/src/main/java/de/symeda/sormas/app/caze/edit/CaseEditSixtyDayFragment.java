@@ -25,11 +25,14 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
+import android.view.View;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
+import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.NormalWasted;
 import de.symeda.sormas.api.utils.PackagingType;
@@ -152,6 +155,24 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 
 		/*if (getContentBinding().sixtyDaySpecifySources.getValue() != null) {
 			getContentBinding().sixtyDaySpecifySources.setVisibility(VISIBLE);
+		}
+
+		applySampleTestsVisibility(getContentBinding().sixtyDayParalysisWeaknessPresentSite.getSelectedValues());
+
+		getContentBinding().sixtyDayParalysisWeaknessPresentSite.setOnValueChangeListener(selectedValues -> {
+			applySampleTestsVisibility(getContentBinding().sixtyDayParalysisWeaknessPresentSite.getSelectedValues());
+		});
+	}
+
+	private void applySampleTestsVisibility(List<String> selectedItems) {
+		if (selectedItems == null) {
+			selectedItems = Collections.emptyList();
+		}
+
+		boolean other = selectedItems.contains(ParalysisSite.OTHER.toString());
+		getContentBinding().sixtyDayParalyzedPartOther.setVisibility(other ? View.VISIBLE : View.GONE);
+
+
 		}*/
 
 		contentBinding.buttonScanFieldSixtyDayId.setOnClickListener((View v) -> {

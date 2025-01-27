@@ -1506,6 +1506,8 @@
                     android:id="@+id/symptoms_injectionSite"
                     app:value="@={data.injectionSite}"
                     app:enumClass="@{injectionSiteClass}"
+                    app:dependencyParentField="@{symptomsInjectionSiteBeforeOnsetParalysis}"
+                    app:dependencyParentValue="@{YesNo.YES}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
