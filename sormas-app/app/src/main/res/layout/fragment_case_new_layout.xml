@@ -31,6 +31,7 @@
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.api.i18n.Captions" />
         <import type="de.symeda.sormas.api.disease.DiseaseVariant" />
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case" />
         <variable name="caseOriginClass" type="Class" />
@@ -469,6 +470,18 @@
                 android:layout_height="wrap_content"
                 android:text="@{I18nProperties.getCaption(Captions.coorLabel)}"
                 style="@style/SubHeadingStyle" />
+
+            <ImageView style="@style/FullHorizontalDividerStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlButton
+                android:id="@+id/pick_gps_coordinates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/buttonControlMarginBottom"
+                app:slim="true"
+                app:iconStart="@drawable/ic_gps_fixed_black_24dp"
+                app:buttonType="@{ControlButtonType.SECONDARY}"
+                android:text="@string/action_pick_gps" />
 
             <LinearLayout
                 android:id="@+id/gps_layout"

@@ -100,6 +100,9 @@ import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ValueChangeListener;
 import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
 import de.symeda.sormas.app.component.dialog.InfoDialog;
+import de.symeda.sormas.app.component.dialog.LocationDialog;
+import de.symeda.sormas.app.core.notification.NotificationHelper;
+import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.DialogClassificationRulesLayoutBinding;
 import de.symeda.sormas.app.databinding.FragmentCaseEditLayoutBinding;
 import de.symeda.sormas.app.databinding.FragmentPersonEditLayoutBinding;
@@ -109,6 +112,7 @@ import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
+import de.symeda.sormas.app.util.LocationService;
 
 public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBinding, Case, Case> {
 
@@ -553,6 +557,27 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 			contentBinding.caseDataVaccinationStatus.setEnumItems(vaccinationList);
 		}
+
+		// "Pick GPS Coordinates" confirmation dialog
+		contentBinding.pickGpsCoordinates.setOnClickListener(v -> {
+			final ConfirmationDialog confirmationDialog = new ConfirmationDialog(
+					getActivity(),
+					R.string.heading_confirmation_dialog,
+					R.string.confirmation_pick_gps,
+					R.string.yes,
+					R.string.no);
+
+			confirmationDialog.setPositiveCallback(() -> {
+				android.location.Location phoneLocation = LocationService.instance().getLocation(getActivity());
+				if (phoneLocation != null) {
+					contentBinding.caseDataReportLat.setDoubleValue(phoneLocation.getLatitude());
+					contentBinding.caseDataReportLon.setDoubleValue(phoneLocation.getLongitude());
+				} else {
+					NotificationHelper.showDialogNotification(CaseEditActivity.getActiveActivity(), NotificationType.WARNING, R.string.message_gps_problem);
+				}
+			});
+			confirmationDialog.show();
+		});
 
 		if (record.getDisease() != null) {
 			super.hideFieldsForDisease(record.getDisease(), contentBinding.mainContent, FormType.CASE_EDIT);

@@ -56,6 +56,9 @@ import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.backend.user.UserRole;
 import de.symeda.sormas.app.component.Item;
+import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
+import de.symeda.sormas.app.core.notification.NotificationHelper;
+import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.FragmentCaseNewLayoutBinding;
 import de.symeda.sormas.app.person.edit.PersonValidator;
 import de.symeda.sormas.app.util.Bundler;
@@ -64,6 +67,7 @@ import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 import de.symeda.sormas.app.util.DiseaseFieldHandler;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
+import de.symeda.sormas.app.util.LocationService;
 
 public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBinding, Case, Case> {
 
@@ -333,6 +337,27 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 					contentBinding.personBirthdateDD,
 					(Integer) field.getValue(),
 					(Integer) contentBinding.personBirthdateMM.getValue());
+		});
+
+		// "Pick GPS Coordinates" confirmation dialog
+		contentBinding.pickGpsCoordinates.setOnClickListener(v -> {
+			final ConfirmationDialog confirmationDialog = new ConfirmationDialog(
+					getActivity(),
+					R.string.heading_confirmation_dialog,
+					R.string.confirmation_pick_gps,
+					R.string.yes,
+					R.string.no);
+
+			confirmationDialog.setPositiveCallback(() -> {
+				android.location.Location phoneLocation = LocationService.instance().getLocation(getActivity());
+				if (phoneLocation != null) {
+					contentBinding.caseDataReportLat.setDoubleValue(phoneLocation.getLatitude());
+					contentBinding.caseDataReportLon.setDoubleValue(phoneLocation.getLongitude());
+				} else {
+					NotificationHelper.showDialogNotification(CaseNewActivity.getActiveActivity(), NotificationType.WARNING, R.string.message_gps_problem);
+				}
+			});
+			confirmationDialog.show();
 		});
 	}
 
