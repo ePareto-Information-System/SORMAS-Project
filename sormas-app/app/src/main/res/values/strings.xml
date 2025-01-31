@@ -399,8 +399,8 @@
     <string name="heading_risk_mapping_edit">Edit Risk Mapping</string>
     <string name="heading_afp_Immunization">AFP Immunization</string>
     <string name="heading_afp_Immunization_edit">Edit AFP Immunization</string>
-   <!-- <string name="heading_foodsample">Food Sample Testing</string>
-    <string name="heading_foodsample_edit">Edit Food Sample Testing</string>-->
+    <!-- <string name="heading_foodsample">Food Sample Testing</string>
+     <string name="heading_foodsample_edit">Edit Food Sample Testing</string>-->
     <!--<string name="heading_sixtyday">Sixty Day</string>
     <string name="heading_sixtyday_edit">Edit Sixty Day</string>-->
     <string name="heading_event_read">Read Event</string>
