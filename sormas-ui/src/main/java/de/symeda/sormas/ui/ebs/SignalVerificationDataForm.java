@@ -20,6 +20,7 @@ import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.EbsTriagingDecision;
 import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.ebs.SignalVerificationDto;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
@@ -31,10 +32,11 @@ import de.symeda.sormas.ui.utils.EbsAnimalDeathValidator;
 import de.symeda.sormas.ui.utils.EbsDateValidator;
 import de.symeda.sormas.ui.utils.EbsPersonDeathValidator;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.FutureDateValidator;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.NumberNumericValueValidator;
 
-;import javax.enterprise.inject.New;
+;
 
 public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificationDto> {
 
@@ -46,8 +48,8 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 	public static final String PERSON = "Person";
 	public static final String ANIMAL = "Animal";
 	public static final String NUMBER_OF_DEATH_MORE_CASES = "The number of death cannot be more than cases";
-	public final String THE_DATE_OF_OCCURRENCE_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE =
-		"The Date cannot be earlier than the Date of Report or Date of Verification Completed Date.";
+	public final String THE_DATE_OF_OCCURRENCE_CANNOT_BE_OLDER_THAN_THE_DATE_OF_OCCURRENCE =
+		"The Date cannot be older than the Date of Report";
 
 	private final EbsDto ebs;
 	private final Class<? extends EntityDto> parentClass;
@@ -60,7 +62,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 	DateField DateOfOccurrence;
 	EbsAnimalDeathValidator animalDeathValidator = new EbsAnimalDeathValidator(NUMBER_OF_DEATH_MORE_CASES, false);
 	EbsPersonDeathValidator personDeathValidator = new EbsPersonDeathValidator(NUMBER_OF_DEATH_MORE_CASES, false);
-	EbsDateValidator dateValidator = new EbsDateValidator(THE_DATE_OF_OCCURRENCE_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, false);
+	EbsDateValidator dateValidator = new EbsDateValidator(THE_DATE_OF_OCCURRENCE_CANNOT_BE_OLDER_THAN_THE_DATE_OF_OCCURRENCE, false);
 
 	private static final String HTML_LAYOUT = loc(SIGNAL_VERIFICATION_LOC)
 		+ fluidRowLocs(SignalVerificationDto.VERIFICATION_SENT)
@@ -346,30 +348,22 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
 	public void validateSignalVerificationDateOfOccurrence(EbsDto selectedEbs) {
 		Date dateOfReport = selectedEbs.getReportDateTime();
-		Date dateOfDecision = selectedEbs.getTriaging().getDecisionDate();
 		DateField DateOfOccurrenceField = DateOfOccurrence;
-		Date DateverificationCompleteDate = DateOfOccurrenceField.getValue();
 		if (dateOfReport == null) {
 			dateOfReport = new Date(0);
 		}
 
 		Date dateOfReportDate = clearTime(dateOfReport);
-		Date dateOfDecisionDate = clearTime(dateOfDecision);
-		if (DateverificationCompleteDate != null) {
-			DateverificationCompleteDate = clearTime(DateverificationCompleteDate);
-			if (DateverificationCompleteDate.before(dateOfReportDate) || DateverificationCompleteDate.before(dateOfDecisionDate)) {
-				if (!dateOfReportDate.toString().equals(DateverificationCompleteDate.toString())
-					|| !dateOfDecision.toString().equals(DateverificationCompleteDate.toString())) {
-					DateOfOccurrenceField.addValidator(dateValidator);
-					addOccurrenceDateValidator();
-				} else {
-					DateOfOccurrence.removeAllValidators();
-				}
+		if (DateOfOccurrenceField.getValue() != null) {
+			if (DateOfOccurrenceField.getValue().after(dateOfReportDate)) {
+				DateOfOccurrenceField.addValidator(dateValidator);
+				addOccurrenceDateValidator();
 			} else {
 				DateOfOccurrence.removeAllValidators();
 			}
 		}
-	}
+        DateOfOccurrence.addValidator(new FutureDateValidator(DateOfOccurrence, 0, I18nProperties.getCaption(Captions.SignalVerification_dateOfOccurrence)));
+    }
 
 	private Date clearTime(Date date) {
 		assert date != null;
