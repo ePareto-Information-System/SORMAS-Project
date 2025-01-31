@@ -1907,6 +1907,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                         Arrays.asList(motherNumberOfDoses),
                         Arrays.asList(YesNoUnknown.YES),
                         true);
+                notifiedByList.setVisible(false);
             }
 
             if (disease == Disease.GUINEA_WORM) {
