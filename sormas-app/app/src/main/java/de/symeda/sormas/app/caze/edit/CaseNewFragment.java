@@ -309,6 +309,9 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 				contentBinding.caseDataRegion.setVisibility(caseDataDifferentPlaceOfStayJurisdiction ? VISIBLE : GONE);
 				contentBinding.caseDataDistrict.setVisibility(caseDataDifferentPlaceOfStayJurisdiction ? VISIBLE : GONE);
 				contentBinding.caseDataCommunity.setVisibility(caseDataDifferentPlaceOfStayJurisdiction ? VISIBLE : GONE);
+				contentBinding.caseDataPointOfEntry.setVisibility(currentCaseOrigin == CaseOrigin.POINT_OF_ENTRY ? VISIBLE : GONE);
+				InfrastructureDaoHelper
+						.initializePointOfEntryDetailsFieldVisibility(contentBinding.caseDataPointOfEntry, contentBinding.caseDataPointOfEntryDetails);
 			}
 		});
 
