@@ -1656,6 +1656,7 @@ public interface Captions {
 	String EbsAlert_detailsGiven = "EbsAlert.detailsGiven";
 	String EbsAlert_alertIssued = "EbsAlert.alertIssued";
 	String EbsAlert_detailsAlertUsed = "EbsAlert.detailsAlertUsed";
+	String EbsAlert_reasonNoAlert = "EbsAlert.reasonNoAlert";
 	String EbsExport_sourceInformation = "EbsExport.sourceInformation";
 	String EbsExport_categoryOfInformant = "EbsExport.categoryOfInformant";
 	String EbsExport_scanningType = "EbsExport.scanningType";
