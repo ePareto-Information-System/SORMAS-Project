@@ -1432,14 +1432,12 @@
                         android:id="@+id/person_approximateAge"
                         app:value="@={data.person.approximateAge}"
                         app:inputType="number"
-                        app:required="true"
                         app:maxLength="3"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlSpinnerField
                         android:id="@+id/person_approximateAgeType"
                         app:value="@={data.person.approximateAgeType}"
-                        app:required="true"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
