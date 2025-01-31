@@ -99,12 +99,10 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebsAlert_detailsAlertUsed"
                     style="@style/ControlFirstOfTwoColumnsStyle"
-                    app:dependencyParentField="@{ebsAlertAlertIssued}"
-                    app:dependencyParentValue="@{YesNo.YES}"
-                    app:dependencyParentValue2="@{YesNo.NO}"
                     app:gravity="top|start"
                     app:inputType="textMultiLine"
                     app:maxLines="5"
+                    app:required="true"
                     app:singleLine="false"
                     app:textAlignment="gravity"
                     app:textArea="true"
