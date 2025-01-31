@@ -82,14 +82,17 @@ public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditL
 		contentBinding.ebsAlertAlertDate.initializeDateField(getFragmentManager());
 		contentBinding.ebsAlertResponseDate.initializeDateField(getFragmentManager());
 		contentBinding.ebsAlertActionInitiated.addValueChangedListener(e -> {
-			updateAlertUI(contentBinding, e.getValue() == YesNo.YES);
+			updateAlertUI(contentBinding, e.getValue() == YesNo.YES, false);
+		});
+		contentBinding.ebsAlertAlertIssued.addValueChangedListener(e -> {
+			updateAlertUI(contentBinding, e.getValue() == YesNo.YES, false);
 		});
 
-		updateAlertUI(contentBinding, record.getActionInitiated() == YesNo.YES);
+		updateAlertUI(contentBinding, record.getActionInitiated() == YesNo.YES, true);
 
 	}
 
-	private void updateAlertUI(FragmentEbsAlertEditLayoutBinding contentBinding, boolean isYes) {
+	private void updateAlertUI(FragmentEbsAlertEditLayoutBinding contentBinding, boolean isYes, boolean fromInit) {
 		int visibility = isYes ? View.VISIBLE : View.GONE;
 		contentBinding.ebsAlertResponseStatus.setVisibility(visibility);
 		contentBinding.ebsAlertDetailsResponseActivities.setVisibility(visibility);
@@ -97,6 +100,13 @@ public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditL
 		if (!isYes) {
 			contentBinding.ebsAlertDetailsResponseActivities.setValue(null);
 			contentBinding.ebsAlertResponseStatus.setValue(null);
+			contentBinding.ebsAlertDetailsAlertUsed.setCaption("GIVE REASON FOR NO ALERT");
+
+		} else {
+			contentBinding.ebsAlertDetailsAlertUsed.setCaption("PLEASE GIVE DETAILS OF THE ALERT ISSUED");
+		}
+		if (!fromInit) {
+			contentBinding.ebsAlertDetailsAlertUsed.setValue(null);
 		}
 	}
 
