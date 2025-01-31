@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
   ~ Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
   ~
@@ -20,18 +19,30 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="contentDescription"
+    android:id="@+id/base_layout"
     android:descendantFocusability="beforeDescendants"
-    android:id="@+id/base_layout">
+    tools:ignore="contentDescription">
 
 
     <data>
+
         <import type="android.view.View" />
-        <import type="de.symeda.sormas.api.utils.YesNo"/>
-        <import type="de.symeda.sormas.api.ebs.SignalOutcome"/>
-        <variable name="data" type="de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification"/>
-        <variable name="yesNoClass" type="Class" />
-        <variable name="signalOutcomeClass" type="Class" />
+
+        <import type="de.symeda.sormas.api.utils.YesNo" />
+
+        <import type="de.symeda.sormas.api.ebs.SignalOutcome" />
+
+        <variable
+            name="data"
+            type="de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification" />
+
+        <variable
+            name="yesNoClass"
+            type="Class" />
+
+        <variable
+            name="signalOutcomeClass"
+            type="Class" />
 
     </data>
 
@@ -57,47 +68,53 @@
                     app:shortUuidValue="@{data.uuid}" />
             </LinearLayout>
 
-            <ImageView style="@style/FullHorizontalDividerStyle"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <de.symeda.sormas.app.component.controls.ControlSwitchField
-                android:id="@+id/signalVerification_verificationSent"
-                style="@style/ControlFirstOfTwoColumnsStyle"
-                app:enumClass="@{yesNoClass}"
-                app:value="@={data.verificationSent}"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <de.symeda.sormas.app.component.controls.ControlSwitchField
-                android:id="@+id/signalVerification_verified"
-                style="@style/ControlFirstOfTwoColumnsStyle"
-                app:dependencyParentField="@{signalVerificationVerificationSent}"
-                app:dependencyParentValue="@{YesNo.YES}"
-                app:enumClass="@{signalOutcomeClass}"
-                app:value="@={data.verified}"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-        </LinearLayout>
+            <ImageView style="@style/FullHorizontalDividerStyle" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/signalVerification_verificationSent"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:enumClass="@{yesNoClass}"
+                    app:value="@={  data.verificationSent}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/signalVerification_verified"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:dependencyParentField="@{signalVerificationVerificationSent}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:enumClass="@{signalOutcomeClass}"
+                    app:value="@={data.verified}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/signalVerification_verificationCompleteDate"
                     style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:allowedDaysInFuture="0"
                     app:dependencyParentField="@{signalVerificationVerified}"
                     app:dependencyParentValue="@{SignalOutcome.EVENT}"
                     app:required="true"
-                    app:allowedDaysInFuture="0"
                     app:value="@={data.verificationCompleteDate}" />
             </LinearLayout>
 
@@ -118,13 +135,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/signalVerification_dateOfOccurrence"
                     style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:allowedDaysInFuture="0"
                     app:dependencyParentField="@{signalVerificationVerified}"
                     app:dependencyParentValue="@{SignalOutcome.EVENT}"
                     app:required="true"
-                    app:allowedDaysInFuture="0"
                     app:value="@={data.dateOfOccurrence}" />
             </LinearLayout>
 
@@ -133,13 +151,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/signalVerification_numberOfPersonAnimal"
                     style="@style/ControlFirstOfTwoColumnsStyle"
-                    app:inputType="number"
                     app:dependencyParentField="@{signalVerificationVerified}"
                     app:dependencyParentValue="@{SignalOutcome.EVENT}"
+                    app:inputType="number"
                     app:value="@={data.numberOfPersonAnimal}" />
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/signalVerification_numberOfDeath"
                     style="@style/ControlSecondOfTwoColumnsStyle"
@@ -148,10 +168,12 @@
                     app:inputType="number"
                     app:value="@={data.numberOfDeath}" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/signalVerification_numberOfPersonCases"
                     style="@style/ControlFirstOfTwoColumnsStyle"
@@ -159,6 +181,7 @@
                     app:dependencyParentValue="@{SignalOutcome.EVENT}"
                     app:inputType="number"
                     app:value="@={data.numberOfPersonCases}" />
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/signalVerification_numberOfDeathPerson"
                     style="@style/ControlSecondOfTwoColumnsStyle"
@@ -167,42 +190,46 @@
                     app:inputType="number"
                     app:value="@={data.numberOfDeathPerson}" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/signalVerification_description"
-                    app:inputType="textMultiLine"
-                    app:textAlignment="gravity"
-                    app:gravity="top|start"
-                    app:textArea="true"
-                    app:required="true"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{signalVerificationVerified}"
                     app:dependencyParentValue="@{SignalOutcome.EVENT}"
-                    app:singleLine="false"
+                    app:gravity="top|start"
+                    app:inputType="textMultiLine"
                     app:maxLines="5"
-                    app:value="@={data.description}"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
+                    app:required="true"
+                    app:singleLine="false"
+                    app:textAlignment="gravity"
+                    app:textArea="true"
+                    app:value="@={data.description}" />
             </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/signalVerification_whyNotVerify"
-                app:inputType="textMultiLine"
-                app:textAlignment="gravity"
-                app:gravity="top|start"
-                app:dependencyParentField="@{signalVerificationVerified}"
-                app:dependencyParentValue="@{SignalOutcome.NON_EVENT}"
-                app:textArea="true"
-                app:singleLine="false"
-                app:required="true"
-                app:maxLines="5"
-                app:value="@={data.whyNotVerify}"
-                style="@style/ControlFirstOfTwoColumnsStyle" />
-        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/signalVerification_whyNotVerify"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:dependencyParentField="@{signalVerificationVerified}"
+                    app:dependencyParentValue="@{SignalOutcome.NON_EVENT}"
+                    app:gravity="top|start"
+                    app:inputType="textMultiLine"
+                    app:maxLines="5"
+                    app:required="true"
+                    app:singleLine="false"
+                    app:textAlignment="gravity"
+                    app:textArea="true"
+                    app:value="@={data.whyNotVerify}" />
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>
