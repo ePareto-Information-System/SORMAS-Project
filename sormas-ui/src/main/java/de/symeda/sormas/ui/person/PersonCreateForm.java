@@ -461,7 +461,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		getField(PersonDto.FIRST_NAME).setEnabled(!readOnly);
 		getField(PersonDto.LAST_NAME).setEnabled(!readOnly);
 		getField(PersonDto.OTHER_NAME).setEnabled(!readOnly);
-		searchPersonButton.setEnabled(!readOnly);
+		if (searchPersonButton != null) {
+			searchPersonButton.setEnabled(!readOnly);
+		}
 		if (getField(PersonDto.SEX).getValue() != null) {
 			getField(PersonDto.SEX).setEnabled(!readOnly);
 		}
