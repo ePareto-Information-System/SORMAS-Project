@@ -13,6 +13,8 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsAlertDto;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.ResponseStatus;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -121,6 +123,10 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
 		alertIssued.addValueChangeListener(event -> {
 			if (alertIssued.getValue() != null && alertIssued.getValue().equals(YesNo.NO)) {
 				details_alert_issued.setRequired(true);
+				details_alert_issued.setCaption(I18nProperties.getCaption(Captions.EbsAlert_reasonNoAlert));
+			}else {
+				details_alert_issued.setCaption(I18nProperties.getCaption(Captions.EbsAlert_detailsAlertUsed));
+				details_alert_issued.setValue("");
 			}
 		});
 
