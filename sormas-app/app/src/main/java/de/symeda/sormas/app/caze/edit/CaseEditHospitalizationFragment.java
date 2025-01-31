@@ -68,6 +68,9 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	private List<Item> outcomeList;
 	private List<Item> inpatientOutpatientList;
 	private Disease disease;
+	private List<Item> initialPlaceOfRegions;
+	private List<Item> initialPlaceOfDistricts;
+	private List<Item> initialPlaceOfCommunities;
 
 	// Static methods
 
@@ -192,9 +195,9 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 		List<Item> hospitalizationReasons = DataUtils.getEnumItems(HospitalizationReasonType.class, true);
 		List<Item> durationList = DataUtils.getEnumItems(DurationHours.class, true);
-		List<Item> initialPlaceOfRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
-		List<Item> initialPlaceOfDistricts = InfrastructureDaoHelper.loadDistricts(record.getSoughtRegion());
-		List<Item> initialPlaceOfCommunities = InfrastructureDaoHelper.loadCommunities(record.getSoughtDistrict());
+		initialPlaceOfRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
+		initialPlaceOfDistricts = InfrastructureDaoHelper.loadDistricts(record.getSoughtRegion());
+		initialPlaceOfCommunities = InfrastructureDaoHelper.loadCommunities(record.getSoughtDistrict());
 		List<Item> initialPlaceOfFacilities = InfrastructureDaoHelper.loadFacilities(record.getSoughtDistrict(), record.getSoughtCommunity(), null);
 
 		contentBinding.setData(record);
@@ -273,46 +276,8 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 				null,
 				false);
 
-		if (disease == Disease.MONKEYPOX) {
-			InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
-				contentBinding.locationTypeRegion,
-				initialPlaceOfRegions,
-				record.getLocationType().getRegion(),
-				contentBinding.locationTypeDistrict,
-				initialPlaceOfDistricts,
-				record.getLocationType().getDistrict(),
-				contentBinding.locationTypeCommunity,
-				initialPlaceOfCommunities,
-				record.getLocationType().getCommunity());
 
-			if (contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.getValue() == null) {
-				contentBinding.locationTypeRegion.setVisibility(View.GONE);
-				contentBinding.locationTypeDistrict.setVisibility(View.GONE);
-				contentBinding.locationTypeCommunity.setVisibility(View.GONE);
-				contentBinding.caseHospitalizationNameOfFacility.setVisibility(View.GONE);
-				contentBinding.caseHospitalizationAdmissionDate.setVisibility(View.GONE);
-				contentBinding.caseHospitalizationHospitalRecordNumber.setVisibility(View.GONE);
-			} else {
-				int visibility = (contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
-				contentBinding.locationTypeRegion.setVisibility(visibility);
-				contentBinding.locationTypeDistrict.setVisibility(visibility);
-				contentBinding.locationTypeCommunity.setVisibility(visibility);
-				contentBinding.caseHospitalizationNameOfFacility.setVisibility(visibility);
-				contentBinding.caseHospitalizationAdmissionDate.setVisibility(visibility);
-				contentBinding.caseHospitalizationHospitalRecordNumber.setVisibility(visibility);
-			}
 
-			contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.addValueChangedListener(field -> {
-				int visibility = (field.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
-				contentBinding.locationTypeRegion.setVisibility(visibility);
-				contentBinding.locationTypeDistrict.setVisibility(visibility);
-				contentBinding.locationTypeCommunity.setVisibility(visibility);
-				contentBinding.caseHospitalizationNameOfFacility.setVisibility(visibility);
-				contentBinding.caseHospitalizationAdmissionDate.setVisibility(visibility);
-				contentBinding.caseHospitalizationHospitalRecordNumber.setVisibility(visibility);
-			});
-
-		}
 
 		if (disease != null) {
 			hideFieldsForDisease(disease, contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
@@ -347,6 +312,59 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseDataHealthFacility.setCaption("Hospital Name");
 
 		verifyPrevHospitalizationStatus();
+
+		if (disease == Disease.MONKEYPOX) {
+			InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
+					getContentBinding().locationTypeRegion,
+					initialPlaceOfRegions,
+					record.getLocationType().getRegion(),
+					getContentBinding().locationTypeDistrict,
+					initialPlaceOfDistricts,
+					record.getLocationType().getDistrict(),
+					getContentBinding().locationTypeCommunity,
+					initialPlaceOfCommunities,
+					record.getLocationType().getCommunity()
+			);
+
+			if (contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.getValue() == null) {
+				getContentBinding().locationTypeRegion.setVisibility(View.GONE);
+				getContentBinding().locationTypeDistrict.setVisibility(View.GONE);
+				getContentBinding().locationTypeCommunity.setVisibility(View.GONE);
+				getContentBinding().caseHospitalizationNameOfFacility.setVisibility(View.GONE);
+				getContentBinding().caseHospitalizationAdmissionDate.setVisibility(View.GONE);
+				getContentBinding().caseHospitalizationHospitalRecordNumber.setVisibility(View.GONE);
+
+				Object facilityNameValue = contentBinding.caseHospitalizationNameOfFacility.getValue();
+				if (facilityNameValue instanceof String && !((String) facilityNameValue).isEmpty()) {
+					contentBinding.caseHospitalizationNameOfFacility.setVisibility(View.VISIBLE);
+				}
+			} else {
+				int visibility = (contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+				getContentBinding().locationTypeRegion.setVisibility(visibility);
+				getContentBinding().locationTypeDistrict.setVisibility(visibility);
+				getContentBinding().locationTypeCommunity.setVisibility(visibility);
+				getContentBinding().caseHospitalizationNameOfFacility.setVisibility(visibility);
+				getContentBinding().caseHospitalizationAdmissionDate.setVisibility(visibility);
+				getContentBinding().caseHospitalizationHospitalRecordNumber.setVisibility(visibility);
+			}
+
+			contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.addValueChangedListener(field -> {
+				int visibility = (field.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+				getContentBinding().locationTypeRegion.setVisibility(visibility);
+				getContentBinding().locationTypeDistrict.setVisibility(visibility);
+				getContentBinding().locationTypeCommunity.setVisibility(visibility);
+				getContentBinding().caseHospitalizationNameOfFacility.setVisibility(visibility);
+				getContentBinding().caseHospitalizationAdmissionDate.setVisibility(visibility);
+				getContentBinding().caseHospitalizationHospitalRecordNumber.setVisibility(visibility);
+
+				Object facilityNameValue = contentBinding.caseHospitalizationNameOfFacility.getValue();
+				if (field.getValue() != YesNo.YES &&
+						facilityNameValue instanceof String &&
+						!((String) facilityNameValue).isEmpty()) {
+					getContentBinding().caseHospitalizationNameOfFacility.setVisibility(View.VISIBLE);
+				}
+			});
+		}
 
 		switch (disease) {
 		case AHF:

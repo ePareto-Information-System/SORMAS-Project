@@ -1895,6 +1895,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		externalJournalService.handleExternalJournalPersonUpdateAsync(dto.getPerson());
 
+		// Adjust the checkChangeDate flag based on disease logic
+		checkChangeDate = shouldCheckChangeDate(dto, checkChangeDate);
+
 		Case caze = fillOrBuildEntity(dto, existingCaze, checkChangeDate);
 
 		// Set version number on a new case
@@ -1906,6 +1909,21 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		return toPseudonymizedDto(caze, pseudonymizer);
 	}
+
+	/**
+	 * Determines whether to check the change date based on the disease type.
+	 *
+	 * @param dto              The CaseDataDto containing the disease information.
+	 * @param checkChangeDate  The current value of the checkChangeDate flag.
+	 * @return Updated value of the checkChangeDate flag.
+	 */
+	private boolean shouldCheckChangeDate(CaseDataDto dto, boolean checkChangeDate) {
+		if (dto.getDisease() == Disease.MONKEYPOX) {
+			return false;
+		}
+		return checkChangeDate;
+	}
+
 
 	@RightsAllowed(UserRight._CASE_EDIT)
 	public void syncSharesAsync(ShareTreeCriteria criteria) {

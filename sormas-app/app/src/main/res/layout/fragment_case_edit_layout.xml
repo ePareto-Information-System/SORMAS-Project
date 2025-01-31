@@ -603,6 +603,7 @@
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
+                    android:id="@+id/placeOfStay_fields_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -1143,6 +1144,18 @@
 
                 </LinearLayout>
 
+                <ImageView style="@style/FullHorizontalDividerStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlButton
+                    android:id="@+id/pick_gps_coordinates"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/buttonControlMarginBottom"
+                    app:slim="true"
+                    app:iconStart="@drawable/ic_gps_fixed_black_24dp"
+                    app:buttonType="@{ControlButtonType.SECONDARY}"
+                    android:text="@string/action_pick_gps" />
+
                 <LinearLayout
                     android:id="@+id/caseData_reportLonLatLayout"
                     android:layout_width="match_parent"
@@ -1152,11 +1165,13 @@
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportLon"
                         app:value="@={data.reportLon}"
+                        app:inputType="numberDecimal"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportLat"
                         app:value="@={data.reportLat}"
+                        app:inputType="numberDecimal"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
                 </LinearLayout>
 
