@@ -109,6 +109,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private  List<Item> finalExamResultList;
 	private List<Item> injectionSiteList;
 	private List<Item> finalLabResultsList;
+	private List<Item> pathogenTestList = new ArrayList<>();
 
 	public static SampleEditFragment newInstance(Sample activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -326,7 +327,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		finalLabResultsList = DataUtils.getEnumItems(PosNeg.class, true);
 		contentBinding.sampleFinalLabResults.initializeSpinner(finalLabResultsList);
 		contentBinding.samplePathogenTestResult.setEnabled(false);
-
+		pathogenTestList = DataUtils.getEnumItems(PathogenTestType.class, true);
+		contentBinding.sampleRequestedPathogenTests.initializeCheckBoxGroup(pathogenTestList);
 
 	}
 
@@ -614,9 +616,29 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		);
 		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(sampleMaterialList));
 
-		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(PathogenTestType.getCholeraPathogenTests()));
-		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty()); // Remove empty names
-		getContentBinding().sampleRequestedPathogenTests.initializeCheckBoxGroup(compatibleItems);
+//		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(PathogenTestType.getCholeraPathogenTests()));
+//		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty()); // Remove empty names
+//		getContentBinding().sampleRequestedPathogenTests.initializeCheckBoxGroup(compatibleItems);
+//		List<PathogenTestType> pathogenTestTypesAllowed = Arrays.asList(PathogenTestType.ANTIBODY_DETECTION);
+//		List<Item> filteredPathogenTestTypesAllowed = injectionSiteList.stream()
+//				.filter(item -> pathogenTestTypesAllowed.contains(item.getValue()))
+//				.collect(Collectors.toList());
+
+
+		List<PathogenTestType> requestedPathogenTestsAllowed = PathogenTestType.getCholeraPathogenTests();
+		List<Item> filteredRequestedPathogenTestsAllowed = pathogenTestList.stream()
+				.filter(item -> requestedPathogenTestsAllowed.contains(item.getValue()))
+				.collect(Collectors.toList());
+		getContentBinding().sampleRequestedPathogenTests.initializeCheckBoxGroup(filteredRequestedPathogenTestsAllowed);
+
+		if (record.getRequestedPathogenTests() != null) {
+			getContentBinding().sampleRequestedPathogenTests.setValue(
+					record.getRequestedPathogenTests().stream()
+							.filter(requestedPathogenTestsAllowed::contains)
+							.collect(Collectors.toList())
+			);
+		}
+
 	}
 
 	private void handleMpox(){

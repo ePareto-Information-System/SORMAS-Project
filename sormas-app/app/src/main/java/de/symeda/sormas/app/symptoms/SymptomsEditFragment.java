@@ -380,6 +380,14 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 				.filter(item -> symptomsSiteOfParalysisAllowed.contains(item.getValue()))
 				.collect(Collectors.toList());
 		contentBinding.symptomsSiteOfParalysis.initializeCheckBoxGroup(filteredInjectionSitesAllowed);
+
+		if (record.getSiteOfParalysis() != null) {
+			contentBinding.symptomsSiteOfParalysis.setValue(
+					record.getSiteOfParalysis().stream()
+							.filter(symptomsSiteOfParalysisAllowed::contains)
+							.collect(Collectors.toList())
+			);
+		}
 	}
 
 	private void initSymptomFields(FragmentSymptomsEditLayoutBinding contentBinding) {
