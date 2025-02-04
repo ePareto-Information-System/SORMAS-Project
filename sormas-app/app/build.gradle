@@ -14,6 +14,7 @@ android {
         jniLibs {
             excludes += ['META-INF/spring.*']
         }
+
         resources {
             excludes += ['META-INF/LICENSE.md',
                          'META-INF/NOTICE.md',
