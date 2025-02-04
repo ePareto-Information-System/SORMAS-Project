@@ -181,8 +181,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private final String GUINEA_WORM_LAYOUT = loc(PERSON_INFORMATION_HEADING_LOC) +
 			fluidRowLocs(PersonDto.UUID, "") +
 			fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.FATHERS_NAME) +
-			fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.SEX, PersonDto.OCCUPATION_DETAILS, PersonDto.ETHNICITY)
-			+ fluidRowLocs(4, PersonDto.PASSPORT_NUMBER)
+			fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.SEX)
+			+ fluidRowLocs(PersonDto.PASSPORT_NUMBER, PersonDto.OCCUPATION_DETAILS, PersonDto.ETHNICITY)
 			+ loc(ADDRESS_HEADER)
 			+ fluidRowLocs(PersonDto.ADDRESS)
 			+ fluidRowLocs(PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS) +
