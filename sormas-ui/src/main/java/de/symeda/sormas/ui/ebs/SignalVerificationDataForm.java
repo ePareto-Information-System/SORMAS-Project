@@ -28,6 +28,7 @@ import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
+import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.EbsAnimalDeathValidator;
 import de.symeda.sormas.ui.utils.EbsDateValidator;
 import de.symeda.sormas.ui.utils.EbsPersonDeathValidator;
@@ -50,6 +51,8 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 	public static final String NUMBER_OF_DEATH_MORE_CASES = "The number of death cannot be more than cases";
 	public final String THE_DATE_OF_OCCURRENCE_CANNOT_BE_OLDER_THAN_THE_DATE_OF_OCCURRENCE =
 		"The Date cannot be older than the Date of Report";
+	public final String THE_DATE_OF_OCCURRENCE_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE =
+		"The Date cannot be earlier than the Date of Report or Triage Decision Date";
 
 	private final EbsDto ebs;
 	private final Class<? extends EntityDto> parentClass;
@@ -59,10 +62,11 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 	TextField numberOfDeathPerson;
 	TextArea description;
 	DateField verificationCompleteDate;
-	DateField DateOfOccurrence;
+	DateTimeField DateOfOccurrence;
 	EbsAnimalDeathValidator animalDeathValidator = new EbsAnimalDeathValidator(NUMBER_OF_DEATH_MORE_CASES, false);
 	EbsPersonDeathValidator personDeathValidator = new EbsPersonDeathValidator(NUMBER_OF_DEATH_MORE_CASES, false);
 	EbsDateValidator dateValidator = new EbsDateValidator(THE_DATE_OF_OCCURRENCE_CANNOT_BE_OLDER_THAN_THE_DATE_OF_OCCURRENCE, false);
+	EbsDateValidator completeDateValidator = new EbsDateValidator(THE_DATE_OF_OCCURRENCE_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, false);
 
 	private static final String HTML_LAYOUT = loc(SIGNAL_VERIFICATION_LOC)
 		+ fluidRowLocs(SignalVerificationDto.VERIFICATION_SENT)
@@ -121,7 +125,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 		NullableOptionGroup sentVerification = addField(SignalVerificationDto.VERIFICATION_SENT, NullableOptionGroup.class);
 		NullableOptionGroup verified = addField(SignalVerificationDto.VERIFIED, NullableOptionGroup.class);
 		verificationCompleteDate = addField(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, DateField.class);
-		DateOfOccurrence = addField(SignalVerificationDto.DATE_OF_OCCURRENCE, DateField.class);
+		DateOfOccurrence = addField(SignalVerificationDto.DATE_OF_OCCURRENCE, DateTimeField.class);
 		numberOfPersonAnimal = addField(SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, TextField.class);
 		numberOfDeath = addField(SignalVerificationDto.NUMBER_OF_DEATH, TextField.class);
 		description = addField(SignalVerificationDto.DESCRIPTION, TextArea.class);
@@ -335,7 +339,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 			if (DateverificationCompleteDate.before(dateOfReportDate) || DateverificationCompleteDate.before(dateOfDecisionDate)) {
 				if (!dateOfReportDate.toString().equals(DateverificationCompleteDate.toString())
 					|| !dateOfDecision.toString().equals(DateverificationCompleteDate.toString())) {
-					verificationCompleteDateField.addValidator(dateValidator);
+					verificationCompleteDateField.addValidator(completeDateValidator);
 					addVerificationDateValidator();
 				} else {
 					verificationCompleteDate.removeAllValidators();
@@ -348,7 +352,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
 	public void validateSignalVerificationDateOfOccurrence(EbsDto selectedEbs) {
 		Date dateOfReport = selectedEbs.getReportDateTime();
-		DateField DateOfOccurrenceField = DateOfOccurrence;
+		DateTimeField DateOfOccurrenceField = DateOfOccurrence;
 		if (dateOfReport == null) {
 			dateOfReport = new Date(0);
 		}
@@ -381,14 +385,12 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
 	private void addVerificationDateValidator() {
 		dateValidator.setValidDate(false);
-		verificationCompleteDate.removeValidator(dateValidator);
-		verificationCompleteDate.addValidator(dateValidator);
+		verificationCompleteDate.removeValidator(completeDateValidator);
+		verificationCompleteDate.addValidator(completeDateValidator);
 	}
 
 	private void addOccurrenceDateValidator() {
 		dateValidator.setValidDate(false);
-		verificationCompleteDate.removeValidator(dateValidator);
-		verificationCompleteDate.addValidator(dateValidator);
 	}
 
 }
