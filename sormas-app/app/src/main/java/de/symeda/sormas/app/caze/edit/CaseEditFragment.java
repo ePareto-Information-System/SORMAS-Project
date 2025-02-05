@@ -27,9 +27,20 @@ import androidx.fragment.app.FragmentActivity;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseConfirmationBasis;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -63,11 +74,13 @@ import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CardOrHistory;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.VaccineTypes;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -91,6 +104,8 @@ import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ValueChangeListener;
 import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
 import de.symeda.sormas.app.component.dialog.InfoDialog;
+import de.symeda.sormas.app.core.notification.NotificationHelper;
+import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.DialogClassificationRulesLayoutBinding;
 import de.symeda.sormas.app.databinding.FragmentCaseEditLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
@@ -99,6 +114,7 @@ import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
+import de.symeda.sormas.app.util.LocationService;
 
 public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBinding, Case, Case> {
 
@@ -446,6 +462,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		surveillanceOfficerList = DataUtils.toItems(surveillanceOfficersList, true);
 		monthList = DataUtils.getMonthItems(true);
 		yearList = DataUtils.toItems(DateHelper.getYearsToNow(), true);
+		approximateAgeTypeList = DataUtils.getEnumItems(ApproximateAgeType.class, true);
 	}
 
 	@Override
@@ -579,6 +596,18 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				false,
 				() -> Boolean.FALSE.equals(contentBinding.caseDataDifferentPlaceOfStayJurisdiction.getValue()));
 
+		InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
+				contentBinding.caseDataRegionOfResidence,
+				initialRegions,
+				record.getRegion(),
+				contentBinding.caseDataDistrictOfResidence,
+				initialDistricts,
+				record.getDistrict(),
+				null,
+				null,
+				null
+		);
+
 		// trigger responsible jurisdiction change handlers removing place of stay region/district/community
 		contentBinding.caseDataDifferentPlaceOfStayJurisdiction.addValueChangedListener(f -> {
 			if (Boolean.FALSE.equals(f.getValue())) {
@@ -623,6 +652,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 		contentBinding.caseDataQuarantineExtended.setEnabled(false);
 		contentBinding.caseDataQuarantineReduced.setEnabled(false);
+		contentBinding.caseDataDisease.setEnabled(false);
 
 		contentBinding.caseDataQuarantineTo.addValueChangedListener(new ValueChangeListener() {
 
@@ -732,6 +762,62 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				.initIntegerValidator(contentBinding.caseDataVaccinationDoses, I18nProperties.getValidationError(Validations.vaccineDosesFormat), 1, 10);
 		ValidationHelper.initDateIntervalValidator(contentBinding.caseDataFirstVaccinationDate, contentBinding.caseDataLastVaccinationDate);*/
 		CaseValidator.initializeProhibitionToWorkIntervalValidator(contentBinding);
+
+		/*switch (record.getDisease()){
+			case YELLOW_FEVER:
+				handleYellowFever();
+				break;
+			case MONKEYPOX:
+				handleMpox();
+				break;
+			case CSM:
+				getFilteredVaccinationList();
+				getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
+					if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED){
+						getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+						getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+						getContentBinding().caseDataVaccineType.setVisibility(VISIBLE);
+						getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+					}
+					else{
+						getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+						getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+						getContentBinding().caseDataVaccineType.setVisibility(GONE);
+						getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+					}
+				});
+
+				getContentBinding().caseDataVaccinationType.addValueChangedListener( field -> {
+					getContentBinding().caseDataVaccinationDate.setEnabled(getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD);
+				});
+				break;
+			case MEASLES:
+				handleMeasles();
+				getContentBinding().caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
+				break;
+			case NEONATAL_TETANUS:
+				handleNNT();
+				break;
+			case CORONAVIRUS:
+				handleCoronavirus();
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCoronavirus());
+				break;
+			case CHOLERA:
+				handleCholera();
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCholera());
+				break;
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				contentBinding.caseDataVaccinationDate.setCaption("Date of last vaccination");
+				contentBinding.caseDataVaccinationDate.setVisibility(VISIBLE);
+				contentBinding.caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
+				contentBinding.caseDataNumberOfDoses.setVisibility(VISIBLE);
+				break;
+			default:
+		}*/
+
+		if (record.getDisease() != null) {
+			super.hideFieldsForDisease(record.getDisease(), contentBinding.mainContent, FormType.CASE_EDIT);
+		}
 	}
 
 	private void fillConfirmedCaseClassificationCombo() {
@@ -771,6 +857,42 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataNotifiedByList.initializeSpinner(notifyByList);
 		contentBinding.caseDataVaccineType.initializeSpinner(vaccineList);
 		contentBinding.caseDataSurveillanceOfficer.initializeSpinner(surveillanceOfficerList);
+
+		contentBinding.personBirthdateDD.initializeSpinner(new ArrayList<>());
+		contentBinding.personBirthdateMM.initializeSpinner(
+				monthList,
+				field -> DataUtils.updateListOfDays(
+						contentBinding.personBirthdateDD,
+						(Integer) contentBinding.personBirthdateYYYY.getValue(),
+						(Integer) field.getValue()));
+		contentBinding.personBirthdateYYYY.initializeSpinner(
+				yearList,
+				field -> DataUtils.updateListOfDays(
+						contentBinding.personBirthdateDD,
+						(Integer) field.getValue(),
+						(Integer) contentBinding.personBirthdateMM.getValue()));
+
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		contentBinding.personBirthdateYYYY.setSelectionOnOpen(year - 35);
+
+		contentBinding.personSex.initializeSpinner(sexList);
+		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
+
+		contentBinding.personBirthdateDD.initializeSpinner(new ArrayList<>(), field -> updateApproximateAgeField(contentBinding));
+		contentBinding.personBirthdateMM.initializeSpinner(monthList, field -> {
+			updateApproximateAgeField(contentBinding);
+			DataUtils.updateListOfDays(
+					contentBinding.personBirthdateDD,
+					(Integer) contentBinding.personBirthdateYYYY.getValue(),
+					(Integer) field.getValue());
+		});
+		contentBinding.personBirthdateYYYY.initializeSpinner(yearList, field -> {
+			updateApproximateAgeField(contentBinding);
+			DataUtils.updateListOfDays(
+					contentBinding.personBirthdateDD,
+					(Integer) field.getValue(),
+					(Integer) contentBinding.personBirthdateMM.getValue());
+		});
 
 		// Initialize ControlDateFields
 		contentBinding.caseDataReportDate.initializeDateField(getFragmentManager());
@@ -845,6 +967,50 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 		// reinfection
 		contentBinding.caseDataPreviousInfectionDate.initializeDateField(getChildFragmentManager());
+
+		if (Arrays.asList(Disease.MEASLES, Disease.CORONAVIRUS, Disease.CHOLERA).contains(record.getDisease())) {
+			Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
+					VaccinationStatus.VACCINATED,
+					VaccinationStatus.UNVACCINATED
+			);
+
+			vaccinationList = DataUtils.toItems(
+					Arrays.stream(VaccinationStatus.values())
+							.filter(Objects::nonNull)
+							.filter(allowedVaccinations::contains)
+							.collect(Collectors.toList())
+			);
+
+			vaccinationList = vaccinationList.stream()
+					.filter(item -> item != null)
+					.filter(item -> item.getKey() != null && !item.getKey().trim().isEmpty())
+					.filter(item -> item.getValue() != null)
+					.collect(Collectors.toList());
+
+			contentBinding.caseDataVaccinationStatus.setEnumItems(vaccinationList);
+		}
+
+		// "Pick GPS Coordinates" confirmation dialog
+		contentBinding.pickGpsCoordinates.setOnClickListener(v -> {
+			final ConfirmationDialog confirmationDialog = new ConfirmationDialog(
+					getActivity(),
+					R.string.heading_confirmation_dialog,
+					R.string.confirmation_pick_gps,
+					R.string.yes,
+					R.string.no);
+
+			confirmationDialog.setPositiveCallback(() -> {
+				android.location.Location phoneLocation = LocationService.instance().getLocation(getActivity());
+				if (phoneLocation != null) {
+					contentBinding.caseDataReportLat.setDoubleValue(phoneLocation.getLatitude());
+					contentBinding.caseDataReportLon.setDoubleValue(phoneLocation.getLongitude());
+				} else {
+					NotificationHelper.showDialogNotification(CaseEditActivity.getActiveActivity(), NotificationType.WARNING, R.string.message_gps_problem);
+				}
+			});
+			confirmationDialog.show();
+		});
+
 	}
 
 	private void updateDiseaseVariantsField(FragmentCaseEditLayoutBinding contentBinding) {
@@ -878,5 +1044,42 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 	public void setCaseConfirmationBasis(CaseConfirmationBasis caseConfirmationBasis) {
 		this.caseConfirmationBasis = caseConfirmationBasis;
+	}
+
+	private static void updateApproximateAgeField(FragmentCaseEditLayoutBinding contentBinding) {
+
+		Date birthDate = calculateBirthDateValue(contentBinding);
+		if (birthDate != null) {
+
+			Date to = new Date();
+			DataHelper.Pair<Integer, ApproximateAgeType> approximateAge = ApproximateAgeType.ApproximateAgeHelper.getApproximateAge(birthDate, to);
+			ApproximateAgeType ageType = approximateAge.getElement1();
+			contentBinding.personApproximateAge.setValue(String.valueOf(approximateAge.getElement0()));
+			contentBinding.personApproximateAgeType.setValue(ageType);
+		} else {
+			if (contentBinding.personApproximateAge.isEnabled() == false && contentBinding.personApproximateAgeType.isEnabled() == false) {
+				contentBinding.personApproximateAge.setValue(null);
+				contentBinding.personApproximateAgeType.setValue(null);
+			}
+			contentBinding.personApproximateAge.setEnabled(true);
+			contentBinding.personApproximateAgeType.setEnabled(true);
+		}
+	}
+
+	public static Date calculateBirthDateValue(FragmentCaseEditLayoutBinding contentBinding) {
+		Integer birthYear = (Integer) contentBinding.personBirthdateYYYY.getValue();
+
+		if (birthYear != null) {
+			contentBinding.personApproximateAge.setEnabled(false);
+			contentBinding.personApproximateAgeType.setEnabled(false);
+
+			Integer birthDay = (Integer) contentBinding.personBirthdateDD.getValue();
+			Integer birthMonth = (Integer) contentBinding.personBirthdateMM.getValue();
+
+			Calendar birthDate = new GregorianCalendar();
+			birthDate.set(birthYear, birthMonth != null ? birthMonth - 1 : 0, birthDay != null ? birthDay : 1);
+			return birthDate.getTime();
+		}
+		return null;
 	}
 }
