@@ -100,7 +100,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 	private List<UserReferenceDto> districtEventResponsibles = new ArrayList<>();
 	private LocationEditForm locationForm;
 	private final EbsDto ebs;
-	DateField reportDate;
+	DateTimeField reportDate;
 	DateTimeField occurrenceDate;
 	EbsDateValidator validator = new EbsDateValidator(THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, false);
 
@@ -161,7 +161,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
 		addField(EbsDto.INTERNAL_TOKEN);
 
-		reportDate = addField(EbsDto.REPORT_DATE_TIME, DateField.class);
+		reportDate = addField(EbsDto.REPORT_DATE_TIME, DateTimeField.class);
 		ComboBox categoryInformant = addField(EbsDto.CATEGORY_OF_INFORMANT, ComboBox.class);
 
 		ComboBox srcType = addField(EbsDto.SOURCE_INFORMATION);
@@ -373,7 +373,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 	}
 
 	public void validateDateFields() {
-		DateField dateOfReport = reportDate;
+		DateTimeField dateOfReport = reportDate;
 		DateTimeField dateOfOccurrence = occurrenceDate;
 		if (dateOfReport.getValue() != null && dateOfOccurrence.getValue() != null && dateOfReport.getValue().before(dateOfOccurrence.getValue())) {
 			Date dateOfReportDate = clearTime(dateOfReport.getValue());
