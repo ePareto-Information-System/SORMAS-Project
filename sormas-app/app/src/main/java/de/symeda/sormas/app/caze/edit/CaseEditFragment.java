@@ -763,7 +763,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		ValidationHelper.initDateIntervalValidator(contentBinding.caseDataFirstVaccinationDate, contentBinding.caseDataLastVaccinationDate);*/
 		CaseValidator.initializeProhibitionToWorkIntervalValidator(contentBinding);
 
-		/*switch (record.getDisease()){
+		switch (record.getDisease()){
 			case YELLOW_FEVER:
 				handleYellowFever();
 				break;
@@ -771,29 +771,11 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				handleMpox();
 				break;
 			case CSM:
-				getFilteredVaccinationList();
-				getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
-					if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED){
-						getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
-						getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
-						getContentBinding().caseDataVaccineType.setVisibility(VISIBLE);
-						getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
-					}
-					else{
-						getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
-						getContentBinding().caseDataVaccinationType.setVisibility(GONE);
-						getContentBinding().caseDataVaccineType.setVisibility(GONE);
-						getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
-					}
-				});
-
-				getContentBinding().caseDataVaccinationType.addValueChangedListener( field -> {
-					getContentBinding().caseDataVaccinationDate.setEnabled(getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD);
-				});
+				handleCSM();
 				break;
-			case MEASLES:
+			/*case MEASLES:
 				handleMeasles();
-				getContentBinding().caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
 				break;
 			case NEONATAL_TETANUS:
 				handleNNT();
@@ -805,7 +787,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			case CHOLERA:
 				handleCholera();
 				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCholera());
-				break;
+				break;*/
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				contentBinding.caseDataVaccinationDate.setCaption("Date of last vaccination");
 				contentBinding.caseDataVaccinationDate.setVisibility(VISIBLE);
@@ -813,7 +795,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				contentBinding.caseDataNumberOfDoses.setVisibility(VISIBLE);
 				break;
 			default:
-		}*/
+		}
 
 		if (record.getDisease() != null) {
 			super.hideFieldsForDisease(record.getDisease(), contentBinding.mainContent, FormType.CASE_EDIT);
@@ -1081,5 +1063,86 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			return birthDate.getTime();
 		}
 		return null;
+	}
+
+	private void getFilteredVaccinationList() {
+		Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
+				VaccinationStatus.VACCINATED,
+				VaccinationStatus.UNVACCINATED
+		);
+
+		vaccinationList = DataUtils.toItems(
+				Arrays.stream(VaccinationStatus.values())
+						.filter(Objects::nonNull)
+						.filter(allowedVaccinations::contains)
+						.collect(Collectors.toList())
+		);
+
+		vaccinationList = vaccinationList.stream()
+				.filter(item -> item != null)
+				.filter(item -> item.getKey() != null && !item.getKey().trim().isEmpty())
+				.filter(item -> item.getValue() != null)
+				.collect(Collectors.toList());
+
+		getContentBinding().caseDataVaccinationStatus.setEnumItems(vaccinationList);
+	}
+
+	private void handleYellowFever() {
+
+		getFilteredVaccinationList();
+		getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+		getContentBinding().caseDataVaccinationStatus.setRequired(true);
+
+		getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
+			if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED){
+				getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+				getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+			}
+			else{
+				getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+				getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+			}
+		});
+
+		getContentBinding().caseDataVaccinationType.addValueChangedListener( field -> {
+			if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD){
+				getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+				getContentBinding().caseDataLastVaccinationDate.setVisibility(VISIBLE);
+			}
+			else{
+				getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+				getContentBinding().caseDataLastVaccinationDate.setVisibility(GONE);
+			}
+		});
+
+	}
+
+	private void handleMpox(){
+		getContentBinding().caseDataReportingOfficerName.setCaption("Name");
+		getContentBinding().caseDataReportingOfficerTitle.setCaption("Job Title");
+		getContentBinding().caseDataReportingOfficerEmail.setCaption("Email Address");
+		getContentBinding().caseDataReportingOfficerContactPhone.setCaption("Contact Number");
+	}
+
+	private void handleCSM(){
+		getFilteredVaccinationList();
+		getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
+			if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED){
+				getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+				getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+				getContentBinding().caseDataVaccineType.setVisibility(VISIBLE);
+				getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+			}
+			else{
+				getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+				getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+				getContentBinding().caseDataVaccineType.setVisibility(GONE);
+				getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+			}
+		});
+
+		getContentBinding().caseDataVaccinationType.addValueChangedListener( field -> {
+			getContentBinding().caseDataVaccinationDate.setEnabled(getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD);
+		});
 	}
 }
