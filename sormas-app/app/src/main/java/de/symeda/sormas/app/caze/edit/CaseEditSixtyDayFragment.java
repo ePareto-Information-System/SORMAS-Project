@@ -141,8 +141,11 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 			getContentBinding().sixtyDayPackagingTypeOther.setVisibility(VISIBLE);
 		}
 
-		getContentBinding().buttonScanFieldSixtyDayId.setVisibility(GONE);
-		getContentBinding().sixtyDayHeadingProvide.setVisibility(GONE);
+		contentBinding.buttonScanFieldSixtyDayId.setOnClickListener((View v) -> {
+			Intent intent = new Intent(getContext(), BarcodeActivity.class);
+			startActivityForResult(intent, BarcodeActivity.RC_BARCODE_CAPTURE);
+		});
+
 
 		getContentBinding().sixtyDayFoodAvailableTesting.addValueChangedListener( field ->{
 			YesNoUnknown value = (YesNoUnknown) field.getValue();
@@ -150,17 +153,28 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 				getContentBinding().sixtyDaySpecifySources.setVisibility(VISIBLE);
 				getContentBinding().sixtyDayHeadingProvide.setVisibility(VISIBLE);
 				getContentBinding().buttonScanFieldSixtyDayId.setVisibility(VISIBLE);
+				getContentBinding().sixtyDayBarcode.setVisibility(VISIBLE);
 			} else {
 				getContentBinding().sixtyDaySpecifySources.setVisibility(GONE);
 				getContentBinding().sixtyDayHeadingProvide.setVisibility(GONE);
 				getContentBinding().buttonScanFieldSixtyDayId.setVisibility(GONE);
+				getContentBinding().sixtyDayBarcode.setVisibility(GONE);
 			}
 		});
 
-		contentBinding.buttonScanFieldSixtyDayId.setOnClickListener((View v) -> {
-			Intent intent = new Intent(getContext(), BarcodeActivity.class);
-			startActivityForResult(intent, BarcodeActivity.RC_BARCODE_CAPTURE);
-		});
+		YesNoUnknown initialValue = (YesNoUnknown) getContentBinding().sixtyDayFoodAvailableTesting.getValue();
+		if (initialValue == YesNoUnknown.YES) {
+			getContentBinding().sixtyDaySpecifySources.setVisibility(VISIBLE);
+			getContentBinding().sixtyDayHeadingProvide.setVisibility(VISIBLE);
+			getContentBinding().buttonScanFieldSixtyDayId.setVisibility(VISIBLE);
+			getContentBinding().sixtyDayBarcode.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().sixtyDaySpecifySources.setVisibility(GONE);
+			getContentBinding().sixtyDayHeadingProvide.setVisibility(GONE);
+			getContentBinding().buttonScanFieldSixtyDayId.setVisibility(GONE);
+			getContentBinding().sixtyDayBarcode.setVisibility(GONE);
+		}
+
 	}
 
 	@Override

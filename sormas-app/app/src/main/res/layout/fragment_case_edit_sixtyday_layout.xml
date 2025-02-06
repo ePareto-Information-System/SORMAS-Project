@@ -305,8 +305,6 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/sixtyDay_barcode"
                     app:value="@={data.barcode}"
-                    app:dependencyParentField="@{sixtyDayFoodAvailableTesting}"
-                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
