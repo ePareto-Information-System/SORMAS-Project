@@ -775,15 +775,18 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				break;
 			case MEASLES:
 				handleMeasles();
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
 				break;
 			case NEONATAL_TETANUS:
 				handleNNT();
 				break;
 			case CORONAVIRUS:
 				handleCoronavirus();
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCoronavirus());
 				break;
 			case CHOLERA:
 				handleCholera();
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCholera());
 				break;
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				contentBinding.caseDataVaccinationDate.setCaption("Date of last vaccination");
