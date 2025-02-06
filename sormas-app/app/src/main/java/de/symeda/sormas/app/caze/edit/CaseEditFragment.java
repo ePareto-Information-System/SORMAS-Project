@@ -852,11 +852,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 						(Integer) contentBinding.personBirthdateMM.getValue()));
 
 		int year = Calendar.getInstance().get(Calendar.YEAR);
-		contentBinding.personBirthdateYYYY.setSelectionOnOpen(year - 35);
-
 		contentBinding.personSex.initializeSpinner(sexList);
-		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
-
+		contentBinding.personBirthdateYYYY.setSelectionOnOpen(year - 35);
 		contentBinding.personBirthdateDD.initializeSpinner(new ArrayList<>(), field -> updateApproximateAgeField(contentBinding));
 		contentBinding.personBirthdateMM.initializeSpinner(monthList, field -> {
 			updateApproximateAgeField(contentBinding);
@@ -872,6 +869,26 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 					(Integer) field.getValue(),
 					(Integer) contentBinding.personBirthdateMM.getValue());
 		});
+		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
+
+		contentBinding.personApproximateAge.addValueChangedListener(field -> {
+			if (DataHelper.isNullOrEmpty((String) field.getValue())) {
+				contentBinding.personApproximateAgeType.setRequired(false);
+				contentBinding.personApproximateAgeType.setValue(null);
+			} else {
+				contentBinding.personApproximateAgeType.setRequired(true);
+				if (contentBinding.personApproximateAgeType.getValue() == null) {
+					contentBinding.personApproximateAgeType.setValue(ApproximateAgeType.YEARS);
+				}
+			}
+		});
+
+		if (!DataHelper.isNullOrEmpty(contentBinding.personApproximateAge.getValue())) {
+			contentBinding.personApproximateAgeType.setRequired(true);
+			if (contentBinding.personApproximateAgeType.getValue() == null) {
+				contentBinding.personApproximateAgeType.setValue(ApproximateAgeType.YEARS);
+			}
+		}
 
 		// Initialize ControlDateFields
 		contentBinding.caseDataReportDate.initializeDateField(getFragmentManager());

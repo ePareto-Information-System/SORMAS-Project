@@ -1432,6 +1432,7 @@
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/person_approximateAge"
                         app:value="@={data.person.approximateAge}"
+                        app:required="true"
                         app:inputType="number"
                         app:maxLength="3"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
