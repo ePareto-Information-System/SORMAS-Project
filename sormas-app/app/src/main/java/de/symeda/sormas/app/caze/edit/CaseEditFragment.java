@@ -653,6 +653,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataQuarantineExtended.setEnabled(false);
 		contentBinding.caseDataQuarantineReduced.setEnabled(false);
 		contentBinding.caseDataDisease.setEnabled(false);
+		contentBinding.facilityTypeGroup.setEnabled(false);
+		contentBinding.caseDataFacilityType.setEnabled(false);
 
 		contentBinding.caseDataQuarantineTo.addValueChangedListener(new ValueChangeListener() {
 
