@@ -376,9 +376,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		DateTimeField dateOfReport = reportDate;
 		DateTimeField dateOfOccurrence = occurrenceDate;
 		if (dateOfReport.getValue() != null && dateOfOccurrence.getValue() != null && dateOfReport.getValue().before(dateOfOccurrence.getValue())) {
-			Date dateOfReportDate = clearTime(dateOfReport.getValue());
-			Date dateOfOccurrenceDate = clearTime(dateOfOccurrence.getValue());
-			if (!dateOfReportDate.toString().equals(dateOfOccurrenceDate.toString())) {
+//			Date dateOfReportDate = clearTime(dateOfReport.getValue());
+//			Date dateOfOccurrenceDate = clearTime(dateOfOccurrence.getValue());
+			if (!dateOfReport.getValue().toString().equals(dateOfOccurrence.getValue().toString())) {
 				dateOfReport.addValidator(validator);
 				addDateValidator();
 			} else {

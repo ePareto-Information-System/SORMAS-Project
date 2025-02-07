@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <de.symeda.sormas.app.component.controls.ControlDateField
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
                     android:id="@+id/signalVerification_dateOfOccurrence"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:allowedDaysInFuture="0"

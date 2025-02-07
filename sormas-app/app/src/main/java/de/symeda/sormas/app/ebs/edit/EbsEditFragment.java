@@ -47,7 +47,6 @@ import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.component.Item;
-import de.symeda.sormas.app.component.controls.ControlDateField;
 import de.symeda.sormas.app.component.controls.ControlDateTimeField;
 import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
 import de.symeda.sormas.app.component.dialog.LocationDialog;
@@ -205,7 +204,7 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 		contentBinding.ebsAutomaticScanningType.initializeSpinner(automaticScanningType);
 		contentBinding.ebsManualScanningType.initializeSpinner(manualScanningType);
 		contentBinding.ebsScanningType.initializeSpinner(mediaScanningType);
-		contentBinding.ebsReportDateTime.initializeDateField(getFragmentManager());
+		contentBinding.ebsReportDateTime.initializeDateTimeField(getFragmentManager());
 		contentBinding.ebsDateOnset.initializeDateTimeField(getFragmentManager());
 		contentBinding.ebsInformantName.setVisibility(GONE);
 		contentBinding.ebsCommunity.setCaption("Sub District");
@@ -303,14 +302,14 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 	}
 
 	public void validateDateFields(FragmentEbsEditLayoutBinding contentBinding) {
-		ControlDateField dateOfReport = contentBinding.ebsReportDateTime;
+		ControlDateTimeField dateOfReport = contentBinding.ebsReportDateTime;
 		ControlDateTimeField dateOfOccurrence = contentBinding.ebsDateOnset;
 		if (dateOfReport.getValue() != null
 			&& dateOfOccurrence.getValue() != null
 			&& dateOfReport.getValue().before((Date) dateOfOccurrence.getValue())) {
-			Date dateOfReportDate = clearTime(dateOfReport.getValue());
-			Date dateOfOccurrenceDate = clearTime((Date) dateOfOccurrence.getValue());
-			if (!dateOfReportDate.toString().equals(dateOfOccurrenceDate.toString())) {
+//			Date dateOfReportDate = clearTime(dateOfReport.getValue());
+//			Date dateOfOccurrenceDate = clearTime((Date) dateOfOccurrence.getValue());
+			if (!dateOfReport.getValue().toString().equals(dateOfOccurrence.getValue().toString())) {
 				showError(THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE);
 				dateOfReport.setValidationCallback(() -> {
 					dateOfReport.enableErrorState(

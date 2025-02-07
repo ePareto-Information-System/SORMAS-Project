@@ -109,7 +109,7 @@
                     app:value="@={data.categoryOfInformant}" />
             </LinearLayout>
 
-            <de.symeda.sormas.app.component.controls.ControlDateField
+            <de.symeda.sormas.app.component.controls.ControlDateTimeField
                 android:id="@+id/ebs_reportDateTime"
                 style="@style/ControlSingleColumnStyle"
                 app:allowedDaysInFuture="0"

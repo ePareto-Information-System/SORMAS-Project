@@ -34,6 +34,7 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.component.controls.ControlDateField;
+import de.symeda.sormas.app.component.controls.ControlDateTimeField;
 import de.symeda.sormas.app.component.controls.ControlTextEditField;
 import de.symeda.sormas.app.databinding.FragmentSignalVerificationEditLayoutBinding;
 
@@ -46,8 +47,8 @@ public class SignalVerificationEditFragment
 	public static final String TAG = SignalVerificationEditFragment.class.getSimpleName();
 	public final String THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE =
 		"The Verification Completed cannot be earlier than the Date of Report or Date of Occurrence or Decision Date.";
-	public final String THE_DATE_OF_OCCURRENCE_CANNOT_BE_OLDER_THAN_THE_DATE_OF_OCCURRENCE =
-		"The Date of Occurrence cannot be older than the Date of Report or Date of Verification Completed Date.";
+	public final String THE_DATE_OF_OCCURRENCE_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE =
+		"The Date cannot be earlier than the Date of Report or Triage Decision Date";
 	private SignalVerification record;
 
 	public static SignalVerificationEditFragment newInstance(Ebs activityRootData) {
@@ -101,7 +102,7 @@ public class SignalVerificationEditFragment
 		super.onAfterLayoutBinding(contentBinding);
 		setFieldVisibilitiesAndAccesses(SignalVerificationDto.class, contentBinding.mainContent);
 		contentBinding.signalVerificationVerificationCompleteDate.initializeDateField(getFragmentManager());
-		contentBinding.signalVerificationDateOfOccurrence.initializeDateField(getFragmentManager());
+		contentBinding.signalVerificationDateOfOccurrence.initializeDateTimeField(getFragmentManager());
 		contentBinding.signalVerificationVerificationCompleteDate.addValueChangedListener(e -> {
 			validateSignalVerificationVerificationCompleteDate(contentBinding);
 		});
@@ -240,27 +241,23 @@ public class SignalVerificationEditFragment
 
 	public void signalVerificationDateOfOccurrence(FragmentSignalVerificationEditLayoutBinding contentBinding) {
 		Date dateOfReport = EbsEditActivity.getParentEbs().getReportDateTime();
-		ControlDateField verificationCompleteDate = contentBinding.signalVerificationVerificationCompleteDate;
-		ControlDateField signalVerificationDateOfOccurrence = contentBinding.signalVerificationDateOfOccurrence;
+		ControlDateTimeField signalVerificationDateOfOccurrence = contentBinding.signalVerificationDateOfOccurrence;
 		Date DatesignalVerificationDateOfOccurrenceDate = signalVerificationDateOfOccurrence.getValue();
 		if (dateOfReport == null) {
 			dateOfReport = new Date(0);
 		}
-		if (verificationCompleteDate.getValue() == null) {
-			verificationCompleteDate.setValue(dateOfReport);
-		}
 
-		Date dateOfReportDate = clearTime(dateOfReport);
+//		Date dateOfReportDate = clearTime(dateOfReport);
 		if (DatesignalVerificationDateOfOccurrenceDate != null) {
-			DatesignalVerificationDateOfOccurrenceDate = clearTime(DatesignalVerificationDateOfOccurrenceDate);
-			if (DatesignalVerificationDateOfOccurrenceDate.after(dateOfReportDate)) {
-				if (!dateOfReportDate.toString().equals(DatesignalVerificationDateOfOccurrenceDate.toString())) {
-					showError(THE_DATE_OF_OCCURRENCE_CANNOT_BE_OLDER_THAN_THE_DATE_OF_OCCURRENCE);
+//			DatesignalVerificationDateOfOccurrenceDate = clearTime(DatesignalVerificationDateOfOccurrenceDate);
+			if (DatesignalVerificationDateOfOccurrenceDate.after(dateOfReport)) {
+				if (!dateOfReport.toString().equals(DatesignalVerificationDateOfOccurrenceDate.toString())) {
+					showError(THE_DATE_OF_OCCURRENCE_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE);
 					signalVerificationDateOfOccurrence.setValidationCallback(() -> {
 						signalVerificationDateOfOccurrence.enableErrorState(
 							I18nProperties.getValidationError(
-								THE_DATE_OF_OCCURRENCE_CANNOT_BE_OLDER_THAN_THE_DATE_OF_OCCURRENCE,
-								THE_DATE_OF_OCCURRENCE_CANNOT_BE_OLDER_THAN_THE_DATE_OF_OCCURRENCE));
+								THE_DATE_OF_OCCURRENCE_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE,
+								THE_DATE_OF_OCCURRENCE_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE));
 						return true;
 					});
 				} else {

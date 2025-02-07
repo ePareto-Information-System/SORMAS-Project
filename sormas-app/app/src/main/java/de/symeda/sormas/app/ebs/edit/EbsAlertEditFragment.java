@@ -98,15 +98,18 @@ public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditL
 		contentBinding.ebsAlertDetailsResponseActivities.setVisibility(visibility);
 
 		if (!isYes) {
-			contentBinding.ebsAlertDetailsResponseActivities.setValue(null);
 			contentBinding.ebsAlertResponseStatus.setValue(null);
+			contentBinding.ebsAlertDetailsAlertUsed.setVisibility(View.VISIBLE);
 			contentBinding.ebsAlertDetailsAlertUsed.setCaption("GIVE REASON FOR NO ALERT");
-
 		} else {
 			contentBinding.ebsAlertDetailsAlertUsed.setCaption("PLEASE GIVE DETAILS OF THE ALERT ISSUED");
 		}
+
 		if (!fromInit) {
-			contentBinding.ebsAlertDetailsAlertUsed.setValue(null);
+			contentBinding.ebsAlertDetailsAlertUsed.setValue(" ");
+		}
+		if (contentBinding.ebsAlertAlertIssued.getValue() == null) {
+			contentBinding.ebsAlertDetailsAlertUsed.setVisibility(View.GONE);
 		}
 	}
 

@@ -357,9 +357,9 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 			dateOfReport = new Date(0);
 		}
 
-		Date dateOfReportDate = clearTime(dateOfReport);
+//		Date dateOfReportDate = clearTime(dateOfReport);
 		if (DateOfOccurrenceField.getValue() != null) {
-			if (DateOfOccurrenceField.getValue().after(dateOfReportDate)) {
+			if (DateOfOccurrenceField.getValue().after(dateOfReport)) {
 				DateOfOccurrenceField.addValidator(dateValidator);
 				addOccurrenceDateValidator();
 			} else {
