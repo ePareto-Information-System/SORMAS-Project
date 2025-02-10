@@ -247,9 +247,7 @@ public class SignalVerificationEditFragment
 			dateOfReport = new Date(0);
 		}
 
-//		Date dateOfReportDate = clearTime(dateOfReport);
 		if (DatesignalVerificationDateOfOccurrenceDate != null) {
-//			DatesignalVerificationDateOfOccurrenceDate = clearTime(DatesignalVerificationDateOfOccurrenceDate);
 			if (DatesignalVerificationDateOfOccurrenceDate.after(dateOfReport)) {
 				if (!dateOfReport.toString().equals(DatesignalVerificationDateOfOccurrenceDate.toString())) {
 					showError(THE_DATE_OF_OCCURRENCE_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE);
