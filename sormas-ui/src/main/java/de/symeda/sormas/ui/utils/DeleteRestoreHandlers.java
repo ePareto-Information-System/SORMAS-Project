@@ -3,7 +3,6 @@ package de.symeda.sormas.ui.utils;
 import java.util.Arrays;
 import java.util.List;
 
-import de.symeda.sormas.api.visit.VisitFacade;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.server.Sizeable;
@@ -69,7 +68,7 @@ public final class DeleteRestoreHandlers {
 	}
 
 	public static class DeleteRestoreHandler<T extends EntityDto, F extends DeletableFacade>
-		implements DeleteRestoreController.IDeleteRestoreHandler<T> {
+			implements DeleteRestoreController.IDeleteRestoreHandler<T> {
 
 		protected final F entityFacade;
 		private final DeleteRestoreMessages deleteRestoreMessages;
@@ -173,7 +172,7 @@ public final class DeleteRestoreHandlers {
 	}
 
 	public static class CoreEntityDeleteRestoreHandler<T extends EntityDto, F extends CoreFacade<T, ?, ?, ?>> extends DeleteRestoreHandler<T, F>
-		implements DeleteRestoreController.IDeleteRestoreHandler<T> {
+			implements DeleteRestoreController.IDeleteRestoreHandler<T> {
 
 		protected CoreEntityDeleteRestoreHandler(F entityFacade, DeleteRestoreMessages deleteRestoreMessages) {
 			super(entityFacade, deleteRestoreMessages);
@@ -188,22 +187,13 @@ public final class DeleteRestoreHandlers {
 	}
 
 	public static class PermanentDeleteHandler<T extends EntityDto, F extends PermanentlyDeletableFacade>
-		implements PermanentDeleteController.IPermanentDeleteHandler<T> {
+			implements PermanentDeleteController.IPermanentDeleteHandler<T> {
 
-		protected  F entityFacade;
+		protected final F entityFacade;
 		private final DeleteRestoreMessages deleteRestoreMessages;
 
 		private PermanentDeleteHandler(F entityFacade, DeleteRestoreMessages deleteRestoreMessages) {
 			this.entityFacade = entityFacade;
-			this.deleteRestoreMessages = deleteRestoreMessages;
-		}
-
-		public PermanentDeleteHandler(VisitFacade visitFacade, DeleteRestoreMessages deleteRestoreMessages, F entityFacade, DeleteRestoreMessages deleteRestoreMessages1) {
-			this.entityFacade = entityFacade;
-			this.deleteRestoreMessages = deleteRestoreMessages1;
-		}
-
-		public PermanentDeleteHandler(VisitFacade visitFacade, DeleteRestoreMessages deleteRestoreMessages) {
 			this.deleteRestoreMessages = deleteRestoreMessages;
 		}
 

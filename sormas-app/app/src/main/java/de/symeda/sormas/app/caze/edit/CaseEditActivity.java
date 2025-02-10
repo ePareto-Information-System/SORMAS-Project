@@ -143,8 +143,13 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 			|| !DatabaseHelper.getFeatureConfigurationDao().isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
 			menuItems.set(CaseSection.VACCINATIONS.ordinal(), null);
 		}
+//		if (!ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW)
+//			|| (caze != null && caze.isUnreferredPortHealthCase())
+//			|| (caze != null && !DiseaseConfigurationCache.getInstance().hasFollowUp(caze.getDisease()))) {
+//			menuItems.set(CaseSection.CONTACTS.ordinal(), null);
+//		}
+
 		if (!ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW)
-			|| (caze != null && caze.isUnreferredPortHealthCase())
 			|| (caze != null && !DiseaseConfigurationCache.getInstance().hasFollowUp(caze.getDisease()))) {
 			menuItems.set(CaseSection.CONTACTS.ordinal(), null);
 		}
