@@ -379,8 +379,10 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 //			Date dateOfReportDate = clearTime(dateOfReport.getValue());
 //			Date dateOfOccurrenceDate = clearTime(dateOfOccurrence.getValue());
 			if (!dateOfReport.getValue().toString().equals(dateOfOccurrence.getValue().toString())) {
-				dateOfReport.addValidator(validator);
-				addDateValidator();
+				if(!dateOfReport.getValidators().contains(validator)){
+					dateOfReport.addValidator(validator);
+					addDateValidator();
+				}
 			} else {
 				dateOfReport.removeAllValidators();
 			}
