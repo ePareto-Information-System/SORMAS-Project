@@ -54,7 +54,7 @@ public class VisitGrid extends FilteredGrid<VisitIndexDto, VisitCriteria> {
 		Consumer<VisitIndexDto> visitIndexDtoConsumer = e -> ControllerProvider.getVisitController()
 			.editVisit(e.getUuid(), getCriteria().getContact(), getCriteria().getCaze(), r -> reload(), isEditAllowed, isDeleteAllowed);
 
-		if (isEditAllowed && UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
 			setSelectionMode(SelectionMode.MULTI);
 			addEditColumn(visitIndexDtoConsumer);
 		} else {

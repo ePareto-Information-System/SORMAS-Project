@@ -36,7 +36,9 @@ public class SampleCreateForm extends AbstractSampleForm {
 	@Override
 	protected String createHtmlLayout() {
 		disease = getCaseDisease();
-
+		if(disease == null){
+			return SAMPLE_COMMON_HTML_LAYOUT;
+		}
 		String SELECTED_LAYOUT = "";
 			switch (disease) {
 				case GUINEA_WORM:
