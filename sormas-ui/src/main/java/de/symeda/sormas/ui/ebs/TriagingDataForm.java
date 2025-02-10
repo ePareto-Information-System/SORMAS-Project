@@ -614,8 +614,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			dateOfDecisionDate = clearTime(dateOfDecisionDate);
 			if (dateOfDecisionDate.before(dateOfReportDate)) {
 				if (!dateOfReportDate.toString().equals(dateOfDecisionDate.toString())) {
-					dateDecision.addValidator(validator);
-					addDateValidator();
+					if (!dateDecision.getValidators().contains(validator)) {
+						dateDecision.addValidator(validator);
+						addDateValidator();
+					}
 				}
 			} else {
 				dateDecision.removeAllValidators();
