@@ -117,17 +117,15 @@
                     app:required="true"
                     app:value="@={data.verificationCompleteDate}" />
             </LinearLayout>
-
-            <!-- Caption TextView -->
+            
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/event_details"
                 android:layout_width="154dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="@string/event_details"
                 android:textSize="20dp"
-                android:textStyle="bold"
+                app:caption="@string/event_details"
                 app:dependencyParentField="@{signalVerificationVerified}"
                 app:dependencyParentValue="@{SignalOutcome.EVENT}" />
 
