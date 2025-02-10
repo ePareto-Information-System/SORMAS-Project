@@ -339,8 +339,10 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 			if (DateverificationCompleteDate.before(dateOfReportDate) || DateverificationCompleteDate.before(dateOfDecisionDate)) {
 				if (!dateOfReportDate.toString().equals(DateverificationCompleteDate.toString())
 					|| !dateOfDecision.toString().equals(DateverificationCompleteDate.toString())) {
-					verificationCompleteDateField.addValidator(completeDateValidator);
-					addVerificationDateValidator();
+					if (!verificationCompleteDateField.getValidators().contains(completeDateValidator)) {
+						verificationCompleteDateField.addValidator(completeDateValidator);
+						addVerificationDateValidator();
+					}
 				} else {
 					verificationCompleteDate.removeAllValidators();
 				}
@@ -360,8 +362,10 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 //		Date dateOfReportDate = clearTime(dateOfReport);
 		if (DateOfOccurrenceField.getValue() != null) {
 			if (DateOfOccurrenceField.getValue().after(dateOfReport)) {
-				DateOfOccurrenceField.addValidator(dateValidator);
-				addOccurrenceDateValidator();
+				if (!DateOfOccurrenceField.getValidators().contains(dateValidator)) {
+					DateOfOccurrenceField.addValidator(dateValidator);
+					addOccurrenceDateValidator();
+				}
 			} else {
 				DateOfOccurrence.removeAllValidators();
 			}
