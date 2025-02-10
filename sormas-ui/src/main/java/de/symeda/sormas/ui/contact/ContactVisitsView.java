@@ -86,7 +86,6 @@ public class ContactVisitsView extends AbstractContactView {
 		topLayout.setWidth(100, Unit.PERCENTAGE);
 		topLayout.addStyleName(CssStyles.VSPACE_3);
 
-		if (isEditAllowed()) {
 			if (UserProvider.getCurrent().hasAllUserRights(UserRight.PERFORM_BULK_OPERATIONS, UserRight.CONTACT_EDIT, UserRight.VISIT_EDIT)) {
 				topLayout.setWidth(100, Unit.PERCENTAGE);
 
@@ -165,7 +164,6 @@ public class ContactVisitsView extends AbstractContactView {
 					topLayout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 				}
 			}
-		}
 
 		return topLayout;
 	}

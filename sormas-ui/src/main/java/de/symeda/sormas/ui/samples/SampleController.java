@@ -33,7 +33,9 @@ import java.util.function.Consumer;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_NONE;
 import java.util.stream.Collectors;
 
+import com.vaadin.server.Page;
 import de.symeda.sormas.api.CountryHelper;
+import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -88,16 +90,6 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
-import de.symeda.sormas.ui.utils.ButtonHelper;
-import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
-import de.symeda.sormas.ui.utils.ConfirmationComponent;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DateComparisonValidator;
-import de.symeda.sormas.ui.utils.DateFormatHelper;
-import de.symeda.sormas.ui.utils.DateTimeField;
-import de.symeda.sormas.ui.utils.DeleteRestoreHandlers;
-import de.symeda.sormas.ui.utils.NullableOptionGroup;
-import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.components.page.title.TitleLayout;
 
 public class SampleController {
@@ -858,6 +850,18 @@ public class SampleController {
 
 	}
 
+	public void deleteAllSelectedItems(Collection<SampleIndexDto> selectedRows, CCESamplesGrid sampleGrid, Runnable noEntriesRemainingCallback) {
+
+		ControllerProvider.getDeleteRestoreController()
+				.deleteAllSelectedItems(
+						selectedRows,
+						null,
+						null,
+						DeleteRestoreHandlers.forSample(),
+						bulkOperationCallback(sampleGrid, noEntriesRemainingCallback, null));
+
+	}
+
 	public void restoreSelectedSamples(Collection<SampleIndexDto> selectedRows, SampleGrid sampleGrid, Runnable noEntriesRemainingCallback) {
 
 		ControllerProvider.getDeleteRestoreController()
@@ -937,5 +941,44 @@ public class SampleController {
 				noEntriesRemainingCallback.run();
 			}
 		};
+	}
+
+	private Consumer<List<SampleIndexDto>> bulkOperationCallback(CCESamplesGrid sampleGrid, Runnable noEntriesRemainingCallback, Window popupWindow) {
+		return remainingSamples -> {
+			if (popupWindow != null) {
+				popupWindow.close();
+			}
+
+			sampleGrid.reload();
+			if (CollectionUtils.isNotEmpty(remainingSamples)) {
+				sampleGrid.asMultiSelect().selectItems(remainingSamples.toArray(new SampleIndexDto[0]));
+			} else {
+				noEntriesRemainingCallback.run();
+			}
+		};
+	}
+
+	public void deleteAllSelectedItems(Collection<SampleIndexDto> selectedRows, Runnable callback) {
+
+		if (selectedRows.size() == 0) {
+			new Notification(
+					I18nProperties.getString(Strings.headingNoSamplesSelected),
+					I18nProperties.getString(Strings.messageNoSamplesSelected),
+					Type.WARNING_MESSAGE,
+					false).show(Page.getCurrent());
+		} else {
+			DeletableUtils.showDeleteWithReasonPopup(
+					String.format(I18nProperties.getString(Strings.confirmationDeleteSamples), selectedRows.size()),
+					(deletionDetails) -> {
+						List<String> sampleIndexDtoList = selectedRows.stream().map(SampleIndexDto::getUuid).collect(Collectors.toList());
+						FacadeProvider.getSampleFacade().deleteAllSamples(sampleIndexDtoList, deletionDetails);
+						callback.run();
+						new Notification(
+								I18nProperties.getString(Strings.headingSamplesDeleted),
+								I18nProperties.getString(Strings.messageSamplesDeleted),
+								Type.HUMANIZED_MESSAGE,
+								false).show(Page.getCurrent());
+					});
+		}
 	}
 }

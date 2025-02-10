@@ -113,27 +113,15 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
         lastPathogenTestColumn.setId(LAST_PATHOGEN_TEST);
         lastPathogenTestColumn.setSortable(false);
 
-        if (isMonkeyPoxPresent(criteria)) {
-            setColumns(
-                    SampleIndexDto.UUID,
-                    SampleIndexDto.SAMPLE_MATERIAL,
-                    PATHOGEN_TEST_RESULT,
-                    SampleIndexDto.RECEIVED,
-                    SampleIndexDto.RECEIVED_DATE,
-                    SampleIndexDto.LAB,
-                    SampleIndexDto.SAMPLE_PURPOSE,
-                    SampleIndexDto.PATHOGEN_TEST_COUNT);
-        } else {
-            setColumns(
-                    SampleIndexDto.UUID,
-                    SampleIndexDto.SAMPLE_MATERIAL,
-                    PATHOGEN_TEST_RESULT,
-                    SampleIndexDto.RECEIVED,
-                    SampleIndexDto.RECEIVED_DATE,
-                    SampleIndexDto.LAB,
-                    SampleIndexDto.SAMPLE_PURPOSE,
-                    SampleIndexDto.PATHOGEN_TEST_COUNT);
-        }
+        setColumns(
+                SampleIndexDto.UUID,
+                SampleIndexDto.SAMPLE_MATERIAL,
+                PATHOGEN_TEST_RESULT,
+                SampleIndexDto.RECEIVED,
+                SampleIndexDto.RECEIVED_DATE,
+                SampleIndexDto.LAB,
+                SampleIndexDto.SAMPLE_PURPOSE,
+                SampleIndexDto.PATHOGEN_TEST_COUNT);
 
         //((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.SHIPMENT_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
         ((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.RECEIVED_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));

@@ -144,24 +144,24 @@ public class ContactSamplesView extends AbstractContactView {
             }
 
             // Bulk operation dropdown
-//            if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_CASE_SAMPLES)) {
-//                shipmentFilterLayout.setWidth(100, Unit.PERCENTAGE);
-//
-//                MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(
-//                        Captions.bulkActions,
-//                        new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
-//                            ControllerProvider.getSampleController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
-//
-//                                public void run() {
-//                                    navigateTo(criteria);
-//                                }
-//                            });
-//                        }));
-//
-//                bulkOperationsDropdown.setVisible(viewConfiguration.isInEagerMode());
-//
-//                actionButtonsLayout.addComponent(bulkOperationsDropdown);
-//            }
+            if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_CASE_SAMPLES)) {
+                shipmentFilterLayout.setWidth(100, Unit.PERCENTAGE);
+
+                MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(
+                        Captions.bulkActions,
+                        new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
+                            ControllerProvider.getSampleController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
+
+                                public void run() {
+                                    navigateTo(criteria);
+                                }
+                            });
+                        }));
+
+                bulkOperationsDropdown.setVisible(viewConfiguration.isInEagerMode());
+
+                actionButtonsLayout.addComponent(bulkOperationsDropdown);
+            }
 
             sampleTypeFilter = ComboBoxHelper.createComboBoxV7();
             sampleTypeFilter.setWidth(140, Unit.PERCENTAGE);
