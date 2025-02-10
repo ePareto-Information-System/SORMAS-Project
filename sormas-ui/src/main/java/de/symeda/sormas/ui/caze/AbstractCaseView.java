@@ -298,9 +298,13 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
                 params);*/
 				}
 			}
-			if (FacadeProvider.getDiseaseConfigurationFacade().hasFollowUp(caze.getDisease())
-					&& UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)
-					&& !caze.checkIsUnreferredPortHealthCase()) {
+//			if (FacadeProvider.getDiseaseConfigurationFacade().hasFollowUp(caze.getDisease())
+//					&& UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)
+//					&& !caze.checkIsUnreferredPortHealthCase()) {
+//				menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseContacts), params);
+//			}
+
+			if(FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)) {
 				menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseContacts), params);
 			}
 

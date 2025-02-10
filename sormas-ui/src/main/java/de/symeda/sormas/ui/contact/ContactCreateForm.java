@@ -192,6 +192,7 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 		}
 		addField(ContactDto.DESCRIPTION, TextArea.class).setRows(4);
 		relationToCase = addField(ContactDto.RELATION_TO_CASE, ComboBox.class);
+		relationToCase.removeItem(ContactRelation.SAME_HOUSEHOLD);
 		addField(ContactDto.RELATION_DESCRIPTION, TextField.class);
 
 
