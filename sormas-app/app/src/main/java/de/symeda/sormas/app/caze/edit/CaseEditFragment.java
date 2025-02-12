@@ -777,6 +777,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				break;
 			case MEASLES:
 				handleMeasles();
+				contentBinding.caseDataReportingOfficerContactPhone.setRequired(true);
 				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
 				break;
 			case NEONATAL_TETANUS:

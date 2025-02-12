@@ -175,9 +175,23 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 			getContentBinding().sixtyDayBarcode.setVisibility(GONE);
 		}
 
+		handleParalyzedOtherVisibility(getContentBinding().sixtyDayParalysisWeaknessPresentSite.getSelectedValues());
+		getContentBinding().sixtyDayParalysisWeaknessPresentSite.setOnValueChangeListener(selectedValues -> {
+			handleParalyzedOtherVisibility(getContentBinding().sixtyDayParalysisWeaknessPresentSite.getSelectedValues());
+		});
+
 	}
 
-	@Override
+	private void handleParalyzedOtherVisibility(List<String> selectedItems) {
+		if (selectedItems == null) {
+			selectedItems = Collections.emptyList();
+		}
+
+		boolean hasOther = selectedItems.contains(ParalysisSite.OTHER.toString());
+		getContentBinding().sixtyDayParalyzedPartOther.setVisibility(hasOther ? View.VISIBLE : View.GONE);
+	}
+
+		@Override
 	public int getEditLayout() {
 		return R.layout.fragment_case_edit_sixtyday_layout;
 	}
