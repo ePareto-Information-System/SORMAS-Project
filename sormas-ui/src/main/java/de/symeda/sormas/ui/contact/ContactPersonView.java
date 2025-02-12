@@ -62,10 +62,10 @@ public class ContactPersonView extends AbstractContactView implements PersonSide
 		CustomLayout layout = addPageLayout(componentWrapper, editComponent);
 		setSubComponent(componentWrapper);
 		addSideComponents(layout, CoreEntityType.CONTACT, contact.getUuid(), person.toReference(), this::showUnsavedChangesPopup, isEditAllowed());
-		setEditPermission(
+		/*setEditPermission(
 				editComponent,
 				UserProvider.getCurrent().hasUserRight(UserRight.PERSON_EDIT),
 				PersonDto.ADDRESSES,
-				PersonDto.PERSON_CONTACT_DETAILS);
+				PersonDto.PERSON_CONTACT_DETAILS);*/
 	}
 }

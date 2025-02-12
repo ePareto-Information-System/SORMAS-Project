@@ -233,6 +233,8 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         responsibleCommunityCombo = addInfrastructureField(CaseDataDto.RESPONSIBLE_COMMUNITY);
         responsibleCommunityCombo.setNullSelectionAllowed(true);
         responsibleCommunityCombo.addStyleName(SOFT_REQUIRED);
+        investigated = addField(CaseDataDto.INVESTIGATED_DATE, DateField.class);
+        investigated.setVisible(false);
 
         InfrastructureFieldsHelper.initInfrastructureFields(responsibleRegion, responsibleDistrictCombo, responsibleCommunityCombo);
 
@@ -552,10 +554,11 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 
             caseTransmissionClassification.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.AHF && disease != Disease.MEASLES);
             updateDiseaseVariant(disease);
-            if (investigated == null) {
-                investigated = addField(CaseDataDto.INVESTIGATED_DATE, DateField.class);
+            if (investigated.getValue() == null) {
+                investigated.setVisible(true);
+            }else{
+                investigated.setVisible(false);
             }
-            investigated.setVisible(false);
             ogCaseOrigin.setVisible(disease != Disease.CSM);
             caseTransmissionClassification.setVisible(false);
 
