@@ -136,8 +136,8 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		TextField approximateAgeField = addField(PersonDto.APPROXIMATE_AGE, TextField.class);
 		ComboBox approximateAgeTypeField = addField(PersonDto.APPROXIMATE_AGE_TYPE, ComboBox.class);
 
-		setRequiredWithValidation(approximateAgeField, "Age is required.");
-		setRequiredWithValidation(approximateAgeTypeField, "Unit is required.");
+		/*setRequiredWithValidation(approximateAgeField, "Age is required.");
+		setRequiredWithValidation(approximateAgeTypeField, "Unit is required.");*/
 
 		setVisible(false, PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE);
 
@@ -410,6 +410,14 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		if (StringUtils.isNotEmpty(getEmailAddress())) {
 			person.setEmailAddress(getEmailAddress());
 		}
+		if (getHomeAddressForm() != null && getHomeAddressForm().getValue() != null) {
+			person.setAddress(getHomeAddressForm().getValue());
+		}
+	}
+
+	public void updateHomeAddress(PersonDto person) {
+
+		commit();
 		if (getHomeAddressForm() != null && getHomeAddressForm().getValue() != null) {
 			person.setAddress(getHomeAddressForm().getValue());
 		}

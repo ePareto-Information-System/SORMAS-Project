@@ -867,7 +867,7 @@ public class CaseController {
 				} else {
 					PersonDto searchedPerson = createForm.getSearchedPerson();
 					if (searchedPerson != null) {
-						//updateHomeAddress(createForm, searchedPerson);
+						updateHomeAddress(createForm, searchedPerson);
 						dto.setPerson(searchedPerson.toReference());
 						selectOrCreateCase(createForm, dto, searchedPerson.toReference());
 					} else {
@@ -924,10 +924,10 @@ public class CaseController {
 		caseDataForm.getPersonEditForm().transferDataToPersonFromCaseData(person);
 	}
 
-	/*private void updateHomeAddress(CaseCreateForm createForm, PersonDto person) {
+	private void updateHomeAddress(CaseCreateForm createForm, PersonDto person) {
 		createForm.getPersonCreateForm().updateHomeAddress(person);
 		FacadeProvider.getPersonFacade().save(person);
-	}*/
+	}
 
 	public void selectOrCreateCase(CaseDataDto caseDto, PersonDto person, Consumer<String> selectedCaseUuidConsumer) {
 		CaseSimilarityCriteria criteria = CaseSimilarityCriteria.forCase(caseDto, person.getUuid());
@@ -995,7 +995,9 @@ public class CaseController {
 			CaseDataDto oldCase = findCase(caseUuid);
 			CaseDataDto cazeDto = caseEditForm.getValue();
 
-			transferDataToPersonFromCaseData(caseEditForm, person);
+			if(cazeDto.getDisease() != null && cazeDto.getDisease() == Disease.MONKEYPOX){
+				transferDataToPersonFromCaseData(caseEditForm, person);
+			}
 			FacadeProvider.getPersonFacade().save(person);
 
 			saveCaseWithFacilityChangedPrompt(cazeDto, oldCase);
