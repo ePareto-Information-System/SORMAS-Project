@@ -169,7 +169,7 @@
     <string name="caption_case_food_history">Food History</string>
     <string name="caption_case_investigation_notes">Investigation Notes</string>
     <string name="caption_case_afp_immunization">Immunization History</string>
-    <string name="caption_case_sixy_day">Sixty Day</string>
+    <string name="caption_case_sixy_day">60-Day Follow Up</string>
     <string name="caption_case_food_sample_testing">Food Sample Testing</string>
     <string name="caption_case_treatments">Treatments</string>
     <string name="caption_case_similarity_create">Create a new case</string>

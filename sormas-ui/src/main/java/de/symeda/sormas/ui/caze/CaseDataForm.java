@@ -1745,7 +1745,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             }
 
             hideFieldsForSelectedDisease(disease);
-
+            notifiedOther.setVisible(notifiedByList.getValue() != null && notifiedByList.getValue() == NotifiedList.OTHER);
             notifiedByList.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
                 notifiedOther.setVisible(notifiedByList.getValue() != null && notifiedByList.getValue() == NotifiedList.OTHER);
             });
@@ -1813,6 +1813,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 lastVaccinationDate.setVisible(false);
 
                 setVaccinatedByCardOrHistoryVisibility();
+                getFieldGroup().getField(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE).setRequired(true);
 
                 healthConditionsField.setVisible(false);
                 internaltoken.setVisible(false);
