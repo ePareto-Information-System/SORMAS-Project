@@ -244,7 +244,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(6, OUTCOME);
 
 	public static final String AFP_LAYOUT = fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
-			fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
+			fluidRowLocs(PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC, DATE_ONSET_PARALYSIS) +
 			fluidRowLocs(6,SITE_OF_PARALYSIS) +
 			fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
 			fluidRowLocs(INJECTION_SITE) +
@@ -406,7 +406,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         foodHistoryHeadingLabel.setVisible(false);
 
         DateField onsetDateField = addField(ONSET_DATE, DateField.class);
-		onsetDateField.setRequired(true);
+		if (disease != Disease.AFP) {
+			onsetDateField.setRequired(true);
+		}
         ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
         if (symptomsContext == SymptomsContext.CASE) {
             // If the symptom onset date is after the hospital admission date, show a warning but don't prevent the user from saving
