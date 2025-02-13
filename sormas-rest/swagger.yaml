@@ -6894,6 +6894,7 @@ paths:
                   - SAMPLE_EXPORT
                   - SAMPLE_TRANSFER
                   - SAMPLE_EDIT_NOT_OWNED
+                  - EBS_VIEW
                   - PERFORM_BULK_OPERATIONS_CASE_SAMPLES
                   - PATHOGEN_TEST_CREATE
                   - PATHOGEN_TEST_EDIT
@@ -6968,6 +6969,7 @@ paths:
                   - DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS
                   - DASHBOARD_CAMPAIGNS_VIEW
                   - DASHBOARD_SAMPLES_VIEW
+                  - DASHBOARD_EBS_VIEW
                   - CASE_CLINICIAN_VIEW
                   - THERAPY_VIEW
                   - PRESCRIPTION_CREATE
@@ -7099,6 +7101,7 @@ paths:
                   - SAMPLE_EXPORT
                   - SAMPLE_TRANSFER
                   - SAMPLE_EDIT_NOT_OWNED
+                  - EBS_VIEW
                   - PERFORM_BULK_OPERATIONS_CASE_SAMPLES
                   - PATHOGEN_TEST_CREATE
                   - PATHOGEN_TEST_EDIT
@@ -7173,6 +7176,7 @@ paths:
                   - DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS
                   - DASHBOARD_CAMPAIGNS_VIEW
                   - DASHBOARD_SAMPLES_VIEW
+                  - DASHBOARD_EBS_VIEW
                   - CASE_CLINICIAN_VIEW
                   - THERAPY_VIEW
                   - PRESCRIPTION_CREATE
@@ -16910,6 +16914,7 @@ components:
           - DASHBOARD_CONTACTS
           - DASHBOARD_CAMPAIGNS
           - DASHBOARD_SAMPLES
+          - DASHBOARD_EBS
           - LIMITED_SYNCHRONIZATION
           - ENVIRONMENT_MANAGEMENT
           - ASSIGN_TASKS_TO_HIGHER_LEVEL
@@ -24974,6 +24979,7 @@ components:
             - DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS
             - DASHBOARD_CAMPAIGNS_VIEW
             - DASHBOARD_SAMPLES_VIEW
+            - DASHBOARD_EBS_VIEW
             - CASE_CLINICIAN_VIEW
             - THERAPY_VIEW
             - PRESCRIPTION_CREATE

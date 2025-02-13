@@ -36,6 +36,7 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.campaigns.CampaignDashboardView;
 import de.symeda.sormas.ui.dashboard.components.DashboardFilterLayout;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
+import de.symeda.sormas.ui.dashboard.ebs.EbsDashboardView;
 import de.symeda.sormas.ui.dashboard.samples.SamplesDashboardView;
 import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
 import de.symeda.sormas.ui.dashboard.sample.SampleDashboardView;
@@ -103,6 +104,12 @@ public abstract class AbstractDashboardView extends AbstractView {
 			dashboardSwitcher.setItemCaption(DashboardType.DISEASE, I18nProperties.getEnumCaption(DashboardType.DISEASE));	
 			}
 		}
+
+		if (permitted(FeatureType.EBS,UserRight.DASHBOARD_EBS_VIEW)) {
+			dashboardSwitcher.addItem(DashboardType.EBS);
+			dashboardSwitcher.setItemCaption(DashboardType.EBS, I18nProperties.getEnumCaption(DashboardType.EBS));
+		}
+
 		// if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
 		// 	dashboardSwitcher.addItem(DashboardType.SAMPLES);
 		// 	dashboardSwitcher.setItemCaption(DashboardType.SAMPLES, I18nProperties.getEnumCaption(DashboardType.SAMPLES));
@@ -141,7 +148,14 @@ public abstract class AbstractDashboardView extends AbstractView {
 			else if (DashboardType.SAMPLES.equals(e.getProperty().getValue())) {
 				
 				SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
-			}else {
+			}
+
+			else if (DashboardType.EBS.equals(e.getProperty().getValue())) {
+
+				SormasUI.get().getNavigator().navigateTo(EbsDashboardView.VIEW_NAME);
+			}
+
+			else {
 				SormasUI.get().getNavigator().navigateTo(ContactsDashboardView.VIEW_NAME);
 			}
 		});
@@ -193,6 +207,12 @@ public abstract class AbstractDashboardView extends AbstractView {
 
 			dashboardSwitcher.setItemCaption(DashboardType.DISEASE, I18nProperties.getEnumCaption(DashboardType.DISEASE));
 		}
+
+		if (permitted(FeatureType.EBS, UserRight.DASHBOARD_EBS_VIEW)) {
+			dashboardSwitcher.addItem(DashboardType.EBS);
+
+			dashboardSwitcher.setItemCaption(DashboardType.EBS, I18nProperties.getEnumCaption(DashboardType.EBS));
+		}
 	}
 	// 	addHeaderComponent(dashboardSwitcher);1.87.0
 
@@ -228,7 +248,11 @@ public abstract class AbstractDashboardView extends AbstractView {
 		}
 		else if (DashboardType.CAMPAIGNS.equals(e.getProperty().getValue()))  {
 			SormasUI.get().getNavigator().navigateTo(CampaignDashboardView.VIEW_NAME);
-		} else {
+		}
+		else if (DashboardType.EBS.equals(e.getProperty().getValue()))  {
+			SormasUI.get().getNavigator().navigateTo(EbsDashboardView.VIEW_NAME);
+		}
+		else {
 			SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
 		}
 	}

@@ -15231,3 +15231,9 @@ INSERT INTO schema_version(version_number, comment) VALUES (722, 'Dropped and ad
 
 ALTER TABLE sixtyday ADD COLUMN barcode VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (723, 'Added barcode to sixtyday(food sample testing)');
+
+
+-- Assign EBS DASHBOARD user rights to default admin and national_user user roles
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'DASHBOARD_EBS_VIEW' FROM public.userroles WHERE userroles.linkeddefaultuserrole in ('ADMIN','NATIONAL_USER');
+
+INSERT INTO schema_version (version_number, comment) VALUES (724, 'EBS Dashboard');

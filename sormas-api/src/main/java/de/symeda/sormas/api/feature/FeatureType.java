@@ -41,6 +41,7 @@ public enum FeatureType {
 	AGGREGATE_REPORTING(true, true, null, null, null),
 	CAMPAIGNS(true, false, null, null, null),
 	DISEASE_DETAILS(true, true, null, null, null),
+	EBS(true, true, null, null, null),
 	CASE_SURVEILANCE(true, true, null, null, ImmutableMap.of(FeatureTypeProperty.AUTOMATIC_RESPONSIBILITY_ASSIGNMENT, Boolean.TRUE)),
 	CLINICAL_MANAGEMENT(true, true, null, null, null),
 	CONTACT_TRACING(true,
@@ -77,6 +78,8 @@ public enum FeatureType {
 	DASHBOARD_CONTACTS(true, true, null, null, null),
 	DASHBOARD_CAMPAIGNS(true, true, null, null, null),
 	DASHBOARD_SAMPLES(true, true, null, null, null),
+	DASHBOARD_EBS(true, true, null, null, null),
+
 	LIMITED_SYNCHRONIZATION(true,
 		false,
 		null,

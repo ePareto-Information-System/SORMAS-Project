@@ -549,7 +549,9 @@ public enum DefaultUserRole {
 					OUTBREAK_EDIT,
 					SORMAS_REST,
 					SORMAS_UI,
-					DEV_MODE));
+					DEV_MODE,
+					DASHBOARD_EBS_VIEW
+						));
 			break;
 		case ADMIN_SUPERVISOR:
 			userRights.addAll(

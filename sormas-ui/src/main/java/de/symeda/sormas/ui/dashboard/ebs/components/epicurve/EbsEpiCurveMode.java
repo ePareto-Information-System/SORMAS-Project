@@ -15,18 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.ui.dashboard;
+package de.symeda.sormas.ui.dashboard.ebs.components.epicurve;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
-public enum DashboardType {
+public enum EbsEpiCurveMode {
 
-	SURVEILLANCE,
-	CONTACTS,
-	CAMPAIGNS,
-	SAMPLES,
-	DISEASE,
-	EBS;
+	CASE_STATUS,
+	ALIVE_OR_DEAD;
 
 	@Override
 	public String toString() {
