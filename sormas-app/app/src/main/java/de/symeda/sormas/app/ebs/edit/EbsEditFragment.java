@@ -50,6 +50,7 @@ import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
+import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.controls.ControlDateField;
 import de.symeda.sormas.app.component.controls.ControlDateTimeField;
@@ -181,13 +182,15 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 	@Override
 	public void onLayoutBinding(final FragmentEbsEditLayoutBinding contentBinding) {
 		setUpControlListeners(contentBinding);
-
+		User currentUser = ConfigProvider.getUser();
 		contentBinding.setData(record);
 		contentBinding.setAutomaticScanningTypeClass(AutomaticScanningType.class);
 		contentBinding.setManualScanningTypeClass(ManualScanningType.class);
 		contentBinding.setMediaScannningTypeClass(MediaScannningType.class);
 		ValidationHelper.initEbsPhoneNumberValidator(contentBinding.ebsInformantTel);
 		ValidationHelper.initEbsPhoneNumberValidator(contentBinding.ebsPersonPhone);
+		record.getEbsLocation().setRegion(currentUser.getRegion());
+		record.getEbsLocation().setDistrict(currentUser.getDistrict());
 		InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
 				contentBinding.ebsRegion,
 				initialRegions,
