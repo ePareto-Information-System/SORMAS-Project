@@ -222,8 +222,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			addHeadingsAndInfoTexts();
 		}
 
-		addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
-		addField(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
+		NullableOptionGroup recentTravelOutbreak =addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
+		NullableOptionGroup similarSymptoms = addField(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
 
 		NullableOptionGroup contactSickDomesticAnimals = addField(EpiDataDto.CONTACT_SICK_ANIMALS, NullableOptionGroup.class);
 		TextField ifYesSpecifySickDomestic = addField(EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL, TextField.class);
@@ -457,9 +457,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		exposuresField.addValueChangeListener(e -> ogExposureDetailsKnown.setEnabled(CollectionUtils.isEmpty(exposuresField.getValue())));
 
-		hideFieldsForSelectedDisease(disease);
+//		hideFieldsForSelectedDisease(disease);
 
 		if (disease == Disease.NEW_INFLUENZA) {
+			hideAllFields();
+			hideLabels();
 
 			NullableOptionGroup previously = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA, NullableOptionGroup.class);
 			TextField vaccineName = addField(EpiDataDto.NAME_OF_VACCINE, TextField.class);
@@ -478,17 +480,14 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			yearCovid.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
 			yearCovid.setInputPrompt(I18nProperties.getString(Strings.year));
 
-			vaccineName.setVisible(false);
-			year.setVisible(false);
-			vaccineNameCovid.setVisible(false);
-			yearCovid.setVisible(false);
-			contactDeadWildAnimals.setVisible(true);
 
 			TextArea placesVisited = addField(EpiDataDto.PLACES_VISITED_PAST_7DAYS, TextArea.class);
 			OptionGroup visitedPlace = addField(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC, OptionGroup.class);
 			ComboBox riskFactor = addField(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, ComboBox.class);
 			TextField other = addField(EpiDataDto.OTHER_SPECIFY, com.vaadin.v7.ui.TextField.class);
-			other.setVisible(false);
+
+			setFieldsVisible(false, vaccineName, year, vaccineNameCovid, yearCovid, other);
+			setFieldsVisible(true, contactSickDomesticAnimals, contactDeadWildAnimals, similarSymptoms, recentTravelOutbreak);
 
 			FieldHelper.setVisibleWhen(riskFactor, Arrays.asList(other), Arrays.asList(RiskFactorCondition.OTHER), true);
 			FieldHelper.setVisibleWhen(previously, Arrays.asList(year, vaccineName), Arrays.asList(YesNo.YES), true);
@@ -732,7 +731,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			Disease.FOODBORNE_ILLNESS,
 			Disease.AFP,
 			Disease.AHF,
-			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS
+			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
+			Disease.NEW_INFLUENZA
 	);
 
 	private Label createLabel(String text, String h4, String location) {
@@ -753,6 +753,16 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				label -> getContent().getComponent(label)).filter(
 				label -> label != null).forEach(
 				label -> label.setVisible(false));
+	}
+
+	public void hideAllFields () {
+		for (Field<?> field : getFieldGroup().getFields()) {
+			//check if field is not null
+			if (field != null)
+				//hide the field
+				field.setVisible(false);
+
+		}
 	}
 
 	private boolean shouldToggleSourceContacts(YesNo sourceContactsKnown) {

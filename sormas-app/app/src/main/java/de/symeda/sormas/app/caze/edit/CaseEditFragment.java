@@ -720,6 +720,28 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataQuarantineReduced
 				.addValueChangedListener(e -> contentBinding.caseDataQuarantineReduced.setVisibility(record.isQuarantineReduced() ? VISIBLE : GONE));
 
+		if (Arrays.asList(Disease.MEASLES, Disease.CORONAVIRUS, Disease.CHOLERA).contains(record.getDisease())) {
+			Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
+					VaccinationStatus.VACCINATED,
+					VaccinationStatus.UNVACCINATED
+			);
+
+			vaccinationList = DataUtils.toItems(
+					Arrays.stream(VaccinationStatus.values())
+							.filter(Objects::nonNull)
+							.filter(allowedVaccinations::contains)
+							.collect(Collectors.toList())
+			);
+
+			vaccinationList = vaccinationList.stream()
+					.filter(item -> item != null)
+					.filter(item -> item.getKey() != null && !item.getKey().trim().isEmpty())
+					.filter(item -> item.getValue() != null)
+					.collect(Collectors.toList());
+
+			contentBinding.caseDataVaccinationStatus.setEnumItems(vaccinationList);
+		}
+
 
 		/*contentBinding.caseDataVaccineName.addValueChangedListener(new ValueChangeListener() {
 
@@ -774,21 +796,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				break;
 			case CSM:
 				handleCSM();
-				break;
-			case MEASLES:
-				handleMeasles();
-				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
-				break;
-			case NEONATAL_TETANUS:
-				handleNNT();
-				break;
-			case CORONAVIRUS:
-				handleCoronavirus();
-				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCoronavirus());
-				break;
-			case CHOLERA:
-				handleCholera();
-				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCholera());
 				break;
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				contentBinding.caseDataVaccinationDate.setCaption("Date of last vaccination");
@@ -969,7 +976,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		// reinfection
 		contentBinding.caseDataPreviousInfectionDate.initializeDateField(getChildFragmentManager());
 
-		if (Arrays.asList(Disease.MEASLES, Disease.CORONAVIRUS, Disease.CHOLERA).contains(record.getDisease())) {
+		/*if (Arrays.asList(Disease.MEASLES, Disease.CORONAVIRUS, Disease.CHOLERA).contains(record.getDisease())) {
 			Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
 					VaccinationStatus.VACCINATED,
 					VaccinationStatus.UNVACCINATED
@@ -989,7 +996,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 					.collect(Collectors.toList());
 
 			contentBinding.caseDataVaccinationStatus.setEnumItems(vaccinationList);
-		}
+		}*/
 
 		// "Pick GPS Coordinates" confirmation dialog
 		contentBinding.pickGpsCoordinates.setOnClickListener(v -> {
@@ -1011,6 +1018,25 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			});
 			confirmationDialog.show();
 		});
+
+		switch (record.getDisease()) {
+			case MEASLES:
+				handleMeasles();
+				getContentBinding().caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
+				break;
+			case NEONATAL_TETANUS:
+				handleNNT();
+				break;
+			case CORONAVIRUS:
+				handleCoronavirus();
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCoronavirus());
+				break;
+			case CHOLERA:
+				handleCholera();
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCholera());
+			default:
+				break;
+		}
 
 	}
 
