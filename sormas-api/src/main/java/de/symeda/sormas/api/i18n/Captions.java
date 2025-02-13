@@ -3713,6 +3713,8 @@ public interface Captions {
 	String View_dashboard_surveillance = "View.dashboard.surveillance";
 	String View_dashboard_sample = "View.dashboard.samples";
 	String View_dashboard_disease = "View.dashboard.disease";
+
+	String View_dashboard_ebs = "View.dashboard.ebs";
 	String View_environments = "View.environments";
 	String View_ebs = "View.ebs";
 	String Ebs_reportDateTime = "Ebs.reportDateTime";

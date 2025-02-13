@@ -152,6 +152,10 @@
 	</security-role>
 
 	<security-role>
+		<role-name>EBS_VIEW</role-name>
+	</security-role>
+
+	<security-role>
 		<role-name>PATHOGEN_TEST_CREATE</role-name>
 	</security-role>
 
@@ -473,6 +477,10 @@
 
 	<security-role>
 		<role-name>DASHBOARD_SAMPLES_VIEW</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>DASHBOARD_EBS_VIEW</role-name>
 	</security-role>
 
 	<security-role>

@@ -19,6 +19,7 @@ package de.symeda.sormas.ui.dashboard;
 
 import static de.symeda.sormas.ui.UiUtil.permitted;
 
+import de.symeda.sormas.ui.dashboard.ebs.EbsDashboardView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,6 +78,11 @@ public class DashboardController {
 		if (permitted(FeatureType.SAMPLES_LAB, UserRight.DASHBOARD_SAMPLES_VIEW)) {  //1.87.0
 			navigator.addView(SampleDashboardView.VIEW_NAME, SampleDashboardView.class);
 		
+		}
+
+		if (permitted(FeatureType.EBS, UserRight.DASHBOARD_EBS_VIEW)) {  //1.87.0
+			navigator.addView(EbsDashboardView.VIEW_NAME, EbsDashboardView.class);
+
 		}
 	}
 

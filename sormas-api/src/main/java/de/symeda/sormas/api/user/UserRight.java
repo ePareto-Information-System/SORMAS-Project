@@ -250,6 +250,7 @@ public enum UserRight {
 	SAMPLE_EXPORT(UserRightGroup.SAMPLE, UserRight._SAMPLE_VIEW),
 	SAMPLE_TRANSFER(UserRightGroup.SAMPLE, UserRight._SAMPLE_EDIT),
 	SAMPLE_EDIT_NOT_OWNED(UserRightGroup.SAMPLE, UserRight._SAMPLE_EDIT),
+	EBS_VIEW(UserRightGroup.EBS),
 	PERFORM_BULK_OPERATIONS_CASE_SAMPLES(UserRightGroup.SAMPLE, UserRight._SAMPLE_EDIT),
 
 	PATHOGEN_TEST_CREATE(UserRightGroup.SAMPLE, UserRight._SAMPLE_VIEW),
@@ -340,6 +341,8 @@ public enum UserRight {
 	DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS(UserRightGroup.DASHBOARD, UserRight._DASHBOARD_CONTACT_VIEW),
 	DASHBOARD_CAMPAIGNS_VIEW(UserRightGroup.DASHBOARD, UserRight._CAMPAIGN_VIEW),
 	DASHBOARD_SAMPLES_VIEW(UserRightGroup.DASHBOARD, UserRight._SAMPLE_VIEW),
+	DASHBOARD_EBS_VIEW(UserRightGroup.DASHBOARD, UserRight._EBS_VIEW),
+
 	//DASHBOARD_SAMPLES_ACCESS(UserRightGroup.DASHBOARD, UserRight._SAMPLE_ACCESS),
 
 	CASE_CLINICIAN_VIEW(UserRightGroup.CASE_MANAGEMENT, UserRight._CASE_VIEW),
@@ -482,6 +485,8 @@ public enum UserRight {
 	//public static final String _SAMPLE_ACCESS = "SAMPLES_ACCESS";
 	public static final String _SAMPLE_CREATE = "SAMPLE_CREATE";
 	public static final String _SAMPLE_VIEW = "SAMPLE_VIEW";
+	public static final String _EBS_VIEW = "EBS_VIEW";
+
 	public static final String _SAMPLE_EDIT = "SAMPLE_EDIT";
 	public static final String _SAMPLE_EDIT_NOT_OWNED = "SAMPLE_EDIT_NOT_OWNED";
 
@@ -572,6 +577,10 @@ public enum UserRight {
 	public static final String _DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS = "DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS";
 	public static final String _DASHBOARD_CAMPAIGNS_VIEW = "DASHBOARD_CAMPAIGNS_VIEW";
 	public static final String _DASHBOARD_SAMPLES_VIEW = "DASHBOARD_SAMPLES_VIEW";
+	public static final String _DASHBOARD_EBS_VIEW = "DASHBOARD_EBS_VIEW";
+
+
+
 	public static final String _CASE_CLINICIAN_VIEW = "CASE_CLINICIAN_VIEW";
 	public static final String _THERAPY_VIEW = "THERAPY_VIEW";
 	public static final String _PRESCRIPTION_CREATE = "PRESCRIPTION_CREATE";

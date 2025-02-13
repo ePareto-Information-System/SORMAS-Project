@@ -14739,3 +14739,8 @@ INSERT INTO schema_version(version_number, comment) VALUES (647, 'Resolved repli
 
 UPDATE samples SET samplematerial = 'NASOPHARYNGEAL_SWAB' WHERE samplematerial = 'NP_SWAB';
 INSERT INTO schema_version(version_number, comment) VALUES (648, 'updated np_swab to NASOPHARYNGEAL_SWAB');
+
+-- Assign EBS DASHBOARD user rights to default admin and national_user user roles
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'DASHBOARD_EBS_VIEW' FROM public.userroles WHERE userroles.linkeddefaultuserrole in ('ADMIN','NATIONAL_USER');
+
+INSERT INTO schema_version (version_number, comment) VALUES (649, 'EBS Dashboard');

@@ -18,6 +18,7 @@
 package de.symeda.sormas.ui;
 
 import static de.symeda.sormas.ui.UiUtil.permitted;
+import de.symeda.sormas.ui.dashboard.ebs.EbsDashboardView;
 import static java.util.Objects.nonNull;
 
 import java.util.Arrays;
@@ -124,9 +125,17 @@ public class MainScreen extends HorizontalLayout {
 					defaultView = SamplesView.VIEW_NAME;
 				} else if (permitted(FeatureType.ENVIRONMENT_MANAGEMENT, UserRight.ENVIRONMENT_VIEW)) {
 					defaultView = EnvironmentsView.VIEW_NAME;
-				} else if (permitted(FeatureType.TASK_MANAGEMENT, UserRight.TASK_VIEW)) {
+				} 
+				else if (permitted(FeatureType.EBS, UserRight.DASHBOARD_EBS_VIEW)) {
+					defaultView = EbsDashboardView.VIEW_NAME;
+				}
+				else if (permitted(FeatureType.TASK_MANAGEMENT, UserRight.TASK_VIEW)) {
 					defaultView = TasksView.VIEW_NAME;
-				} else {
+				}
+//				else if (permitted(FeatureType.TASK_MANAGEMENT)){
+//					defaultView = EbsDashboardView.VIEW_NAME;
+//				}
+				else {
 					defaultView = AboutView.VIEW_NAME;
 				}
 
@@ -428,6 +437,10 @@ public class MainScreen extends HorizontalLayout {
 		return permitted(EnumSet.of(FeatureType.DASHBOARD_SAMPLES, FeatureType.SAMPLES_LAB), UserRight.DASHBOARD_SAMPLES_VIEW);
 	}
 
+	private static boolean ebsDashboardPermittedPermitted() {
+		return permitted(EnumSet.of(FeatureType.DASHBOARD_EBS, FeatureType.EBS), UserRight.DASHBOARD_EBS_VIEW);
+	}
+
 	private static Set<String> initKnownViews() {
 		final Set<String> views = new HashSet<>(
 			Arrays.asList(
@@ -461,7 +474,9 @@ public class MainScreen extends HorizontalLayout {
 				ExternalMessagesView.VIEW_NAME,
 				TravelEntriesView.VIEW_NAME,
 				ImmunizationsView.VIEW_NAME,
-				AdditionalView.VIEW_NAME)
+				AdditionalView.VIEW_NAME,
+				EbsDashboardView.VIEW_NAME
+			)
 		);
 
 		if (surveillanceDashboardPermitted()) {
@@ -476,6 +491,10 @@ public class MainScreen extends HorizontalLayout {
 
 		if (sampleDashboardPermitted()) {
 			views.add(SampleDashboardView.VIEW_NAME);
+		}
+
+		if(ebsDashboardPermittedPermitted()){
+			views.add(EbsDashboardView.VIEW_NAME);
 		}
 
 		return views;
