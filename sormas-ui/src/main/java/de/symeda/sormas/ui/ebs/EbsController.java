@@ -437,13 +437,7 @@ public class EbsController {
 			if (!eventEditForm.getFieldGroup().isModified()) {
 				EbsDto eventDto = eventEditForm.getValue();
 
-				final UserDto user = UserProvider.getCurrent().getUser();
-				final RegionReferenceDto userRegion = user.getRegion();
-				final DistrictReferenceDto userDistrict = user.getDistrict();
-				final RegionReferenceDto epEventRegion = eventDto.getEbsLocation().getRegion();
-				final DistrictReferenceDto epEventDistrict = eventDto.getEbsLocation().getDistrict();
-				final Boolean eventOutsideJurisdiction =
-					(userRegion != null && !userRegion.equals(epEventRegion) || userDistrict != null && !userDistrict.equals(epEventDistrict));
+				final Boolean eventOutsideJurisdiction = getEventOutsideJurisdiction(eventDto);
 
 				if (eventOutsideJurisdiction) {
 					VaadinUiUtil.showConfirmationPopup(
@@ -488,6 +482,17 @@ public class EbsController {
 		editView.getDiscardButton().setCaption("Cancel");
 
 		return editView;
+	}
+
+	private static Boolean getEventOutsideJurisdiction(EbsDto eventDto) {
+		final UserDto user = UserProvider.getCurrent().getUser();
+		final RegionReferenceDto userRegion = user.getRegion();
+		final DistrictReferenceDto userDistrict = user.getDistrict();
+		final RegionReferenceDto epEventRegion = eventDto.getEbsLocation().getRegion();
+		final DistrictReferenceDto epEventDistrict = eventDto.getEbsLocation().getDistrict();
+		final Boolean eventOutsideJurisdiction =
+			(userRegion != null && !userRegion.equals(epEventRegion) || userDistrict != null && !userDistrict.equals(epEventDistrict));
+		return eventOutsideJurisdiction;
 	}
 
 	public CommitDiscardWrapperComponent<RiskAssessmentDataForm> getRiskAssessmenteditComponent(
