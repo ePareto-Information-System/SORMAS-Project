@@ -50,10 +50,13 @@ import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.user.JurisdictionLevel;
+import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.location.LocationEditForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.DateTimeField;
@@ -98,6 +101,8 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 	private List<UserReferenceDto> districtEventResponsibles = new ArrayList<>();
 	private LocationEditForm locationForm;
 	private final EbsDto ebs;
+	final UserDto user;
+	final JurisdictionLevel jurisdictionLevel;
 	DateField reportDate;
 	DateTimeField occurrenceDate;
 	EbsDateValidator validator = new EbsDateValidator(THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, false);
@@ -123,7 +128,8 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		statusChangeLayout.setSpacing(false);
 		statusChangeLayout.setMargin(false);
 		getContent().addComponent(statusChangeLayout, STATUS_CHANGE);
-
+		this.user = UserProvider.getCurrent().getUser();
+		this.jurisdictionLevel = user.getJurisdictionLevel();
 		addFields();
 	}
 
@@ -183,7 +189,6 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
 		locationForm = (LocationEditForm) getFieldGroup().getField(EbsDto.EBS_LOCATION);
 		locationForm.setDistrictRequiredOnDefaultCountry(true);
-
 		ComboBox regionField = (ComboBox) locationForm.getFieldGroup().getField(LocationDto.REGION);
 		ComboBox districtField = (ComboBox) locationForm.getFieldGroup().getField(LocationDto.DISTRICT);
 		addField(EbsDto.EBS_LATITUDE, TextField.class);
@@ -356,7 +361,6 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		});
 		reportDate.addValueChangeListener(valueChangeEvent -> validateDateFields());
 		occurrenceDate.addValueChangeListener(valueChangeEvent -> validateDateFields());
-
 		validateDateFields();
 
 	}
@@ -404,6 +408,10 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 	@Override
 	public EbsDto getValue() {
 		final EbsDto EbsDto = super.getValue();
+		if (jurisdictionLevel != JurisdictionLevel.NATION) {
+			EbsDto.getEbsLocation().setRegion(user.getRegion());
+			EbsDto.getEbsLocation().setDistrict(user.getDistrict());
+		}
 		return EbsDto;
 	}
 
