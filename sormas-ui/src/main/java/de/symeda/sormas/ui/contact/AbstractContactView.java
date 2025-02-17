@@ -25,6 +25,7 @@ import com.vaadin.ui.Component;
 
 import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
@@ -32,6 +33,8 @@ import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.infrastructure.forms.FormBuilderDto;
+import de.symeda.sormas.api.infrastructure.forms.FormBuilderReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
@@ -48,6 +51,8 @@ import de.symeda.sormas.ui.utils.ExternalJournalUtil;
 public abstract class AbstractContactView extends AbstractEditAllowedDetailView<ContactReferenceDto> {
 
 	public static final String ROOT_VIEW_NAME = ContactsView.VIEW_NAME;
+
+	private List<FormBuilderDto> formBuilderReferenceDtos;
 
 	protected AbstractContactView(String viewName) {
 		super(viewName);
@@ -73,6 +78,7 @@ public abstract class AbstractContactView extends AbstractEditAllowedDetailView<
 		}
 
 		ContactDto contact = FacadeProvider.getContactFacade().getByUuid(getReference().getUuid());
+		formBuilderReferenceDtos = FacadeProvider.getFormBuilderFacade().getByDiseaseName(contact.getDisease());
 
 		menu.removeAllViews();
 		menu.addView(ContactsView.VIEW_NAME, I18nProperties.getCaption(Captions.contactContactsList));
@@ -87,15 +93,17 @@ public abstract class AbstractContactView extends AbstractEditAllowedDetailView<
 			menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getCaption(Captions.contactCaseContacts), contact.getCaze().getUuid(), true);
 		}
 		menu.addView(ContactDataView.VIEW_NAME, I18nProperties.getCaption(ContactDto.I18N_PREFIX), params);
-		menu.addView(ContactPersonView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.PERSON), params);
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CONTACTS_EPIDEMIOLOGICAL_DATA)) {
+		if (isFormAvailable(FormType.PERSON_EDIT)) {
+			menu.addView(ContactPersonView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.PERSON), params);
+		}
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CONTACTS_EPIDEMIOLOGICAL_DATA) && isFormAvailable(FormType.EPIDEMIOLOGICAL_EDIT)) {
 			menu.addView(ContactEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.EPI_DATA), params);
 		}
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CONTACTS_FOLLOW_UP_VISITS)) {
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CONTACTS_FOLLOW_UP_VISITS) && isFormAvailable(FormType.FOLLOW_UP_VISITS)) {
 			menu.addView(ContactVisitsView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.VISITS), params);
 		}
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)) {
+		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW) && isFormAvailable(FormType.SAMPLE_EDIT)) {
 			menu.addView(ContactSamplesView.VIEW_NAME, I18nProperties.getCaption(Captions.Contact_samples), params);
 		}
 
@@ -151,5 +159,18 @@ public abstract class AbstractContactView extends AbstractEditAllowedDetailView<
 		if (!isEditAllowed()) {
 			getComponent(getComponentIndex(component)).setEnabled(false);
 		}
+	}
+
+
+	//form found in formBuilderReferenceDtos
+	public boolean isFormAvailable(FormType formType) {
+		if (formBuilderReferenceDtos != null) {
+			for (FormBuilderDto formBuilderDto : formBuilderReferenceDtos) {
+				if (formBuilderDto.getFormType().equals(formType)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

@@ -301,7 +301,9 @@ public class DiseaseFieldHandler {
     private static void removeMenuItemIfFormAvailable(List<PageMenuItem> menuItems, FormType formType, CaseSection section) {
         boolean isFormAvailable = isFormNotAvailableForDisease(formType);
         if (isFormAvailable) {
-            menuItems.set(section.ordinal(), null);
+            if (menuItems.size() > section.ordinal() && menuItems.get(section.ordinal()) != null) {
+                menuItems.set(section.ordinal(), null);
+            }
         }
     }
 

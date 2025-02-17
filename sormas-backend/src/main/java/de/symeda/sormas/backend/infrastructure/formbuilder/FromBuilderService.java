@@ -95,6 +95,20 @@ public class FromBuilderService extends AbstractInfrastructureAdoService<FormBui
         }
     }
 
+    // getByDiseaseName
+    public List<FormBuilder> getByDiseaseName(Disease disease) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<FormBuilder> cq = cb.createQuery(FormBuilder.class);
+        Root<FormBuilder> from = cq.from(FormBuilder.class);
+
+        //where disease.name = :diseaseName
+        Predicate filter = cb.equal(from.get("disease"), disease);
+        cq.where(filter);
+
+        TypedQuery<FormBuilder> query = em.createQuery(cq);
+        return query.getResultList();
+    }
+
 
 
 }
