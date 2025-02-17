@@ -1,5 +1,6 @@
 package de.symeda.sormas.backend.infrastructure.formbuilder;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
@@ -291,5 +292,11 @@ public class FormBuilderFacadeEjb extends AbstractInfrastructureFacadeEjb<FormBu
                 entity.getUuid(),
                 FacilityHelper.buildFacilityString(entity.getUuid(), entity.getDisease().getName()),
                 null);
+    }
+
+    @Override
+    public List<FormBuilderDto> getByDiseaseName(Disease disease) {
+        List<FormBuilder> formBuilders = service.getByDiseaseName(disease);
+        return formBuilders.stream().map(this::toDto).collect(Collectors.toList());
     }
 }

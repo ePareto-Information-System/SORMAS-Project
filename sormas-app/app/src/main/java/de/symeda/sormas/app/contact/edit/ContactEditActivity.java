@@ -24,6 +24,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.view.Menu;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
@@ -34,11 +35,14 @@ import de.symeda.sormas.app.BaseActivity;
 import de.symeda.sormas.app.BaseEditActivity;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.DaoException;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.contact.Contact;
 import de.symeda.sormas.app.backend.contact.ContactEditAuthorization;
+import de.symeda.sormas.app.caze.CaseSection;
+import de.symeda.sormas.app.component.menu.DiseaseMenuCaptionHandler;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.contact.ContactSection;
@@ -52,6 +56,7 @@ import de.symeda.sormas.app.immunization.vaccination.VaccinationNewActivity;
 import de.symeda.sormas.app.person.edit.PersonEditFragment;
 import de.symeda.sormas.app.task.edit.TaskNewActivity;
 import de.symeda.sormas.app.util.Bundler;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 import de.symeda.sormas.app.visit.edit.VisitNewActivity;
 
 public class ContactEditActivity extends BaseEditActivity<Contact> {
@@ -81,6 +86,14 @@ public class ContactEditActivity extends BaseEditActivity<Contact> {
 	@Override
 	public List<PageMenuItem> getPageMenuData() {
 		List<PageMenuItem> menuItems = PageMenuItem.fromEnum(ContactSection.values(), getContext());
+
+		Contact contact = getStoredRootEntity();
+
+		Disease disease = contact != null ? contact.getDisease() : null;
+		if (disease != null) {
+			DiseaseFieldHandler.handleMenuDataForDisease(menuItems, disease);
+		}
+
 		// Sections must be removed in reverse order
 		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.TASK_MANAGEMENT)) {
 			menuItems.set(ContactSection.TASKS.ordinal(), null);

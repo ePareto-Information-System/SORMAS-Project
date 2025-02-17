@@ -31,7 +31,8 @@ public enum FormType {
     MATERNAL_HISTORY_EDIT,
     EVENT_EDIT,
     EPI_LOCATION_EDIT,
-    INVESTIGATION_NOTES_EDIT;
+    INVESTIGATION_NOTES_EDIT,
+    FOLLOW_UP_VISITS;
 
     @Override
     public String toString() {
