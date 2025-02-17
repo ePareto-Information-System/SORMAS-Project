@@ -191,6 +191,56 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private NullableOptionGroup patientContactWithConfirmedCaseYesNoField;
 	private OptionGroup patientContactWithConfirmedCaseExposureLocationsField;
 	private TextField patientContactWithConfirmedCaseExposureLocationCityCountryField;
+	private boolean activityAsCaseFieldsAdded = false;
+	private NullableOptionGroup contactSickDomesticAnimals;
+	private NullableOptionGroup recentTravelOutbreak;
+	private NullableOptionGroup similarSymptoms;
+	private NullableOptionGroup contactDeadWildAnimals;
+	private NullableOptionGroup intlTravel;
+	private TextField specifyCountries;
+	private TextField ifYesSpecifySickDomestic;
+	private DateField dateDeparture;
+	private DateField dateArrival;
+	private NullableOptionGroup domTravel;
+	private TextField specifyLocation;
+	private DateField dateDepart2;
+	private DateField dateArrival2;
+	private NullableOptionGroup illPerson;
+	private DateField contactDate;
+	private TextField specifyIllnessKnown;
+	private TextField ifYesSpecifyDeadWild;
+	private NullableOptionGroup patientTravelDuringIllness;
+	private TextField comm1;
+	private TextField comm2;
+	private TextField healthCenter1;
+	private TextField healthCenter2;
+	private TextField country1;
+	private TextField country2;
+	private NullableOptionGroup wasPatientHospitalized;
+	private TextField ifYesWhere;
+	private DateField hospitalizedDate1;
+	private DateField hospitalizedDate2;
+	private NullableOptionGroup didPatientConsultHealer;
+	private TextField ifYesNameHealer;
+	private TextField community;
+	private TextField country;
+	private TextField whenWhereContactTakePlace;
+	private DateField dateOfContact;
+	private NullableOptionGroup patientReceiveTraditionalMedicine;
+	private TextField ifYesExplain;
+	private NullableOptionGroup patientTravelAnytimePeriodBeforeIll;
+	private TextField ifTravelYesWhere;
+	private DateField ifTravelStartDate;
+	private DateField ifYesEndDate;
+	private NullableOptionGroup patientContactKnownSuspect;
+	private TextField suspectLastName;
+	private TextField suspectName;
+	private TextField idCase;
+	private ComboBox duringContactSuspectCase;
+	private DateField dateOfLastContactWithSuspectCase;
+	private TextField ifYesWildAnimalLocation;
+	private DateField ifYesWildAnimalDate;
+	private DateField dateOfDeath;
 
 	public EpiDataForm(
 			Disease disease,
@@ -222,21 +272,17 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			addHeadingsAndInfoTexts();
 		}
 
-		NullableOptionGroup recentTravelOutbreak =addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
-		NullableOptionGroup similarSymptoms = addField(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
+		recentTravelOutbreak =addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
+		similarSymptoms = addField(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
 
-		NullableOptionGroup contactSickDomesticAnimals = addField(EpiDataDto.CONTACT_SICK_ANIMALS, NullableOptionGroup.class);
-		TextField ifYesSpecifySickDomestic = addField(EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL, TextField.class);
-		NullableOptionGroup contactDeadWildAnimals = addField(EpiDataDto.CONTACT_DEAD_WILD_ANIMALS, NullableOptionGroup.class);
-		TextField ifYesSpecifyDeadWild = addField(EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL, TextField.class);
-		TextField ifYesWildAnimalLocation = addField(EpiDataDto.IF_YES_WILD_ANIMAL_LOCATION, TextField.class);
-		DateField ifYesWildAnimalDate = addField(EpiDataDto.IF_YES_WILD_ANIMAL_DATE, DateField.class);
+		contactSickDomesticAnimals = addField(EpiDataDto.CONTACT_SICK_ANIMALS, NullableOptionGroup.class);
+		ifYesSpecifySickDomestic = addField(EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL, TextField.class);
+		contactDeadWildAnimals = addField(EpiDataDto.CONTACT_DEAD_WILD_ANIMALS, NullableOptionGroup.class);
+		ifYesSpecifyDeadWild = addField(EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL, TextField.class);
+		ifYesWildAnimalLocation = addField(EpiDataDto.IF_YES_WILD_ANIMAL_LOCATION, TextField.class);
+		ifYesWildAnimalDate = addField(EpiDataDto.IF_YES_WILD_ANIMAL_DATE, DateField.class);
 
-		contactDeadWildAnimals.setVisible(false);
-		ifYesSpecifySickDomestic.setVisible(false);
-		ifYesSpecifyDeadWild.setVisible(false);
-		ifYesWildAnimalLocation.setVisible(false);
-		ifYesWildAnimalDate.setVisible(false);
+		setFieldsVisible(false, contactDeadWildAnimals, ifYesSpecifySickDomestic, ifYesSpecifyDeadWild, ifYesWildAnimalLocation, ifYesWildAnimalDate);
 
 		NullableOptionGroup ogExposureDetailsKnown = addField(EpiDataDto.EXPOSURE_DETAILS_KNOWN, NullableOptionGroup.class);
 		ExposuresField exposuresField = addField(EpiDataDto.EXPOSURES, ExposuresField.class);
@@ -245,7 +291,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		exposuresField.setPseudonymized(isPseudonymized);
 
 		if (parentClass == CaseDataDto.class) {
-			addActivityAsCaseFields();
+			if (!activityAsCaseFieldsAdded) {
+				addActivityAsCaseFields();
+				activityAsCaseFieldsAdded = true;
+			}
 			addPersonTravelHistoryFields();
 			addContaminationSourcesFields();
 			addContainmentMeasuresFields();
@@ -370,52 +419,50 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				Collections.singletonList(YesNo.YES),
 				true);
 
-		//Food Borne
 
-
-		NullableOptionGroup intlTravel = addField(EpiDataDto.INTL_TRAVEL, NullableOptionGroup.class);
-		TextField specifyCountries = addField(EpiDataDto.SPECIFY_COUNTRIES, TextField.class);
-		DateField dateDeparture = addField(EpiDataDto.DATE_OF_DEPARTURE, DateField.class);
-		DateField dateArrival = addField(EpiDataDto.DATE_OF_ARRIVAL, DateField.class);
-		NullableOptionGroup domTravel = addField(EpiDataDto.DOMESTIC_TRAVEL, NullableOptionGroup.class);
-		TextField specifyLocation= addField(EpiDataDto.SPECIFY_LOCATION, TextField.class);
-		DateField dateDepart2= addField(EpiDataDto.DATE_OF_DEPARTURE2, DateField.class);
-		DateField dateArrival2= addField(EpiDataDto.DATE_OF_ARRIVAL2, DateField.class);
-		NullableOptionGroup illPerson = addField(EpiDataDto.CONTACT_ILL_PERSON, NullableOptionGroup.class);
-		DateField contactDate = addField(EpiDataDto.CONTACT_DATE, DateField.class);
-		TextField specifyIllnessKnown = addField(EpiDataDto.SPECIFY_ILLNESS, TextField.class);
+		intlTravel = addField(EpiDataDto.INTL_TRAVEL, NullableOptionGroup.class);
+		specifyCountries = addField(EpiDataDto.SPECIFY_COUNTRIES, TextField.class);
+		dateDeparture = addField(EpiDataDto.DATE_OF_DEPARTURE, DateField.class);
+		dateArrival = addField(EpiDataDto.DATE_OF_ARRIVAL, DateField.class);
+		domTravel = addField(EpiDataDto.DOMESTIC_TRAVEL, NullableOptionGroup.class);
+		specifyLocation= addField(EpiDataDto.SPECIFY_LOCATION, TextField.class);
+		dateDepart2 = addField(EpiDataDto.DATE_OF_DEPARTURE2, DateField.class);
+		dateArrival2 = addField(EpiDataDto.DATE_OF_ARRIVAL2, DateField.class);
+		illPerson = addField(EpiDataDto.CONTACT_ILL_PERSON, NullableOptionGroup.class);
+		contactDate = addField(EpiDataDto.CONTACT_DATE, DateField.class);
+		specifyIllnessKnown = addField(EpiDataDto.SPECIFY_ILLNESS, TextField.class);
 
 		//AHF
-		NullableOptionGroup patientTravelDuringIllness = addField(EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, NullableOptionGroup.class);
-		TextField comm1 = addField(EpiDataDto.COMM1, TextField.class);
-		TextField comm2 = addField(EpiDataDto.COMM2, TextField.class);
-		TextField healthCenter1 = addField(EpiDataDto.HEALTH_CENTER1, TextField.class);
-		TextField healthCenter2 = addField(EpiDataDto.HEALTH_CENTER2, TextField.class);
-		TextField country1 = addField(EpiDataDto.COUNTRY1, TextField.class);
-		TextField country2 = addField(EpiDataDto.COUNTRY2, TextField.class);
-		NullableOptionGroup wasPatientHospitalized = addField(EpiDataDto.WAS_PATIENT_HOSPITALIZED, NullableOptionGroup.class);
-		TextField ifYesWhere = addField(EpiDataDto.IF_YES_WHERE, TextField.class);
-		DateField hospitalizedDate1 = addField(EpiDataDto.HOSPITALIZED_DATE1, DateField.class);
-		DateField hospitalizedDate2 = addField(EpiDataDto.HOSPITALIZED_DATE2, DateField.class);
-		NullableOptionGroup didPatientConsultHealer = addField(EpiDataDto.DID_PATIENT_CONSULT_HEALER, NullableOptionGroup.class);
-		TextField ifYesNameHealer = addField(EpiDataDto.IF_YES_NAME_HEALER, TextField.class);
-		TextField community = addField(EpiDataDto.COMMUNITY, TextField.class);
-		TextField country = addField(EpiDataDto.COUNTRY, TextField.class);
-		TextField whenWhereContactTakePlace = addField(EpiDataDto.WHEN_WHERE_CONTACT_TAKE_PLACE, TextField.class);
-		DateField dateOfContact = addField(EpiDataDto.DATE_OF_CONTACT, DateField.class);
-		NullableOptionGroup patientReceiveTraditionalMedicine = addField(EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, NullableOptionGroup.class);
-		TextField ifYesExplain = addField(EpiDataDto.IF_YES_EXPLAIN, TextField.class);
+		patientTravelDuringIllness = addField(EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, NullableOptionGroup.class);
+		comm1 = addField(EpiDataDto.COMM1, TextField.class);
+		comm2 = addField(EpiDataDto.COMM2, TextField.class);
+		healthCenter1 = addField(EpiDataDto.HEALTH_CENTER1, TextField.class);
+		healthCenter2 = addField(EpiDataDto.HEALTH_CENTER2, TextField.class);
+		country1 = addField(EpiDataDto.COUNTRY1, TextField.class);
+		country2 = addField(EpiDataDto.COUNTRY2, TextField.class);
+		wasPatientHospitalized = addField(EpiDataDto.WAS_PATIENT_HOSPITALIZED, NullableOptionGroup.class);
+		ifYesWhere = addField(EpiDataDto.IF_YES_WHERE, TextField.class);
+		hospitalizedDate1 = addField(EpiDataDto.HOSPITALIZED_DATE1, DateField.class);
+		hospitalizedDate2 = addField(EpiDataDto.HOSPITALIZED_DATE2, DateField.class);
+		didPatientConsultHealer = addField(EpiDataDto.DID_PATIENT_CONSULT_HEALER, NullableOptionGroup.class);
+		ifYesNameHealer = addField(EpiDataDto.IF_YES_NAME_HEALER, TextField.class);
+		community = addField(EpiDataDto.COMMUNITY, TextField.class);
+		country = addField(EpiDataDto.COUNTRY, TextField.class);
+		whenWhereContactTakePlace = addField(EpiDataDto.WHEN_WHERE_CONTACT_TAKE_PLACE, TextField.class);
+		dateOfContact = addField(EpiDataDto.DATE_OF_CONTACT, DateField.class);
+		patientReceiveTraditionalMedicine = addField(EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, NullableOptionGroup.class);
+		ifYesExplain = addField(EpiDataDto.IF_YES_EXPLAIN, TextField.class);
 		addField(EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, NullableOptionGroup.class);
-		NullableOptionGroup patientTravelAnytimePeriodBeforeIll = addField(EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL, NullableOptionGroup.class);
-		TextField ifTravelYesWhere = addField(EpiDataDto.IF_TRAVEL_YES_WHERE, TextField.class);
-		DateField ifTravelStartDate = addField(EpiDataDto.IF_TRAVEL_START_DATE, DateField.class);
-		DateField ifYesEndDate = addField(EpiDataDto.IF_YES_END_DATE, DateField.class);
-		NullableOptionGroup patientContactKnownSuspect = addField(EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, NullableOptionGroup.class);
-		TextField suspectLastName = addField(EpiDataDto.SUSPECT_LAST_NAME, TextField.class);
-		TextField suspectName = addField(EpiDataDto.SUSPECT_NAME, TextField.class);
-		TextField idCase = addField(EpiDataDto.ID_CASE, TextField.class);
+		patientTravelAnytimePeriodBeforeIll = addField(EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL, NullableOptionGroup.class);
+		ifTravelYesWhere = addField(EpiDataDto.IF_TRAVEL_YES_WHERE, TextField.class);
+		ifTravelStartDate = addField(EpiDataDto.IF_TRAVEL_START_DATE, DateField.class);
+		ifYesEndDate = addField(EpiDataDto.IF_YES_END_DATE, DateField.class);
+		patientContactKnownSuspect = addField(EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, NullableOptionGroup.class);
+		suspectLastName = addField(EpiDataDto.SUSPECT_LAST_NAME, TextField.class);
+		suspectName = addField(EpiDataDto.SUSPECT_NAME, TextField.class);
+		idCase = addField(EpiDataDto.ID_CASE, TextField.class);
 
-		ComboBox duringContactSuspectCase = new ComboBox("Outcome");
+		duringContactSuspectCase = new ComboBox("Outcome");
 
 		for (CaseOutcome caseOutcome : CaseOutcome.values()) {
 			if (caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE) {
@@ -425,8 +472,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		 addField(EpiDataDto.DURING_CONTACT_SUSPECT_CASE, duringContactSuspectCase);
 
 
-		DateField dateOfDeath = addField(EpiDataDto.DATE_OF_DEATH, DateField.class);
-		DateField dateOfLastContactWithSuspectCase = addField(EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE, DateField.class);
+		dateOfDeath = addField(EpiDataDto.DATE_OF_DEATH, DateField.class);
+		dateOfLastContactWithSuspectCase = addField(EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE, DateField.class);
 
 		setVisible(false, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS);
 
@@ -457,47 +504,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		exposuresField.addValueChangeListener(e -> ogExposureDetailsKnown.setEnabled(CollectionUtils.isEmpty(exposuresField.getValue())));
 
-//		hideFieldsForSelectedDisease(disease);
-
-		if (disease == Disease.NEW_INFLUENZA) {
-			hideAllFields();
-			hideLabels();
-
-			NullableOptionGroup previously = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA, NullableOptionGroup.class);
-			TextField vaccineName = addField(EpiDataDto.NAME_OF_VACCINE, TextField.class);
-			ComboBox year = addField(EpiDataDto.YEAR_OF_VACCINATION, ComboBox.class);
-			// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
-			year.setNullSelectionAllowed(true);
-			year.addItems(DateHelper.getYearsToNow());
-			year.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
-			year.setInputPrompt(I18nProperties.getString(Strings.year));
-
-			NullableOptionGroup previouslyCovid = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_COVID, NullableOptionGroup.class);
-			TextField vaccineNameCovid = addField(EpiDataDto.NAME_OF_VACCINE_FOR_COVID, TextField.class);
-			ComboBox yearCovid = addField(EpiDataDto.YEAR_OF_VACCINATION_FOR_COVID, ComboBox.class);
-			yearCovid.setNullSelectionAllowed(true);
-			yearCovid.addItems(DateHelper.getYearsToNow());
-			yearCovid.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
-			yearCovid.setInputPrompt(I18nProperties.getString(Strings.year));
-
-
-			TextArea placesVisited = addField(EpiDataDto.PLACES_VISITED_PAST_7DAYS, TextArea.class);
-			OptionGroup visitedPlace = addField(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC, OptionGroup.class);
-			ComboBox riskFactor = addField(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, ComboBox.class);
-			TextField other = addField(EpiDataDto.OTHER_SPECIFY, com.vaadin.v7.ui.TextField.class);
-
-			setFieldsVisible(false, vaccineName, year, vaccineNameCovid, yearCovid, other);
-			setFieldsVisible(true, contactSickDomesticAnimals, contactDeadWildAnimals, similarSymptoms, recentTravelOutbreak);
-
-			FieldHelper.setVisibleWhen(riskFactor, Arrays.asList(other), Arrays.asList(RiskFactorCondition.OTHER), true);
-			FieldHelper.setVisibleWhen(previously, Arrays.asList(year, vaccineName), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(previouslyCovid, Arrays.asList(yearCovid, vaccineNameCovid), Arrays.asList(YesNo.YES), true);
-
-			FieldHelper.setVisibleWhen(contactSickDomesticAnimals, Arrays.asList(ifYesSpecifySickDomestic), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(contactDeadWildAnimals, Arrays.asList(ifYesSpecifyDeadWild), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(visitedPlace, Arrays.asList(placesVisited), Arrays.asList(YesNo.YES), true);
-
+		if (disease != null) {
+			handleDiseaseFields(disease);
 		}
+
+//		hideFieldsForSelectedDisease(disease);
 
 //		PATIENT_TRAVELLED_IN_COUNTRY_ONE, PATIENT_TRAVELLED_IN_COUNTRY_TWO, PATIENT_TRAVELLED_IN_COUNTRY_THREE, PATIENT_TRAVELLED_IN_COUNTRY_FOUR, visible if PATIENT_TRAVELLED_TWO_WEEKS_PRIOR = YES
 		FieldHelper.setVisibleWhen(
@@ -552,17 +563,6 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		}
 
-		if(disease == Disease.FOODBORNE_ILLNESS){
-
-			createLabel(I18nProperties.getString(Strings.headingExposureHistory), H3, EXPOSURE_HISTORY_HEADING);
-
-			setVisible(true, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS);
-
-			FieldHelper.setVisibleWhen(intlTravel, Arrays.asList(specifyCountries,dateDeparture,dateArrival ), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(domTravel, Arrays.asList(specifyLocation, dateDepart2, dateArrival2 ), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(illPerson, Arrays.asList(contactDate, specifyIllnessKnown), Arrays.asList(YesNo.YES), true);
-		}
-
 		if (disease == Disease.GUINEA_WORM) {
 			hideAllFields();
 			setVisible(true, EpiDataDto.PERSON_TRAVEL_HISTORY, EpiDataDto.CONTAMINATION_SOURCES, EpiDataDto.CONTAINMENT_MEASURES);
@@ -586,46 +586,125 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			hideLabels();
 		}
 
+	}
 
-		if (disease == Disease.AHF) {
-			createLabel(I18nProperties.getString(Strings.headingExpositionRisks), H3, EXPOSITION_RISKS_HEADING);
+	private void handleDiseaseFields(Disease disease) {
+		hideAllFields();
+		hideLabels();
 
-			Label indicatePlacesheading = new Label(I18nProperties.getString(Strings.indicatePlace));
-			indicatePlacesheading.setStyleName(H3);
-			getContent().addComponent(indicatePlacesheading, INDICATE_PLACES_COUNTRY_HEADING);
-			indicatePlacesheading.setVisible(false);
-
-
-			setVisible(true,
-					EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, EpiDataDto.WAS_PATIENT_HOSPITALIZED, EpiDataDto.IF_YES_WHERE,
-					EpiDataDto.HOSPITALIZED_DATE1, EpiDataDto.HOSPITALIZED_DATE2, EpiDataDto.DID_PATIENT_CONSULT_HEALER,
-					EpiDataDto.IF_YES_NAME_HEALER, EpiDataDto.COMMUNITY, EpiDataDto.COUNTRY,
-					EpiDataDto.WHEN_WHERE_CONTACT_TAKE_PLACE, EpiDataDto.DATE_OF_CONTACT,
-					EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, EpiDataDto.IF_YES_EXPLAIN,
-					EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL,
-					EpiDataDto.IF_TRAVEL_YES_WHERE, EpiDataDto.IF_TRAVEL_START_DATE, EpiDataDto.IF_YES_END_DATE,
-					EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_LAST_NAME, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE,
-					EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH,
-					EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE);
-
-			contactDeadWildAnimals.setVisible(true);
-
-			FieldHelper.setVisibleWhen(patientContactKnownSuspect, Arrays.asList(suspectName, suspectLastName, idCase, duringContactSuspectCase, dateOfLastContactWithSuspectCase), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(contactDeadWildAnimals, Arrays.asList(ifYesSpecifyDeadWild, ifYesWildAnimalLocation, ifYesWildAnimalDate), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(duringContactSuspectCase, Arrays.asList(dateOfDeath), Arrays.asList(CaseOutcome.DECEASED), true);
-			FieldHelper.setVisibleWhen(wasPatientHospitalized, Arrays.asList(ifYesWhere, hospitalizedDate1, hospitalizedDate2), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(didPatientConsultHealer, Arrays.asList(ifYesNameHealer, community, country, whenWhereContactTakePlace, dateOfContact), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(patientTravelAnytimePeriodBeforeIll, Arrays.asList(ifTravelYesWhere, ifTravelStartDate, ifYesEndDate), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(patientReceiveTraditionalMedicine, Arrays.asList(ifYesExplain), Arrays.asList(YesNo.YES), true);
-
-			FieldHelper.setVisibleWhen(patientTravelDuringIllness, Arrays.asList(comm1, comm2, healthCenter1, healthCenter2, country1, country2), Arrays.asList(YesNo.YES), true);
-
-			patientTravelDuringIllness.addValueChangeListener(event -> {
-				YesNo varField = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) event.getProperty());
-                indicatePlacesheading.setVisible(varField == YesNo.YES);
-			});
-
+		switch (disease) {
+			case NEW_INFLUENZA:
+				handleNewInfluenza();
+				break;
+			case YELLOW_FEVER:
+				handleYellowFever();
+				break;
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				setFieldsVisible(true, contactSickDomesticAnimals, similarSymptoms, recentTravelOutbreak);
+				break;
+			case CSM:
+				setVisible(true, EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, EpiDataDto.EXPOSURE_DETAILS_KNOWN,
+						EpiDataDto.EXPOSURES, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
+				break;
+			case AFP:
+				setFieldsVisible(true, similarSymptoms, recentTravelOutbreak);
+				break;
+			case FOODBORNE_ILLNESS:
+				handleFoodborneIllness();
+				break;
+			case AHF:
+				handleAHF();
+				break;
 		}
+	}
+
+	private void handleNewInfluenza() {
+		NullableOptionGroup previously = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA, NullableOptionGroup.class);
+		TextField vaccineName = addField(EpiDataDto.NAME_OF_VACCINE, TextField.class);
+		ComboBox year = addField(EpiDataDto.YEAR_OF_VACCINATION, ComboBox.class);
+		year.setNullSelectionAllowed(true);
+		year.addItems(DateHelper.getYearsToNow());
+		year.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
+		year.setInputPrompt(I18nProperties.getString(Strings.year));
+		NullableOptionGroup previouslyCovid = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_COVID, NullableOptionGroup.class);
+		TextField vaccineNameCovid = addField(EpiDataDto.NAME_OF_VACCINE_FOR_COVID, TextField.class);
+		ComboBox yearCovid = addField(EpiDataDto.YEAR_OF_VACCINATION_FOR_COVID, ComboBox.class);
+		yearCovid.setNullSelectionAllowed(true);
+		yearCovid.addItems(DateHelper.getYearsToNow());
+		yearCovid.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
+		yearCovid.setInputPrompt(I18nProperties.getString(Strings.year));
+		TextArea placesVisited = addField(EpiDataDto.PLACES_VISITED_PAST_7DAYS, TextArea.class);
+		OptionGroup visitedPlace = addField(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC, OptionGroup.class);
+		ComboBox riskFactor = addField(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, ComboBox.class);
+		TextField other = addField(EpiDataDto.OTHER_SPECIFY, com.vaadin.v7.ui.TextField.class);
+
+		setFieldsVisible(false, vaccineName, year, vaccineNameCovid, yearCovid, other);
+		setFieldsVisible(true, contactSickDomesticAnimals, contactDeadWildAnimals, similarSymptoms, recentTravelOutbreak);
+
+		FieldHelper.setVisibleWhen(riskFactor, Arrays.asList(other), Arrays.asList(RiskFactorCondition.OTHER), true);
+		FieldHelper.setVisibleWhen(previously, Arrays.asList(year, vaccineName), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(previouslyCovid, Arrays.asList(yearCovid, vaccineNameCovid), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(contactSickDomesticAnimals, Arrays.asList(ifYesSpecifySickDomestic), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(contactDeadWildAnimals, Arrays.asList(ifYesSpecifyDeadWild), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(visitedPlace, Arrays.asList(placesVisited), Arrays.asList(YesNo.YES), true);
+	}
+
+	private void handleYellowFever() {
+		setVisible(true, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.ACTIVITIES_AS_CASE);
+		if (!activityAsCaseFieldsAdded) {
+			addActivityAsCaseFields();
+			activityAsCaseFieldsAdded = true;
+		}
+		getContent().getComponent(LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING).setVisible(true);
+	}
+
+	private void handleFoodborneIllness() {
+		createLabel(I18nProperties.getString(Strings.headingExposureHistory), H3, EXPOSURE_HISTORY_HEADING);
+		setVisible(true, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE,
+				EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION,
+				EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON,
+				EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS);
+
+		FieldHelper.setVisibleWhen(intlTravel, Arrays.asList(specifyCountries, dateDeparture, dateArrival), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(domTravel, Arrays.asList(specifyLocation, dateDepart2, dateArrival2), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(illPerson, Arrays.asList(contactDate, specifyIllnessKnown), Arrays.asList(YesNo.YES), true);
+	}
+
+	private void handleAHF() {
+		createLabel(I18nProperties.getString(Strings.headingExpositionRisks), H3, EXPOSITION_RISKS_HEADING);
+
+		Label indicatePlacesheading = new Label(I18nProperties.getString(Strings.indicatePlace));
+		indicatePlacesheading.setStyleName(H3);
+		getContent().addComponent(indicatePlacesheading, INDICATE_PLACES_COUNTRY_HEADING);
+		indicatePlacesheading.setVisible(false);
+
+		setVisible(true,
+				EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, EpiDataDto.WAS_PATIENT_HOSPITALIZED, EpiDataDto.IF_YES_WHERE,
+				EpiDataDto.HOSPITALIZED_DATE1, EpiDataDto.HOSPITALIZED_DATE2, EpiDataDto.DID_PATIENT_CONSULT_HEALER,
+				EpiDataDto.IF_YES_NAME_HEALER, EpiDataDto.COMMUNITY, EpiDataDto.COUNTRY,
+				EpiDataDto.WHEN_WHERE_CONTACT_TAKE_PLACE, EpiDataDto.DATE_OF_CONTACT,
+				EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, EpiDataDto.IF_YES_EXPLAIN,
+				EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL,
+				EpiDataDto.IF_TRAVEL_YES_WHERE, EpiDataDto.IF_TRAVEL_START_DATE, EpiDataDto.IF_YES_END_DATE,
+				EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_LAST_NAME, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE,
+				EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH,
+				EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE);
+
+		setFieldsVisible(true, contactSickDomesticAnimals, contactDeadWildAnimals, similarSymptoms, recentTravelOutbreak);
+
+		FieldHelper.setVisibleWhen(patientContactKnownSuspect, Arrays.asList(suspectName, suspectLastName, idCase, duringContactSuspectCase, dateOfLastContactWithSuspectCase), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(contactDeadWildAnimals, Arrays.asList(ifYesSpecifyDeadWild, ifYesWildAnimalLocation, ifYesWildAnimalDate), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(duringContactSuspectCase, Arrays.asList(dateOfDeath), Arrays.asList(CaseOutcome.DECEASED), true);
+		FieldHelper.setVisibleWhen(wasPatientHospitalized, Arrays.asList(ifYesWhere, hospitalizedDate1, hospitalizedDate2), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(didPatientConsultHealer, Arrays.asList(ifYesNameHealer, community, country, whenWhereContactTakePlace, dateOfContact), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(patientTravelAnytimePeriodBeforeIll, Arrays.asList(ifTravelYesWhere, ifTravelStartDate, ifYesEndDate), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(patientReceiveTraditionalMedicine, Arrays.asList(ifYesExplain), Arrays.asList(YesNo.YES), true);
+		FieldHelper.setVisibleWhen(patientTravelDuringIllness, Arrays.asList(comm1, comm2, healthCenter1, healthCenter2, country1, country2), Arrays.asList(YesNo.YES), true);
+
+		patientTravelDuringIllness.addValueChangeListener(event -> {
+			YesNo varField = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) event.getProperty());
+			indicatePlacesheading.setVisible(varField == YesNo.YES);
+		});
 	}
 
 	private void addPersonTravelHistoryFields() {
@@ -648,14 +727,12 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 	private void addActivityAsCaseFields() {
 
-		if(disease != Disease.CSM && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.AFP && disease != Disease.AHF && disease != Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
-			getContent().addComponent(
-					new MultilineLabel(
-							h3(I18nProperties.getString(Strings.headingActivityAsCase))
-									+ divsCss(VSPACE_3, I18nProperties.getString(Strings.infoActivityAsCaseInvestigation)),
-							ContentMode.HTML),
-					LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING);
-		}
+		getContent().addComponent(
+				new MultilineLabel(
+						h3(I18nProperties.getString(Strings.headingActivityAsCase))
+								+ divsCss(VSPACE_3, I18nProperties.getString(Strings.infoActivityAsCaseInvestigation)),
+						ContentMode.HTML),
+				LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING);
 
 		NullableOptionGroup ogActivityAsCaseDetailsKnown = addField(EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, NullableOptionGroup.class);
 		ActivityAsCaseField activityAsCaseField = addField(EpiDataDto.ACTIVITIES_AS_CASE, ActivityAsCaseField.class);
@@ -732,7 +809,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			Disease.AFP,
 			Disease.AHF,
 			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
-			Disease.NEW_INFLUENZA
+			Disease.NEW_INFLUENZA,
+			Disease.YELLOW_FEVER
 	);
 
 	private Label createLabel(String text, String h4, String location) {
