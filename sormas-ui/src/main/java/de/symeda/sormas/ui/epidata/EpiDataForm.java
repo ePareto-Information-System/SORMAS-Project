@@ -290,7 +290,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		exposuresField.setWidthFull();
 		exposuresField.setPseudonymized(isPseudonymized);
 
-		if (parentClass == CaseDataDto.class) {
+		if (parentClass == CaseDataDto.class || parentClass == ContactDto.class) {
 			if (!activityAsCaseFieldsAdded) {
 				addActivityAsCaseFields();
 				activityAsCaseFieldsAdded = true;
@@ -810,7 +810,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			Disease.AHF,
 			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
 			Disease.NEW_INFLUENZA,
-			Disease.YELLOW_FEVER
+			Disease.YELLOW_FEVER,
+			Disease.GUINEA_WORM
 	);
 
 	private Label createLabel(String text, String h4, String location) {
