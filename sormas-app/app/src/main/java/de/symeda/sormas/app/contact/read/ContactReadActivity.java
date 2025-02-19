@@ -21,6 +21,7 @@ import android.view.MenuItem;
 
 import java.util.List;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
@@ -40,6 +41,7 @@ import de.symeda.sormas.app.contact.ContactSection;
 import de.symeda.sormas.app.contact.edit.ContactEditActivity;
 import de.symeda.sormas.app.epidata.EpidemiologicalDataReadFragment;
 import de.symeda.sormas.app.person.read.PersonReadFragment;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 
 public class ContactReadActivity extends BaseReadActivity<Contact> {
 
@@ -59,6 +61,13 @@ public class ContactReadActivity extends BaseReadActivity<Contact> {
 	public List<PageMenuItem> getPageMenuData() {
 		List<PageMenuItem> menuItems = PageMenuItem.fromEnum(ContactSection.values(), getContext());
 		// Sections must be removed in reverse order
+
+		Contact contact = getStoredRootEntity();
+		Disease disease = contact != null ? contact.getDisease() : null;
+		if (disease != null) {
+			DiseaseFieldHandler.handleContactMenuDataForDisease(menuItems, disease);
+		}
+
 		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.TASK_MANAGEMENT)) {
 			menuItems.set(ContactSection.TASKS.ordinal(), null);
 		}
