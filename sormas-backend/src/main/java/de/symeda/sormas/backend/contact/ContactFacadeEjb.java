@@ -2484,10 +2484,10 @@ public class ContactFacadeEjb
 		return super.getDeleteReferenceField(deletionReference);
 	}
 
-	@Override
-	public boolean isEditAllowed(String uuid) {
-		return false;
-	}
+//	@Override
+//	public boolean isEditAllowed(String uuid) {
+//		return false;
+//	}
 
 	@RightsAllowed({
 			UserRight._CONTACT_VIEW,
