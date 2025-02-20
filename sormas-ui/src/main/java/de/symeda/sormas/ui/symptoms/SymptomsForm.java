@@ -406,10 +406,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         foodHistoryHeadingLabel.setVisible(false);
 
         DateField onsetDateField = addField(ONSET_DATE, DateField.class);
-		if (disease != Disease.AFP) {
+		if (disease != Disease.AFP && disease != Disease.NEW_INFLUENZA) {
 			onsetDateField.setRequired(true);
 		}
-        ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
+		ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
         if (symptomsContext == SymptomsContext.CASE) {
             // If the symptom onset date is after the hospital admission date, show a warning but don't prevent the user from saving
             onsetDateField.addValueChangeListener(event -> {
