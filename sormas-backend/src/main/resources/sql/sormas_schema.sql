@@ -15231,3 +15231,6 @@ INSERT INTO schema_version(version_number, comment) VALUES (722, 'Dropped and ad
 
 ALTER TABLE sixtyday ADD COLUMN barcode VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (723, 'Added barcode to sixtyday(food sample testing)');
+
+ALTER TABLE contacts_visits REPLICA IDENTITY FULL;
+INSERT INTO schema_version(version_number, comment) VALUES (724, 'Resolved replica saving error with contacts_visits table');
