@@ -616,7 +616,7 @@
     <string name="info_moderate_notification_action">Region/District to discuss support/assistance required with affected level. Consider activating PHEMC.</string>
     <string name="info_low_notification_action">Continue to monitor; repeat risk assessment if situation changes.</string>
     <string name="main_menu_cases">Cases</string>
-    <string name="main_menu_contacts">Contacts</string>
+    <string name="main_menu_contacts">Contact/Exposed</string>
     <string name="main_menu_dashboard">Dashboard</string>
     <string name="main_menu_events">Events</string>
     <string name="main_menu_ebs">Ebs</string>
