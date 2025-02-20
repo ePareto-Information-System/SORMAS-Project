@@ -142,7 +142,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(6,PARALYSED_LIMB_SENSITIVE_TO_PAIN) +
 					fluidRowLocs(6,INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
-					fluidRowLocs(INJECTION_SITE) +
 					fluidRowLocs(6,DATE_ONSET_PARALYSIS) +
 
 					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
@@ -183,6 +182,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
+					fluidRowLocs(INJECTION_SITE) +
 					fluidRowLocs(6, PATIENT_ILL_LOCATION) +
 					fluidRowLocs(6, SYMPTOMS_COMMENTS) +
 					fluidRowLocs(6, ONSET_SYMPTOM) +

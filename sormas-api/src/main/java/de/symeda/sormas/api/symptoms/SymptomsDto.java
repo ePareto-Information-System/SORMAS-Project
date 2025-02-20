@@ -17,16 +17,6 @@
  *******************************************************************************/
 package de.symeda.sormas.api.symptoms;
 
-import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_GERMANY;
-import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_SWITZERLAND;
-import static de.symeda.sormas.api.Disease.*;
-
-import java.util.Date;
-import java.util.Set;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.caze.CaseOutcome;
@@ -37,6 +27,15 @@ import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.util.Date;
+import java.util.Set;
+
+import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_GERMANY;
+import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_SWITZERLAND;
+import static de.symeda.sormas.api.Disease.*;
 
 @DependingOnFeatureType(featureType = {
 	FeatureType.CASE_SURVEILANCE,
@@ -359,7 +358,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	}
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		SARI,
@@ -379,7 +378,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState abdominalPain;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -393,7 +392,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState anorexiaAppetiteLoss;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		YELLOW_FEVER,
 		DENGUE,
@@ -405,7 +404,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState backache;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -414,7 +413,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState bedridden;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		PLAGUE,
 		POLIO,
 		UNDEFINED,
@@ -424,7 +423,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState blackeningDeathOfTissue;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -438,7 +437,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState bleedingVagina;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		ANTHRAX,
 		AHF,
@@ -455,7 +454,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Integer bloodPressureSystolic;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -469,7 +468,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState bloodUrine;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -483,7 +482,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState bloodyBlackStool;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		PLAGUE,
 		POLIO,
 		UNDEFINED,
@@ -493,7 +492,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState buboesGroinArmpitNeck;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		CSM,
 		UNDEFINED,
@@ -504,7 +503,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState bulgingFontanelle;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		PLAGUE,
@@ -520,7 +519,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState chestPain;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		PLAGUE,
 		ANTHRAX,
 		POLIO,
@@ -533,7 +532,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState chillsSweats;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		POLIO,
@@ -547,7 +546,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState conjunctivitis;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		NEW_INFLUENZA,
@@ -567,7 +566,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState cough;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			EVD,
 			LASSA,
 			NEW_INFLUENZA, SARI,
@@ -597,7 +596,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState coughWithHeamoptysis;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		PLAGUE,
@@ -613,7 +612,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState coughingBlood;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -622,7 +621,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState darkUrine;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -636,7 +635,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState dehydration;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		PLAGUE,
@@ -651,7 +650,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState diarrhea;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			EVD,
 			LASSA,
 			SARI,
@@ -667,7 +666,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState difficultySwallow;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			EVD,
 			LASSA,
 			SARI,
@@ -683,7 +682,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState skinRashNew;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		NEW_INFLUENZA, SARI,
@@ -700,7 +699,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState difficultyBreathing;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -714,7 +713,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState digestedBloodVomit;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		DENGUE,
@@ -727,7 +726,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState eyePainLightSensitive;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		AHF,
 		DENGUE,
@@ -739,7 +738,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState eyesBleeding;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		YELLOW_FEVER,
@@ -759,7 +758,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState fatigueWeakness;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		CSM,
@@ -780,7 +779,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState fever;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		UNDEFINED,
@@ -795,7 +794,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Integer glasgowComaScale;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -809,7 +808,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState gumsBleeding;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		CSM,
@@ -829,7 +828,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState headache;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -850,7 +849,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Integer height;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		POLIO,
 		AHF,
@@ -861,7 +860,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState hiccups;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -874,7 +873,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState injectionSiteBleeding;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		YELLOW_FEVER,
 		LASSA,
 		POLIO,
@@ -893,7 +892,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNoUnknown jaundiceWithin24HoursOfBirth;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -912,7 +911,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState jointPain;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -921,7 +920,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState kopliksSpots;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		ANTHRAX,
 		POLIO,
 		UNDEFINED,
@@ -932,7 +931,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lesions;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -942,7 +941,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean lesionsAllOverBody;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		ANTHRAX,
 		POLIO,
 		UNDEFINED,
@@ -953,7 +952,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean lesionsArms;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		ANTHRAX,
 		POLIO,
 		UNDEFINED,
@@ -964,7 +963,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lesionsDeepProfound;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -974,7 +973,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean lesionsFace;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -984,7 +983,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean lesionsGenitals;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1000,7 +999,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Date lesionsOnsetDate;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1037,7 +1036,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lesionsResembleImg4;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1047,7 +1046,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lesionsSameSize;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1057,7 +1056,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lesionsSameState;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1067,7 +1066,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean lesionsSolesFeet;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1077,7 +1076,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lesionsThatItch;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1087,7 +1086,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean lesionsThorax;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -1107,7 +1106,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lymphadenopathy;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1116,7 +1115,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lymphadenopathyAxillary;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1125,7 +1124,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lymphadenopathyCervical;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1134,7 +1133,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lymphadenopathyInguinal;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -1147,7 +1146,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Integer midUpperArmCircumference;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		DENGUE,
@@ -1163,7 +1162,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState musclePain;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		YELLOW_FEVER,
@@ -1181,7 +1180,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState nausea;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		CSM,
 		POLIO,
 		UNDEFINED,
@@ -1192,7 +1191,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState neckStiffness;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -1206,7 +1205,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState noseBleeding;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -1217,7 +1216,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState oedemaFaceNeck;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		UNDEFINED,
@@ -1226,6 +1225,12 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState oedemaLowerExtremity;
 
+	@Diseases({
+		YELLOW_FEVER,
+		CSM,
+		IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
+		AHF
+	})
 	@Outbreaks
 	private Date onsetDate;
 
@@ -1236,7 +1241,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String onsetSymptom;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1245,7 +1250,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState oralUlcers;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		PLAGUE,
@@ -1261,7 +1266,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState otherHemorrhagicSymptoms;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		PLAGUE,
@@ -1276,7 +1281,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String otherHemorrhagicSymptomsText;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		DENGUE,
@@ -1291,7 +1296,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState otherNonHemorrhagicSymptoms;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		DENGUE,
@@ -1310,7 +1315,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String otherNonHemorrhagicSymptomsText;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			SARI,
 			POLIO,
 			UNDEFINED,
@@ -1320,7 +1325,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState otitisMedia;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		PLAGUE,
 		POLIO,
 		UNDEFINED,
@@ -1331,7 +1336,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState painfulLymphadenitis;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -1342,7 +1347,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState palpableLiver;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -1353,7 +1358,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState palpableSpleen;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1362,7 +1367,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String patientIllLocation;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -1373,7 +1378,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState pharyngealErythema;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -1385,7 +1390,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState pharyngealExudate;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		CORONAVIRUS,
 		DENGUE,
 		POLIO,
@@ -1396,7 +1401,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState rapidBreathing;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		DENGUE,
@@ -1410,7 +1415,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState redBloodVomit;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -1425,7 +1430,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Integer respiratoryRate;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			SARI,
 			MEASLES,
 			POLIO,
@@ -1436,7 +1441,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState runnyNose;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -1447,7 +1452,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState sidePain;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -1461,7 +1466,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState skinBruising;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		DENGUE,
@@ -1524,7 +1529,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState rashes;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			ANTHRAX,
 			POLIO,
 			UNDEFINED,
@@ -1533,7 +1538,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState vesicularRash;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			POLIO,
 			UNDEFINED,
 			OTHER })
@@ -1543,7 +1548,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String otherLesionAreas;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		DENGUE,
@@ -1563,21 +1568,21 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState muscleTone;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			UNDEFINED,
 			OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState deepTendonReflex;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			UNDEFINED,
 			OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState muscleVolume;
 
 	@Diseases({
-			AFP,
+//			AFP,
 			UNDEFINED,
 			OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1585,7 +1590,7 @@ public class SymptomsDto extends PseudonymizableDto {
 
 
 	@Diseases({
-		AFP,
+//		AFP,
 		POLIO,
 		YELLOW_FEVER,
 		AHF, DENGUE,
@@ -1597,7 +1602,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState stomachBleeding;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -1608,7 +1613,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState sunkenEyesFontanelle;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		DENGUE,
 		POLIO,
 		DENGUE,
@@ -1621,7 +1626,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean symptomatic;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		NEW_INFLUENZA, SARI,
@@ -1640,7 +1645,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String symptomsComments;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		YELLOW_FEVER,
@@ -1658,7 +1663,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Float temperature;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		YELLOW_FEVER,
@@ -1674,7 +1679,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private TemperatureSource temperatureSource;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -1686,7 +1691,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState throbocytopenia;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1775,7 +1780,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String congenitalHeartDiseaseDetails;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		DENGUE,
@@ -1790,7 +1795,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState unexplainedBleeding;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		YELLOW_FEVER,
@@ -2066,7 +2071,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	// complications
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		CSM,
@@ -2081,7 +2086,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState alteredConsciousness;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		PLAGUE,
@@ -2097,7 +2102,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState confusedDisoriented;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		POLIO,
@@ -2111,7 +2116,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState hemorrhagicSyndrome;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -2123,7 +2128,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState hyperglycemia;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -2135,7 +2140,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState hypoglycemia;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		LASSA,
 		POLIO,
 		DENGUE,
@@ -2148,7 +2153,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState meningealSigns;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA,
 		NEW_INFLUENZA, SARI,
@@ -2195,7 +2200,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String otherComplicationsText;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		POLIO,
@@ -2212,7 +2217,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState seizures;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		POLIO,
@@ -2225,7 +2230,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState sepsis;
 
 	@Diseases({
-		AFP,
+//		AFP,
 		EVD,
 		LASSA, SARI,
 		PLAGUE,
@@ -2379,6 +2384,14 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState numbness;
 	private YesNo feverBodyTempGreater;
+	@Diseases({
+		YELLOW_FEVER,
+		CSM,
+		NEW_INFLUENZA,
+		IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
+		AHF,
+		MONKEYPOX
+	})
 	@Outbreaks
 	private CaseOutcome outcome;
 	private String provisionalDiagnosis;
