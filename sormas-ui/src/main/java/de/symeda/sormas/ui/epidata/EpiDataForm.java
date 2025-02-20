@@ -650,7 +650,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	}
 
 	private void handleYellowFever() {
-		setVisible(true, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.ACTIVITIES_AS_CASE);
+		setVisible(true, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
 		if (!activityAsCaseFieldsAdded) {
 			addActivityAsCaseFields();
 			activityAsCaseFieldsAdded = true;

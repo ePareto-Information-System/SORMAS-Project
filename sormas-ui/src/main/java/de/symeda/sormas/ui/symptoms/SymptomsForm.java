@@ -142,7 +142,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(6,PARALYSED_LIMB_SENSITIVE_TO_PAIN) +
 					fluidRowLocs(6,INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
-					fluidRowLocs(INJECTION_SITE) +
 					fluidRowLocs(6,DATE_ONSET_PARALYSIS) +
 
 					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
@@ -183,6 +182,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
+					fluidRowLocs(INJECTION_SITE) +
 					fluidRowLocs(6, PATIENT_ILL_LOCATION) +
 					fluidRowLocs(6, SYMPTOMS_COMMENTS) +
 					fluidRowLocs(6, ONSET_SYMPTOM) +
@@ -406,10 +406,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         foodHistoryHeadingLabel.setVisible(false);
 
         DateField onsetDateField = addField(ONSET_DATE, DateField.class);
-		if (disease != Disease.AFP) {
+		if (disease != Disease.AFP && disease != Disease.NEW_INFLUENZA) {
 			onsetDateField.setRequired(true);
 		}
-        ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
+		ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
         if (symptomsContext == SymptomsContext.CASE) {
             // If the symptom onset date is after the hospital admission date, show a warning but don't prevent the user from saving
             onsetDateField.addValueChangeListener(event -> {

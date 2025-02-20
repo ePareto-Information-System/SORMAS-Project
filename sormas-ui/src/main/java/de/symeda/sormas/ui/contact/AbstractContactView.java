@@ -93,17 +93,17 @@ public abstract class AbstractContactView extends AbstractEditAllowedDetailView<
 			menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getCaption(Captions.contactCaseContacts), contact.getCaze().getUuid(), true);
 		}
 		menu.addView(ContactDataView.VIEW_NAME, I18nProperties.getCaption(ContactDto.I18N_PREFIX), params);
-		if (isFormAvailable(FormType.PERSON_EDIT)) {
+		if (UserProvider.getCurrent().hasUserRight(UserRight.PERSON_VIEW) || isFormAvailable(FormType.PERSON_EDIT)) {
 			menu.addView(ContactPersonView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.PERSON), params);
 		}
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CONTACTS_EPIDEMIOLOGICAL_DATA) && isFormAvailable(FormType.EPIDEMIOLOGICAL_EDIT)) {
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CONTACTS_EPIDEMIOLOGICAL_DATA) || isFormAvailable(FormType.EPIDEMIOLOGICAL_EDIT)) {
 			menu.addView(ContactEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.EPI_DATA), params);
 		}
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CONTACTS_FOLLOW_UP_VISITS) && isFormAvailable(FormType.FOLLOW_UP_VISITS)) {
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CONTACTS_FOLLOW_UP_VISITS) || isFormAvailable(FormType.FOLLOW_UP_VISITS)) {
 			menu.addView(ContactVisitsView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.VISITS), params);
 		}
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW) && isFormAvailable(FormType.SAMPLE_EDIT)) {
+		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW) || isFormAvailable(FormType.SAMPLE_EDIT)) {
 			menu.addView(ContactSamplesView.VIEW_NAME, I18nProperties.getCaption(Captions.Contact_samples), params);
 		}
 
