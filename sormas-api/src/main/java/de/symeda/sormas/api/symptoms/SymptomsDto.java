@@ -1508,7 +1508,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState swollenLymphNodesBehindEars;
 
 	@Diseases({
-		AFP,
 		EVD,
 		LASSA,
 		DENGUE,
@@ -1523,7 +1522,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState papularRash;
 
 	@Diseases({
-			AFP,
 			ANTHRAX,
 			POLIO,
 			UNDEFINED,
@@ -1565,7 +1563,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState macularRash;
 
 	@Diseases({
-			AFP,
 			UNDEFINED,
 			OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -2179,7 +2176,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState otherComplications;
 
 	@Diseases({
-		AFP,
 		EVD,
 		LASSA, SARI,
 		CSM,
@@ -2341,7 +2337,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState generalBodilyPains;
 
 	@Diseases({
-			AFP,
 			POLIO,
 			UNDEFINED,
 			OTHER })
@@ -2350,7 +2345,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean lesionsNeck;
 
 	@Diseases({
-			AFP,
 			POLIO,
 			UNDEFINED,
 			OTHER })

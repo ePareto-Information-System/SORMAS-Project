@@ -91,7 +91,7 @@ public class ContactEditActivity extends BaseEditActivity<Contact> {
 
 		Disease disease = contact != null ? contact.getDisease() : null;
 		if (disease != null) {
-			DiseaseFieldHandler.handleMenuDataForDisease(menuItems, disease);
+			DiseaseFieldHandler.handleContactMenuDataForDisease(menuItems, disease);
 		}
 
 		// Sections must be removed in reverse order

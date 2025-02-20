@@ -38,6 +38,10 @@ public class EpiDataFragmentHelper {
 		}
 	}
 
+	public static boolean getIsCaseInstance(AbstractDomainObject abstractDomainObject) {
+		return abstractDomainObject instanceof Case;
+	}
+
 	public static boolean isEditAllowed(AbstractDomainObject abstractDomainObject) {
 		if (abstractDomainObject instanceof Case) {
 			return CaseEditAuthorization.isCaseEditAllowed((Case) abstractDomainObject);

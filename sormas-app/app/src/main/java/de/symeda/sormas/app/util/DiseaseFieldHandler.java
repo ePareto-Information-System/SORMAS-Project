@@ -28,6 +28,7 @@ import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ControlSwitchField;
 import de.symeda.sormas.app.component.controls.ControlTextReadField;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
+import de.symeda.sormas.app.contact.ContactSection;
 
 public class DiseaseFieldHandler {
     private static String TAG = DiseaseFieldHandler.class.getSimpleName();
@@ -291,6 +292,18 @@ public class DiseaseFieldHandler {
         return menuItems;
     }
 
+    public static List<PageMenuItem> handleContactMenuDataForDisease(List<PageMenuItem> menuItems, Disease disease) {
+        diseaseForms = DatabaseHelper.getFormBuilderDao().getFormBuilders(disease);
+
+        removeMenuItemIfFormAvailable(menuItems, FormType.PERSON_EDIT, ContactSection.PERSON_INFO);
+        removeMenuItemIfFormAvailable(menuItems, FormType.EPIDEMIOLOGICAL_EDIT, ContactSection.EPIDEMIOLOGICAL_DATA);
+        removeMenuItemIfFormAvailable(menuItems, FormType.FOLLOW_UP_VISITS, ContactSection.VISITS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.TASK_EDIT, ContactSection.TASKS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.IMMUNIZATION_EDIT, ContactSection.IMMUNIZATIONS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.VACCINATION_EDIT, ContactSection.VACCINATIONS);
+        return menuItems;
+    }
+
     /**
      * Remove a menu item if a form is available for a given disease and form type.
      *
@@ -299,6 +312,15 @@ public class DiseaseFieldHandler {
      * @param section The section to remove if the form is available.
      */
     private static void removeMenuItemIfFormAvailable(List<PageMenuItem> menuItems, FormType formType, CaseSection section) {
+        boolean isFormAvailable = isFormNotAvailableForDisease(formType);
+        if (isFormAvailable) {
+            if (menuItems.size() > section.ordinal() && menuItems.get(section.ordinal()) != null) {
+                menuItems.set(section.ordinal(), null);
+            }
+        }
+    }
+
+    private static void removeMenuItemIfFormAvailable(List<PageMenuItem> menuItems, FormType formType, ContactSection section) {
         boolean isFormAvailable = isFormNotAvailableForDisease(formType);
         if (isFormAvailable) {
             if (menuItems.size() > section.ordinal() && menuItems.get(section.ordinal()) != null) {

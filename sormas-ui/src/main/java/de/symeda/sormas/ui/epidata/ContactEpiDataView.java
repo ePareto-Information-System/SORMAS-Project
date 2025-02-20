@@ -38,6 +38,6 @@ public class ContactEpiDataView extends AbstractContactView {
 		CommitDiscardWrapperComponent<EpiDataForm> epidDataForm = ControllerProvider.getContactController()
 			.getEpiDataComponent(getContactRef().getUuid(), isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_EDIT));
 		setSubComponent(epidDataForm);
-//		setEditPermission(epidDataForm, UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_EDIT), EpiDataDto.EXPOSURES);
+		setEditPermission(epidDataForm, UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_EDIT), EpiDataDto.EXPOSURES);
 	}
 }

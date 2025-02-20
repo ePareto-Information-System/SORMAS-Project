@@ -17,9 +17,9 @@ package de.symeda.sormas.app.epidata;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getDisease;
 import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getDiseaseOfCaseOrContact;
 import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getEpiDataOfCaseOrContact;
+import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getIsCaseInstance;
 
 import android.content.res.Resources;
 import android.text.Html;
@@ -69,6 +69,7 @@ import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.caze.edit.CaseEditActivity;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
+import de.symeda.sormas.app.contact.edit.ContactEditActivity;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentEditEpidLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
@@ -97,6 +98,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	private List<Item> riskFactorConditionList;
 
 	private List<Item> outcomeList;
+	private boolean isCaseInstance;
 
 	// Static methods
 
@@ -110,6 +112,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	}
 
 	private void setUpControlListeners(final FragmentEditEpidLayoutBinding contentBinding) {
+		isCaseInstance = getIsCaseInstance(getActivityRootData());
 		onExposureItemClickListener = (v, item) -> {
 			final Exposure exposure = (Exposure) item;
 			final Exposure exposureClone = (Exposure) exposure.clone();
@@ -187,7 +190,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.btnAddPersonTravelHistory.setOnClickListener(v -> {
 			final PersonTravelHistory personTravelHistory = DatabaseHelper.getPersonTravelHistoryDao().build();
 			final PersonTravelHistoryDialog dialog =
-				new PersonTravelHistoryDialog(CaseEditActivity.getActiveActivity(), personTravelHistory, getActivityRootData(), true);
+				new PersonTravelHistoryDialog(isCaseInstance ? CaseEditActivity.getActiveActivity() : ContactEditActivity.getActiveActivity(), personTravelHistory, getActivityRootData(), true);
 			dialog.setPositiveCallback(() -> addPersonTravelHistory(personTravelHistory));
 			dialog.show();
 		});
@@ -196,7 +199,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			final PersonTravelHistory personTravelHistory = (PersonTravelHistory) item;
 			final PersonTravelHistory personTravelHistoryClone = (PersonTravelHistory) personTravelHistory.clone();
 			final PersonTravelHistoryDialog dialog =
-				new PersonTravelHistoryDialog(CaseEditActivity.getActiveActivity(), personTravelHistoryClone, getActivityRootData(), false);
+				new PersonTravelHistoryDialog(isCaseInstance ? CaseEditActivity.getActiveActivity() : ContactEditActivity.getActiveActivity(), personTravelHistoryClone, getActivityRootData(), false);
 			dialog.setPositiveCallback(() -> {
 				record.getPersonTravelHistories().set(record.getPersonTravelHistories().indexOf(personTravelHistory), personTravelHistoryClone);
 				updatePersonTravelHistories();
@@ -215,7 +218,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.btnAddContainmentMeasure.setOnClickListener(v -> {
 			final ContainmentMeasure containmentMeasure = DatabaseHelper.getContainmentMeasureDao().build();
 			final ContainmentMeasureDialog dialog =
-				new ContainmentMeasureDialog(CaseEditActivity.getActiveActivity(), containmentMeasure, getActivityRootData(), true);
+				new ContainmentMeasureDialog(isCaseInstance ? CaseEditActivity.getActiveActivity() : ContactEditActivity.getActiveActivity(), containmentMeasure, getActivityRootData(), true);
 			dialog.setPositiveCallback(() -> addContainmentMeasure(containmentMeasure));
 			dialog.show();
 		});
@@ -224,7 +227,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			final ContainmentMeasure containmentMeasure = (ContainmentMeasure) item;
 			final ContainmentMeasure containmentMeasureClone = (ContainmentMeasure) containmentMeasure.clone();
 			final ContainmentMeasureDialog dialog =
-				new ContainmentMeasureDialog(CaseEditActivity.getActiveActivity(), containmentMeasureClone, getActivityRootData(), false);
+				new ContainmentMeasureDialog(isCaseInstance ? CaseEditActivity.getActiveActivity() : ContactEditActivity.getActiveActivity(), containmentMeasureClone, getActivityRootData(), false);
 			dialog.setPositiveCallback(() -> {
 				record.getContainmentMeasures().set(record.getContainmentMeasures().indexOf(containmentMeasure), containmentMeasureClone);
 				updateContainmentMeasures();
@@ -241,7 +244,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.btnAddContaminationSource.setOnClickListener(v -> {
 			final ContaminationSource contaminationSource = DatabaseHelper.getContaminationSourceDao().build();
 			final ContaminationSourceDialog dialog =
-				new ContaminationSourceDialog(CaseEditActivity.getActiveActivity(), contaminationSource, getActivityRootData(), true);
+				new ContaminationSourceDialog(isCaseInstance ? CaseEditActivity.getActiveActivity() : ContactEditActivity.getActiveActivity(), contaminationSource, getActivityRootData(), true);
 			dialog.setPositiveCallback(() -> addContaminationSource(contaminationSource));
 			dialog.show();
 		});
@@ -250,7 +253,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			final ContaminationSource contaminationSource = (ContaminationSource) item;
 			final ContaminationSource contaminationSourceClone = (ContaminationSource) contaminationSource.clone();
 			final ContaminationSourceDialog dialog =
-				new ContaminationSourceDialog(CaseEditActivity.getActiveActivity(), contaminationSourceClone, getActivityRootData(), false);
+				new ContaminationSourceDialog(isCaseInstance ? CaseEditActivity.getActiveActivity() : ContactEditActivity.getActiveActivity(), contaminationSourceClone, getActivityRootData(), false);
 			dialog.setPositiveCallback(() -> {
 				record.getContaminationSources().set(record.getContaminationSources().indexOf(contaminationSource), contaminationSourceClone);
 				updateContaminationSources();
@@ -534,9 +537,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			contentBinding.activityascaseInvestigationInfo.setText(Html.fromHtml(I18nProperties.getString(Strings.infoActivityAsCaseInvestigation)));
 			contentBinding.activityascaseLayout.setVisibility(GONE);
 			contentBinding.epiDataActivityAsCaseDetailsKnown.setVisibility(GONE);
-			contentBinding.personTravelHistoryLayout.setVisibility(GONE);
-			contentBinding.containmentMeasureLayout.setVisibility(GONE);
-			contentBinding.contaminationSourceLayout.setVisibility(GONE);
 		}
 		YesNo  epiDataHistoryOfTravelOutsideTheVillageTownDistrictValue = (YesNo) contentBinding.epiDataHistoryOfTravelOutsideTheVillageTownDistrict.getValue();
 		contentBinding.headingNameOfPlaceOfTravel.setVisibility(epiDataHistoryOfTravelOutsideTheVillageTownDistrictValue == YesNo.YES ? VISIBLE : GONE);
