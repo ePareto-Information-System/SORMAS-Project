@@ -1229,7 +1229,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		YELLOW_FEVER,
 		CSM,
 		IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
-		AHF
+		AHF,
+		CHOLERA,
+		MEASLES,
+		CORONAVIRUS,
+		NEONATAL_TETANUS
 	})
 	@Outbreaks
 	private Date onsetDate;
@@ -2390,7 +2394,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
 		AHF,
-		MONKEYPOX
+		MONKEYPOX,
+		CHOLERA,
+		MEASLES,
+		CORONAVIRUS,
+		NEONATAL_TETANUS
 	})
 	@Outbreaks
 	private CaseOutcome outcome;
