@@ -504,7 +504,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		exposuresField.addValueChangeListener(e -> ogExposureDetailsKnown.setEnabled(CollectionUtils.isEmpty(exposuresField.getValue())));
 
-		if (disease != null) {
+		if (disease != null && disease != Disease.MEASLES) {
 			handleDiseaseFields(disease);
 		}
 
