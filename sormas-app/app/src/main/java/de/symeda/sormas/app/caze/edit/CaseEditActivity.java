@@ -149,8 +149,8 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 //			menuItems.set(CaseSection.CONTACTS.ordinal(), null);
 //		}
 
-		if (!ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW)
-			|| (caze != null && !DiseaseConfigurationCache.getInstance().hasFollowUp(caze.getDisease()))) {
+		if (!ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW)) {
+//			|| (caze != null && !DiseaseConfigurationCache.getInstance().hasFollowUp(caze.getDisease()))) {
 			menuItems.set(CaseSection.CONTACTS.ordinal(), null);
 		}
 		if (caze != null && caze.getDisease() == Disease.CONGENITAL_RUBELLA
