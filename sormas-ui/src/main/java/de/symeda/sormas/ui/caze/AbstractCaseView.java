@@ -273,7 +273,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			}
 		}
 
-		if (caze.getDisease() != Disease.FOODBORNE_ILLNESS && caze.getDisease() != Disease.MONKEYPOX) {
+		if (caze.getDisease() != Disease.MONKEYPOX) {
 			if (caseFollowupEnabled
 					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
 					&& caze.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP) {
