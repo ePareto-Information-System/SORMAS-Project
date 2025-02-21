@@ -206,11 +206,13 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setHistoryOfTravelVillage(source.getHistoryOfTravelVillage());
 
 		List<PersonTravelHistory> personTravelHistories = new ArrayList<>();
-		for (PersonTravelHistoryDto personTravelHistoryDto : source.getPersonTravelHistories()) {
-			PersonTravelHistory personTravelHistory = personTravelHistoryService.getByUuid(personTravelHistoryDto.getUuid());
-			personTravelHistory = fillOrBuildPersonTravelHistoryEntity(personTravelHistoryDto, personTravelHistory, checkChangeDate);
-			personTravelHistory.setEpiData(target);
-			personTravelHistories.add(personTravelHistory);
+		if (target.getId() != null) {
+			for (PersonTravelHistoryDto personTravelHistoryDto : source.getPersonTravelHistories()) {
+				PersonTravelHistory personTravelHistory = personTravelHistoryService.getByUuid(personTravelHistoryDto.getUuid());
+				personTravelHistory = fillOrBuildPersonTravelHistoryEntity(personTravelHistoryDto, personTravelHistory, checkChangeDate);
+				personTravelHistory.setEpiData(target);
+				personTravelHistories.add(personTravelHistory);
+			}
 		}
 		if (!DataHelper.equalContains(target.getPersonTravelHistories(), personTravelHistories)) {
 			// note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
@@ -220,11 +222,13 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.getPersonTravelHistories().addAll(personTravelHistories);
 
 		List<ContaminationSource> contaminationSources = new ArrayList<>();
-		for (ContaminationSourceDto contaminationSourceDto : source.getContaminationSources()) {
-			ContaminationSource contaminationSource = contaminationSourceService.getByUuid(contaminationSourceDto.getUuid());
-			contaminationSource = fillOrBuildContaminationSourceEntity(contaminationSourceDto, contaminationSource, checkChangeDate);
-			contaminationSource.setEpiData(target);
-			contaminationSources.add(contaminationSource);
+		if (target.getId() != null) {
+			for (ContaminationSourceDto contaminationSourceDto : source.getContaminationSources()) {
+				ContaminationSource contaminationSource = contaminationSourceService.getByUuid(contaminationSourceDto.getUuid());
+				contaminationSource = fillOrBuildContaminationSourceEntity(contaminationSourceDto, contaminationSource, checkChangeDate);
+				contaminationSource.setEpiData(target);
+				contaminationSources.add(contaminationSource);
+			}
 		}
 		if (!DataHelper.equalContains(target.getContaminationSources(), contaminationSources)) {
 			// note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
@@ -235,11 +239,13 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.getContaminationSources().addAll(contaminationSources);
 
 		List<ContainmentMeasure> containmentMeasures = new ArrayList<>();
-		for (ContainmentMeasureDto containmentMeasureDto : source.getContainmentMeasures()) {
-			ContainmentMeasure containmentMeasure = containmentMeasureService.getByUuid(containmentMeasureDto.getUuid());
-			containmentMeasure = fillOrBuildContainmentMeasureEntity(containmentMeasureDto, containmentMeasure, checkChangeDate);
-			containmentMeasure.setEpiData(target);
-			containmentMeasures.add(containmentMeasure);
+		if (target.getId() != null) {
+			for (ContainmentMeasureDto containmentMeasureDto : source.getContainmentMeasures()) {
+				ContainmentMeasure containmentMeasure = containmentMeasureService.getByUuid(containmentMeasureDto.getUuid());
+				containmentMeasure = fillOrBuildContainmentMeasureEntity(containmentMeasureDto, containmentMeasure, checkChangeDate);
+				containmentMeasure.setEpiData(target);
+				containmentMeasures.add(containmentMeasure);
+			}
 		}
 		if (!DataHelper.equalContains(target.getContainmentMeasures(), containmentMeasures)) {
 			// note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
