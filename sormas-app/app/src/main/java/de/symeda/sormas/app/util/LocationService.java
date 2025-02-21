@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
@@ -249,6 +250,10 @@ public final class LocationService {
 				List<Address> addresses = instance.geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 				if (addresses.size() > 0) {
 					String countryCode = addresses.get(0).getCountryCode();
+					//this if for Ghana, where the country code is not the same as the locale
+					if (Objects.equals(countryCode, "GH") && countryLocale.equals("en")) {
+						return true;
+					}
 					if (countryCode == null || !countryCode.equals(countryLocale.substring(countryLocale.indexOf("-") + 1).toUpperCase())) {
 						return false;
 					}
