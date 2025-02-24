@@ -1150,9 +1150,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		if(disease == Disease.FOODBORNE_ILLNESS){
 
-            symptomsOngoing.setVisible(true);
-            durationHours.setVisible(true);
-            nameOfHealthFacility.setVisible(true);
+			setFieldsVisible(true, symptomsOngoing, durationHours, nameOfHealthFacility);
 
             FieldHelper
                     .setVisibleWhen(symptomsOngoing, Arrays.asList(nameOfHealthFacility), Arrays.asList(YesNo.YES), true);
