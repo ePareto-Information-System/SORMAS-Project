@@ -114,7 +114,7 @@ public class ContactEditVisitsListFragment extends BaseEditFragment<FragmentForm
 	@Override
 	public void onListItemClick(View view, int position, Object item) {
 		Visit visit = (Visit) item;
-		if (VisitOrigin.USER.equals(visit.getOrigin()) && ConfigProvider.hasUserRight(UserRight.VISIT_EDIT)) {
+		if (VisitOrigin.USER.equals(visit.getOrigin())) {
 			VisitEditActivity.startActivity(getContext(), visit.getUuid(), getActivityRootData().getUuid(), VisitSection.VISIT_INFO);
 		} else {
 			VisitReadActivity.startActivity(getContext(), visit.getUuid(), getActivityRootData().getUuid(), VisitSection.VISIT_INFO);
