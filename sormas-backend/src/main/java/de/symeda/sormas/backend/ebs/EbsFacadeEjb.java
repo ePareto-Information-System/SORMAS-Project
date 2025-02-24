@@ -443,11 +443,11 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 				ebs.get(Ebs.PERSON_DESIGNATION),
 				region.get(Region.UUID),
 				region.get(Region.NAME),
+				district.get(District.UUID),
+				district.get(District.NAME),
 				community.get(Community.UUID),
 				community.get(Community.NAME),
-				location.get(Location.CITY),
-				district.get(District.UUID),
-				district.get(District.NAME));
+				location.get(Location.CITY));
 
 			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
 

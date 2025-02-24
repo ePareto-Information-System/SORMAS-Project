@@ -1046,6 +1046,7 @@ public interface Captions {
 	String DocumentTemplate_uploadTemplate = "DocumentTemplate.uploadTemplate";
 	String DocumentTemplate_uploadWorkflowTemplate = "DocumentTemplate.uploadWorkflowTemplate";
 	String documentUploadDocument = "documentUploadDocument";
+	String Ebs_community = "Ebs.community";
 	String edit = "edit";
 	String endOfProcessingDate = "endOfProcessingDate";
 	String EpiData = "EpiData";

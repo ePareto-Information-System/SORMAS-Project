@@ -96,11 +96,11 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		String personDesignation,
 		String regionUuid,
 		String regionName,
+		String districtUuid,
+		String districtName,
 		String communityUuid,
 		String communityName,
-		String city,
-		String districtUuid,
-		String districtName) {
+		String city) {
 
 		super(uuid);
 		this.id = id;
@@ -112,7 +112,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.informantTel = informantTel;
 		this.personDesignation = personDesignation;
 		this.personRegistering = personRegistering;
-		this.ebsLocation = new EbsLocation(regionName, communityName, city, districtName);
+		this.ebsLocation = new EbsLocation(regionName, districtName, communityName, city);
 		this.regionUuid = regionUuid;
 	}
 
@@ -338,6 +338,10 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return getEbsLocation().getCommunity();
 	}
 
+	public String getDistrict() {
+		return getEbsLocation().getDistrict();
+	}
+
 	public String getAddress() {
 		return getEbsLocation().getAddress();
 	}
@@ -504,7 +508,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		private String city;
 		private String districtName;
 
-		public EbsLocation(String regionName, String communityName, String city, String districtName) {
+		public EbsLocation(String regionName, String districtName, String communityName, String city) {
 			this.regionName = regionName;
 			this.communityName = communityName;
 			this.city = city;

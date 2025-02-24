@@ -97,6 +97,7 @@ public class EbsSignalGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsInde
 				EbsIndexDto.INFORMANT_NAME,
 				EbsIndexDto.INFORMANT_TEL,
 				EbsIndexDto.REGION,
+				EbsIndexDto.DISTRICT,
 				EbsIndexDto.COMMUNITY,
 				EbsIndexDto.TOWN,
 				EbsIndexDto.PERSON_REGISTERING,
@@ -107,6 +108,7 @@ public class EbsSignalGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsInde
 		((Column<EbsIndexDto, String>) getColumn(EbsIndexDto.UUID)).setRenderer(new UuidRenderer());
 		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.REPORT_DATE_TIME))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
+		((Column<EbsIndexDto, String>) getColumn(EbsIndexDto.COMMUNITY)).setCaption(I18nProperties.getCaption(Captions.Ebs_community));
 		addItemClickListener(new ShowDetailsListener<>(EbsIndexDto.UUID, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
 	}
 
