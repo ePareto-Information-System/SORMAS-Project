@@ -653,8 +653,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		}
 
 		target = DtoHelper.fillOrBuildEntity(source, target, Symptoms::new, checkChangeDate);
-		target.setHealthConditions(
-				healthConditionsMapper.fillOrBuildEntity(source.getHealthConditions(), target.getHealthConditions(), checkChangeDate));
+//		target.setHealthConditions(
+//				healthConditionsMapper.fillOrBuildEntity(source.getHealthConditions(), target.getHealthConditions(), checkChangeDate));
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setOutcome(source.getOutcome());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
