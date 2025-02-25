@@ -111,6 +111,6 @@ public class VisitResource extends EntityDtoResource<VisitDto> {
 
 	@Override
 	public UnaryOperator<VisitDto> getSave() {
-		return null;
+		return FacadeProvider.getVisitFacade()::save;
 	}
 }
