@@ -639,6 +639,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			}
 		hideFieldsForSelectedDisease(disease);
         setSampleMaterialTypesForDisease(disease);
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION),
+				SampleDto.RECEIVED,
+				Arrays.asList(true),
+				true);
     }
 
 
