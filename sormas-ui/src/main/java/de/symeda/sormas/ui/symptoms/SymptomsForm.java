@@ -1294,7 +1294,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldHelper.setVisibleWhen(getFieldGroup(), CASE_DETECTED_BEFORE_WORM_EMERGENCE, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), NUMBER_OF_WORMS, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), DATE_FIRST_WORM_EMERGENCE, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
-
+			setRequired(false, ONSET_DATE);
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {

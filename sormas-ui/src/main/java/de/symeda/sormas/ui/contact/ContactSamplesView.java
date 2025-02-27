@@ -7,7 +7,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.sample.SampleAssociationType;
@@ -20,7 +22,6 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.CaseSampleView;
 import de.symeda.sormas.ui.samples.CCESamplesGrid;
-import de.symeda.sormas.ui.samples.SampleCreateForm;
 import de.symeda.sormas.ui.utils.*;
 
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class ContactSamplesView extends AbstractContactView {
     private static final String REFERRED = "referred";
     private CCESamplesGrid grid;
     private DetailSubComponentWrapper gridLayout;
+    private Disease contactDisease;
 
     public ContactSamplesView() {
         super(VIEW_NAME);
@@ -54,6 +56,7 @@ public class ContactSamplesView extends AbstractContactView {
     @Override
     protected void initView(String params) {
         criteria.contact(getContactRef());
+        contactDisease = getContactDisease();
 
         if (grid == null) {
             grid = new CCESamplesGrid(criteria);
@@ -184,7 +187,7 @@ public class ContactSamplesView extends AbstractContactView {
                 Captions.sampleNewSample,
                 I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, Captions.sampleNewSample),
                 VaadinIcons.PLUS_CIRCLE,
-                e -> ControllerProvider.getSampleController().create(criteria.getContact(), criteria.getDisease(), SormasUI::refreshView),
+                e -> ControllerProvider.getSampleController().create(criteria.getContact(), contactDisease, SormasUI::refreshView),
                 ValoTheme.BUTTON_PRIMARY);
 
         addHeaderComponent(newButton);
@@ -271,5 +274,9 @@ public class ContactSamplesView extends AbstractContactView {
         }
 
         applyingCriteria = false;
+    }
+
+    public Disease getContactDisease() {
+        return FacadeProvider.getContactFacade().getContactByUuid(criteria.getContact().getUuid()).getDisease();
     }
 }
