@@ -603,8 +603,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				setFieldsVisible(true, contactSickDomesticAnimals, similarSymptoms, recentTravelOutbreak);
 				break;
 			case CSM:
-				setVisible(true, EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, EpiDataDto.EXPOSURE_DETAILS_KNOWN,
-						EpiDataDto.EXPOSURES, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
+				setVisible(true, EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.EXPOSURES);
 				break;
 			case AFP:
 				setFieldsVisible(true, similarSymptoms, recentTravelOutbreak);
