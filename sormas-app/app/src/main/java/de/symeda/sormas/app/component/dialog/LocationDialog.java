@@ -279,6 +279,7 @@ public class LocationDialog extends FormDialog {
 
 		ValidationHelper.initEmailValidator(contentBinding.locationContactPersonEmail);
 		ValidationHelper.initPhoneNumberValidator(contentBinding.locationContactPersonPhone);
+		contentBinding.locationCountry.setVisibility(GONE);
 	}
 
 	private void overrideLocationDetailsWithFacilityOnes(Facility facility) {
@@ -439,6 +440,7 @@ public class LocationDialog extends FormDialog {
 			contentBinding.locationFacility.setValue(oldFacility);
 			contentBinding.locationFacilityDetails.setValue(oldDetails);
 		});
+//		contentBinding.locationCountry.setVisibility(GONE);
 	}
 
 	/**
@@ -452,6 +454,7 @@ public class LocationDialog extends FormDialog {
 	 */
 
 	public void showHideFieldsForDisease(Disease caseDisease, FormType formType) {
+		contentBinding.locationCountry.setVisibility(GONE);
 		if (caseDisease == null) {
 			return;
 		}
