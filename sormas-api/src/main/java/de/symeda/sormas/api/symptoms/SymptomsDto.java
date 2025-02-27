@@ -659,7 +659,6 @@ public class SymptomsDto extends PseudonymizableDto {
 			ANTHRAX,
 			AHF,
 			UNDEFINED,
-			FOODBORNE_ILLNESS,
 			OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -675,7 +674,7 @@ public class SymptomsDto extends PseudonymizableDto {
 			ANTHRAX,
 			AHF,
 			UNDEFINED,
-			FOODBORNE_ILLNESS,
+//			FOODBORNE_ILLNESS,
 			OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)

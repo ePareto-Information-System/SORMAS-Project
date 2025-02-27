@@ -77,8 +77,8 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 
 		Disease disease = caze != null ? caze.getDisease() : null;
 		if (disease != null) {
-			menuItems = DiseaseMenuCaptionHandler.updateMenuCaptionsForDisease(menuItems, disease, getContext());
-			menuItems = DiseaseFieldHandler.handleMenuDataForDisease(menuItems, disease);
+			DiseaseFieldHandler.handleMenuDataForDisease(menuItems, disease);
+			DiseaseMenuCaptionHandler.updateMenuCaptionsForDisease(menuItems, disease, getContext());
 		}
 		// Sections must be removed in reverse order
 		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.TASK_MANAGEMENT)) {
