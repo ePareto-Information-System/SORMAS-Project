@@ -112,9 +112,8 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 		if (caze != null && caze.isUnreferredPortHealthCase()) {
 			menuItems.set(CaseSection.EVENTS.ordinal(), null);
 		}
-		if (!ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW)
-			|| (caze != null && caze.isUnreferredPortHealthCase())
-			|| (caze != null && !DiseaseConfigurationCache.getInstance().hasFollowUp(caze.getDisease()))) {
+		if (!ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW)) {
+//			|| (caze != null && !DiseaseConfigurationCache.getInstance().hasFollowUp(caze.getDisease()))) {
 			menuItems.set(CaseSection.CONTACTS.ordinal(), null);
 		}
 		if (caze != null
