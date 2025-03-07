@@ -120,6 +120,28 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/age_fields_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_approximateAge"
+                    app:value="@={data.person.approximateAge}"
+                    app:inputType="number"
+                    app:maxLength="3"
+                    app:required="true"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/person_approximateAgeType"
+                    app:value="@={data.person.approximateAgeType}"
+                    app:required="true"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/contact_returningTraveler"
                 app:value="@={data.returningTraveler}"

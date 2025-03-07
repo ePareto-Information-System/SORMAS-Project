@@ -21,6 +21,8 @@ import static android.view.View.VISIBLE;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import de.symeda.sormas.api.CountryHelper;
@@ -29,7 +31,9 @@ import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactProximity;
 import de.symeda.sormas.api.contact.ContactRelation;
+import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.BaseEditFragment;
@@ -62,6 +66,7 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 	private List<Item> sexList;
 	private List<Item> categoryList;
 	private List<Item> contactTransmissionClassificationsList;
+	List<Item> approximateAgeTypeList;
 
 	public static ContactNewFragment newInstance(Contact activityRootData) {
 		return newInstance(ContactNewFragment.class, null, activityRootData);
@@ -91,6 +96,7 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 		sexList = DataUtils.getEnumItems(Sex.class, true);
 		categoryList = DataUtils.getEnumItems(ContactCategory.class, true);
 		contactTransmissionClassificationsList = DataUtils.getEnumItems(TransmissionClassification.class, true);
+		approximateAgeTypeList = DataUtils.getEnumItems(ApproximateAgeType.class, true);
 	}
 
 	@Override
@@ -201,19 +207,22 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 
 		List<Item> monthList = DataUtils.getMonthItems(true);
 		List<Item> yearList = DataUtils.toItems(DateHelper.getYearsToNow(), true);
-		contentBinding.personBirthdateDD.initializeSpinner(new ArrayList<>());
+		contentBinding.personBirthdateDD.initializeSpinner(new ArrayList<>(), field -> updateApproximateAgeField(contentBinding));
 		contentBinding.personBirthdateMM.initializeSpinner(monthList, field -> {
+			updateApproximateAgeField(contentBinding);
 			DataUtils.updateListOfDays(
 				contentBinding.personBirthdateDD,
 				(Integer) contentBinding.personBirthdateYYYY.getValue(),
 				(Integer) field.getValue());
 		});
 		contentBinding.personBirthdateYYYY.initializeSpinner(yearList, field -> {
+			updateApproximateAgeField(contentBinding);
 			DataUtils.updateListOfDays(
 				contentBinding.personBirthdateDD,
 				(Integer) field.getValue(),
 				(Integer) contentBinding.personBirthdateMM.getValue());
 		});
+		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		contentBinding.personBirthdateYYYY.setSelectionOnOpen(year - 35);
 	}
@@ -222,4 +231,42 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 	public int getEditLayout() {
 		return R.layout.fragment_contact_new_layout;
 	}
+
+	public static void updateApproximateAgeField(FragmentContactNewLayoutBinding contentBinding) {
+		Date birthDate = calculateBirthDateValue(contentBinding);
+		if (birthDate != null) {
+
+			Date to = new Date();
+			DataHelper.Pair<Integer, ApproximateAgeType> approximateAge = ApproximateAgeType.ApproximateAgeHelper.getApproximateAge(birthDate, to);
+			ApproximateAgeType ageType = approximateAge.getElement1();
+			contentBinding.personApproximateAge.setValue(String.valueOf(approximateAge.getElement0()));
+			contentBinding.personApproximateAgeType.setValue(ageType);
+		} else {
+			if (contentBinding.personApproximateAge.isEnabled() == false && contentBinding.personApproximateAgeType.isEnabled() == false) {
+				contentBinding.personApproximateAge.setValue(null);
+				contentBinding.personApproximateAgeType.setValue(null);
+			}
+			contentBinding.personApproximateAge.setEnabled(true);
+			contentBinding.personApproximateAgeType.setEnabled(true);
+		}
+	}
+
+	public static Date calculateBirthDateValue(FragmentContactNewLayoutBinding contentBinding) {
+		Integer birthYear = (Integer) contentBinding.personBirthdateYYYY.getValue();
+
+		if (birthYear != null) {
+			contentBinding.personApproximateAge.setEnabled(false);
+			contentBinding.personApproximateAgeType.setEnabled(false);
+
+			Integer birthDay = (Integer) contentBinding.personBirthdateDD.getValue();
+			Integer birthMonth = (Integer) contentBinding.personBirthdateMM.getValue();
+
+			Calendar birthDate = new GregorianCalendar();
+			birthDate.set(birthYear, birthMonth != null ? birthMonth - 1 : 0, birthDay != null ? birthDay : 1);
+			return birthDate.getTime();
+		}
+		return null;
+	}
+
+
 }
