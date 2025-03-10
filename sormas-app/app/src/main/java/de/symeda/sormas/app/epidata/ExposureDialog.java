@@ -26,6 +26,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.utils.ValidationException;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BR;
@@ -102,6 +103,7 @@ public class ExposureDialog extends FormDialog {
 	protected void setContentBinding(Context context, ViewDataBinding binding, String layoutName) {
 		contentBinding = (DialogExposureEditLayoutBinding) binding;
 		binding.setVariable(BR.data, data);
+		contentBinding.setYesNoClass(YesNo.class);
 	}
 
 	@Override

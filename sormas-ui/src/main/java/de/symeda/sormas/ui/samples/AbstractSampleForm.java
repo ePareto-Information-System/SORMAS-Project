@@ -585,7 +585,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         } else {
             FieldHelper.setVisibleWhen(
                     getFieldGroup(),
-					Arrays.asList(SampleDto.RECEIVED_DATE),
+					Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
                     SampleDto.RECEIVED,
 					Arrays.asList(true),
                     true);
@@ -593,7 +593,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     getFieldGroup(),
                     receivedField,
                     Arrays.asList(true),
-                    Arrays.asList(SampleDto.RECEIVED_DATE),
+                    Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
                     true);
         }
 

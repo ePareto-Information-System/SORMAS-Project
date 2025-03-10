@@ -323,7 +323,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	private void updateActivitiesAsCase() {
 		getContentBinding().setActivityAsCaseList(getActivityAsCaseList());
 		getContentBinding().epiDataActivityAsCaseDetailsKnown.setEnabled(getActivityAsCaseList().isEmpty());
-		updateAddActivitiesAsCaseButtonVisibility();
+//		updateAddActivitiesAsCaseButtonVisibility();
 	}
 	private void addActivityAsCase(ActivityAsCase activityAsCase) {
 		record.getActivitiesAsCase().add(0, activityAsCase);
@@ -423,8 +423,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		setUpControlListeners(contentBinding);
 
 		setDefaultValues(record);
-		contentBinding.setYesNoClass(YesNo.class);
-
 		contentBinding.setData(record);
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setPlaceManagedClass(PlaceManaged.class);
