@@ -273,7 +273,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			}
 		}
 
-		if (caze.getDisease() != Disease.MONKEYPOX) {
+//		if (caze.getDisease() != Disease.MONKEYPOX) {
 			if (caseFollowupEnabled
 					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
 					&& caze.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP) {
@@ -311,7 +311,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			if (caze.getExternalData() != null && !caze.getExternalData().isEmpty()) {
 				menu.addView(CaseExternalDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EXTERNAL_DATA), params);
 			}
-		}
+//		}
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
 				&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
