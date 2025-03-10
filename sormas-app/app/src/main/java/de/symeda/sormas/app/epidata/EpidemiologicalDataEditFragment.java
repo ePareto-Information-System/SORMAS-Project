@@ -423,8 +423,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		setUpControlListeners(contentBinding);
 
 		setDefaultValues(record);
-		contentBinding.setYesNoClass(YesNo.class);
-
 		contentBinding.setData(record);
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setPlaceManagedClass(PlaceManaged.class);
