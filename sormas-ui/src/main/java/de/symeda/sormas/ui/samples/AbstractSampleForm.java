@@ -269,7 +269,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
 			fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
 			locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-			fluidRowLocs(6, SampleDto.RECEIVED_DATE) +
+			fluidRowLocs(SampleDto.RECEIVED_DATE,SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION) +
 			fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
 			
 	protected static final String CHOLERA_HTML_LAYOUT =
@@ -284,7 +284,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
 					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
 					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-					fluidRowLocs(6, SampleDto.RECEIVED_DATE, 6, SampleDto.SPECIMEN_CONDITION) +
+					fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION) +
 					fluidRowLocs("", SampleDto.PATHOGEN_TEST_RESULT);
 
 	protected static final String AHF_LAYOUT =
@@ -296,7 +296,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
 					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
 					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-					fluidRowLocs(6, SampleDto.RECEIVED_DATE);
+					fluidRowLocs(SampleDto.RECEIVED_DATE,SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION);
 
 
 
