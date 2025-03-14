@@ -7,9 +7,9 @@ import javax.persistence.criteria.From;
 
 import de.symeda.sormas.backend.common.QueryContext;
 
-public class EnvironmentQueryContext extends QueryContext<Environment, EnvironmentJoins> {
+public class EnvironmentQueryContext extends QueryContext<SignalVerification, EnvironmentJoins> {
 
-	public EnvironmentQueryContext(CriteriaBuilder cb, CriteriaQuery<?> query, From<?, Environment> root) {
+	public EnvironmentQueryContext(CriteriaBuilder cb, CriteriaQuery<?> query, From<?, SignalVerification> root) {
 		super(cb, query, root, new EnvironmentJoins(root));
 	}
 

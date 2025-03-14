@@ -58,7 +58,7 @@ import de.symeda.sormas.backend.util.RightsAllowed;
 @Stateless(name = "EnvironmentFacade")
 @RightsAllowed(UserRight._ENVIRONMENT_VIEW)
 public class EnvironmentFacadeEjb
-	extends AbstractCoreFacadeEjb<Environment, EnvironmentDto, EnvironmentIndexDto, EnvironmentReferenceDto, EnvironmentService, EnvironmentCriteria>
+	extends AbstractCoreFacadeEjb<SignalVerification, EnvironmentDto, EnvironmentIndexDto, EnvironmentReferenceDto, EnvironmentService, EnvironmentCriteria>
 	implements EnvironmentFacade {
 
 	public EnvironmentFacadeEjb() {
@@ -66,7 +66,7 @@ public class EnvironmentFacadeEjb
 
 	@Inject
 	public EnvironmentFacadeEjb(EnvironmentService service) {
-		super(Environment.class, EnvironmentDto.class, service);
+		super(SignalVerification.class, EnvironmentDto.class, service);
 	}
 
 	@EJB
@@ -85,12 +85,12 @@ public class EnvironmentFacadeEjb
 		UserRight._ENVIRONMENT_CREATE })
 	public EnvironmentDto save(EnvironmentDto dto, boolean checkChangeDate) {
 
-		Environment existingEnvironment = dto.getUuid() != null ? service.getByUuid(dto.getUuid()) : null;
+		SignalVerification existingEnvironment = dto.getUuid() != null ? service.getByUuid(dto.getUuid()) : null;
 
 		FacadeHelper.checkCreateAndEditRights(existingEnvironment, userService, UserRight.ENVIRONMENT_CREATE, UserRight.ENVIRONMENT_EDIT);
 
 		validate(dto);
-		Environment environment = fillOrBuildEntity(dto, existingEnvironment, checkChangeDate);
+		SignalVerification environment = fillOrBuildEntity(dto, existingEnvironment, checkChangeDate);
 		service.ensurePersisted(environment);
 
 		return toDto(environment);
@@ -100,7 +100,7 @@ public class EnvironmentFacadeEjb
 	public long count(EnvironmentCriteria criteria) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		Root<Environment> environment = cq.from(Environment.class);
+		Root<SignalVerification> environment = cq.from(SignalVerification.class);
 
 		final EnvironmentQueryContext environmentQueryContext = new EnvironmentQueryContext(cb, cq, environment);
 
@@ -123,21 +123,21 @@ public class EnvironmentFacadeEjb
 		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<EnvironmentIndexDto> cq = cb.createQuery(EnvironmentIndexDto.class);
-			Root<Environment> environment = cq.from(Environment.class);
+			Root<SignalVerification> environment = cq.from(SignalVerification.class);
 
 			final EnvironmentQueryContext environmentQueryContext = new EnvironmentQueryContext(cb, cq, environment);
 
 			final EnvironmentJoins environmentJoins = new EnvironmentJoins(environment);
-			final Join<Environment, Location> location = environmentJoins.getLocation();
+			final Join<SignalVerification, Location> location = environmentJoins.getLocation();
 			final Join<Location, Region> region = environmentJoins.getLocationJoins().getRegion();
 			final Join<Location, District> district = environmentJoins.getLocationJoins().getDistrict();
 			final Join<Location, Community> community = environmentJoins.getLocationJoins().getCommunity();
 
 			cq.multiselect(
-				environment.get(Environment.UUID),
-				environment.get(Environment.EXTERNAL_ID),
-				environment.get(Environment.ENVIRONMENT_NAME),
-				environment.get(Environment.ENVIRONMENT_MEDIA),
+				environment.get(SignalVerification.UUID),
+				environment.get(SignalVerification.EXTERNAL_ID),
+				environment.get(SignalVerification.ENVIRONMENT_NAME),
+				environment.get(SignalVerification.ENVIRONMENT_MEDIA),
 				region.get(Region.NAME),
 				district.get(District.NAME),
 				community.get(Community.NAME),
@@ -145,10 +145,10 @@ public class EnvironmentFacadeEjb
 				location.get(Location.LONGITUDE),
 				location.get(Location.POSTAL_CODE),
 				location.get(Location.CITY),
-				environment.get(Environment.REPORT_DATE),
-				environment.get(Environment.INVESTIGATION_STATUS));
+				environment.get(SignalVerification.REPORT_DATE),
+				environment.get(SignalVerification.INVESTIGATION_STATUS));
 
-			cq.where(environment.get(Environment.ID).in(batchedIds));
+			cq.where(environment.get(SignalVerification.ID).in(batchedIds));
 			sortBy(sortProperties, environmentQueryContext);
 
 			environments.addAll(QueryHelper.getResultList(em, cq, null, null));
@@ -161,12 +161,12 @@ public class EnvironmentFacadeEjb
 
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-		final Root<Environment> environment = cq.from(Environment.class);
+		final Root<SignalVerification> environment = cq.from(SignalVerification.class);
 
 		final EnvironmentQueryContext environmentQueryContext = new EnvironmentQueryContext(cb, cq, environment);
 
 		List<Selection<?>> selections = new ArrayList<>();
-		selections.add(environment.get(Environment.ID));
+		selections.add(environment.get(SignalVerification.ID));
 		selections.addAll(sortBy(sortProperties, environmentQueryContext));
 
 		cq.multiselect(selections);
@@ -215,7 +215,7 @@ public class EnvironmentFacadeEjb
 				case EnvironmentIndexDto.LATITUDE:
 				case EnvironmentIndexDto.LONGITUDE:
 				case EnvironmentIndexDto.CITY:
-					Join<Environment, Location> location = environmentQueryContext.getJoins().getLocation();
+					Join<SignalVerification, Location> location = environmentQueryContext.getJoins().getLocation();
 					expression = location.get(sortProperty.propertyName);
 					break;
 				default:
@@ -226,7 +226,7 @@ public class EnvironmentFacadeEjb
 			}
 			cq.orderBy(order);
 		} else {
-			Path<Object> changeDate = environmentQueryContext.getRoot().get(Environment.CHANGE_DATE);
+			Path<Object> changeDate = environmentQueryContext.getRoot().get(SignalVerification.CHANGE_DATE);
 			cq.orderBy(cb.desc(changeDate));
 			selections.add(changeDate);
 		}
@@ -240,9 +240,9 @@ public class EnvironmentFacadeEjb
 	}
 
 	@Override
-	protected Environment fillOrBuildEntity(EnvironmentDto source, Environment target, boolean checkChangeDate) {
+	protected SignalVerification fillOrBuildEntity(EnvironmentDto source, SignalVerification target, boolean checkChangeDate) {
 		boolean targetWasNull = isNull(target);
-		target = DtoHelper.fillOrBuildEntity(source, target, Environment::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, SignalVerification::new, checkChangeDate);
 
 		if (targetWasNull) {
 			FacadeHelper.setUuidIfDtoExists(target.getLocation(), source.getLocation());
@@ -271,7 +271,7 @@ public class EnvironmentFacadeEjb
 	}
 
 	@Override
-    public EnvironmentDto toDto(Environment source) {
+    public EnvironmentDto toDto(SignalVerification source) {
 
 		if (source == null) {
 			return null;
@@ -303,11 +303,11 @@ public class EnvironmentFacadeEjb
 	}
 
 	@Override
-	protected EnvironmentReferenceDto toRefDto(Environment environment) {
+	protected EnvironmentReferenceDto toRefDto(SignalVerification environment) {
 		return toReferenceDto(environment);
 	}
 
-	public static EnvironmentReferenceDto toReferenceDto(Environment entity) {
+	public static EnvironmentReferenceDto toReferenceDto(SignalVerification entity) {
 
 		if (entity == null) {
 			return null;
@@ -331,7 +331,7 @@ public class EnvironmentFacadeEjb
 	@Override
 	@RightsAllowed(UserRight._ENVIRONMENT_DELETE)
 	public void delete(String uuid, DeletionDetails deletionDetails) throws ExternalSurveillanceToolRuntimeException {
-		Environment environment = service.getByUuid(uuid);
+		SignalVerification environment = service.getByUuid(uuid);
 
 		if (!service.inJurisdictionOrOwned(environment)) {
 			throw new AccessDeniedException(I18nProperties.getString(Strings.messageEventParticipantOutsideJurisdictionDeletionDenied));
@@ -347,12 +347,12 @@ public class EnvironmentFacadeEjb
 	}
 
 	@Override
-	protected void pseudonymizeDto(Environment source, EnvironmentDto dto, Pseudonymizer pseudonymizer) {
+	protected void pseudonymizeDto(SignalVerification source, EnvironmentDto dto, Pseudonymizer pseudonymizer) {
 
 	}
 
 	@Override
-	protected void pseudonymizeDto(Environment source, EnvironmentDto dto, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+	protected void pseudonymizeDto(SignalVerification source, EnvironmentDto dto, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
 		if (dto != null) {
 			pseudonymizer.pseudonymizeDto(EnvironmentDto.class, dto, inJurisdiction, e -> {
 				pseudonymizer.pseudonymizeUser(source.getReportingUser(), userService.getCurrentUser(), dto::setReportingUser);
@@ -361,7 +361,7 @@ public class EnvironmentFacadeEjb
 	}
 
 	@Override
-	protected void restorePseudonymizedDto(EnvironmentDto dto, EnvironmentDto existingDto, Environment entity, Pseudonymizer pseudonymizer) {
+	protected void restorePseudonymizedDto(EnvironmentDto dto, EnvironmentDto existingDto, SignalVerification entity, Pseudonymizer pseudonymizer) {
 		if (existingDto != null) {
 			boolean inJurisdiction = service.inJurisdictionOrOwned(entity);
 			pseudonymizer.restorePseudonymizedValues(EnvironmentDto.class, dto, existingDto, inJurisdiction);

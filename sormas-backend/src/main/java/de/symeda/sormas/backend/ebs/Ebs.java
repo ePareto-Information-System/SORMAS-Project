@@ -51,6 +51,7 @@ import de.symeda.sormas.backend.user.User;
 @Entity(name = "ebs")
 public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternalData {
 
+	public static final String DATE_ONSET = "dateOnset" ;
 	private static final long serialVersionUID = 4964495716032049582L;
 
 	public static final String TABLE_NAME = "ebs";
@@ -80,12 +81,16 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String SCANNING_TYPE = "scanningType";
 	public static final String OTHER = "other";
 	public static final String EBS_LOCATION = "ebsLocation";
+
 	public static final String CASES = "cases";
 	public static final String CATEGORY_OF_INFORMANT = "categoryOfInformant";
 	public static final String TRIAGING = "triaging";
+	public static final String TRIAGING_ID = "triagingId";
 	public static final String SIGNAL_VERIFICATION = "signalVerification";
-	public static final String RISK_ASSESSMENT = "riskassessment";
+	public static final String SIGNAL_VERIFICATION_ID = "signalVerificationId";
+	public static final String RISK_ASSESSMENT = "riskAssessment";
 	public static final String OTHER_INFORMANT = "otherInformant";
+	public static final String EBS_ALERT ="ebsAlert";
 
 	private String informantName;
 	private String informantTel;
@@ -94,6 +99,8 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	private Date reportDateTime;
 	private Date dateOnset;
 	private User reportingUser;
+
+	@Column(name = "source_information")
 	private EbsSourceType sourceInformation;
 	private User responsibleUser;
 	private String sourceName;
@@ -119,6 +126,12 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	private Set<RiskAssessment> riskAssessment = new HashSet<>();
 	private Set<EbsAlert> ebsAlert = new HashSet<>();
 	private String otherInformant;
+
+	private Long triagingId;
+
+	private Long signalVerificationId;
+
+	private Long ebsLocationId;
 
 	@Column(columnDefinition = "text")
 	public String getInformantName() {
@@ -203,6 +216,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	}
 
 	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "ebslocation_id")
 	public Location getEbsLocation() {
 		return ebsLocation;
 	}
@@ -413,5 +427,34 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 
 	public void setOtherInformant(String otherInformant) {
 		this.otherInformant = otherInformant;
+	}
+
+	@Column(name = "triaging_id", updatable = false, insertable = false)
+
+	public Long getTriagingId() {
+		return triagingId;
+	}
+
+	public void setTriagingId(Long triagingId) {
+		this.triagingId = triagingId;
+	}
+
+	@Column(name = "signalverification_id", updatable = false, insertable = false)
+
+	public Long getSignalVerificationId() {
+		return signalVerificationId;
+	}
+
+	public void setSignalVerificationId(Long signalVerificationId) {
+		this.signalVerificationId = signalVerificationId;
+	}
+
+	@Column(name = "ebslocation_id", updatable = false, insertable = false)
+	public Long getEbsLocationId() {
+		return ebsLocationId;
+	}
+
+	public void setEbsLocationId(Long ebsLocationId) {
+		this.ebsLocationId = ebsLocationId;
 	}
 }

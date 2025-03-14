@@ -12,21 +12,21 @@ import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.location.LocationJoins;
 import de.symeda.sormas.backend.user.User;
 
-public class EnvironmentJoins extends QueryJoins<Environment> {
+public class EnvironmentJoins extends QueryJoins<SignalVerification> {
 
-	private Join<Environment, Location> location;
-	private Join<Environment, User> responsibleUser;
+	private Join<SignalVerification, Location> location;
+	private Join<SignalVerification, User> responsibleUser;
 	private LocationJoins locationJoins;
 
-	public EnvironmentJoins(From<?, Environment> root) {
+	public EnvironmentJoins(From<?, SignalVerification> root) {
 		super(root);
 	}
 
-	public Join<Environment, Location> getLocation() {
-		return getOrCreate(location, Environment.LOCATION, JoinType.LEFT, this::setLocation);
+	public Join<SignalVerification, Location> getLocation() {
+		return getOrCreate(location, SignalVerification.LOCATION, JoinType.LEFT, this::setLocation);
 	}
 
-	public void setLocation(Join<Environment, Location> location) {
+	public void setLocation(Join<SignalVerification, Location> location) {
 		this.location = location;
 	}
 
@@ -50,11 +50,11 @@ public class EnvironmentJoins extends QueryJoins<Environment> {
 		return getLocationJoins().getCommunity();
 	}
 
-	public Join<Environment, User> getResponsibleUser() {
-		return getOrCreate(responsibleUser, Environment.RESPONSIBLE_USER, JoinType.LEFT, this::setResponsibleUser);
+	public Join<SignalVerification, User> getResponsibleUser() {
+		return getOrCreate(responsibleUser, SignalVerification.RESPONSIBLE_USER, JoinType.LEFT, this::setResponsibleUser);
 	}
 
-	private void setResponsibleUser(Join<Environment, User> responsibleUser) {
+	private void setResponsibleUser(Join<SignalVerification, User> responsibleUser) {
 		this.responsibleUser = responsibleUser;
 	}
 }

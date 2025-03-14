@@ -15,21 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.ui.dashboard.ebs.components.disease.tile;
+package de.symeda.sormas.ui.dashboard.ebs.components.ebsevent.tile;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import de.symeda.sormas.api.disease.DiseaseBurdenDto;
+import de.symeda.sormas.api.ebs.EbsEventBurdenDto;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import java.util.List;
 
-public class DiseaseTileViewLayout extends CssLayout {
+public class EbsEventTileViewLayout extends CssLayout {
 	
 	private DashboardDataProvider dashboardDataProvider;
 
 	private static final long serialVersionUID = 6582975657305031105L;
 
-	public DiseaseTileViewLayout(DashboardDataProvider dashboardDataProvider) {
+	public EbsEventTileViewLayout(DashboardDataProvider dashboardDataProvider) {
 		this.dashboardDataProvider = dashboardDataProvider;
 	}
 
@@ -38,12 +38,12 @@ public class DiseaseTileViewLayout extends CssLayout {
 		return "margin-left: 18px; margin-bottom: 18px;";
 	}
 
-	public void refresh(List<DiseaseBurdenDto> diseasesBurden) {
+	public void refresh(List<EbsEventBurdenDto> diseasesBurden) {
 		this.removeAllComponents();
 
-		for (DiseaseBurdenDto diseaseBurden : diseasesBurden) {
+		for (EbsEventBurdenDto diseaseBurden : diseasesBurden) {
 
-			DiseaseTileComponent tile = new DiseaseTileComponent(diseaseBurden,this.dashboardDataProvider);
+			EbsEventTileComponent tile = new EbsEventTileComponent(diseaseBurden,this.dashboardDataProvider);
 			tile.setWidth(230, Unit.PIXELS);
 			addComponent(tile);
 		}

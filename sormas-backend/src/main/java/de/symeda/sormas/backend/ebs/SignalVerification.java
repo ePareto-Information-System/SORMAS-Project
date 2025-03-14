@@ -2,6 +2,7 @@ package de.symeda.sormas.backend.ebs;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -9,11 +10,13 @@ import javax.persistence.Enumerated;
 import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity(name = "signalVerification")
 public class SignalVerification extends AbstractDomainObject {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 	public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356;
 
 	public static final String I18N_PREFIX = "SignalVerification";
@@ -31,6 +34,12 @@ public class SignalVerification extends AbstractDomainObject {
 	public static final String DESCRIPTION = "description";
 	public static final String WHY_NOT_VERIFY = "whyNotVerify";
 
+	public static final String CREATION_DATE = "creationDate";
+
+	public static final String VERIFICATION_SENT_DATE = "verificationSentDate";
+
+
+
 	private YesNo verificationSent;
 	private SignalOutcome verified;
 	private Date verificationCompleteDate;
@@ -41,7 +50,12 @@ public class SignalVerification extends AbstractDomainObject {
 	private String numberOfDeathPerson;
 	private String description;
 	private String whyNotVerify;
+	private Date verificationSentDate;
 
+
+	private Ebs ebs;
+
+	private Long ebsId;
 	public YesNo getVerificationSent() {
 		return verificationSent;
 	}
@@ -121,5 +135,31 @@ public class SignalVerification extends AbstractDomainObject {
 
 	public void setNumberOfDeathPerson(String numberOfDeathPerson) {
 		this.numberOfDeathPerson = numberOfDeathPerson;
+	}
+
+	@ManyToOne(cascade = {})
+	@JoinColumn(nullable = false)
+	public Ebs getEbs() {
+		return ebs;
+	}
+
+	public void setEbs(Ebs ebs) {
+		this.ebs = ebs;
+	}
+	@Column(name = "ebs_id", updatable = false, insertable = false)
+	public Long getEbsId() {
+		return ebsId;
+	}
+
+	public void setEbsId(Long ebsId) {
+		this.ebsId = ebsId;
+	}
+
+	public Date getVerificationSentDate() {
+		return verificationSentDate;
+	}
+
+	public void setVerificationSentDate(Date verificationSentDate) {
+		this.verificationSentDate = verificationSentDate;
 	}
 }

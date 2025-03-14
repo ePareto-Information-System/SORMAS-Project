@@ -16,33 +16,49 @@
 package de.symeda.sormas.backend.ebs;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EbsEvent;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.RequestContextHolder;
+import de.symeda.sormas.api.caze.MapCaseDto;
+import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
 import de.symeda.sormas.api.ebs.*;
+import de.symeda.sormas.api.event.EventSourceType;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.share.ExternalShareStatus;
 import de.symeda.sormas.api.user.JurisdictionLevel;
+import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
+import de.symeda.sormas.api.utils.criteria.ExternalShareDateType;
+import de.symeda.sormas.backend.caze.Case;
+import de.symeda.sormas.backend.caze.CaseJoins;
+import de.symeda.sormas.backend.caze.CaseQueryContext;
 import de.symeda.sormas.backend.caze.CaseService;
+import de.symeda.sormas.backend.caze.CaseUserFilterCriteria;
 import de.symeda.sormas.backend.common.*;
 import de.symeda.sormas.backend.document.DocumentService;
 import de.symeda.sormas.backend.externalsurveillancetool.ExternalSurveillanceToolGatewayFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
+import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.share.ExternalShareInfo;
 import de.symeda.sormas.backend.share.ExternalShareInfoCountAndLatestDate;
 import de.symeda.sormas.backend.share.ExternalShareInfoService;
 import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfoFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfoService;
+import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.*;
@@ -281,6 +297,43 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		cq.select(ebs.get(Ebs.UUID));
 
 		return em.createQuery(cq).getResultList();
+	}
+
+	private static final Map<EbsSourceType, List<PersonReporting>> SOURCE_TO_PERSON_REPORTING_MAP = new HashMap<>();
+
+	static {
+		SOURCE_TO_PERSON_REPORTING_MAP.put(EbsSourceType.CEBS, Arrays.asList(
+				PersonReporting.COMMUNITY_SURVEILLANCE_VOLUNTEER,
+				PersonReporting.COMMUNITY_ANIMAL_HEALTH_WORKER,
+				PersonReporting.OTC_CHEMICAL_WORKER,
+				PersonReporting.COMMUNITY_MEMBER,
+				PersonReporting.OTHER
+		));
+		SOURCE_TO_PERSON_REPORTING_MAP.put(EbsSourceType.HEBS, Arrays.asList(
+				PersonReporting.PUBLIC_HEALTHCARE,
+				PersonReporting.PRIVATE_HEALTH,
+				PersonReporting.REFERENCE_LABORATORY,
+				PersonReporting.OTHER
+		));
+		SOURCE_TO_PERSON_REPORTING_MAP.put(EbsSourceType.MEDIA_NEWS, Arrays.asList(
+				PersonReporting.PERSON_DISTRICT,
+				PersonReporting.PERSON_REGION,
+				PersonReporting.PERSON_NATIONAL,
+				PersonReporting.OTHER
+		));
+		SOURCE_TO_PERSON_REPORTING_MAP.put(EbsSourceType.HOTLINE_PERSON, Arrays.asList(
+				PersonReporting.GENERAL_PUBLIC_INFORMANT,
+				PersonReporting.INSTITUTIONAL_INFORMANT,
+				PersonReporting.OTHER
+		));
+	}
+
+	public List<PersonReporting> getPersonReportingByEventSourceType(EbsSourceType srcType) {
+		if (srcType == null ) {
+			return Collections.emptyList();
+		}
+
+		return SOURCE_TO_PERSON_REPORTING_MAP.getOrDefault(srcType, Collections.emptyList());
 	}
 
 	@Override
@@ -532,6 +585,41 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		return filter;
 	}
 
+	public Predicate createNewEbsFilter(EbsQueryContext caseQueryContext, Date fromDate, Date toDate, CriteriaDateType dateType) {
+
+		final CriteriaBuilder cb = caseQueryContext.getCriteriaBuilder();
+		final From<?, Ebs> ebs = caseQueryContext.getRoot();
+		final CriteriaQuery<?> cq = caseQueryContext.getQuery();
+		final EbsJoins joins = caseQueryContext.getJoins();
+
+		//Join<Case, Symptoms> symptoms = joins.getSymptoms();
+
+		Date toDateEndOfDay = DateHelper.getEndOfDay(toDate);
+
+		Predicate onsetDateFilter = cb.between(ebs.get(Ebs.DATE_ONSET), fromDate, toDateEndOfDay);
+		Predicate reportDateFilter = cb.between(ebs.get(Ebs.REPORT_DATE_TIME), fromDate, toDateEndOfDay);
+
+		Predicate newCaseFilter = null;
+		if (dateType == null || dateType == NewCaseDateType.MOST_RELEVANT) {
+			newCaseFilter = cb.or(onsetDateFilter, cb.and(cb.isNull(ebs.get(Ebs.DATE_ONSET)), reportDateFilter));
+		} else if (dateType == NewCaseDateType.ONSET) {
+			newCaseFilter = onsetDateFilter;
+
+		} else if (dateType == NewCaseDateType.REPORT) {
+
+			newCaseFilter = cb.between(ebs.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
+
+		}
+		else if (dateType == NewCaseDateType.CREATION) {
+			newCaseFilter = cb.between(ebs.get(Case.CREATION_DATE), fromDate, toDate);
+		}
+		else {
+			newCaseFilter = reportDateFilter;
+		}
+
+		return newCaseFilter;
+	}
+
 
 	/**
 	 * Creates a filter that excludes all ebss that are either {@link Ebs#isArchived()} or {@link DeletableAdo#isDeleted()}.
@@ -661,4 +749,180 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		return true;
 	}
 
-}
+	public List<EbsEventDto> getEbsEventForMap(Region region, District district, EbsEvent ebsEvent, Date from, Date to, NewCaseDateType dateType) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+		Root<Ebs> ebs = cq.from(Ebs.class);
+
+		EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
+		EbsJoins joins = ebsQueryContext.getJoins();
+
+		Predicate filter = createMapEbsEventFilter(ebsQueryContext, region, district, ebsEvent, from, to, dateType);
+
+		List<EbsEventDto> result;
+		if (filter != null) {
+			cq.where(filter);
+
+			Join<Ebs, Location> locationJoin = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+
+			cq.multiselect(
+					ebs.get(Ebs.REPORT_DATE_TIME),
+					ebs.get(Ebs.SOURCE_INFORMATION),
+					ebs.get(Ebs.EBS_LATITUDE),
+					ebs.get(Ebs.EBS_LONGITUDE),
+					locationJoin.get(Location.LATITUDE),
+					locationJoin.get(Location.LONGITUDE),
+					ebs.get(Ebs.CATEGORY_OF_INFORMANT),
+					ebs.get(Ebs.PERSON_REGISTERING),
+					ebs.get(Ebs.PERSON_DESIGNATION),
+					ebs.get(Ebs.PERSON_PHONE),
+					ebs.get(Ebs.INFORMANT_NAME),
+					ebs.get(Ebs.INFORMANT_TEL),
+					ebs.get(Ebs.SOURCE_NAME),
+					ebs.get(Ebs.SOURCE_URL),
+					ebs.get(Ebs.DATE_ONSET),
+					joins.getReportingUser().get(User.UUID),    // reportingUser UUID
+					joins.getResponsibleUser().get(User.UUID),  // responsibleUser UUID
+					ebs.get(Ebs.OTHER),
+					ebs.get(Ebs.DELETION_REASON),
+					ebs.get(Ebs.OTHER_DELETION_REASON),
+					ebs.get(Ebs.OTHER_INFORMANT)
+			);
+
+			List<Object[]> rawResults = em.createQuery(cq).getResultList();
+
+			result = new ArrayList<>(rawResults.size());
+			for (Object[] row : rawResults) {
+				result.add(transformToEbsEventDto(row));
+			}
+		} else {
+			result = Collections.emptyList();
+		}
+
+		return result;
+	}
+
+	private EbsEventDto transformToEbsEventDto(Object[] row) {
+		UserReferenceDto reportingUser = null;
+		UserReferenceDto responsibleUser = null;
+
+		if (row[15] != null) {
+			reportingUser = new UserReferenceDto();
+			reportingUser.setUuid((String) row[15]);
+			reportingUser.setCaption("");
+		}
+
+		if (row[16] != null) {
+			responsibleUser = new UserReferenceDto();
+			responsibleUser.setUuid((String) row[16]);
+			responsibleUser.setCaption("");
+		}
+
+		return new EbsEventDto(
+				(Date) row[0],
+				(EbsSourceType) row[1],
+				row[2] != null ? (Double) row[2] : null,
+				row[3] != null ? (Double) row[3] : null,
+				row[4] != null ? (Double) row[4] : null,
+				row[5] != null ? (Double) row[5] : null,
+				(PersonReporting) row[6],
+				(String) row[7],
+				(String) row[8],
+				(String) row[9],
+				(String) row[10],
+				(String) row[11],
+				(String) row[12],
+				(String) row[13],
+				(Date) row[14],
+				reportingUser,
+				responsibleUser,
+				(String) row[17],
+				(DeletionReason) row[18],
+				(String) row[19],
+				(String) row[20]
+		);
+	}
+	private Predicate createMapEbsEventFilter(
+			EbsQueryContext ebsQueryContext,
+			Region region,
+			District district,
+			EbsEvent ebsEvent,
+			Date from,
+			Date to,
+			NewCaseDateType dateType) {
+
+		final CriteriaBuilder cb = ebsQueryContext.getCriteriaBuilder();
+		final From<?, Ebs> root = ebsQueryContext.getRoot();
+		final EbsJoins joins = ebsQueryContext.getJoins();
+
+		// Initialize filter as a true condition
+		Predicate filter = cb.isTrue(cb.literal(true));
+
+		// Add the condition for ebs.archived IS NOT NULL
+		Predicate archivedNotNull = cb.isNotNull(root.get(Ebs.ARCHIVED));
+
+		// Add the condition for ebs.deleted = FALSE
+		Predicate notDeleted = cb.equal(root.get(Ebs.DELETED), false);
+
+		// Combine the conditions using AND
+		filter = CriteriaBuilderHelper.and(cb, filter, archivedNotNull, notDeleted);
+
+		// User filter
+		filter = CriteriaBuilderHelper.and(cb, filter, createUserFilter(ebsQueryContext, new EbsUserFilterCriteria()));
+
+		// Filter by date
+		if (dateType != null) {
+			Date frmDate = DateHelper.getStartOfDay(from);
+			Date toDate = DateHelper.getEndOfDay(to);
+
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					createNewEbsFilter(ebsQueryContext, frmDate, toDate, dateType)
+			);
+		}
+
+		// Join the location table to filter by region and district
+		Join<Ebs, Location> locationJoin = root.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+
+		// Filter by region (from ebslocation_id -> location.region_id)
+		if (region != null) {
+			Predicate regionFilter = cb.equal(locationJoin.get(Location.REGION), region);
+			filter = CriteriaBuilderHelper.and(cb, filter, regionFilter);
+		}
+
+		// Filter by district (from ebslocation_id -> location.district_id)
+		if (district != null) {
+			Predicate districtFilter = cb.equal(locationJoin.get(Location.DISTRICT), district);
+			filter = CriteriaBuilderHelper.and(cb, filter, districtFilter);
+		}
+
+		// Filter by EbsEvent
+		if (ebsEvent != null) {
+			switch (ebsEvent) {
+				case TRIAGING:
+					Predicate triagingFilter = cb.isNotNull(root.get(Ebs.TRIAGING_ID));
+					filter = CriteriaBuilderHelper.and(cb, filter, triagingFilter);
+					break;
+				case SIGNAL_VERIFICATION:
+					Predicate signalVerificationFilter = cb.isNotNull(root.get(Ebs.SIGNAL_VERIFICATION_ID));
+					filter = CriteriaBuilderHelper.and(cb, filter, signalVerificationFilter);
+					break;
+				case RISK_ASSESSMENT:
+					Join<Ebs, RiskAssessment> riskAssessmentJoin = root.join(Ebs.RISK_ASSESSMENT, JoinType.LEFT);
+					Predicate riskAssessmentFilter = cb.isNotNull(riskAssessmentJoin.get(RiskAssessment.ID));
+					filter = CriteriaBuilderHelper.and(cb, filter, riskAssessmentFilter);
+					break;
+				case ALERT:
+					Join<Ebs, EbsAlert> ebsAlertJoin = root.join(Ebs.EBS_ALERT, JoinType.LEFT);
+					Predicate ebsAlertFilter = cb.isNotNull(ebsAlertJoin.get(EbsAlert.ID));
+					filter = CriteriaBuilderHelper.and(cb, filter, ebsAlertFilter);
+					break;
+				default:
+					break;
+			}
+		}
+
+		return filter;
+	}}

@@ -15,6 +15,7 @@
 
 package de.symeda.sormas.ui.utils;
 
+import de.symeda.sormas.api.EbsEvent;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -421,6 +422,23 @@ public final class CssStyles {
 		case UNDEFINED:
 		default:
 			return "background-disease-undefined";
+		}
+	}
+
+	public static String getEbsEventColor(EbsEvent disease) {
+		switch (disease) {
+			case SIGNAL_INFORMATION:
+				return "background-disease-afp";
+			case TRIAGING:
+				return "background-disease-cholera";
+			case SIGNAL_VERIFICATION:
+				return "background-disease-csm";
+			case RISK_ASSESSMENT:
+				return "background-disease-dengue";
+			case ALERT:
+				return "background-disease-evd";
+			default:
+				return "background-disease-undefined";
 		}
 	}
 

@@ -14,6 +14,7 @@
  */
 package de.symeda.sormas.api;
 
+import de.symeda.sormas.api.ebs.EbsEventFacade;
 import javax.naming.ConfigurationException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -575,6 +576,11 @@ public class FacadeProvider {
 	public static EnvironmentFacade getEnvironmentFacade() {
 		return get().lookupEjbRemote(EnvironmentFacade.class);
 	}
+
+	public static EbsEventFacade getEbsEventFacade() {
+		return get().lookupEjbRemote(EbsEventFacade.class);
+	}
+
 
 	@SuppressWarnings("unchecked")
 	public <P> P lookupEjbRemote(Class<P> clazz) {

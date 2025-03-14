@@ -1,5 +1,8 @@
 package de.symeda.sormas.api.dashboard;
 
+import de.symeda.sormas.api.EbsEvent;
+import de.symeda.sormas.api.ebs.EbsEventBurdenDto;
+import de.symeda.sormas.api.ebs.EbsSourceType;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -60,4 +63,18 @@ public interface DashboardFacade {
 		Date previousToDate,
 		CriteriaDateType newCaseDateType,
 		CaseClassification caseClassification);
+
+	List<EbsEventBurdenDto> getEbsEventBurden(
+			RegionReferenceDto region,
+			DistrictReferenceDto district,
+			Date fromDate,
+			Date toDate,
+			Date previousFromDate,
+			Date previousToDate,
+			CriteriaDateType newCaseDateType,
+			CaseClassification caseClassification);
+
+	Map<EbsSourceType, Integer> getSourceTypeCount(DashboardCriteria dashboardCriteria);
+
+    List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType ebsSourceType, EbsEvent ebsEvent);
 }

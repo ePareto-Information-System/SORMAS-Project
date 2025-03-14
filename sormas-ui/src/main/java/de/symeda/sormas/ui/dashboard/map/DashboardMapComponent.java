@@ -17,6 +17,8 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard.map;
 
+import de.symeda.sormas.api.EbsEvent;
+import de.symeda.sormas.api.ebs.EbsEventDto;
 import static java.util.Objects.nonNull;
 
 import java.math.BigDecimal;
@@ -84,11 +86,11 @@ import com.vaadin.ui.themes.ValoTheme;
 
 
 @SuppressWarnings("serial")
-//public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCriteria, DashboardDataProvider> {
 public class DashboardMapComponent extends VerticalLayout {
 
 	private static final String CASES_GROUP_ID = "cases";
 	private static final String CONTACTS_GROUP_ID = "contacts";
+	private static final String EBS_EVENT_GROUP_ID="ebs";
 	private static final String EVENTS_GROUP_ID = "events";
 	private static final String REGIONS_GROUP_ID = "regions";
 	private static final String DISTRICTS_GROUP_ID = "districts";
@@ -142,6 +144,7 @@ public class DashboardMapComponent extends VerticalLayout {
 
 	private final LeafletMap map;
 	private final DashboardDataProvider dashboardDataProvider;
+	private boolean showEbsEvents;
 
 
 //	public DashboardMapComponent(DashboardDataProvider dashboardDataProvider) {
@@ -250,6 +253,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			showEvents = false;
 			showConfirmedContacts = true;
 			showUnconfirmedContacts = true;
+			showEbsEvents = false;
 		}
 		else if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS) {
 			showCases = false;
@@ -259,6 +263,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			showEvents = false;
 			showConfirmedContacts = true;
 			showUnconfirmedContacts = true;
+			showEbsEvents = false;
 		}
 		else if (dashboardDataProvider.getDashboardType() == DashboardType.DISEASE) {
 			map.setZoom(6);
@@ -268,6 +273,17 @@ public class DashboardMapComponent extends VerticalLayout {
 			showEvents = false;
 			showConfirmedContacts = true;
 			showUnconfirmedContacts = true;
+			showEbsEvents = false;
+		}
+		else if (dashboardDataProvider.getDashboardType() == DashboardType.EBS) {
+			map.setZoom(6);
+			showCases = false;
+			caseClassificationOption = null;
+			showContacts = false;
+			showEvents = false;
+			showConfirmedContacts = false;
+			showUnconfirmedContacts = false;
+			showEbsEvents = true;
 		}
 		hideOtherCountries = false;
 		showCurrentEpiSituation = false;
@@ -539,6 +555,17 @@ public class DashboardMapComponent extends VerticalLayout {
 			showUnconfirmedContacts = true;
 		}
 
+		else if (dashboardDataProvider.getDashboardType() == DashboardType.EBS) {
+			map.setZoom(6);
+			showCases = false;
+			caseClassificationOption = null;
+			showContacts = false;
+			showEvents = false;
+			showConfirmedContacts = false;
+			showUnconfirmedContacts = false;
+			showEbsEvents = true;
+		}
+
 		hideOtherCountries = false;
 		showCurrentEpiSituation = false;
 
@@ -657,6 +684,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		RegionReferenceDto region = dashboardDataProvider.getRegion();
 		DistrictReferenceDto district = dashboardDataProvider.getDistrict();
 		Disease disease = dashboardDataProvider.getDisease();
+		EbsEvent ebsEvent = dashboardDataProvider.getEbsEvent();
 
 		if (showCases) {
 			showCaseMarkers(
@@ -674,6 +702,19 @@ public class DashboardMapComponent extends VerticalLayout {
 		}
 		if (showEvents) {
 			showEventMarkers(dashboardDataProvider.getEvents());
+		}
+
+		if (showEbsEvents){
+			showEbsEventMarkers(
+			FacadeProvider.getEbsEventFacade()
+			.getEbsEventForMap(
+					region,
+					district,
+					ebsEvent,
+					fromDate,
+					toDate,
+					showCurrentEpiSituation ? null : dashboardDataProvider.getNewCaseDateType()
+			));
 		}
 
 		// Re-create the map key layout to only show the keys for the selected layers
@@ -702,8 +743,13 @@ public class DashboardMapComponent extends VerticalLayout {
 		if (dashboardDataProvider.getDashboardType() == DashboardType.SURVEILLANCE) {
 			mapLabel.setValue(I18nProperties.getString(Strings.headingCaseStatusMap));
 			CssStyles.style(mapLabel, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
-		}else if (dashboardDataProvider.getDashboardType() == DashboardType.DISEASE) {
+		}
+		else if (dashboardDataProvider.getDashboardType() == DashboardType.DISEASE) {
 			mapLabel.setValue(I18nProperties.getCaption(Captions.diseaseDetailMap));
+			CssStyles.style(mapLabel, CssStyles.H4, CssStyles.VSPACE_4, CssStyles.VSPACE_NONE);
+		}
+		else if (dashboardDataProvider.getDashboardType() == DashboardType.EBS) {
+			mapLabel.setValue(I18nProperties.getCaption(Captions.ebsMap));
 			CssStyles.style(mapLabel, CssStyles.H4, CssStyles.VSPACE_4, CssStyles.VSPACE_NONE);
 		}
 		else {
@@ -1717,6 +1763,10 @@ public class DashboardMapComponent extends VerticalLayout {
 		mapAndFacilityCases.clear();
 	}
 
+	private void clearEbsEventMarkers() {
+		map.removeGroup(EBS_EVENT_GROUP_ID);
+	}
+
 	private void showCaseMarkers(List<MapCaseDto> cases) {
 
 		clearCaseMarkers();
@@ -1791,6 +1841,42 @@ public class DashboardMapComponent extends VerticalLayout {
 		}
 
 		map.addMarkerGroup("cases", caseMarkers);
+	}
+
+	private void showEbsEventMarkers(List<EbsEventDto> ebsEventDtos) {
+
+		clearEbsEventMarkers();
+
+		fillEbsEventLists(ebsEventDtos);
+
+		List<LeafletMarker> ebsMarkers = new ArrayList<>();
+
+		for (EbsEventDto ebsEventDto : ebsEventDtos) {
+			LeafletMarker marker = new LeafletMarker();
+//			CaseClassification caseClassification = caze.getCaseClassification();
+//			if (caseClassification == CaseClassification.CONFIRMED
+//					|| caseClassification == CaseClassification.CONFIRMED_NO_SYMPTOMS
+//					|| caseClassification == CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS) {
+//				marker.setIcon(MarkerIcon.CASE_CONFIRMED);
+//			} else if (caseClassification == CaseClassification.PROBABLE) {
+//				marker.setIcon(MarkerIcon.CASE_PROBABLE);
+//			} else if (caseClassification == CaseClassification.SUSPECT) {
+//				marker.setIcon(MarkerIcon.CASE_SUSPECT);
+//			} else {
+//				marker.setIcon(MarkerIcon.CASE_UNCLASSIFIED);
+//			}
+
+			marker.setIcon(MarkerIcon.MARKER);
+			if (ebsEventDto.getEbsLatitude() != null && ebsEventDto.getEbsLongitude() != null) {
+				marker.setLatLon(ebsEventDto.getEbsLatitude(), ebsEventDto.getEbsLongitude());
+			}
+			else if(ebsEventDto.getEbsLocation().getLatitude() != null && ebsEventDto.getEbsLocation().getLongitude() != null) {
+				marker.setLatLon(ebsEventDto.getEbsLocation().getLatitude(), ebsEventDto.getEbsLocation().getLongitude());
+			}
+			ebsMarkers.add(marker);
+		}
+
+		map.addMarkerGroup(EBS_EVENT_GROUP_ID, ebsMarkers);
 	}
 
 	private GeoLatLon generateCoordinatesInDistrict(DistrictReferenceDto district){
@@ -1869,6 +1955,64 @@ public class DashboardMapComponent extends VerticalLayout {
 			}
 
 			mapAndFacilityCases.add(caze);
+		}
+	}
+
+	private void fillEbsEventLists(List<EbsEventDto> ebsEventDtoList) {
+		for (EbsEventDto ebsEventDto : ebsEventDtoList) {
+			// these filters need to be used for the count too
+//			CaseClassification classification = caze.getCaseClassification();
+//			if (caseClassificationOption == MapCaseClassificationOption.CONFIRMED_CASES_ONLY && classification != CaseClassification.CONFIRMED)
+//				continue;
+//			if (caseClassificationOption == MapCaseClassificationOption.CONFIRMED_CASES_ONLY && classification != CaseClassification.CONFIRMED)
+//				continue;
+//			if (dateTo != null && !(caze.getReportDate() == dateTo || caze.getReportDate().before(dateTo) || dateTo.after(caze.getReportDate())))
+//				continue;
+//			boolean hasCaseGps =
+//					(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null && caze.getReportLon() != null);
+//
+//			boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
+//
+//			boolean hasDistrickGps = caze.getDistrictLatitude() != null && caze.getDistrictLongitude() != null;
+//
+//			if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
+//				if (!hasCaseGps) {
+//					continue;
+//				}
+//				mapCaseDtos.add(caze);
+//			}
+//			else if (hasDistrickGps && !hasFacilityGps){
+//				DistrictReferenceDto district = new DistrictReferenceDto();
+//				district.setUuid(caze.getDistrictUuid());
+//
+//				GeoLatLon coordinates = generateCoordinatesInDistrict(district);
+//				caze.setDistrictLatitude(coordinates.getLat());
+//				caze.setDistrictLongitude(coordinates.getLon());
+//
+//				mapCaseDtos.add(caze);
+//				casesByDistrict.computeIfAbsent(district, k -> new ArrayList<>());
+//			}
+//			else {
+//				if (FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacilityUuid()) || FacilityDto.OTHER_FACILITY_UUID.equals(caze.getHealthFacilityUuid()) || !hasFacilityGps) {
+//					if (mapCaseDisplayMode == MapCaseDisplayMode.FACILITY_OR_CASE_ADDRESS) {
+//						if (!hasCaseGps) {
+//							continue;
+//						}
+//						mapCaseDtos.add(caze);
+//					} else {
+//						continue;
+//					}
+//				} else {
+//					FacilityReferenceDto facility = new FacilityReferenceDto();
+//					facility.setUuid(caze.getHealthFacilityUuid());
+//					if (casesByFacility.get(facility) == null) {
+//						casesByFacility.put(facility, new ArrayList<MapCaseDto>());
+//					}
+//					casesByFacility.get(facility).add(caze);
+//				}
+//			}
+
+			//mapAndFacilityCases.add(caze);
 		}
 	}
 

@@ -22,7 +22,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.ui.CheckBox;
-import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EbsEvent;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -38,28 +38,27 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @SuppressWarnings("serial")
-public class EbsDiseaseCarouselLayout extends VerticalLayout {
+public class EbsEventCarouselLayout extends VerticalLayout {
 
 	private DashboardDataProvider dashboardDataProvider;
 
-	private DiseaseStatisticsComponent statisticsComponent;
-	private EbsEpiCurveComponent epiCurveComponent;
+	private EbsEventStatisticsComponent statisticsComponent;
+	//private EbsEpiCurveComponent epiCurveComponent;
 	private DashboardMapComponent mapComponent;
 	private Consumer<Boolean> externalExpandListener;
 	private SubMenu carouselMenu;
-	private List<Disease> diseases;
+	private List<EbsEvent> ebsEvents;
 	private Registration pollRegistration;
+	
 
-	public EbsDiseaseCarouselLayout(DashboardDataProvider dashboardDataProvider) {
+	public EbsEventCarouselLayout(DashboardDataProvider dashboardDataProvider) {
 		this.dashboardDataProvider = dashboardDataProvider;
 
-		statisticsComponent = new DiseaseStatisticsComponent(dashboardDataProvider);
+		statisticsComponent = new EbsEventStatisticsComponent(dashboardDataProvider);
 
-		epiCurveComponent = new EbsEpiCurveComponent(dashboardDataProvider);
+		//epiCurveComponent = new EbsEpiCurveComponent(dashboardDataProvider);
 		mapComponent = new DashboardMapComponent(dashboardDataProvider);
-		diseases = FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, true, true);
-		//remove 'other' and 'undefined' if present
-		diseases.removeAll(Arrays.asList(Disease.OTHER, Disease.UNDEFINED));
+		ebsEvents = FacadeProvider.getEbsEventFacade().getAllEbsEvents();
 
 		this.initLayout();
 	}
@@ -99,16 +98,16 @@ public class EbsDiseaseCarouselLayout extends VerticalLayout {
 
 		carouselMenu = new SubMenu();
 
-		for (Disease disease : diseases) {
-			carouselMenu.addView(disease.getName(), disease.toShortString(), () -> {
-				this.changeSelectedDisease(disease, true);
+		for (EbsEvent ebsEvent : ebsEvents) {
+			carouselMenu.addView(I18nProperties.getEnumCaption(ebsEvent), I18nProperties.getEnumCaption(ebsEvent), () -> {
+				this.changeSelectedEbsEvent(ebsEvent, true);
 
 				return true;
 			});
 		}
 
-		if (diseases.size() > 0) {
-			this.setActiveDisease(diseases.get(0), false);
+		if (ebsEvents.size() > 0) {
+			this.setActiveEbsEvent(ebsEvents.get(0), false);
 		}
 
 		layout.addComponent(carouselMenu);
@@ -122,36 +121,36 @@ public class EbsDiseaseCarouselLayout extends VerticalLayout {
 		final int BASE_HEIGHT = 480;
 		epiCurveAndMapLayout.setHeight(BASE_HEIGHT, Unit.PIXELS);
 
-		epiCurveAndMapLayout.addComponent(epiCurveComponent);
+		//epiCurveAndMapLayout.addComponent(epiCurveComponent);
 		epiCurveAndMapLayout.addComponent(mapComponent);
 
-		epiCurveComponent.setExpandListener(expanded -> {
-			if (expanded) {
-				removeComponent(statisticsComponent);
-				epiCurveAndMapLayout.removeComponent(mapComponent);
-				epiCurveAndMapLayout.setHeight(100, Unit.PERCENTAGE);
-				setHeight(100, Unit.PERCENTAGE);
-			} else {
-				addComponent(statisticsComponent, 1);
-				epiCurveAndMapLayout.addComponent(mapComponent, 1);
-				mapComponent.refreshMap();
-				epiCurveAndMapLayout.setHeight(BASE_HEIGHT, Unit.PIXELS);
-				setHeightUndefined();
-			}
-			if (externalExpandListener != null) {
-				externalExpandListener.accept(expanded);
-			}
-		});
+//		epiCurveComponent.setExpandListener(expanded -> {
+//			if (expanded) {
+//				removeComponent(statisticsComponent);
+//				epiCurveAndMapLayout.removeComponent(mapComponent);
+//				epiCurveAndMapLayout.setHeight(100, Unit.PERCENTAGE);
+//				setHeight(100, Unit.PERCENTAGE);
+//			} else {
+//				addComponent(statisticsComponent, 1);
+//				epiCurveAndMapLayout.addComponent(mapComponent, 1);
+//				mapComponent.refreshMap();
+//				epiCurveAndMapLayout.setHeight(BASE_HEIGHT, Unit.PIXELS);
+//				setHeightUndefined();
+//			}
+//			if (externalExpandListener != null) {
+//				externalExpandListener.accept(expanded);
+//			}
+//		});
 
 		mapComponent.setExpandListener(expanded -> {
 			if (expanded) {
 				removeComponent(statisticsComponent);
-				epiCurveAndMapLayout.removeComponent(epiCurveComponent);
+				//epiCurveAndMapLayout.removeComponent(epiCurveComponent);
 				epiCurveAndMapLayout.setHeight(100, Unit.PERCENTAGE);
 				setHeight(100, Unit.PERCENTAGE);
 			} else {
 				addComponent(statisticsComponent, 1);
-				epiCurveAndMapLayout.addComponent(epiCurveComponent, 0);
+				//epiCurveAndMapLayout.addComponent(epiCurveComponent, 0);
 				epiCurveAndMapLayout.setHeight(BASE_HEIGHT, Unit.PIXELS);
 				setHeightUndefined();
 			}
@@ -165,7 +164,7 @@ public class EbsDiseaseCarouselLayout extends VerticalLayout {
 
 	private CheckBox setupSlideShow() {
 		// slideshow option
-		CheckBox autoSlide = new CheckBox(I18nProperties.getCaption(Captions.dashboardDiseaseCarouselSlideShow));
+		CheckBox autoSlide = new CheckBox(I18nProperties.getCaption(Captions.dashboardEbsEventCarouselSlideShow));
 		autoSlide.addValueChangeListener(e -> {
 			this.changeAutoSlideOption(autoSlide.getValue());
 		});
@@ -176,15 +175,15 @@ public class EbsDiseaseCarouselLayout extends VerticalLayout {
 		return autoSlide;
 	}
 
-	private void setActiveDisease(Disease selectedDisease, boolean doRefresh) {
-		carouselMenu.setActiveView(selectedDisease.getName());
-		this.changeSelectedDisease(selectedDisease, doRefresh);
+	private void setActiveEbsEvent(EbsEvent selectedEbsEvent, boolean doRefresh) {
+		carouselMenu.setActiveView(I18nProperties.getEnumCaption(selectedEbsEvent));
+		this.changeSelectedEbsEvent(selectedEbsEvent, doRefresh);
 	}
 
-	private void changeSelectedDisease(Disease disease, boolean doRefresh) {
-		this.dashboardDataProvider.setDisease(disease);
+	private void changeSelectedEbsEvent(EbsEvent ebsEvent, boolean doRefresh) {
+		this.dashboardDataProvider.setEbsEvent(ebsEvent);
 		if (doRefresh) {
-			this.dashboardDataProvider.refreshDataForSelectedDisease();
+			this.dashboardDataProvider.refreshDataForSelectedEbsEvent();
 			refresh();
 		}
 	}
@@ -205,18 +204,18 @@ public class EbsDiseaseCarouselLayout extends VerticalLayout {
 			// set timer for slideshow
 			if (pollRegistration == null) {
 				pollRegistration = SormasUI.getCurrent().addPollListener(e -> {
-					Disease selectedDisease = dashboardDataProvider.getDisease();
-					int nextDiseaseIndex = 0;
+					EbsEvent selectedEbsEvent = dashboardDataProvider.getEbsEvent();
+					int nextEbsEventIndex = 0;
 
-					if (selectedDisease != null) {
-						nextDiseaseIndex = diseases.indexOf(selectedDisease) + 1;
+					if (selectedEbsEvent != null) {
+						nextEbsEventIndex = ebsEvents.indexOf(selectedEbsEvent) + 1;
 
-						if (nextDiseaseIndex >= diseases.size()) {
-							nextDiseaseIndex = 0;
+						if (nextEbsEventIndex >= ebsEvents.size()) {
+							nextEbsEventIndex = 0;
 						}
 					}
 
-					this.setActiveDisease(diseases.get(nextDiseaseIndex), true);
+					this.setActiveEbsEvent(ebsEvents.get(nextEbsEventIndex), true);
 				});
 			}
 		} else {
@@ -231,7 +230,7 @@ public class EbsDiseaseCarouselLayout extends VerticalLayout {
 
 	public void refresh() {
 		this.statisticsComponent.refresh();
-		this.epiCurveComponent.clearAndFillEpiCurveChart();
+		//this.epiCurveComponent.clearAndFillEpiCurveChart();
 		this.mapComponent.refreshMap();
 	}
 }

@@ -15,31 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.ui.dashboard.ebs.components.disease.burden;
+package de.symeda.sormas.ui.dashboard.ebs.components.ebsevent.burden;
 
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.shared.ui.grid.HeightMode;
-import de.symeda.sormas.api.disease.DiseaseBurdenDto;
+import de.symeda.sormas.api.ebs.EbsEventBurdenDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.ui.dashboard.DiseaseBurdenGrid;
+import de.symeda.sormas.ui.dashboard.EbsEventBurdenGrid;
 import de.symeda.sormas.ui.utils.CssStyles;
 import java.util.List;
 
-public class DiseaseBurdenComponent extends VerticalLayout {
+public class EbsEventBurdenComponent extends VerticalLayout {
 
 	private static final long serialVersionUID = 6582975657305031105L;
 
-	private DiseaseBurdenGrid grid;
+	private EbsEventBurdenGrid grid;
 
-	public DiseaseBurdenComponent() {
+	public EbsEventBurdenComponent() {
 
-		Label title = new Label(I18nProperties.getCaption(Captions.dashboardDiseaseBurdenInfo));
+		Label title = new Label(I18nProperties.getCaption(Captions.dashboardEbsEventBurdenInfo));
 		CssStyles.style(title, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
 
-		grid = new DiseaseBurdenGrid();
+		grid = new EbsEventBurdenGrid();
 		grid.setHeightMode(HeightMode.ROW);
 		grid.setWidth(100, Unit.PERCENTAGE);
 		// layout
@@ -52,10 +52,10 @@ public class DiseaseBurdenComponent extends VerticalLayout {
 		setExpandRatio(grid, 1);
 	}
 
-	public void refresh(List<DiseaseBurdenDto> diseasesBurden) {
-		grid.reload(diseasesBurden);
-		if (diseasesBurden != null && diseasesBurden.size() > 0) {
-			grid.setHeightByRows(diseasesBurden.size());
+	public void refresh(List<EbsEventBurdenDto> ebsEventBurdenDtos) {
+		grid.reload(ebsEventBurdenDtos);
+		if (ebsEventBurdenDtos != null && ebsEventBurdenDtos.size() > 0) {
+			grid.setHeightByRows(ebsEventBurdenDtos.size());
 		}
 	}
 }

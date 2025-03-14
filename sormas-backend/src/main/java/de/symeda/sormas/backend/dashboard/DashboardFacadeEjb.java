@@ -1,8 +1,13 @@
 package de.symeda.sormas.backend.dashboard;
 
+import de.symeda.sormas.api.EbsEvent;
 import static de.symeda.sormas.api.dashboard.DashboardContactStatisticDto.CURRENT_CONTACTS;
 import static de.symeda.sormas.api.dashboard.DashboardContactStatisticDto.PREVIOUS_CONTACTS;
 
+import de.symeda.sormas.api.dashboard.EbsCategoryOfInformantDto;
+import de.symeda.sormas.api.ebs.EbsEventBurdenDto;
+import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.backend.ebs.EbsEventFacadeEjb;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -94,6 +99,8 @@ public class DashboardFacadeEjb implements DashboardFacade {
 
 	@EJB
 	private DashboardService dashboardService;
+	@EJB
+	private EbsEventFacadeEjb.EbsEventFacadeEjbLocal ebsEventFacade;
 
 	@Override
 	@RightsAllowed({
@@ -805,6 +812,81 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		}).collect(Collectors.toList());
 
 		return diseasesBurden;
+	}
+
+	@Override
+	@RightsAllowed({
+			UserRight._DASHBOARD_EBS_VIEW,
+			})
+	public List<EbsEventBurdenDto> getEbsEventBurden(
+			RegionReferenceDto region,
+			DistrictReferenceDto district,
+			Date fromDate,
+			Date toDate,
+			Date previousFromDate,
+			Date previousToDate,
+			CriteriaDateType newCaseDateType,
+			CaseClassification caseClassification) {
+
+		//ebsEvents
+		List<EbsEvent> ebsEvents = ebsEventFacade.getAllEbsEvents();
+
+		DashboardCriteria dashboardCriteria = new DashboardCriteria()
+				.region(region)
+				.district(district)
+				.newCaseDateType(newCaseDateType)
+				.dateBetween(fromDate, toDate)
+				.caseClassification(caseClassification)
+				.previousDateFrom(previousFromDate)
+				.previousDateTo(previousToDate);
+
+		Map<EbsEvent, Long> newEbsEventCountDb = dashboardService.getEbsEventCountByEbsEvent(dashboardCriteria);
+
+		//last report district
+		Map<EbsEvent, District> lastReportedDistricts = dashboardService.getLastReportedDistrictByEbsEvent(dashboardCriteria);
+
+		Map<EbsEvent, Date> latestEbsEventsDate= dashboardService.getLatestEbsEventsDate(dashboardCriteria);
+
+		Map<EbsEvent, EbsSourceType> latestEbsEventsSource= dashboardService.getLatestEbsEventsSource(dashboardCriteria);
+
+		//previous events
+		dashboardCriteria.dateBetween(previousFromDate, previousToDate);
+		Map<EbsEvent, Long> previousEbsEventCountDb = dashboardService.getEbsEventCountByEbsEvent(dashboardCriteria);
+
+		//build ebsEventsBurden
+		return ebsEvents.stream().map(ebsEvent -> {
+			Long ebsEventCount = newEbsEventCountDb.getOrDefault(ebsEvent,0L);
+			Long previousEbsEventCount = previousEbsEventCountDb.getOrDefault(ebsEvent,0L);
+			Date lastReportDate = latestEbsEventsDate.getOrDefault(ebsEvent,new Date());
+			EbsSourceType ebsEventSource = latestEbsEventsSource.getOrDefault(ebsEvent,EbsSourceType.NONE);
+			District lastReportedDistrict = lastReportedDistricts.getOrDefault(ebsEvent, null);
+			String lastReportedDistrictName = lastReportedDistrict == null ? "" : lastReportedDistrict.getName();
+
+			return new EbsEventBurdenDto(
+					ebsEvent,
+					ebsEventCount,
+					previousEbsEventCount,
+					lastReportDate,
+					ebsEventSource,
+					lastReportedDistrictName
+					);
+		}).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceInformation(
+			EbsSourceType ebsSourceType, EbsEvent ebsEvent){
+
+		DashboardCriteria dashboardCriteria = new DashboardCriteria();
+		return dashboardService.getEbsCategoryOfInformantDtoBySourceInformation(dashboardCriteria,ebsSourceType,ebsEvent);
+	}
+
+	@Override
+	@RightsAllowed({
+			UserRight._DASHBOARD_EBS_VIEW
+	})
+	public Map<EbsSourceType, Integer> getSourceTypeCount(DashboardCriteria dashboardCriteria) {
+		return dashboardService.getSourceTypeCount(dashboardCriteria);
 	}
 
 	@LocalBean

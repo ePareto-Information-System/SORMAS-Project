@@ -17,6 +17,9 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard;
 
+import de.symeda.sormas.api.EbsEvent;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import static de.symeda.sormas.ui.UiUtil.permitted;
 
 import de.symeda.sormas.ui.dashboard.ebs.EbsDashboardView;
@@ -132,7 +135,47 @@ public class DashboardController {
 	private CaseDataDto findCase(String uuid) {
 		return FacadeProvider.getCaseFacade().getCaseDataByUuid(uuid);
 	}
-	
 
 
+
+	public void navigateToEbsEvent(EbsEvent ebsEvent, DashboardDataProvider dashboardDataProvider){
+		Date dateFrom = dashboardDataProvider.getFromDate();
+
+		Date dateTo = dashboardDataProvider.getToDate();
+
+		NewDateFilterType type = dashboardDataProvider.getDateFilterType();
+
+		CaseClassification caseClassification= dashboardDataProvider.getCaseClassification();
+//
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); // Quoted "Z" to indicate UTC, no timezone offset
+		df.setTimeZone(tz);
+		String dateFromAsISO = df.format(dateFrom);
+		String dateToAsISO = df.format(dateTo);
+
+		NewCaseDateType newCaseDateType = dashboardDataProvider.getNewCaseDateType();
+
+		RegionReferenceDto region = dashboardDataProvider.getRegion();
+		String regionId = null;
+		if(Objects.nonNull(region)&&region.getUuid()!=null){
+			regionId= region.getUuid();
+		}
+		System.out.println(regionId);
+
+
+//
+		String paramData = dateFromAsISO+"/"+dateToAsISO+"/"+type+"/"+caseClassification+"/"+newCaseDateType+"/"+regionId;
+//
+		DiseaseDetailsView.setData(paramData);
+		//DiseaseDetailsView.setProvider(dashboardDataProvider);
+
+		String navigationState = DiseaseDetailsView.VIEW_NAME + "/" + I18nProperties.getEnumCaption(ebsEvent);
+		//+"/"+dateFromAsISO+"/"+dateToAsISO+"/"+type.toString();
+		//String navigationState = DiseaseDetailsView.VIEW_NAME + "/?disease=" + disease.getName();
+		SormasUI.get().getNavigator().navigateTo(navigationState);
+
+
+
+		//SormasUI.get().getSession().setAttribute("paramdata", dateFromAsISO+"/"+dateToAsISO+"/"+type);
+	}
 }

@@ -43,6 +43,9 @@ public class RiskAssessment extends AbstractDomainObject {
 
 	public static final String EBS = "ebs";
 
+	public static final String CREATION_DATE = "creationDate";
+
+
 	private YesNo morbidityMortality;
 	private YesNo spreadProbability;
 	private YesNo controlMeasures;

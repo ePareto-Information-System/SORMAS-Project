@@ -11,7 +11,7 @@ import de.symeda.sormas.ui.dashboard.statistics.DashboardStatisticsCountElement;
 import de.symeda.sormas.ui.utils.CssStyles;
 import java.util.Map;
 
-public class LaboratoryResultsStatisticsComponent extends DiseaseSectionStatisticsComponent {
+public class LaboratoryResultsStatisticsComponent extends EbsEventSectionStatisticsComponent {
 
 	private final DashboardStatisticsCountElement labResultPositive;
 	private final DashboardStatisticsCountElement labResultNegative;
