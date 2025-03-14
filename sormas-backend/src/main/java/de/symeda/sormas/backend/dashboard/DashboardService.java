@@ -1,5 +1,22 @@
 package de.symeda.sormas.backend.dashboard;
 
+import de.symeda.sormas.api.EbsEvent;
+import de.symeda.sormas.api.dashboard.EbsCategoryOfInformantDto;
+import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.PersonReporting;
+import de.symeda.sormas.api.ebs.SignalOutcome;
+import de.symeda.sormas.backend.ebs.Ebs;
+import de.symeda.sormas.backend.ebs.EbsAlert;
+import de.symeda.sormas.backend.ebs.EbsAlertService;
+import de.symeda.sormas.backend.ebs.EbsJoins;
+import de.symeda.sormas.backend.ebs.EbsQueryContext;
+import de.symeda.sormas.backend.ebs.EbsService;
+import de.symeda.sormas.backend.ebs.RiskAssessment;
+import de.symeda.sormas.backend.ebs.RiskAssessmentService;
+import de.symeda.sormas.backend.ebs.SignalVerification;
+import de.symeda.sormas.backend.ebs.SignalVerificationService;
+import de.symeda.sormas.backend.ebs.Triaging;
+import de.symeda.sormas.backend.ebs.TriagingService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -12,7 +29,10 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -60,6 +80,9 @@ import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.JurisdictionHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.QueryHelper;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
+import org.hibernate.hql.spi.QueryTranslator;
 
 @Stateless
 @LocalBean
@@ -70,8 +93,24 @@ public class DashboardService {
 
 	@EJB
 	private CaseService caseService;
+
+	@EJB
+	private SignalVerificationService signalVerificationService;
+
+	@EJB
+	private TriagingService triagingService;
+
+	@EJB
+	private RiskAssessmentService riskAssessmentService;
+
+	@EJB
+	private EbsService ebsService;
+
+	@EJB
+	private EbsAlertService ebsAlertService;
 	@EJB
 	private EventService eventService;
+
 	@EJB
 	private SampleService sampleService;
 	@EJB
@@ -570,5 +609,1686 @@ public class DashboardService {
 		}
 
 		return filter;
+	}
+
+
+
+	public Predicate createCriteriaFilter(
+			DashboardCriteria criteria,
+			CriteriaBuilder cb,
+			CriteriaQuery<?> cq,
+			From<Ebs, Ebs> from) {
+
+		Predicate filter = null;
+
+		// Join the SignalVerification table
+		Join<Ebs, SignalVerification> signalVerification = from.join(Ebs.SIGNAL_VERIFICATION, JoinType.LEFT); // Assuming Ebs.SIGNAL_VERIFICATION is the relationship name
+
+		// Join the Location table for region and district filtering
+		Join<Ebs, Location> location = from.join(Ebs.EBS_LOCATION, JoinType.LEFT); // Assuming Ebs.EBS_LOCATION is the relationship name
+		Join<Location, Region> region = location.join(Location.REGION, JoinType.LEFT);
+		Join<Location, District> district = location.join(Location.DISTRICT, JoinType.LEFT);
+
+		// Add filters
+
+		// Region filter
+		if (criteria.getRegion() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), criteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (criteria.getDistrict() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), criteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter
+		if (criteria.getDateFrom() != null && criteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							from.get(Ebs.CREATION_DATE), // Assuming Ebs.REPORT_DATE_TIME is the field for date filtering
+							DateHelper.getStartOfDay(criteria.getDateFrom()),
+							DateHelper.getEndOfDay(criteria.getDateTo())
+					)
+			);
+		}
+
+		// Signal verification filter
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT));
+
+		// Use the deleted field from the Ebs table
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Ebs.DELETED)));
+
+		// Use the archived field from the Ebs table
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Ebs.ARCHIVED)));
+
+		return filter;
+	}
+
+
+	private <T extends AbstractDomainObject> Predicate createEbsCriteriaFilter(
+			DashboardCriteria dashboardCriteria,
+			EbsQueryContext ebsQueryContext) {
+
+		final From<?, Ebs> from = ebsQueryContext.getRoot();
+		final CriteriaBuilder cb = ebsQueryContext.getCriteriaBuilder();
+		final EbsJoins joins = ebsQueryContext.getJoins();
+
+		Join<Location, Region> responsibleRegion = joins.getRegion();
+		Join<Location, District> responsibleDistrict = joins.getDistrict();
+
+
+		Predicate filter = null;
+
+		if (dashboardCriteria.getRegion() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(responsibleRegion.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(responsibleDistrict.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+//
+//		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+//			filter = CriteriaBuilderHelper.and(
+//					cb,
+//					filter,
+//					cb.between(
+//							from.get(Ebs.REPORT_DATE_TIME),
+//							dashboardCriteria.getDateFrom(),
+//							dashboardCriteria.getDateTo()
+//					)
+//			);
+//		}
+
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					ebsService.createNewEbsFilter(
+							ebsQueryContext,
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo()),
+							dashboardCriteria.getNewCaseDateType()));
+		}
+		// Exclude deleted cases. Archived cases should stay included
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Case.DELETED)));
+
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Case.ARCHIVED)));
+
+
+		return filter;
+	}
+
+	public Long getSignalInformationCount(DashboardCriteria dashboardCriteria) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Ebs> ebs = cq.from(Ebs.class);
+		final EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
+
+		Predicate filter = ebsService.createUserFilter(ebsQueryContext);
+
+		filter = CriteriaBuilderHelper.and(cb, filter, createEbsCriteriaFilter(dashboardCriteria, ebsQueryContext));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		// Select count
+		cq.select(cb.count(ebs));
+
+		return em.createQuery(cq).getSingleResult();
+
+	}
+
+	public Long getTriagingCount(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Ebs> ebs = cq.from(Ebs.class); // Start from Ebs table
+
+		// Create join to Triaging table
+		Join<Ebs, Triaging> triaging = ebs.join(Ebs.TRIAGING, JoinType.LEFT); // Assuming Ebs.TRIAGING is the relationship name
+
+		// Create joins for filtering
+		Join<Ebs, Location> location;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT); // Assuming Ebs.EBS_LOCATION is the relationship name
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter - using decisiondate as the primary date field for triaging
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							triaging.get(Triaging.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted cases. Archived cases should stay included
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(triaging.get(Triaging.TRIAGING_DECISION)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		// Select count
+		cq.select(cb.count(ebs));
+
+		return em.createQuery(cq).getSingleResult();
+	}
+
+	public Long getEbsEventCount(DashboardCriteria dashboardCriteria) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Ebs> from = cq.from(Ebs.class);
+
+		Predicate filter = CriteriaBuilderHelper.and(cb, createCriteriaFilter(dashboardCriteria,cb,cq,from));
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		// Select count
+		cq.select(cb.count(from));
+
+		return em.createQuery(cq).getSingleResult();
+
+	}
+
+	public Long getSignalVerificationCount(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Ebs> ebs = cq.from(Ebs.class); // Start from Ebs table
+
+		// Create join to SignalVerification table
+		Join<Ebs, SignalVerification> signalVerification = ebs.join(Ebs.SIGNAL_VERIFICATION, JoinType.LEFT); // Assuming Ebs.SIGNAL_VERIFICATION is the relationship name
+
+		// Create joins for filtering
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT); // Assuming Ebs.EBS_LOCATION is the relationship name
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter - using verificationsentdate from the schema
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							signalVerification.get(SignalVerification.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+
+		// Exclude archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(signalVerification.get(SignalVerification.VERIFIED),SignalOutcome.EVENT));
+
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		// Select count
+		cq.select(cb.count(ebs));
+
+		return em.createQuery(cq).getSingleResult();
+	}
+
+	public Long getRiskAssessmentCount(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<RiskAssessment> riskAssessment = cq.from(RiskAssessment.class);
+
+		// Create joins for filtering
+		Join<RiskAssessment, Ebs> ebs = riskAssessment.join(Ebs.TABLE_NAME, JoinType.LEFT);
+		Join<Ebs, SignalVerification> ebsSignalVerificationJoin = ebs.join(Ebs.SIGNAL_VERIFICATION, JoinType.LEFT);
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter - using assessmentdate from the schema
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							riskAssessment.get(RiskAssessment.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(ebsSignalVerificationJoin.get(SignalVerification.VERIFIED)));
+
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(ebsSignalVerificationJoin.get(SignalVerification.VERIFIED), SignalOutcome.EVENT));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		// Select count
+		cq.select(cb.count(riskAssessment));
+
+		return em.createQuery(cq).getSingleResult();
+	}
+
+	public Long getAlertCount(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<EbsAlert> ebsAlert = cq.from(EbsAlert.class);
+
+		// Create joins for filtering
+		Join<EbsAlert, Ebs> ebs = ebsAlert.join(Ebs.TABLE_NAME, JoinType.LEFT);
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter - using alertdate from the schema
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							ebsAlert.get(EbsAlert.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		// Select count
+		cq.select(cb.count(ebsAlert));
+
+		return em.createQuery(cq).getSingleResult();
+	}
+
+	public Date getLatestSignalInformationCreationDate(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Date> cq = cb.createQuery(Date.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+
+		final EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, root);
+
+		Predicate filter = ebsService.createUserFilter(ebsQueryContext);
+
+		filter = CriteriaBuilderHelper.and(cb, filter, createEbsCriteriaFilter(dashboardCriteria, ebsQueryContext));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(root.get(SignalVerification.CREATION_DATE));
+
+		cq.orderBy(cb.desc(root.get(SignalVerification.CREATION_DATE)));
+
+		TypedQuery<Date> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public Date getLatestEbsEventCreationDate(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Date> cq = cb.createQuery(Date.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+
+		Predicate filter = CriteriaBuilderHelper.and(cb, createCriteriaFilter(dashboardCriteria,cb,cq,root));
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(root.get(SignalVerification.CREATION_DATE));
+
+		cq.orderBy(cb.desc(root.get(SignalVerification.CREATION_DATE)));
+
+		TypedQuery<Date> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public Date getLatestTriagingCreationDate(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Date> cq = cb.createQuery(Date.class);
+		Root<Ebs> ebs = cq.from(Ebs.class); // Start from Ebs table
+
+		// Create join to Triaging table
+		Join<Ebs, Triaging> triaging = ebs.join(Ebs.TRIAGING, JoinType.LEFT); // Assuming Ebs.TRIAGING is the relationship name
+
+		// Create joins for filtering
+		Join<Ebs, Location> location;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT); // Assuming Ebs.EBS_LOCATION is the relationship name
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							triaging.get(Triaging.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		// Select the creation date from Ebs
+		cq.select(ebs.get(Ebs.CREATION_DATE));
+		cq.orderBy(cb.desc(ebs.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<Date> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public Date getLatestSignalVerificationCreationDate(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Date> cq = cb.createQuery(Date.class);
+		Root<Ebs> ebs = cq.from(Ebs.class); // Start from Ebs table
+
+		// Create join to SignalVerification table
+		Join<Ebs, SignalVerification> signalVerification = ebs.join(Ebs.SIGNAL_VERIFICATION, JoinType.LEFT); // Assuming Ebs.SIGNAL_VERIFICATION is the relationship name
+
+		// Create joins for filtering
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT); // Assuming Ebs.EBS_LOCATION is the relationship name
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							signalVerification.get(SignalVerification.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		// Select the creation date from Ebs
+		cq.select(ebs.get(Ebs.CREATION_DATE));
+		cq.orderBy(cb.desc(ebs.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<Date> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public Date getLatestRiskAssessmentCreationDate(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Date> cq = cb.createQuery(Date.class);
+		Root<RiskAssessment> root = cq.from(RiskAssessment.class);
+
+		// Create joins for filtering
+		Join<RiskAssessment, Ebs> ebs = root.join(Ebs.TABLE_NAME, JoinType.LEFT);
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							root.get(RiskAssessment.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(root.get(RiskAssessment.CREATION_DATE));
+		cq.orderBy(cb.desc(root.get(RiskAssessment.CREATION_DATE)));
+
+		TypedQuery<Date> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public Date getLatestAlertCreationDate(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Date> cq = cb.createQuery(Date.class);
+		Root<EbsAlert> root = cq.from(EbsAlert.class);
+
+		// Create joins for filtering
+		Join<EbsAlert, Ebs> ebs = root.join(Ebs.TABLE_NAME, JoinType.LEFT);
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							root.get(Ebs.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(root.get(Ebs.CREATION_DATE));
+		cq.orderBy(cb.desc(root.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<Date> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	public EbsSourceType getSignalInformationSource(DashboardCriteria dashboardCriteria) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<EbsSourceType> cq = cb.createQuery(EbsSourceType.class);
+		Root<Ebs> ebs = cq.from(Ebs.class);
+		final EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
+
+		cq.select(ebs.get(Ebs.SOURCE_INFORMATION));
+
+		Predicate filter = ebsService.createUserFilter(ebsQueryContext);
+
+		filter = CriteriaBuilderHelper.and(cb, filter, createEbsCriteriaFilter(dashboardCriteria, ebsQueryContext));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+		cq.orderBy(cb.desc(ebs.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<EbsSourceType> query = em.createQuery(cq);
+		query.setMaxResults(1);
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public EbsSourceType getLatestEbsEventSource(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<EbsSourceType> cq = cb.createQuery(EbsSourceType.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+
+		Join<Ebs, SignalVerification> ebsJoin = root.join(Ebs.SIGNAL_VERIFICATION);
+
+		Predicate filter = CriteriaBuilderHelper.and(cb, createCriteriaFilter(dashboardCriteria,cb,cq,root));
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(root.get(Ebs.SOURCE_INFORMATION));
+
+		cq.orderBy(cb.desc(root.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<EbsSourceType> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public EbsSourceType getLatestTriagingSource(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<EbsSourceType> cq = cb.createQuery(EbsSourceType.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+
+		// Create joins for filtering
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = root.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = cb.isNotNull(root.get(Ebs.TRIAGING_ID));
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			Join<Ebs, Triaging> triaging = root.join(Ebs.TRIAGING, JoinType.LEFT);
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							triaging.get(Triaging.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(root.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(root.get(Ebs.ARCHIVED)));
+
+		cq.where(filter);
+		cq.select(root.get(Ebs.SOURCE_INFORMATION));
+		cq.orderBy(cb.desc(root.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<EbsSourceType> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public EbsSourceType getLatestSignalVerificationSource(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<EbsSourceType> cq = cb.createQuery(EbsSourceType.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+
+		// Create joins for filtering
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = root.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = cb.isNotNull(root.get(Ebs.SIGNAL_VERIFICATION_ID));
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			Join<Ebs, SignalVerification> signalVerification = root.join(Ebs.SIGNAL_VERIFICATION, JoinType.LEFT);
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							signalVerification.get(SignalVerification.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(root.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(root.get(Ebs.ARCHIVED)));
+
+		cq.where(filter);
+		cq.select(root.get(Ebs.SOURCE_INFORMATION));
+		cq.orderBy(cb.desc(root.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<EbsSourceType> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public EbsSourceType getLatestAlertSource(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<EbsSourceType> cq = cb.createQuery(EbsSourceType.class);
+		Root<EbsAlert> root = cq.from(EbsAlert.class);
+
+		// Create joins for filtering
+		Join<EbsAlert, Ebs> ebs = root.join(Ebs.TABLE_NAME, JoinType.LEFT);
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							root.get(Ebs.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(ebs.get(Ebs.SOURCE_INFORMATION));
+		cq.orderBy(cb.desc(ebs.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<EbsSourceType> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public EbsSourceType getLatestRiskAssessmentSource(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<EbsSourceType> cq = cb.createQuery(EbsSourceType.class);
+		Root<RiskAssessment> root = cq.from(RiskAssessment.class);
+
+		// Create joins for filtering
+		Join<RiskAssessment, Ebs> ebs = root.join(Ebs.TABLE_NAME, JoinType.LEFT);
+		Join<Ebs, Location> location = null;
+		Join<Location, Region> region = null;
+		Join<Location, District> district = null;
+
+		// Only create location joins if needed for region/district filtering
+		if (dashboardCriteria.getRegion() != null || dashboardCriteria.getDistrict() != null) {
+			location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+			region = location.join(Location.REGION, JoinType.LEFT);
+			district = location.join(Location.DISTRICT, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null && district != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							root.get(RiskAssessment.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(ebs.get(Ebs.SOURCE_INFORMATION));
+		cq.orderBy(cb.desc(ebs.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<EbsSourceType> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public Map<EbsEvent, Long> getEbsEventCountByEbsEvent(DashboardCriteria dashboardCriteria) {
+		Map<EbsEvent, Long> resultMap = new HashMap<>();
+
+		try {
+
+			Long ebsCount = getSignalInformationCount(dashboardCriteria);
+			resultMap.put(EbsEvent.SIGNAL_INFORMATION, ebsCount);
+			Long triagingCount = getTriagingCount(dashboardCriteria);
+			resultMap.put(EbsEvent.TRIAGING,triagingCount);
+			Long signalVerificationCount = getSignalVerificationCount(dashboardCriteria);
+			resultMap.put(EbsEvent.SIGNAL_VERIFICATION,signalVerificationCount);
+			Long eventCount = getEbsEventCount(dashboardCriteria);
+			resultMap.put(EbsEvent.EVENT,eventCount);
+			Long riskAssessmentCount = getRiskAssessmentCount(dashboardCriteria);
+			resultMap.put(EbsEvent.RISK_ASSESSMENT,riskAssessmentCount);
+			Long alertCount = getAlertCount(dashboardCriteria);
+			resultMap.put(EbsEvent.ALERT,alertCount);
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return resultMap;
+	}
+
+	public Map<EbsEvent, Date> getLatestEbsEventsDate(DashboardCriteria dashboardCriteria) {
+		Map<EbsEvent, Date> resultMap = new HashMap<>();
+
+		try {
+
+			Date ebsDate = getLatestSignalInformationCreationDate(dashboardCriteria);
+			resultMap.put(EbsEvent.SIGNAL_INFORMATION, ebsDate);
+			Date triagingDate = getLatestTriagingCreationDate(dashboardCriteria);
+			resultMap.put(EbsEvent.TRIAGING,triagingDate);
+			Date signalVerificationDate = getLatestSignalVerificationCreationDate(dashboardCriteria);
+			resultMap.put(EbsEvent.SIGNAL_VERIFICATION,signalVerificationDate);
+			Date eventDate = getLatestEbsEventCreationDate(dashboardCriteria);
+			resultMap.put(EbsEvent.EVENT,eventDate);
+			Date riskAssessmentDate = getLatestRiskAssessmentCreationDate(dashboardCriteria);
+			resultMap.put(EbsEvent.RISK_ASSESSMENT,riskAssessmentDate);
+			Date alertDate = getLatestAlertCreationDate(dashboardCriteria);
+			resultMap.put(EbsEvent.ALERT,alertDate);
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return resultMap;
+	}
+
+	public Map<EbsEvent, EbsSourceType> getLatestEbsEventsSource(DashboardCriteria dashboardCriteria) {
+
+		Map<EbsEvent, EbsSourceType> resultMap = new HashMap<>();
+
+		try {
+
+			EbsSourceType ebsEbsSourceType = getSignalInformationSource(dashboardCriteria);
+			resultMap.put(EbsEvent.SIGNAL_INFORMATION, ebsEbsSourceType);
+			EbsSourceType triagingEbsSourceType = getLatestTriagingSource(dashboardCriteria);
+			resultMap.put(EbsEvent.TRIAGING,triagingEbsSourceType);
+			EbsSourceType signalVerificationEbsSourceType = getLatestSignalVerificationSource(dashboardCriteria);
+			resultMap.put(EbsEvent.SIGNAL_VERIFICATION,signalVerificationEbsSourceType);
+			EbsSourceType eventEbsSourceType = getLatestEbsEventSource(dashboardCriteria);
+			resultMap.put(EbsEvent.EVENT,eventEbsSourceType);
+			EbsSourceType riskAssessmentEbsSourceType = getLatestRiskAssessmentSource(dashboardCriteria);
+			resultMap.put(EbsEvent.RISK_ASSESSMENT,riskAssessmentEbsSourceType);
+			EbsSourceType alertEbsSourceType = getLatestAlertSource(dashboardCriteria);
+			resultMap.put(EbsEvent.ALERT,alertEbsSourceType);
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return resultMap;
+	}
+
+	public Map<EbsEvent, District> getLastReportedDistrictByEbsEvent(DashboardCriteria dashboardCriteria) {
+
+		Map<EbsEvent, District> resultMap = new HashMap<>();
+
+		try {
+
+			District ebsEbsDistrict = getLatestSignalInformationDistrict(dashboardCriteria);
+			resultMap.put(EbsEvent.SIGNAL_INFORMATION, ebsEbsDistrict);
+			District triagingEbsDistrict = getLatestTriagingDistrict(dashboardCriteria);
+			resultMap.put(EbsEvent.TRIAGING,triagingEbsDistrict);
+			District signalVerificationEbsDistrict = getLatestSignalVerificationDistrict(dashboardCriteria);
+			resultMap.put(EbsEvent.SIGNAL_VERIFICATION,signalVerificationEbsDistrict);
+			District eventEbsDistrict = getLatestEbsEventDistrict(dashboardCriteria);
+			resultMap.put(EbsEvent.EVENT,eventEbsDistrict);
+			District riskAssessmentEbsDistrict = getLatestRiskAssessmentDistrict(dashboardCriteria);
+			resultMap.put(EbsEvent.RISK_ASSESSMENT,riskAssessmentEbsDistrict);
+			District alertEbsDistrict = getLatestAlertDistrict(dashboardCriteria);
+			resultMap.put(EbsEvent.ALERT,alertEbsDistrict);
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return resultMap;
+	}
+
+	private District getLatestSignalInformationDistrict(DashboardCriteria dashboardCriteria) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<District> cq = cb.createQuery(District.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+		final EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, root);
+		Join<Ebs,Location> locationJoin= root.join(Ebs.EBS_LOCATION);
+		Join<Location,District> districtJoin= locationJoin.join(Location.DISTRICT);
+
+		cq.select(districtJoin);
+
+		Predicate filter = ebsService.createUserFilter(ebsQueryContext);
+
+		filter = CriteriaBuilderHelper.and(cb, filter, createEbsCriteriaFilter(dashboardCriteria, ebsQueryContext));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+		cq.orderBy(cb.desc(root.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<District> query = em.createQuery(cq);
+		query.setMaxResults(1);
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	private District getLatestEbsEventDistrict(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<District> cq = cb.createQuery(District.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+
+		Join<Ebs, SignalVerification> ebsJoin = root.join(Ebs.SIGNAL_VERIFICATION);
+		Join<Ebs, Location> ebsLocationJoin = root.join(Ebs.EBS_LOCATION);
+		Join<Location, District> locationDistrictJoin = ebsLocationJoin.join(Location.DISTRICT);
+
+		Predicate filter = CriteriaBuilderHelper.and(cb, createCriteriaFilter(dashboardCriteria,cb,cq,root));
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(locationDistrictJoin);
+
+		cq.orderBy(cb.desc(ebsJoin.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<District> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public District getLatestSignalVerificationDistrict(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<District> cq = cb.createQuery(District.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+
+		// Create joins for filtering
+		Join<Ebs, Location> location = root.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+		Join<Location, District> district = location.join(Location.DISTRICT, JoinType.LEFT);
+		Join<Location, Region> region = null;
+
+		// Only create region join if needed for region filtering
+		if (dashboardCriteria.getRegion() != null) {
+			region = location.join(Location.REGION, JoinType.LEFT);
+		}
+
+		Predicate filter = cb.isNotNull(root.get(Ebs.SIGNAL_VERIFICATION_ID));
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter (pre-filtering when district is specified)
+		if (dashboardCriteria.getDistrict() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			Join<Ebs, SignalVerification> signalVerification = root.join(Ebs.SIGNAL_VERIFICATION, JoinType.LEFT);
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							signalVerification.get(SignalVerification.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(root.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(root.get(Ebs.ARCHIVED)));
+
+		cq.where(filter);
+		cq.select(district);
+		cq.orderBy(cb.desc(root.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<District> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public District getLatestTriagingDistrict(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<District> cq = cb.createQuery(District.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+
+		// Create joins for filtering
+		Join<Ebs, Location> location = root.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+		Join<Location, District> district = location.join(Location.DISTRICT, JoinType.LEFT);
+		Join<Location, Region> region = null;
+
+		// Only create region join if needed for region filtering
+		if (dashboardCriteria.getRegion() != null) {
+			region = location.join(Location.REGION, JoinType.LEFT);
+		}
+
+		Predicate filter = cb.isNotNull(root.get(Ebs.TRIAGING_ID));
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter (pre-filtering when district is specified)
+		if (dashboardCriteria.getDistrict() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			Join<Ebs, Triaging> triaging = root.join(Ebs.TRIAGING, JoinType.LEFT);
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							triaging.get(Triaging.DATE_OF_DECISION),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(root.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(root.get(Ebs.ARCHIVED)));
+
+		cq.where(filter);
+		cq.select(district);
+		cq.orderBy(cb.desc(root.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<District> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public District getLatestAlertDistrict(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<District> cq = cb.createQuery(District.class);
+		Root<EbsAlert> root = cq.from(EbsAlert.class);
+
+		// Create joins for filtering
+		Join<EbsAlert, Ebs> ebs = root.join(Ebs.TABLE_NAME, JoinType.LEFT);
+		Join<Ebs, Location> location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+		Join<Location, District> district = location.join(Location.DISTRICT, JoinType.LEFT);
+		Join<Location, Region> region = null;
+
+		// Only create region join if needed for region filtering
+		if (dashboardCriteria.getRegion() != null) {
+			region = location.join(Location.REGION, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							root.get(EbsAlert.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(district);
+		cq.orderBy(cb.desc(ebs.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<District> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public District getLatestRiskAssessmentDistrict(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<District> cq = cb.createQuery(District.class);
+		Root<RiskAssessment> root = cq.from(RiskAssessment.class);
+
+		// Create joins for filtering
+		Join<RiskAssessment, Ebs> ebs = root.join(Ebs.TABLE_NAME, JoinType.LEFT);
+		Join<Ebs, Location> location = ebs.join(Ebs.EBS_LOCATION, JoinType.LEFT);
+		Join<Location, District> district = location.join(Location.DISTRICT, JoinType.LEFT);
+		Join<Location, Region> region = null;
+
+		// Only create region join if needed for region filtering
+		if (dashboardCriteria.getRegion() != null) {
+			region = location.join(Location.REGION, JoinType.LEFT);
+		}
+
+		Predicate filter = null;
+
+		// Region filter
+		if (dashboardCriteria.getRegion() != null && region != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid())
+			);
+		}
+
+		// District filter
+		if (dashboardCriteria.getDistrict() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid())
+			);
+		}
+
+		// Date filter if applicable
+		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					cb.between(
+							root.get(RiskAssessment.CREATION_DATE),
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo())
+					)
+			);
+		}
+
+		// Exclude deleted and archived cases
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.DELETED)));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(ebs.get(Ebs.ARCHIVED)));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(district);
+		cq.orderBy(cb.desc(ebs.get(Ebs.CREATION_DATE)));
+
+		TypedQuery<District> query = em.createQuery(cq);
+		query.setMaxResults(1);
+
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	public Map<EbsSourceType, Integer> getSourceTypeCount(DashboardCriteria dashboardCriteria) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Tuple> cq = cb.createQuery(Tuple.class);
+		Root<Ebs> ebs = cq.from(Ebs.class);
+		final EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
+
+		cq.multiselect(
+				ebs.get(Ebs.SOURCE_INFORMATION),
+				cb.count(ebs)
+		).groupBy(ebs.get(Ebs.SOURCE_INFORMATION));
+
+		Predicate filter = ebsService.createUserFilter(ebsQueryContext);
+		filter = CriteriaBuilderHelper.and(cb, filter, createEbsCriteriaFilter(dashboardCriteria, ebsQueryContext));
+
+		if (filter != null) {
+			cq.where(filter); // Add the filter to the query
+		}
+
+		TypedQuery<Tuple> query = em.createQuery(cq);
+		List<Tuple> results = query.getResultList();
+
+		Map<EbsSourceType, Integer> sourceTypeCountMap = new HashMap<>();
+		for (Tuple tuple : results) {
+			EbsSourceType sourceType = tuple.get(0, EbsSourceType.class); // Get source type
+			Long count = tuple.get(1, Long.class); // Get count (as Long)
+			sourceTypeCountMap.put(sourceType, count.intValue()); // Convert to Integer
+		}
+
+		return sourceTypeCountMap;
+	}
+
+	public List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceInformation(
+			DashboardCriteria dashboardCriteria,
+			EbsSourceType sourceType, EbsEvent ebsEvent) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+		Root<Ebs> ebs = cq.from(Ebs.class);
+		final EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
+
+		Predicate filter = ebsService.createUserFilter(ebsQueryContext);
+		filter = CriteriaBuilderHelper.and(cb, filter, createEbsCriteriaFilter(dashboardCriteria, ebsQueryContext));
+
+		if (sourceType != null && !sourceType.toString().isEmpty()) {
+			Predicate sourceTypeFilter = cb.equal(ebs.get(Ebs.SOURCE_INFORMATION), sourceType);
+			filter = CriteriaBuilderHelper.and(cb, filter, sourceTypeFilter);
+		}
+
+		if (ebsEvent != null) {
+			switch (ebsEvent) {
+				case TRIAGING:
+					Predicate triagingFilter = cb.isNotNull(ebs.get(Ebs.TRIAGING_ID));
+					filter = CriteriaBuilderHelper.and(cb, filter, triagingFilter);
+					break;
+				case SIGNAL_VERIFICATION:
+					Predicate signalVerificationFilter = cb.isNotNull(ebs.get(Ebs.SIGNAL_VERIFICATION_ID));
+					filter = CriteriaBuilderHelper.and(cb, filter, signalVerificationFilter);
+					break;
+				case RISK_ASSESSMENT:
+					Join<Ebs, RiskAssessment> riskAssessmentJoin = ebs.join(Ebs.RISK_ASSESSMENT, JoinType.LEFT);
+					Predicate riskAssessmentFilter = cb.isNotNull(riskAssessmentJoin.get(RiskAssessment.ID));
+					filter = CriteriaBuilderHelper.and(cb, filter, riskAssessmentFilter);
+					break;
+				case ALERT:
+					Join<Ebs, EbsAlert> ebsAlertJoin = ebs.join(Ebs.EBS_ALERT, JoinType.LEFT);
+					Predicate ebsAlertFilter = cb.isNotNull(ebsAlertJoin.get(EbsAlert.ID));
+					filter = CriteriaBuilderHelper.and(cb, filter, ebsAlertFilter);
+					break;
+				default:
+					break;
+			}
+		}
+
+		Predicate notNullCondition = cb.and(
+				cb.isNotNull(ebs.get(Ebs.SOURCE_INFORMATION)),
+				cb.isNotNull(ebs.get(Ebs.CATEGORY_OF_INFORMANT))
+		);
+
+		cq.where(CriteriaBuilderHelper.and(cb, filter, notNullCondition));
+
+		cq.multiselect(
+				ebs.get(Ebs.SOURCE_INFORMATION),
+				ebs.get(Ebs.CATEGORY_OF_INFORMANT),
+				cb.count(ebs)
+    );
+
+		cq.groupBy(
+				ebs.get(Ebs.SOURCE_INFORMATION),
+				ebs.get(Ebs.CATEGORY_OF_INFORMANT)
+    );
+
+		cq.orderBy(
+				cb.asc(ebs.get(Ebs.SOURCE_INFORMATION)),
+				cb.desc(cb.count(ebs))
+		);
+
+		List<Object[]> results = em.createQuery(cq).getResultList();
+
+		Map<EbsSourceType, Long> sourceTotals = new HashMap<>();
+
+		for (Object[] row : results) {
+			EbsSourceType source = (EbsSourceType) row[0];
+			Long count = (Long) row[2];
+			sourceTotals.merge(source, count, Long::sum);
+		}
+
+		List<EbsCategoryOfInformantDto> dtoList = new ArrayList<>();
+		for (Object[] row : results) {
+			EbsSourceType source = (EbsSourceType) row[0];
+			PersonReporting category = (PersonReporting) row[1];
+			Long count = (Long) row[2];
+
+			double percentage = 0;
+			if (sourceTotals.containsKey(source) && sourceTotals.get(source) > 0) {
+				percentage = (count * 100.0) / sourceTotals.get(source);
+				percentage = Math.ceil(percentage * 100) / 100;
+			}
+
+			dtoList.add(new EbsCategoryOfInformantDto(source, category, count, percentage));
+		}
+
+		return dtoList;
 	}
 }

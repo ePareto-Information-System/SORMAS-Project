@@ -34,7 +34,7 @@ public class EbsDashboardView extends AbstractDashboardView {
 	protected EbsFilterLayout filterLayout;
 
 	protected EbsOverviewLayout ebsOverviewLayout;
-	protected EbsDiseaseCarouselLayout diseaseCarouselLayout;
+	protected EbsEventCarouselLayout ebsEventCarouselLayout;
 
 	public EbsDashboardView() {
 		//super(VIEW_NAME);
@@ -73,11 +73,11 @@ public class EbsDashboardView extends AbstractDashboardView {
 		});
 
 		//add diseaseCarousel and map
-		diseaseCarouselLayout = new EbsDiseaseCarouselLayout(dashboardDataProvider);
-		dashboardLayout.addComponent(diseaseCarouselLayout);
-		dashboardLayout.setExpandRatio(diseaseCarouselLayout, 1);
+		ebsEventCarouselLayout = new EbsEventCarouselLayout(dashboardDataProvider);
+		dashboardLayout.addComponent(ebsEventCarouselLayout);
+		dashboardLayout.setExpandRatio(ebsEventCarouselLayout, 1);
 
-		diseaseCarouselLayout.setExpandListener(expanded -> {
+		ebsEventCarouselLayout.setExpandListener(expanded -> {
 			if (expanded) {
 				dashboardLayout.removeComponent(ebsOverviewLayout);
 			} else {
@@ -93,7 +93,7 @@ public class EbsDashboardView extends AbstractDashboardView {
 	}
 
 	public void refreshDashboard() {
-		dashboardDataProvider.refreshData();
+		dashboardDataProvider.refreshEbsData();
 
 		// Update disease burden
 		if (ebsOverviewLayout != null) {
@@ -101,7 +101,7 @@ public class EbsDashboardView extends AbstractDashboardView {
 		}
 
 		//Update disease carousel
-		if (diseaseCarouselLayout != null)
-			diseaseCarouselLayout.refresh();
+		if (ebsEventCarouselLayout != null)
+			ebsEventCarouselLayout.refresh();
 	}
 }

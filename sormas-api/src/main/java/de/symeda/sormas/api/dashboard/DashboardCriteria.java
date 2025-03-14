@@ -2,6 +2,7 @@ package de.symeda.sormas.api.dashboard;
 
 import de.symeda.sormas.api.CaseMeasure;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EbsEvent;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
@@ -20,6 +21,8 @@ public class DashboardCriteria extends BaseDashboardCriteria<DashboardCriteria> 
 	private NewDateFilterType dateFilterType;
 
 	private Boolean includeNotACaseClassification;
+
+	private EbsEvent ebsEvent;
 
 	public DashboardCriteria(Class<DashboardCriteria> dashboardCriteriaClass) {
 		super(dashboardCriteriaClass);
@@ -181,6 +184,14 @@ public class DashboardCriteria extends BaseDashboardCriteria<DashboardCriteria> 
 		this.dateFilterType = dateFilterType;
 	}
 
+	public EbsEvent getEbsEvent() {
+		return ebsEvent;
+	}
+
+	public void setEbsEvent(EbsEvent ebsEvent) {
+		this.ebsEvent = ebsEvent;
+	}
+
 	@Override
 	public String toString() {
 		return "DashboardCriteria [region=" + region + ", district=" + district + ", disease=" + disease
@@ -190,10 +201,5 @@ public class DashboardCriteria extends BaseDashboardCriteria<DashboardCriteria> 
 				+ ", caseMeasure=" + caseMeasure + ", caseClassification=" + caseClassification + ", dateFilterType="
 				+ dateFilterType + ", includeNotACaseClassification=" + includeNotACaseClassification + "]";
 	}
-	
-	
-	
-	
-	
-	
+
 }

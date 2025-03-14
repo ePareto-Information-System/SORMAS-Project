@@ -266,9 +266,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	@EJB
 	private RegionService regionService;
 	@EJB
-	private DistrictFacadeEjbLocal districtFacade;
-	@EJB
 	private DistrictService districtService;
+	@EJB
+	private DistrictFacadeEjbLocal districtFacade;
+
 	@EJB
 	private CommunityFacadeEjbLocal communityFacade;
 	@EJB

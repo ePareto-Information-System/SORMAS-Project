@@ -17,6 +17,10 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard;
 
+import de.symeda.sormas.api.EbsEvent;
+import de.symeda.sormas.api.dashboard.EbsCategoryOfInformantDto;
+import de.symeda.sormas.api.ebs.EbsEventBurdenDto;
+import de.symeda.sormas.api.ebs.EbsSourceType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,7 +34,6 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseReferenceDefinition;
 import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.dashboard.DashboardCaseDto;
@@ -47,7 +50,6 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.outbreak.OutbreakCriteria;
 
 import de.symeda.sormas.api.sample.DashboardTestResultDto;
-import de.symeda.sormas.api.outbreak.OutbreakCriteria;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleCountType;
 import de.symeda.sormas.api.utils.DateHelper;
@@ -61,6 +63,8 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
 	private Disease disease;
+
+	private EbsEvent ebsEvent;
 	private Date fromDate;
 	private Date toDate;
 	private Date previousFromDate;
@@ -83,6 +87,7 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	private List<DashboardCaseDto> cases = new ArrayList<>();
 	private List<DashboardCaseDto> previousCases = new ArrayList<>();
 	private Map<CaseClassification, Integer> casesCountByClassification = new HashMap<>();
+	//List<PersonReporting> personReportingByEventSourceType;
 	private Long outbreakDistrictCount = 0L;
 	private String lastReportedDistrict = "";
 	private List<DashboardEventDto> events = new ArrayList<>();
@@ -101,6 +106,16 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	private Long caseWithReferenceDefinitionFulfilledCount = 0L;
 	private Map<SampleCountType, Long> sampleCounts = new HashMap<SampleCountType, Long>();
 	private Map<SampleCountType, Long> previousSampleCounts = new HashMap<SampleCountType, Long>();
+	private List<EbsEventBurdenDto> ebsEventsBurden = new ArrayList<>();
+
+	private Map<EbsSourceType, Integer> sourceTypeCount = new HashMap<>();
+	private EbsSourceType eventSourceType;
+	private List<EbsCategoryOfInformantDto> ebsCategoryOfInformantDtoBySourceType;
+	private List<EbsCategoryOfInformantDto>  ebsCategoryOfInformantDtoBySourceTypeForHeb;
+	private List<EbsCategoryOfInformantDto>  ebsCategoryOfInformantDtoBySourceTypeForMediaScan;
+	private List<EbsCategoryOfInformantDto>  ebsCategoryOfInformantDtoBySourceTypeForHotline;
+
+	;
 
 	//private final Class<? extends CriteriaDateType> dateTypeClass;
 
@@ -359,6 +374,7 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 //
 //	}
 
+
 	public void refreshDataForSelectedDisease() {
 
 		// Update the entities lists according to the filters
@@ -544,6 +560,89 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 		this.refreshDataForSelectedDisease();
 	}
 
+	public EbsEvent getEbsEvent() {
+		return ebsEvent;
+	}
+
+	public void setEbsEvent(EbsEvent ebsEvent) {
+		this.ebsEvent = ebsEvent;
+
+		this.refreshDataForSelectedEbsEvent();
+	}
+
+	public void refreshDataForSelectedEbsEvent() {
+
+//		if (getDashboardType() == DashboardType.CONTACTS) {
+//			// Contacts
+//			setContacts(FacadeProvider.getContactFacade().getContactsForDashboard(region, district, disease, fromDate, toDate));
+//			setPreviousContacts(
+//					FacadeProvider.getContactFacade().getContactsForDashboard(region, district, disease, previousFromDate, previousToDate));
+//
+//			this.refreshDataForQuarantinedContacts();
+//		}
+
+		//getDashboardType() == DashboardType.CONTACTS ||
+		if ( this.ebsEvent != null) {
+			DashboardCriteria caseDashboardCriteria = buildDashboardCriteria(fromDate, toDate);
+
+			// Cases
+			//setCases(FacadeProvider.getDashboardFacade().getCases(caseDashboardCriteria));
+			setLastReportedDistrict(FacadeProvider.getDashboardFacade().getLastReportedDistrictName(caseDashboardCriteria));
+//			setCasesCountByClassification(
+//					FacadeProvider.getDashboardFacade()
+//							.getCasesCountByClassification(buildDashboardCriteria(fromDate, toDate).includeNotACaseClassification(true)));
+
+			setSourceTypeCount(
+					FacadeProvider.getDashboardFacade()
+							.getSourceTypeCount(buildDashboardCriteria(fromDate, toDate)));
+//-------
+
+			setEbsCategoryOfInformantDtoBySourceType(
+					FacadeProvider.getDashboardFacade()
+							.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.CEBS,ebsEvent));
+
+			setEbsCategoryOfInformantDtoBySourceTypeForHeb(
+					FacadeProvider.getDashboardFacade()
+							.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HEBS,ebsEvent));
+
+			setEbsCategoryOfInformantDtoBySourceTypeForMediaScan(
+					FacadeProvider.getDashboardFacade()
+							.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.MEDIA_NEWS,ebsEvent));
+
+			setEbsCategoryOfInformantDtoBySourceTypeForHotline(
+					FacadeProvider.getDashboardFacade()
+							.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HOTLINE_PERSON,ebsEvent));
+			//setPreviousCases(FacadeProvider.getDashboardFacade().getCases(buildDashboardCriteria(previousFromDate, previousToDate)));
+
+			// test results
+//			if (getDashboardType() != DashboardType.CONTACTS) {
+//				setNewCasesFinalLabResultCountByResultType(
+//						FacadeProvider.getDashboardFacade().getNewCasesFinalLabResultCountByResultType(caseDashboardCriteria));
+//			}
+		}
+
+		if (this.ebsEvent == null || getDashboardType() == DashboardType.EBS) {
+			return;
+		}
+
+
+
+		// Events
+//		DashboardCriteria eventDashboardCriteria = buildDashboardCriteriaWithDates();
+//		setEvents(FacadeProvider.getDashboardFacade().getNewEvents(eventDashboardCriteria));
+//		setEventCountByStatus(FacadeProvider.getDashboardFacade().getEventCountByStatus(eventDashboardCriteria));
+
+//		setOutbreakDistrictCount(
+//				FacadeProvider.getOutbreakFacade()
+//						.getOutbreakDistrictCount(
+//								new OutbreakCriteria().region(region).district(district).disease(disease).reportedBetween(fromDate, toDate)));
+//
+//		refreshDataForQuarantinedCases();
+//		refreshDataForConvertedContactsToCase();
+//		refreshDataForCasesWithReferenceDefinitionFulfilled();
+	}
+
+
 	public CaseClassification getCaseClassification() {
 		return caseClassification;
 	}
@@ -695,15 +794,6 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 		this.caseWithReferenceDefinitionFulfilledCount = caseWithReferenceDefinitionFulfilledCount;
 	} 
 
-//	public DashboardCriteria getCriteria() {
-//		return new DashboardCriteria(dateTypeClass).region(region)
-//			.district(district)
-//			.disease(disease)
-//			.dateBetween(fromDate, toDate)
-//			.caseClassification(caseClassification)
-//			.newCaseDateType(newCaseDateType)
-//			.dateFilterType(dateFilterType);
-//	}
 	public Map<SampleCountType, Long> getSampleCounts() {
 		return sampleCounts;
 	}
@@ -727,6 +817,14 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 		this.regionDtoList = regionDtoList;
 	}
 
+	public Map<EbsSourceType, Integer> getSourceTypeCount() {
+		return sourceTypeCount;
+	}
+
+	public void setSourceTypeCount(Map<EbsSourceType, Integer> sourceTypeCount) {
+		this.sourceTypeCount = sourceTypeCount;
+	}
+
 	public DashboardCriteria getCriteria() {
 		return new DashboardCriteria().region(region)
 				.district(district)
@@ -735,5 +833,92 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 				.caseClassification(caseClassification)
 				.newCaseDateType(newCaseDateType)
 				.dateFilterType(dateFilterType);
+	}
+
+	public List<EbsEventBurdenDto> getEbsEventsBurden() {
+
+		return ebsEventsBurden;
+	}
+
+//	public List<PersonReporting> getPersonReportingByEventSourceType() {
+//		return personReportingByEventSourceType;
+//	}
+//
+//	public void setPersonReportingByEventSourceType(List<PersonReporting> personReportingByEventSourceType) {
+//		this.personReportingByEventSourceType = personReportingByEventSourceType;
+//	}
+
+
+
+	public void setEbsEventBurden(List<EbsEventBurdenDto> ebsEventsBurden) {
+		this.ebsEventsBurden = ebsEventsBurden;
+	}
+
+	public void setEventSourceType(EbsSourceType eventSourceType) {
+		this.eventSourceType = eventSourceType;
+	}
+
+	public EbsSourceType getEventSourceType() {
+		return eventSourceType;
+	}
+
+	public List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceType() {
+		return ebsCategoryOfInformantDtoBySourceType;
+	}
+
+	public void setEbsCategoryOfInformantDtoBySourceType(List<EbsCategoryOfInformantDto> ebsCategoryOfInformantDtoBySourceType) {
+		this.ebsCategoryOfInformantDtoBySourceType = ebsCategoryOfInformantDtoBySourceType;
+	}
+
+	public void refreshEbsData() {
+		//this.getCriteria();
+		// Update the entities lists according to the filters
+		// EbsEvent burden
+		setEbsEventBurden(
+				FacadeProvider.getDashboardFacade()
+						.getEbsEventBurden(region, district, fromDate, toDate, previousFromDate, previousToDate, newCaseDateType, caseClassification));
+
+//		setEbsCategoryOfInformantDtoBySourceType(
+//				FacadeProvider.getDashboardFacade()
+//						.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.CEBS, ebsEvent));
+//
+//		setEbsCategoryOfInformantDtoBySourceTypeForHeb(
+//				FacadeProvider.getDashboardFacade()
+//						.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HEBS, ebsEvent));
+//
+//		setEbsCategoryOfInformantDtoBySourceTypeForMediaScan(
+//				FacadeProvider.getDashboardFacade()
+//						.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.MEDIA_NEWS, ebsEvent));
+//
+//		setEbsCategoryOfInformantDtoBySourceTypeForHotline(
+//				FacadeProvider.getDashboardFacade()
+//						.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HOTLINE_PERSON, ebsEvent));
+
+		this.refreshDataForSelectedEbsEvent();
+	}
+
+
+	public List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceTypeForHeb() {
+		return ebsCategoryOfInformantDtoBySourceTypeForHeb;
+	}
+
+	public void setEbsCategoryOfInformantDtoBySourceTypeForHeb(List<EbsCategoryOfInformantDto> ebsCategoryOfInformantDtoBySourceTypeForHeb) {
+		this.ebsCategoryOfInformantDtoBySourceTypeForHeb = ebsCategoryOfInformantDtoBySourceTypeForHeb;
+	}
+
+	public List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceTypeForMediaScan() {
+		return ebsCategoryOfInformantDtoBySourceTypeForMediaScan;
+	}
+
+	public void setEbsCategoryOfInformantDtoBySourceTypeForMediaScan(List<EbsCategoryOfInformantDto> ebsCategoryOfInformantDtoBySourceTypeForMediaScan) {
+		this.ebsCategoryOfInformantDtoBySourceTypeForMediaScan = ebsCategoryOfInformantDtoBySourceTypeForMediaScan;
+	}
+
+	public List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceTypeForHotline() {
+		return ebsCategoryOfInformantDtoBySourceTypeForHotline;
+	}
+
+	public void setEbsCategoryOfInformantDtoBySourceTypeForHotline(List<EbsCategoryOfInformantDto> ebsCategoryOfInformantDtoBySourceTypeForHotline) {
+		this.ebsCategoryOfInformantDtoBySourceTypeForHotline = ebsCategoryOfInformantDtoBySourceTypeForHotline;
 	}
 }

@@ -30,7 +30,7 @@ import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.ModelConstants;
 
 @Entity(name = "environments")
-public class Environment extends CoreAdo {
+public class SignalVerification extends CoreAdo {
 
 	public static final String I18N_PREFIX = "Environment";
 

@@ -5,11 +5,11 @@ import com.vaadin.ui.Label;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.ui.utils.CssStyles;
 
-public class DiseaseSummaryElementComponent extends HorizontalLayout {
+public class EbsEventSummaryElementComponent extends HorizontalLayout {
 
 	private final Label totalLabel;
 
-	public DiseaseSummaryElementComponent(String heading) {
+	public EbsEventSummaryElementComponent(String heading) {
 		setMargin(false);
 		setSpacing(false);
 
@@ -28,7 +28,7 @@ public class DiseaseSummaryElementComponent extends HorizontalLayout {
 		addComponent(totalLabel);
 	}
 
-	public DiseaseSummaryElementComponent(String heading, String defaultValue) {
+	public EbsEventSummaryElementComponent(String heading, String defaultValue) {
 		this(heading);
 		updateTotalLabel(defaultValue);
 	}

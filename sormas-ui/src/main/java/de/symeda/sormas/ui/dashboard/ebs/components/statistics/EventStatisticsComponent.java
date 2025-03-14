@@ -6,7 +6,7 @@ import de.symeda.sormas.ui.dashboard.statistics.CountElementStyle;
 import de.symeda.sormas.ui.dashboard.statistics.DashboardStatisticsCountElement;
 import java.util.Map;
 
-public class EventStatisticsComponent extends DiseaseSectionStatisticsComponent {
+public class EventStatisticsComponent extends EbsEventSectionStatisticsComponent {
 
 	private final DashboardStatisticsCountElement eventStatusConfirmed;
 	private final DashboardStatisticsCountElement eventStatusCluster;

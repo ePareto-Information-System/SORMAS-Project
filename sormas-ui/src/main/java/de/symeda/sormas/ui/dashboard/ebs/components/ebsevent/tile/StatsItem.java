@@ -1,4 +1,4 @@
-package de.symeda.sormas.ui.dashboard.ebs.components.disease.tile;
+package de.symeda.sormas.ui.dashboard.ebs.components.ebsevent.tile;
 
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;

@@ -1022,6 +1022,7 @@ public interface Captions {
 	String dashboardDiseaseBurdenOutbreakDistricts = "dashboardDiseaseBurdenOutbreakDistricts";
 	String dashboardDiseaseCarouselSlideShow = "dashboardDiseaseCarouselSlideShow";
 	String dashboardDiseaseDifference = "dashboardDiseaseDifference";
+	String dashboardEbsEventDifference = "dashboardEbsEventDifference";
 	String dashboardDiseaseDifferenceYAxisLabel = "dashboardDiseaseDifferenceYAxisLabel";
 	String dashboardDone = "dashboardDone";
 	String dashboardFacilities = "dashboardFacilities";
@@ -3802,5 +3803,20 @@ public interface Captions {
 	String dashboardLastReportedDistrict = "Last Reported District";
 	String exportDownloadMergeFile ="exportDownloadMergeFile" ;
 
+	String dashboardEbsEventCarouselSlideShow ="dashboardEbsEventCarouselSlideShow" ;
+	String dashboardShowAllEbsEvents = "dashboardShowAllEbsEvents";
+	String dashboardShowFirstEbsEvents = "dashboardShowFirstEbsEvents";
+	String dashboardEbsEventBurdenInfo = "dashboardEbsEventBurdenInfo";
+	String EbsEventBurdenEventCount = "EbsEventBurden.ebsEventCount";
+	String EbsEventBurdenSourceRate = "EbsEventBurden.ebsEventSourceRate";
+	String EbsEventBurdenSource = "EbsEventBurden.ebsEventSource";
+	String EbsEventBurdenLastReportedDate = "EbsEventBurden.lastReportedDate";
+    String EbsEventBurdenLastReportedDistrictName = "EbsEventBurden.lastReportedDistrictName";
+	String dashboardCebs = "dashboardCebs";
+	String dashboardHebs = "dashboardHebs";
+	String dashboardMediaScanning = "dashboardMediaScanning";
+	String dashboardHotline = "dashboardHotline";
+	String dashboardNewSources = "dashboardNewSources";
+    String ebsMap = "ebsMap";
 }
 

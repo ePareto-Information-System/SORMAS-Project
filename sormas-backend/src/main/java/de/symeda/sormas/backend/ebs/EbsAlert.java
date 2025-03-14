@@ -29,6 +29,9 @@ public class EbsAlert extends AbstractDomainObject {
 
 	public static final String EBS = "ebs";
 
+	public static final String CREATION_DATE = "creationDate";
+
+
 	private YesNo actionInitiated;
 	private ResponseStatus responseStatus;
 	private Date responseDate;

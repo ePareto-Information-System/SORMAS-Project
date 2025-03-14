@@ -29,7 +29,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
-import de.symeda.sormas.ui.dashboard.ebs.components.disease.DiseaseOverviewComponent;
+import de.symeda.sormas.ui.dashboard.ebs.components.ebsevent.EbsEventOverviewComponent;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.LayoutUtil;
@@ -43,12 +43,12 @@ public class EbsOverviewLayout extends CustomLayout {
 
 	private final DashboardDataProvider dashboardDataProvider;
 
-	private DiseaseOverviewComponent diseaseOverviewComponent;
-	private CaseCountDifferenceComponent diseaseDifferenceComponent;
+	private EbsEventOverviewComponent diseaseOverviewComponent;
+	private EbsEventCountDifferenceComponent diseaseDifferenceComponent;
 	private Button showMoreButton;
 	private Button showLessButton;
 	private CheckBox hideOverview;
-	private Boolean isShowingAllDiseases;
+	private Boolean isShowingAllEbsEvents;
 
 	public EbsOverviewLayout(DashboardDataProvider dashboardDataProvider) {
 
@@ -58,17 +58,17 @@ public class EbsOverviewLayout extends CustomLayout {
 
 		this.dashboardDataProvider = dashboardDataProvider;
 
-		diseaseDifferenceComponent = new CaseCountDifferenceComponent(dashboardDataProvider);
+		diseaseDifferenceComponent = new EbsEventCountDifferenceComponent(dashboardDataProvider);
 
-		addDiseaseBurdenView(dashboardDataProvider);
+		addEbsEventBurdenView(dashboardDataProvider);
 
 		addComponent(diseaseDifferenceComponent, DIFFERENCE_LOC);
 
 		addShowMoreAndLessButtons();
 	}
 
-	private void addDiseaseBurdenView(DashboardDataProvider dashboardDataProvider) {
-		diseaseOverviewComponent = new DiseaseOverviewComponent(dashboardDataProvider);
+	private void addEbsEventBurdenView(DashboardDataProvider dashboardDataProvider) {
+		diseaseOverviewComponent = new EbsEventOverviewComponent(dashboardDataProvider);
 		addComponent(diseaseOverviewComponent, BURDEN_LOC);
 
 		if (UserProvider.getCurrent().hasRegionJurisdictionLevel())
@@ -83,14 +83,14 @@ public class EbsOverviewLayout extends CustomLayout {
 		buttonsLayout.setMargin(new MarginInfo(false, true));
 
 		showMoreButton = ButtonHelper.createIconButton(
-			Captions.dashboardShowAllDiseases,
+			Captions.dashboardShowAllEbsEvents,
 			VaadinIcons.CHEVRON_DOWN,
 			null,
 			ValoTheme.BUTTON_BORDERLESS,
 			CssStyles.VSPACE_TOP_NONE,
 			CssStyles.VSPACE_4);
 		showLessButton = ButtonHelper.createIconButton(
-			Captions.dashboardShowFirstDiseases,
+			Captions.dashboardShowFirstEbsEvents,
 			VaadinIcons.CHEVRON_UP,
 			null,
 			ValoTheme.BUTTON_BORDERLESS,
@@ -101,7 +101,7 @@ public class EbsOverviewLayout extends CustomLayout {
 		CssStyles.style(hideOverview, CssStyles.VSPACE_3);
 
 		showMoreButton.addClickListener(e -> {
-			isShowingAllDiseases = true;
+			isShowingAllEbsEvents = true;
 			refresh();
 
 			showMoreButton.setVisible(false);
@@ -109,7 +109,7 @@ public class EbsOverviewLayout extends CustomLayout {
 		});
 
 		showLessButton.addClickListener(e -> {
-			isShowingAllDiseases = false;
+			isShowingAllEbsEvents = false;
 			refresh();
 
 			showLessButton.setVisible(false);
@@ -125,8 +125,8 @@ public class EbsOverviewLayout extends CustomLayout {
 			} else {
 				diseaseOverviewComponent.setVisible(true);
 				diseaseDifferenceComponent.setVisible(true);
-				showLessButton.setVisible(isShowingAllDiseases);
-				showMoreButton.setVisible(!isShowingAllDiseases);
+				showLessButton.setVisible(isShowingAllEbsEvents);
+				showMoreButton.setVisible(!isShowingAllEbsEvents);
 			}
 		});
 
@@ -142,14 +142,14 @@ public class EbsOverviewLayout extends CustomLayout {
 
 		addComponent(buttonsLayout, EXTEND_BUTTONS_LOC);
 
-		isShowingAllDiseases = false;
+		isShowingAllEbsEvents = false;
 		showLessButton.setVisible(false);
 		buttonsLayout.setExpandRatio(showLessButton, 1);
 	}
 
 	public void refresh() {
-		diseaseOverviewComponent.refresh(dashboardDataProvider.getDiseasesBurden(), isShowingAllDiseases);
-		diseaseDifferenceComponent.refresh(isShowingAllDiseases ? 0 : 10);
+		diseaseOverviewComponent.refresh(dashboardDataProvider.getEbsEventsBurden(), isShowingAllEbsEvents);
+		diseaseDifferenceComponent.refresh(isShowingAllEbsEvents ? 0 : 10);
 	}
 
 	public void updateDifferenceComponentSubHeader() {

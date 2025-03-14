@@ -30,7 +30,8 @@ public class EbsFilterLayout extends DashboardFilterLayout<DashboardDataProvider
 		super.populateLayout();
 		createDateTypeSelectorFilter();
 		createRegionAndDistrictFilter();
-		createCaseClassificationFilter();
+		//createCaseClassificationFilter();
+
 	}
 
 	public void addDateTypeValueChangeListener(Property.ValueChangeListener listener) {

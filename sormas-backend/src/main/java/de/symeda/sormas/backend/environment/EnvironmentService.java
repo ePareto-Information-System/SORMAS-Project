@@ -26,14 +26,14 @@ import de.symeda.sormas.backend.user.User;
 
 @Stateless
 @LocalBean
-public class EnvironmentService extends AbstractCoreAdoService<Environment, EnvironmentJoins> {
+public class EnvironmentService extends AbstractCoreAdoService<SignalVerification, EnvironmentJoins> {
 
 	public EnvironmentService() {
-		super(Environment.class);
+		super(SignalVerification.class);
 	}
 
 	@Override
-	protected Predicate createUserFilterInternal(CriteriaBuilder cb, CriteriaQuery cq, From<?, Environment> from) {
+	protected Predicate createUserFilterInternal(CriteriaBuilder cb, CriteriaQuery cq, From<?, SignalVerification> from) {
 		return createUserFilter(new EnvironmentQueryContext(cb, cq, from));
 	}
 
@@ -50,7 +50,7 @@ public class EnvironmentService extends AbstractCoreAdoService<Environment, Envi
 		final CriteriaQuery cq = queryContext.getQuery();
 		final CriteriaBuilder cb = queryContext.getCriteriaBuilder();
 		final EnvironmentJoins environmentJoins = queryContext.getJoins();
-		final From<?, Environment> environmentJoin = queryContext.getRoot();
+		final From<?, SignalVerification> environmentJoin = queryContext.getRoot();
 
 		if (jurisdictionLevel != JurisdictionLevel.NATION) {
 			switch (jurisdictionLevel) {
@@ -75,8 +75,8 @@ public class EnvironmentService extends AbstractCoreAdoService<Environment, Envi
 			default:
 			}
 
-			Predicate filterResponsible = cb.equal(environmentJoins.getRoot().get(Environment.REPORTING_USER), currentUser);
-			filterResponsible = cb.or(filterResponsible, cb.equal(environmentJoins.getRoot().get(Environment.RESPONSIBLE_USER), currentUser));
+			Predicate filterResponsible = cb.equal(environmentJoins.getRoot().get(SignalVerification.REPORTING_USER), currentUser);
+			filterResponsible = cb.or(filterResponsible, cb.equal(environmentJoins.getRoot().get(SignalVerification.RESPONSIBLE_USER), currentUser));
 
 			if (filter != null) {
 				filter = CriteriaBuilderHelper.or(cb, filter, filterResponsible);
@@ -96,19 +96,19 @@ public class EnvironmentService extends AbstractCoreAdoService<Environment, Envi
 	}
 
 	@Override
-	protected EnvironmentJoins toJoins(From<?, Environment> adoPath) {
+	protected EnvironmentJoins toJoins(From<?, SignalVerification> adoPath) {
 		return new EnvironmentJoins(adoPath);
 	}
 
 	@Override
-	public Predicate inJurisdictionOrOwned(CriteriaBuilder cb, CriteriaQuery<?> query, From<?, Environment> from) {
+	public Predicate inJurisdictionOrOwned(CriteriaBuilder cb, CriteriaQuery<?> query, From<?, SignalVerification> from) {
 		return cb.conjunction();
 	}
 
 	public Predicate buildCriteriaFilter(EnvironmentCriteria environmentCriteria, EnvironmentQueryContext environmentQueryContext) {
 
 		CriteriaBuilder cb = environmentQueryContext.getCriteriaBuilder();
-		From<?, Environment> from = environmentQueryContext.getRoot();
+		From<?, SignalVerification> from = environmentQueryContext.getRoot();
 		final EnvironmentJoins joins = environmentQueryContext.getJoins();
 
 		Predicate filter = null;
@@ -121,10 +121,10 @@ public class EnvironmentService extends AbstractCoreAdoService<Environment, Envi
 				}
 
 				Predicate likeFilters = cb.or(
-					CriteriaBuilderHelper.ilike(cb, from.get(Environment.UUID), textFilter),
-					CriteriaBuilderHelper.unaccentedIlike(cb, from.get(Environment.EXTERNAL_ID), textFilter),
-					CriteriaBuilderHelper.unaccentedIlike(cb, from.get(Environment.ENVIRONMENT_NAME), textFilter),
-					CriteriaBuilderHelper.unaccentedIlike(cb, from.get(Environment.DESCRIPTION), textFilter));
+					CriteriaBuilderHelper.ilike(cb, from.get(SignalVerification.UUID), textFilter),
+					CriteriaBuilderHelper.unaccentedIlike(cb, from.get(SignalVerification.EXTERNAL_ID), textFilter),
+					CriteriaBuilderHelper.unaccentedIlike(cb, from.get(SignalVerification.ENVIRONMENT_NAME), textFilter),
+					CriteriaBuilderHelper.unaccentedIlike(cb, from.get(SignalVerification.DESCRIPTION), textFilter));
 				filter = CriteriaBuilderHelper.and(cb, filter, likeFilters);
 			}
 		}
@@ -143,30 +143,30 @@ public class EnvironmentService extends AbstractCoreAdoService<Environment, Envi
 			filter = CriteriaBuilderHelper.and(
 				cb,
 				filter,
-				cb.between(from.get(Environment.REPORT_DATE), environmentCriteria.getReportDateFrom(), environmentCriteria.getReportDateTo()));
+				cb.between(from.get(SignalVerification.REPORT_DATE), environmentCriteria.getReportDateFrom(), environmentCriteria.getReportDateTo()));
 		} else if (environmentCriteria.getReportDateFrom() != null) {
 			filter = CriteriaBuilderHelper
-				.and(cb, filter, cb.greaterThanOrEqualTo(from.get(Environment.REPORT_DATE), environmentCriteria.getReportDateFrom()));
+				.and(cb, filter, cb.greaterThanOrEqualTo(from.get(SignalVerification.REPORT_DATE), environmentCriteria.getReportDateFrom()));
 		} else if (environmentCriteria.getReportDateTo() != null) {
 			filter =
-				CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(from.get(Environment.REPORT_DATE), environmentCriteria.getReportDateTo()));
+				CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(from.get(SignalVerification.REPORT_DATE), environmentCriteria.getReportDateTo()));
 		}
 		if (environmentCriteria.getInvestigationStatus() != null) {
 			filter = CriteriaBuilderHelper
-				.and(cb, filter, cb.equal(from.get(Environment.INVESTIGATION_STATUS), environmentCriteria.getInvestigationStatus()));
+				.and(cb, filter, cb.equal(from.get(SignalVerification.INVESTIGATION_STATUS), environmentCriteria.getInvestigationStatus()));
 		}
 		if (environmentCriteria.getEnvironmentMedia() != null) {
 			filter =
-				CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Environment.ENVIRONMENT_MEDIA), environmentCriteria.getEnvironmentMedia()));
+				CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.ENVIRONMENT_MEDIA), environmentCriteria.getEnvironmentMedia()));
 		}
 		if (environmentCriteria.getRelevanceStatus() != null) {
 			if (environmentCriteria.getRelevanceStatus() == EntityRelevanceStatus.ACTIVE) {
 				filter = CriteriaBuilderHelper
-					.and(cb, filter, cb.or(cb.equal(from.get(Environment.ARCHIVED), false), cb.isNull(from.get(Environment.ARCHIVED))));
+					.and(cb, filter, cb.or(cb.equal(from.get(SignalVerification.ARCHIVED), false), cb.isNull(from.get(SignalVerification.ARCHIVED))));
 			} else if (environmentCriteria.getRelevanceStatus() == EntityRelevanceStatus.ARCHIVED) {
-				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Environment.ARCHIVED), true));
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.ARCHIVED), true));
 			} else if (environmentCriteria.getRelevanceStatus() == EntityRelevanceStatus.DELETED) {
-				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Environment.DELETED), true));
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.DELETED), true));
 			}
 		}
 		if (environmentCriteria.getRelevanceStatus() != EntityRelevanceStatus.DELETED) {
@@ -208,13 +208,13 @@ public class EnvironmentService extends AbstractCoreAdoService<Environment, Envi
 	 * Creates a default filter that should be used as the basis of queries that do not use {@link EventCriteria}.
 	 * This essentially removes {@link DeletableAdo#isDeleted()} events from the queries.
 	 */
-	public Predicate createDefaultFilter(CriteriaBuilder cb, From<?, Environment> root) {
-		return cb.isFalse(root.get(Environment.DELETED));
+	public Predicate createDefaultFilter(CriteriaBuilder cb, From<?, SignalVerification> root) {
+		return cb.isFalse(root.get(SignalVerification.DELETED));
 	}
 
 	@Override
 	@SuppressWarnings("rawtypes")
-	protected Predicate createRelevantDataFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, Environment> from) {
+	protected Predicate createRelevantDataFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, SignalVerification> from) {
 
 		Predicate filter = createDefaultFilter(cb, from);
 		if (getCurrentUser() != null) {

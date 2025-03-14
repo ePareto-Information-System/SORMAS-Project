@@ -21,6 +21,7 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import de.symeda.sormas.api.disease.DiseaseBurdenDto;
+import de.symeda.sormas.api.ebs.EbsEventBurdenDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CaseCountDifferenceComponent extends VerticalLayout {
+public class EbsEventCountDifferenceComponent extends VerticalLayout {
 
 	private static final long serialVersionUID = 6582975657305031105L;
 
@@ -39,11 +40,11 @@ public class CaseCountDifferenceComponent extends VerticalLayout {
 	private HighChart chart;
 	private Label subtitleLabel;
 
-	public CaseCountDifferenceComponent(DashboardDataProvider dashboardDataProvider) {
+	public EbsEventCountDifferenceComponent(DashboardDataProvider dashboardDataProvider) {
 
 		this.dashboardDataProvider = dashboardDataProvider;
 
-		Label title = new Label(I18nProperties.getCaption(Captions.dashboardDiseaseDifference));
+		Label title = new Label(I18nProperties.getCaption(Captions.dashboardEbsEventDifference));
 		CssStyles.style(title, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
 
 		subtitleLabel = new Label();
@@ -67,33 +68,46 @@ public class CaseCountDifferenceComponent extends VerticalLayout {
 
 	public void refresh(int limitDiseasesCount) {
 
-		List<DiseaseBurdenDto> diseasesBurden = dashboardDataProvider.getDiseasesBurden();
+		// Fetch the list of EbsEvent
+		List<EbsEventBurdenDto> ebsEvents = dashboardDataProvider.getEbsEventsBurden();
 
-		Stream<DiseaseBurdenDto> diseasesBurdenStream = diseasesBurden.stream().sorted((dto1, dto2) -> {
-			long caseDifference1 = dto1.getCasesDifference();
-			long caseDifference2 = dto2.getCasesDifference();
+		// Create a stream and sort it based on the desired attribute in EbsEvent
+		Stream<EbsEventBurdenDto> ebsEventsStream = ebsEvents.stream().sorted((event1, event2) -> {
+			// Assuming EbsEvent has a method getCaseDifference() similar to DiseaseBurdenDto
+			long caseDifference1 = event1.getEbsEventsDifference();
+			long caseDifference2 = event2.getEbsEventsDifference();
+
+			// Handle zero values by setting them to Long.MIN_VALUE
 			if (caseDifference1 == 0)
 				caseDifference1 = Long.MIN_VALUE;
 			if (caseDifference2 == 0)
 				caseDifference2 = Long.MIN_VALUE;
+
+			// Compare in descending order
 			return Long.compare(caseDifference2, caseDifference1);
 		});
 
+		// Limit the stream if a limit is specified
 		if (limitDiseasesCount > 0) {
-			diseasesBurdenStream = diseasesBurdenStream.limit(limitDiseasesCount);
+			ebsEventsStream = ebsEventsStream.limit(limitDiseasesCount);
 		}
-		diseasesBurden = diseasesBurdenStream.collect(Collectors.toList());
 
-		refreshChart(diseasesBurden);
+		// Collect the sorted and limited stream back into a list
+		ebsEvents = ebsEventsStream.collect(Collectors.toList());
+
+		// Refresh the chart with the sorted list
+		refreshChart(ebsEvents);
+
+		// Adjust the chart height based on the number of items in the list
 		if (limitDiseasesCount > 0) {
-			chart.setHeight(diseasesBurden.size() * 20 + 70, Unit.PIXELS); // compact mode
+			chart.setHeight(ebsEvents.size() * 20 + 70, Unit.PIXELS); // compact mode
 		} else {
-			chart.setHeight(diseasesBurden.size() * 40 + 70, Unit.PIXELS);
+			chart.setHeight(ebsEvents.size() * 40 + 70, Unit.PIXELS);
 		}
 	}
 
-	private void refreshChart(List<DiseaseBurdenDto> data) {
-		int maxCasesDifference = data.stream().map(d -> Math.abs(d.getCasesDifference())).max(Long::compare).orElse(5L).intValue();
+	private void refreshChart(List<EbsEventBurdenDto> data) {
+		int maxCasesDifference = data.stream().map(d -> Math.abs(d.getEbsEventsDifference())).max(Long::compare).orElse(5L).intValue();
 		maxCasesDifference = Math.max(5, maxCasesDifference);
 
 		StringBuilder hcjs = new StringBuilder();
@@ -118,8 +132,8 @@ public class CaseCountDifferenceComponent extends VerticalLayout {
 						"data: [" +
 							data.stream().map((d) -> 
 							"{" +
-								"y: " + d.getCasesDifference() + "," +
-								"className: '" + CssStyles.getDiseaseColor(d.getDisease()) + " " + CssStyles.BACKGROUND_DARKER + "'," +
+								"y: " + d.getEbsEventsDifference() + "," +
+								"className: '" + CssStyles.getEbsEventColor(d.getEbsEvent()) + " " + CssStyles.BACKGROUND_DARKER + "'," +
 							"},")
 							.reduce((fullText, nextText) -> fullText + nextText).orElse("") + 
 						"]," +
@@ -128,7 +142,7 @@ public class CaseCountDifferenceComponent extends VerticalLayout {
 					
 				"xAxis: {" +
 					"categories: [" + 
-						data.stream().map((d) -> "'" + d.getDisease().toString() + "'").reduce((fullText, nextText) -> fullText + ", " + nextText).orElse("") + 
+						data.stream().map((d) -> "'" + I18nProperties.getEnumCaption(d.getEbsEvent()) + "'").reduce((fullText, nextText) -> fullText + ", " + nextText).orElse("") +
 					"]" +
 				"}," + 
 					

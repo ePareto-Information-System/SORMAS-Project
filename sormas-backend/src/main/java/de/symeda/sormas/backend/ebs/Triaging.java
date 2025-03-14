@@ -74,6 +74,8 @@ public class Triaging extends AbstractDomainObject {
 	public static final String POTENTIAL_RISK = "potentialRisk";
 	public static final String REFERRED = "referred";
 
+	public static final String CREATION_DATE = "creationDate";
+
 	private YesNo supervisorReview;
 	private YesNo referred;
 	private YesNo specificSignal;
@@ -98,6 +100,9 @@ public class Triaging extends AbstractDomainObject {
 	private OutComeSupervisor outcomeSupervisor;
 	private boolean notSignal;
 	private YesNo potentialRisk;
+
+	private Date creationDate;
+
 
 	public EbsReferenceDto toReference() {
 		return new EbsReferenceDto(getUuid());
@@ -290,5 +295,9 @@ public class Triaging extends AbstractDomainObject {
 
 	public void setReferred(YesNo referred) {
 		this.referred = referred;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 }
