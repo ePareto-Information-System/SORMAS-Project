@@ -29,6 +29,8 @@ import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRun
 import de.symeda.sormas.api.share.ExternalShareStatus;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
+import de.symeda.sormas.api.utils.criteria.ExternalShareDateType;
 import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.common.*;
 import de.symeda.sormas.backend.document.DocumentService;
@@ -380,6 +382,49 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		}
 	}
 
+	/**
+	 * Creates a filter that checks whether the Ebs has "started" within the time frame specified by {@code fromDate} and {@code toDate}.
+	 * By default (if {@code dateType} is null)
+	 */
+	public Predicate createNewEbsFilter(EbsQueryContext ebsQueryContext, Date fromDate, Date toDate, CriteriaDateType dateType) {
+
+		final CriteriaBuilder cb = ebsQueryContext.getCriteriaBuilder();
+		final From<?, Ebs> from = ebsQueryContext.getRoot();
+		final CriteriaQuery<?> cq = ebsQueryContext.getQuery();
+		final EbsJoins joins = ebsQueryContext.getJoins();
+
+		Date toDateEndOfDay = DateHelper.getEndOfDay(toDate);
+
+		Predicate newEbsFilter = null;
+		if (dateType == NewEbsDateType.REPORT) {
+
+			newEbsFilter = cb.between(from.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
+
+		} else if (dateType == NewEbsDateType.TRIAGE_DECISION) {
+			newEbsFilter = cb.between(joins.getTriaging().get(Triaging.DATE_OF_DECISION), fromDate, toDate);
+		} else if (dateType ==  NewEbsDateType.VERIFIED_DATE) {
+			newEbsFilter = cb.between(joins.getSignalVerification().get(SignalVerification.VERIFICATION_COMPLETE_DATE), fromDate, toDate);
+		} else if (dateType == NewEbsDateType.ASSESSMENT_DATE) {
+			newEbsFilter = cb.between(joins.getRiskAssessment().get(RiskAssessment.ASSESSMENT_DATE), fromDate, toDate);
+		} else if (dateType == NewEbsDateType.ALERT_DATE) {
+			newEbsFilter = cb.between(joins.getEbsAlert().get(EbsAlert.ALERTDATE), fromDate, toDate);
+		}
+
+		else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
+			newEbsFilter = externalShareInfoService.buildLatestSurvToolShareDateFilter(
+					cq,
+					cb,
+					from,
+					ExternalShareInfo.EBS,
+					(latestShareDate) -> cb.between(latestShareDate, fromDate, toDateEndOfDay));
+		}
+		else {
+			newEbsFilter = cb.between(from.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
+		}
+
+		return newEbsFilter;
+	}
+
 	public List<Ebs> getByExternalId(String externalId) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -514,6 +559,16 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		}
 		if (CollectionUtils.isNotEmpty(ebsCriteria.getExcludedUuids())) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.not(from.get(AbstractDomainObject.UUID).in(ebsCriteria.getExcludedUuids())));
+		}
+		if (ebsCriteria.getNewEbsDateFrom() != null && ebsCriteria.getNewEbsDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					createNewEbsFilter(
+							ebsQueryContext,
+							DateHelper.getStartOfDay(ebsCriteria.getNewEbsDateFrom()),
+							DateHelper.getEndOfDay(ebsCriteria.getNewEbsDateTo()),
+							ebsCriteria.getNewEbsDateType()));
 		}
 
 		filter = CriteriaBuilderHelper.and(

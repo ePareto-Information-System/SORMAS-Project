@@ -6,8 +6,10 @@ import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.share.ExternalShareCriteria;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
+import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
 import de.symeda.sormas.api.utils.criteria.CriteriaWithDateType;
 
 import java.io.Serializable;
@@ -49,6 +51,13 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     private CommunityReferenceDto community;
     private TriagingDto triagingDto;
     private SignalVerificationDto signalVerificationDto;
+    private Date newEbsDateFrom;
+    private Date newEbsDateTo;
+    private Date creationDateFrom;
+    private Date creationDateTo;
+    private CriteriaDateType newEbsDateType;
+    // Used to re-construct whether users have filtered by epi weeks or dates
+    private DateFilterOption dateFilterOption = DateFilterOption.DATE;
 
 
     private Boolean userFilterIncluded = true;
@@ -409,6 +418,71 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
         this.responseStatus = responseStatus;
         return this;
     }
+
+    public EbsCriteria newEbsDateBetween(Date newEbsDateFrom, Date newEbsDateTo) {
+
+        this.newEbsDateFrom = newEbsDateFrom;
+        this.newEbsDateTo = newEbsDateTo;
+        return this;
+    }
+
+    /**
+     * @param newEbsDateTo
+     *            will automatically be set to the end of the day
+     */
+    public EbsCriteria newEbsDateBetween(Date newEbsDateFrom, Date newEbsDateTo, CriteriaDateType newEbsDateType) {
+
+        this.newEbsDateFrom = newEbsDateFrom;
+        this.newEbsDateTo = newEbsDateTo;
+        this.newEbsDateType = newEbsDateType;
+        return this;
+    }
+
+    public EbsCriteria newEbsDateFrom(Date newEbsDateFrom) {
+        setNewEbsDateFrom(newEbsDateFrom);
+        return this;
+    }
+
+    public Date getNewEbsDateFrom() {
+        return newEbsDateFrom;
+    }
+
+    public void setNewEbsDateFrom(Date newEbsDateFrom) {
+        this.newEbsDateFrom = newEbsDateFrom;
+    }
+
+    public Date getNewEbsDateTo() {
+        return newEbsDateTo;
+    }
+
+    public void setNewEbsDateTo(Date newEbsDateTo) {
+        this.newEbsDateTo = newEbsDateTo;
+    }
+
+    public CriteriaDateType getNewEbsDateType() {
+        return newEbsDateType;
+    }
+
+    public void setNewEbsDateType(CriteriaDateType newEbsDateType) {
+        this.newEbsDateType = newEbsDateType;
+    }
+
+
+
+    public EbsCriteria newEbsDateType(CriteriaDateType newEbsDateType) {
+        setNewEbsDateType(newEbsDateType);
+        return this;
+    }
+
+    public EbsCriteria dateFilterOption(DateFilterOption dateFilterOption) {
+        this.dateFilterOption = dateFilterOption;
+        return this;
+    }
+
+    public DateFilterOption getDateFilterOption() {
+        return dateFilterOption;
+    }
+
 
     @IgnoreForUrl
     public Set<String> getExcludedUuids() {

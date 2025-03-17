@@ -1,19 +1,32 @@
 package de.symeda.sormas.ui.ebs;
 
 
+import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.Field;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsIndexDto;
+import de.symeda.sormas.api.ebs.NewEbsDateType;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.utils.DateFilterOption;
+import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.EpiWeek;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateTypeHelper;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.*;
+
+import java.util.Date;
+
+import static de.symeda.sormas.ui.utils.LayoutUtil.filterLocs;
 
 ///*
 // * SORMAS® - Surveillance Outbreak Response Management & Analysis System
@@ -34,11 +47,15 @@ import de.symeda.sormas.ui.utils.*;
 public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 
 	private static final long serialVersionUID = -1366745065032487009L;
+	private static final String WEEK_AND_DATE_FILTER = "moreFilters";
 	protected EbsFilterForm() {
 		super(EbsCriteria.class,
 				EbsIndexDto.I18N_PREFIX,
 				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()));
 	}
+	private static final String MORE_FILTERS_HTML_LAYOUT = filterLocs(
+			WEEK_AND_DATE_FILTER
+	);
 	@Override
 	protected String[] getMainFilterLocators() {
 
@@ -47,10 +64,9 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 				EbsIndexDto.REGION,
 				EbsIndexDto.DISTRICT,
 				EbsIndexDto.COMMUNITY,
-				EbsIndexDto.REPORT_DATE_TIME,
 				EbsIndexDto.TRIAGING_DECISION,
 				EbsIndexDto.SIGNAL_CATEGORY,
-				EbsIndexDto.TRIAGE_DATE
+				WEEK_AND_DATE_FILTER
 		};
 	}
 
@@ -73,6 +89,17 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 		final ComboBox triagingField = addField(FieldConfiguration.pixelSized(EbsIndexDto.TRIAGING_DECISION, 140));
 		Field<?> triageDate = addField(FieldConfiguration.pixelSized(EbsIndexDto.TRIAGE_DATE, 200));
 		triageDate.removeAllValidators();
+	}
+
+	@Override
+	protected String createMoreFiltersHtmlLayout() {
+		return MORE_FILTERS_HTML_LAYOUT;
+	}
+
+	@Override
+	public void addMoreFilters(CustomLayout moreFiltersContainer) {
+		moreFiltersContainer.addComponent(buildWeekAndDateFilter(false),WEEK_AND_DATE_FILTER);
+
 	}
 
 
@@ -127,5 +154,73 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 		RegionReferenceDto region = criteria.getRegion();
 		DistrictReferenceDto district = criteria.getDistrict();
 		applyRegionAndDistrictFilterDependency(region, LocationDto.DISTRICT, district, LocationDto.COMMUNITY);
+		// Date/Epi week filter
+		HorizontalLayout dateFilterLayout = (HorizontalLayout) getMoreFiltersContainer().getComponent(WEEK_AND_DATE_FILTER);
+		@SuppressWarnings("unchecked")
+		EpiWeekAndDateFilterComponent<NewEbsDateType> weekAndDateFilter =
+				(EpiWeekAndDateFilterComponent<NewEbsDateType>) dateFilterLayout.getComponent(0);
+
+		weekAndDateFilter.getDateTypeSelector().setValue(criteria.getNewEbsDateType());
+		weekAndDateFilter.getDateFilterOptionFilter().setValue(criteria.getDateFilterOption());
+		Date newEbsDateFrom = criteria.getNewEbsDateFrom();
+		Date newEbsDateTo = criteria.getNewEbsDateTo();
+		if (newEbsDateFrom != null && newEbsDateTo != null) {
+			if (DateFilterOption.EPI_WEEK.equals(criteria.getDateFilterOption())) {
+				weekAndDateFilter.getWeekFromFilter().setValue(DateHelper.getEpiWeek(newEbsDateFrom));
+				weekAndDateFilter.getWeekToFilter().setValue(DateHelper.getEpiWeek(newEbsDateTo));
+			} else {
+				weekAndDateFilter.getDateFromFilter().setValue(criteria.getNewEbsDateFrom());
+				weekAndDateFilter.getDateToFilter().setValue(criteria.getNewEbsDateTo());
+			}
+		}
+	}
+
+	private HorizontalLayout buildWeekAndDateFilter(boolean isExternalShareEnabled) {
+
+		EpiWeekAndDateFilterComponent<CriteriaDateType> weekAndDateFilter = new EpiWeekAndDateFilterComponent<>(
+				false,
+				false,
+				I18nProperties.getString(Strings.infoEbsDate),
+				CriteriaDateTypeHelper.getTypes(NewEbsDateType.class, isExternalShareEnabled),
+				I18nProperties.getString(Strings.promptNewEbsDateType),
+				null,
+				this);
+		weekAndDateFilter.getWeekFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptEbsEpiWeekFrom));
+		weekAndDateFilter.getWeekToFilter().setInputPrompt(I18nProperties.getString(Strings.promptEbsEpiWeekTo));
+		weekAndDateFilter.getDateFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptEbsDateFrom));
+		weekAndDateFilter.getDateToFilter().setInputPrompt(I18nProperties.getString(Strings.promptDateTo));
+
+		addApplyHandler(e -> onApplyClick(weekAndDateFilter));
+
+		HorizontalLayout dateFilterRowLayout = new HorizontalLayout();
+		dateFilterRowLayout.setSpacing(true);
+		dateFilterRowLayout.setSizeUndefined();
+
+		dateFilterRowLayout.addComponent(weekAndDateFilter);
+
+		return dateFilterRowLayout;
+	}
+
+	private void onApplyClick(EpiWeekAndDateFilterComponent<CriteriaDateType> weekAndDateFilter) {
+		DateFilterOption dateFilterOption = (DateFilterOption) weekAndDateFilter.getDateFilterOptionFilter().getValue();
+		Date fromDate, toDate;
+		if (dateFilterOption == DateFilterOption.DATE) {
+			Date dateFrom = weekAndDateFilter.getDateFromFilter().getValue();
+			fromDate = dateFrom != null ? DateHelper.getStartOfDay(dateFrom) : null;
+			Date dateTo = weekAndDateFilter.getDateToFilter().getValue();
+			toDate = dateFrom != null ? DateHelper.getEndOfDay(dateTo) : null;
+		} else {
+			fromDate = DateHelper.getEpiWeekStart((EpiWeek) weekAndDateFilter.getWeekFromFilter().getValue());
+			toDate = DateHelper.getEpiWeekEnd((EpiWeek) weekAndDateFilter.getWeekToFilter().getValue());
+		}
+		if ((fromDate != null && toDate != null) || (fromDate == null && toDate == null)) {
+			EbsCriteria criteria = getValue();
+			CriteriaDateType newEbsDateType = (CriteriaDateType) weekAndDateFilter.getDateTypeSelector().getValue();
+
+			criteria.newEbsDateBetween(fromDate, toDate, newEbsDateType != null ? newEbsDateType : NewEbsDateType.REPORT);
+			criteria.dateFilterOption(dateFilterOption);
+		} else {
+			weekAndDateFilter.setNotificationsForMissingFilters();
+		}
 	}
 }

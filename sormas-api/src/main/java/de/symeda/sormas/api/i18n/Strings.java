@@ -980,6 +980,8 @@ public interface Strings {
 	String infoDownloadImportTemplate = "infoDownloadImportTemplate";
 	String infoDownloadImportTemplateXlsm = "infoDownloadImportTemplateXlsm";
 
+	String infoEbsDate = "infoEbsDate";
+
 	
 	String infoEditExportConfiguration = "infoEditExportConfiguration";
 	String infoEpiDataFieldsHint = "infoEpiDataFieldsHint";
@@ -1623,8 +1625,11 @@ public interface Strings {
 	String promptCampaignSearch = "promptCampaignSearch";
 	String promptCaseOrContactEventSearchField = "promptCaseOrContactEventSearchField";
 	String promptCasesDateFrom = "promptCasesDateFrom";
+	String promptEbsDateFrom = "promptEbsDateFrom";
 	String promptCasesEpiWeekFrom = "promptCasesEpiWeekFrom";
 	String promptCasesEpiWeekTo = "promptCasesEpiWeekTo";
+	String promptEbsEpiWeekFrom = "promptCasesEpiWeekFrom";
+	String promptEbsEpiWeekTo = "promptCasesEpiWeekTo";
 	String promptCasesSearchField = "promptCasesSearchField";
 	String promptContactDateFrom = "promptContactDateFrom";
 	String promptContactDateTo = "promptContactDateTo";
@@ -1680,6 +1685,7 @@ public interface Strings {
 	String promptImmunizationValidFrom = "promptImmunizationValidFrom";
 	String promptNamePhoneEmail = "promptNamePhoneEmail";
 	String promptNewCaseDateType = "promptNewCaseDateType";
+	String promptNewEbsDateType = "promptNewEbsDateType";
 	String promptPersonDuplicateSearchIdExternalId = "promptPersonDuplicateSearchIdExternalId";
 	String promptPersonsSearchField = "promptPersonsSearchField";
 	String promptPrescriptionTextFilter = "promptPrescriptionTextFilter";
