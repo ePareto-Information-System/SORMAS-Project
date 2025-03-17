@@ -190,7 +190,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			contentBinding.caseDataFacilityType,
 			contentBinding.caseDataHealthFacility,
 			initialHealthFacility,
-			null,
+			contentBinding.caseDataPointOfEntry,
 			null,
 			() -> Boolean.TRUE.equals(contentBinding.caseDataDifferentPlaceOfStayJurisdiction.getValue()));
 
@@ -370,8 +370,10 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		contentBinding.caseDataCaseOrigin.addValueChangedListener(e -> {
 			if (e.getValue() == CaseOrigin.IN_COUNTRY) {
 				contentBinding.personPassportNumber.setVisibility(GONE);
+				contentBinding.caseDataPointOfEntry.setVisibility(GONE);
 			} else if (e.getValue() == CaseOrigin.POINT_OF_ENTRY) {
 				contentBinding.personPassportNumber.setVisibility(VISIBLE);
+				contentBinding.caseDataPointOfEntry.setVisibility(VISIBLE);
 			}
 		});
 

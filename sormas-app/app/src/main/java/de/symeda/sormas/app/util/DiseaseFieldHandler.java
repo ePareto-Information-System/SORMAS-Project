@@ -3,9 +3,12 @@ package de.symeda.sormas.app.util;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -133,51 +136,39 @@ public class DiseaseFieldHandler {
 
 
     private void reorderFieldsForDisease(List<FormField> orderedFields, ViewGroup parent) {
-        Map<Integer, View> viewMap = new HashMap<>();
-        Map<String, Integer> resourceNameToId = new HashMap<>(); // Map for resource name to ID
+        // Create a lookup map for all views
+        Map<String, View> viewsByFieldName = new HashMap<>();
 
-        // Populate the viewMap with all views within parent
+        // Hide all views initially
         for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            viewMap.put(child.getId(), child);
+            View view = parent.getChildAt(i);
+            view.setVisibility(View.GONE);
 
-            // Log the resource name for each view ID
             try {
-                String resourceName = context.getResources().getResourceEntryName(child.getId());
-                resourceNameToId.put(resourceName, child.getId());
-                Log.d(TAG, "Mapped resource: " + resourceName + " to ID: " + child.getId());
+                String resourceName = context.getResources().getResourceEntryName(view.getId());
+                viewsByFieldName.put(resourceName, view);
             } catch (Resources.NotFoundException e) {
-                Log.e(TAG, "Could not find resource name for ID: " + child.getId());
+                Log.e(TAG, "Could not find resource name for ID: " + view.getId());
             }
         }
 
-        List<View> reorderedViews = new ArrayList<>();
-
-        // Loop through ordered fields and check if the corresponding view exists
+        // Now show only the views in orderedFields, in the specified order
         for (FormField field : orderedFields) {
-            int viewId = context.getResources().getIdentifier(field.getFieldName(), "id", context.getPackageName());
-            View view = viewMap.get(viewId);
+            String fieldName = field.getFieldName();
+            View view = viewsByFieldName.get(fieldName);
 
             if (view != null) {
-                Log.d(TAG, "View found for field: " + field.getFieldName() + " (ID: " + viewId + ")");
-                reorderedViews.add(view);
+                view.setVisibility(View.VISIBLE);
+                // Bring the view to front so it appears in the correct order visually
+                view.bringToFront();
             } else {
-                Log.d(TAG, "No matching View found for FormField with name: " + field.getFieldName());
+                Log.d(TAG, "No matching View found for FormField with name: " + fieldName);
             }
         }
 
-        // Clear parent and re-add views with their original layout parameters
-        parent.removeAllViews();
-        for (View view : reorderedViews) {
-            if (view.getParent() != null) {
-                ((ViewGroup) view.getParent()).removeView(view);
-            }
-            parent.addView(view, view.getLayoutParams());
-        }
+        parent.requestLayout();
+        parent.invalidate();
     }
-
-
-
 
     // Helper class to store view information
     private static class ViewInfo {

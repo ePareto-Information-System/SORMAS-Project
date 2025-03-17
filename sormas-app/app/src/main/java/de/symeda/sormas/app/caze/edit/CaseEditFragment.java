@@ -1019,6 +1019,13 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			confirmationDialog.show();
 		});
 
+		CaseOrigin caseOrigin = (CaseOrigin) contentBinding.caseDataCaseOrigin.getValue();
+		if (caseOrigin == CaseOrigin.IN_COUNTRY) {
+			contentBinding.caseDataPointOfEntry.setVisibility(GONE);
+		} else if (caseOrigin == CaseOrigin.POINT_OF_ENTRY) {
+			contentBinding.caseDataPointOfEntry.setVisibility(VISIBLE);
+		}
+
 		switch (record.getDisease()) {
 			case MEASLES:
 				handleMeasles();
