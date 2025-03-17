@@ -672,7 +672,8 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 			contentBinding.personProfessionOfPatientOther.setVisibility(proOther ? View.VISIBLE : View.GONE);
 
 		});
-		if (contentBinding.personProfessionOfPatientOther.getValue() != null){
+		String personProfessionOfPatientOther = contentBinding.personProfessionOfPatientOther.getValue();
+		if (personProfessionOfPatientOther != null && !personProfessionOfPatientOther.isEmpty()){
 			contentBinding.personProfessionOfPatientOther.setVisibility(View.VISIBLE);
 		}
 
