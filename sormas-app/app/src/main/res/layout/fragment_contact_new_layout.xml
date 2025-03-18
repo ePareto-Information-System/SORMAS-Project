@@ -75,7 +75,6 @@
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_otherName"
-                app:required="true"
                 app:value="@={data.person.otherName}"
                 style="@style/ControlSingleColumnStyle" />
 

@@ -162,6 +162,9 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 		contentBinding.contactContactTransmissionClassification.initializeSpinner(contactTransmissionClassificationsList);
 
 		ContactValidator.initializeLastContactDateValidation(record, contentBinding);
+
+		contentBinding.personApproximateAge.setVisibility(GONE);
+		contentBinding.personApproximateAgeType.setVisibility(GONE);
 	}
 
 	/*

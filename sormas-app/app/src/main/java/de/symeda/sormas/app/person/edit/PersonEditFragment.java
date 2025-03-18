@@ -295,6 +295,8 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.personDeathDate.initializeDateField(fragment.getFragmentManager());
 		contentBinding.personBurialDate.initializeDateField(fragment.getFragmentManager());
 		contentBinding.personResidenceSinceWhenInMonths.addValueChangedListener(field -> handlePersonResidenceSinceWhenInMonths(contentBinding));
+
+		contentBinding.personSalutation.setVisibility(GONE);
 	}
 
 	public static void setUpControlListeners(

@@ -369,6 +369,8 @@ public class ContactEditFragment extends BaseEditFragment<FragmentContactEditLay
 			.addValueChangedListener(e -> contentBinding.contactQuarantineExtended.setVisibility(record.isQuarantineExtended() ? VISIBLE : GONE));
 		contentBinding.contactQuarantineReduced
 			.addValueChangedListener(e -> contentBinding.contactQuarantineReduced.setVisibility(record.isQuarantineReduced() ? VISIBLE : GONE));
+
+		contentBinding.personApproximateAge.setVisibility(GONE);
 	}
 
 	/*
