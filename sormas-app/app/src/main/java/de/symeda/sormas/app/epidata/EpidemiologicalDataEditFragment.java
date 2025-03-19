@@ -542,6 +542,15 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 				YesNo value = (YesNo) field.getValue();
 				contentBinding.headingNameOfPlaceOfTravel.setVisibility(value == YesNo.YES ? VISIBLE : GONE);
 			});
+
+		if(caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			contentBinding.epiDataContactSickAnimals.addValueChangedListener( field -> {
+				YesNo value = (YesNo) field.getValue();
+				if(value == YesNo.YES){
+					contentBinding.epiDataIfYesSpecifySick.setVisibility(GONE);
+				}
+			});
+		}
 	}
 
 	@Override
