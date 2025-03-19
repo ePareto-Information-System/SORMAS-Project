@@ -387,7 +387,6 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 	 * By default (if {@code dateType} is null)
 	 */
 	public Predicate createNewEbsFilter(EbsQueryContext ebsQueryContext, Date fromDate, Date toDate, CriteriaDateType dateType) {
-
 		final CriteriaBuilder cb = ebsQueryContext.getCriteriaBuilder();
 		final From<?, Ebs> from = ebsQueryContext.getRoot();
 		final CriteriaQuery<?> cq = ebsQueryContext.getQuery();
@@ -396,29 +395,30 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		Date toDateEndOfDay = DateHelper.getEndOfDay(toDate);
 
 		Predicate newEbsFilter = null;
+
+		// The issue is here - using if/else if, but then starting a new if statement
 		if (dateType == NewEbsDateType.REPORT) {
-
 			newEbsFilter = cb.between(from.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
-
 		} else if (dateType == NewEbsDateType.TRIAGE_DECISION) {
 			newEbsFilter = cb.between(joins.getTriaging().get(Triaging.DATE_OF_DECISION), fromDate, toDate);
-		} else if (dateType ==  NewEbsDateType.VERIFIED_DATE) {
+		} else if (dateType == NewEbsDateType.VERIFIED_DATE) {
 			newEbsFilter = cb.between(joins.getSignalVerification().get(SignalVerification.VERIFICATION_COMPLETE_DATE), fromDate, toDate);
-		} else if (dateType == NewEbsDateType.ASSESSMENT_DATE) {
-			newEbsFilter = cb.between(joins.getRiskAssessment().get(RiskAssessment.ASSESSMENT_DATE), fromDate, toDate);
-		} else if (dateType == NewEbsDateType.ALERT_DATE) {
-			newEbsFilter = cb.between(joins.getEbsAlert().get(EbsAlert.ALERTDATE), fromDate, toDate);
 		}
-
-		else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
+		// This starts a new if statement, breaking the chain! It should be "else if" instead
+		else if (dateType == NewEbsDateType.ASSESSMENT_DATE) {
+			Join<Ebs, RiskAssessment> riskAssessmentJoin = from.join("riskAssessment", JoinType.LEFT);
+			newEbsFilter = cb.between(riskAssessmentJoin.get(RiskAssessment.ASSESSMENT_DATE), fromDate, toDate);
+		} else if (dateType == NewEbsDateType.ALERT_DATE) {
+			Join<Ebs, EbsAlert> alertJoin = from.join("ebsAlert", JoinType.LEFT);
+			newEbsFilter = cb.between(alertJoin.get(EbsAlert.ALERTDATE), fromDate, toDate);
+		} else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
 			newEbsFilter = externalShareInfoService.buildLatestSurvToolShareDateFilter(
 					cq,
 					cb,
 					from,
 					ExternalShareInfo.EBS,
 					(latestShareDate) -> cb.between(latestShareDate, fromDate, toDateEndOfDay));
-		}
-		else {
+		} else {
 			newEbsFilter = cb.between(from.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
 		}
 

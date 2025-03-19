@@ -51,6 +51,8 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     private CommunityReferenceDto community;
     private TriagingDto triagingDto;
     private SignalVerificationDto signalVerificationDto;
+    private RiskAssessmentDto riskAssessmentDto;
+    private EbsAlertDto ebsAlertDto;
     private Date newEbsDateFrom;
     private Date newEbsDateTo;
     private Date creationDateFrom;
@@ -195,6 +197,35 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
         this.signalVerificationDto = signalVerificationDto;
         return this;
     }
+
+    public RiskAssessmentDto getRiskAssessmentDto() {
+        return riskAssessmentDto;
+    }
+
+    public void setRiskAssessmentDto(RiskAssessmentDto riskAssessmentDto) {
+        this.riskAssessmentDto = riskAssessmentDto;
+    }
+
+
+    public EbsCriteria riskAssessmentDto(RiskAssessmentDto riskAssessmentDto) {
+        this.riskAssessmentDto = riskAssessmentDto;
+        return this;
+    }
+
+    public EbsAlertDto getEbsAlertDto() {
+        return ebsAlertDto;
+    }
+
+    public void setEbsAlertDto(EbsAlertDto ebsAlertDto) {
+        this.ebsAlertDto = ebsAlertDto;
+    }
+
+
+    public EbsCriteria ebsAlertDto(EbsAlertDto ebsAlertDto) {
+        this.ebsAlertDto = ebsAlertDto;
+        return this;
+    }
+
 
 
     //Work on this
