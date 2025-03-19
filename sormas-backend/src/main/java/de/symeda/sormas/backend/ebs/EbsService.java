@@ -404,9 +404,8 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		} else if (dateType == NewEbsDateType.VERIFIED_DATE) {
 			newEbsFilter = cb.between(joins.getSignalVerification().get(SignalVerification.VERIFICATION_COMPLETE_DATE), fromDate, toDate);
 		}
-		// This starts a new if statement, breaking the chain! It should be "else if" instead
 		else if (dateType == NewEbsDateType.ASSESSMENT_DATE) {
-			// Use a subquery to filter EBS records that have risk assessments in the date range
+			Join<Ebs, SignalVerification> signalVerification = joins.getSignalVerification();
 			Subquery<Long> subquery = cq.subquery(Long.class);
 			Root<RiskAssessment> subRoot = subquery.from(RiskAssessment.class);
 			subquery.select(subRoot.get(RiskAssessment.EBS).get("id"))
@@ -416,9 +415,10 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 									cb.between(subRoot.get(RiskAssessment.ASSESSMENT_DATE), fromDate, toDate)
 							)
 					);
-			newEbsFilter = cb.exists(subquery);
+			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
+			newEbsFilter = cb.and(cb.exists(subquery), verifiedPredicate);
 		} else if (dateType == NewEbsDateType.ALERT_DATE) {
-			// Use a subquery to filter EBS records that have alerts in the date range
+			Join<Ebs, SignalVerification> signalVerification = joins.getSignalVerification();
 			Subquery<Long> subquery = cq.subquery(Long.class);
 			Root<EbsAlert> subRoot = subquery.from(EbsAlert.class);
 			subquery.select(subRoot.get(EbsAlert.EBS).get("id"))
@@ -428,8 +428,9 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 									cb.between(subRoot.get(EbsAlert.ALERTDATE), fromDate, toDate)
 							)
 					);
-			newEbsFilter = cb.exists(subquery);
-		} else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
+			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
+			newEbsFilter = cb.and(cb.exists(subquery), verifiedPredicate);
+		}else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
 			newEbsFilter = externalShareInfoService.buildLatestSurvToolShareDateFilter(
 					cq,
 					cb,
