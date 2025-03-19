@@ -406,11 +406,29 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		}
 		// This starts a new if statement, breaking the chain! It should be "else if" instead
 		else if (dateType == NewEbsDateType.ASSESSMENT_DATE) {
-			Join<Ebs, RiskAssessment> riskAssessmentJoin = from.join("riskAssessment", JoinType.LEFT);
-			newEbsFilter = cb.between(riskAssessmentJoin.get(RiskAssessment.ASSESSMENT_DATE), fromDate, toDate);
+			// Use a subquery to filter EBS records that have risk assessments in the date range
+			Subquery<Long> subquery = cq.subquery(Long.class);
+			Root<RiskAssessment> subRoot = subquery.from(RiskAssessment.class);
+			subquery.select(subRoot.get(RiskAssessment.EBS).get("id"))
+					.where(
+							cb.and(
+									cb.equal(subRoot.get(RiskAssessment.EBS), from),
+									cb.between(subRoot.get(RiskAssessment.ASSESSMENT_DATE), fromDate, toDate)
+							)
+					);
+			newEbsFilter = cb.exists(subquery);
 		} else if (dateType == NewEbsDateType.ALERT_DATE) {
-			Join<Ebs, EbsAlert> alertJoin = from.join("ebsAlert", JoinType.LEFT);
-			newEbsFilter = cb.between(alertJoin.get(EbsAlert.ALERTDATE), fromDate, toDate);
+			// Use a subquery to filter EBS records that have alerts in the date range
+			Subquery<Long> subquery = cq.subquery(Long.class);
+			Root<EbsAlert> subRoot = subquery.from(EbsAlert.class);
+			subquery.select(subRoot.get(EbsAlert.EBS).get("id"))
+					.where(
+							cb.and(
+									cb.equal(subRoot.get(EbsAlert.EBS), from),
+									cb.between(subRoot.get(EbsAlert.ALERTDATE), fromDate, toDate)
+							)
+					);
+			newEbsFilter = cb.exists(subquery);
 		} else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
 			newEbsFilter = externalShareInfoService.buildLatestSurvToolShareDateFilter(
 					cq,
