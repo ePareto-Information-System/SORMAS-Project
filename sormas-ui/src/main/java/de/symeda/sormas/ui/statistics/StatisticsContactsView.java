@@ -744,7 +744,7 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 						"                    'downloadPNG',\n" +
 						"                    'downloadJPEG',\n" +
 						"                    'downloadPDF',\n" +
-						"                    'downloadSVG',\n" +
+//						"                    'downloadSVG',\n" +
 						"                    'downloadCSV',\n" +
 						"                    'downloadXLS'\n" +
 						"                ]\n" +

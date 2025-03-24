@@ -18,6 +18,7 @@
 package de.symeda.sormas.ui.highcharts;
 
 import com.vaadin.annotations.JavaScript;
+import com.vaadin.server.Page;
 import com.vaadin.ui.AbstractJavaScriptComponent;
 
 /**
@@ -50,12 +51,15 @@ import com.vaadin.ui.AbstractJavaScriptComponent;
  *         Based on https://github.com/xylo/highcharts-vaadin7 (Apache 2.0 license)
  */
 @JavaScript({
-	"jquery.slim.min.js",
-	"highcharts.js",
-	"highcharts-connector.js",
-	"highcharts-exporting.js",
-	"highcharts-export-data.js",
-	"highcharts-no-data.js" })
+		"jquery.slim.min.js",
+		"h-highcharts.js",
+		"highcharts-connector.js",
+		"h-exporting.js",
+		"h-export-data.js",
+		"h-accessibility.js",
+		"html2canvas.min.js",
+		"welhtmltoimagedownloader.js",
+		"jspdf.umd.min.js"})
 public class HighChart extends AbstractJavaScriptComponent {
 
 	private static final long serialVersionUID = 7738496276049495017L;
@@ -75,6 +79,8 @@ public class HighChart extends AbstractJavaScriptComponent {
 		setId(getDomId());
 		getState().setDomId(getDomId());
 		getState().setHcjs("");
+		String string = "localStorage.setItem('chartID', '" + getDomId() + "')";
+		Page.getCurrent().getJavaScript().execute(string);
 	}
 
 	/**

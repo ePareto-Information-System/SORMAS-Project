@@ -74,7 +74,7 @@ public abstract class ContactsEpiCurveBuilder {
 				"                    'downloadPNG',\n" + 
 				"                    'downloadJPEG',\n" + 
 				"                    'downloadPDF',\n" + 
-				"                    'downloadSVG',\n" + 
+//				"                    'downloadSVG',\n" +
 				"                    'downloadCSV',\n" + 
 				"                    'downloadXLS'\n" + 
 				"                ]\n" + 

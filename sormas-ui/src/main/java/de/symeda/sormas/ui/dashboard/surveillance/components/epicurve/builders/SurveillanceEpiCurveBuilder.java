@@ -75,7 +75,7 @@ public abstract class SurveillanceEpiCurveBuilder {
 			"                    'downloadPNG',\n" +
 			"                    'downloadJPEG',\n" +
 			"                    'downloadPDF',\n" +
-			"                    'downloadSVG',\n" +
+//			"                    'downloadSVG',\n" +
 			"                    'downloadCSV',\n" +
 			"                    'downloadXLS'\n" +
 			"                ]\n" +

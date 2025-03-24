@@ -164,7 +164,7 @@ public class CampaignDashboardDiagramComponent extends VerticalLayout {
 
 		hcjs.append(" buttons:{ contextButton:{ theme:{ fill: 'transparent' }, ")
 			.append(
-				"menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS'");
+				"menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'separator', 'downloadCSV', 'downloadXLS'");
 
 		hcjs.append(", 'separator', 'toggleLabels'");
 		if (totalValuesMap != null) {
