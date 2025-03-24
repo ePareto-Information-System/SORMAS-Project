@@ -18,6 +18,7 @@
 package de.symeda.sormas.ui.highcharts;
 
 import com.vaadin.annotations.JavaScript;
+import com.vaadin.server.Page;
 import com.vaadin.ui.AbstractJavaScriptComponent;
 
 /**
@@ -51,11 +52,14 @@ import com.vaadin.ui.AbstractJavaScriptComponent;
  */
 @JavaScript({
 	"jquery.slim.min.js",
-	"highcharts.js",
+	"h-highcharts.js",
 	"highcharts-connector.js",
-	"highcharts-exporting.js",
-	"highcharts-export-data.js",
-	"highcharts-no-data.js" })
+	"h-exporting.js",
+	"h-export-data.js",
+	"h-accessibility.js",
+	"html2canvas.min.js",
+"welhtmltoimagedownloader.js",
+"jspdf.umd.min.js"})
 public class HighChart extends AbstractJavaScriptComponent {
 
 	private static final long serialVersionUID = 7738496276049495017L;

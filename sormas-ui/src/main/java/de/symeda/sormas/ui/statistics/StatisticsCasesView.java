@@ -504,6 +504,8 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 		HighChart chart = new HighChart();
 		chart.setWidth(100, Unit.PERCENTAGE);
 		chart.setHeight(580, Unit.PIXELS);
+		String string = "localStorage.setItem('chartID', '" + chart.getDomId() + "')";
+		Page.getCurrent().getJavaScript().execute(string);
 
 		StringBuilder hcjs = new StringBuilder();
 		hcjs.append("var options = {").append("chart:{ " + " ignoreHiddenSeries: false, " + " type: '");
@@ -760,7 +762,7 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 						"                    'downloadPNG',\n" +
 						"                    'downloadJPEG',\n" +
 						"                    'downloadPDF',\n" +
-						"                    'downloadSVG',\n" +
+//						"                    'downloadSVG',\n" +
 						"                    'downloadCSV',\n" +
 						"                    'downloadXLS'\n" +
 						"                ]\n" +
