@@ -8,7 +8,7 @@ window.downloadHtmlAsImage = function (imageType = "image/png", fileName = "down
 
     let extension = ""
     switch (imageType) {
-        case "image/png":x
+        case "image/png":
             extension = ".png";
             break;
         case "image/jpeg":
