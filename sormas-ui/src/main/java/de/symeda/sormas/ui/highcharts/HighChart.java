@@ -79,6 +79,8 @@ public class HighChart extends AbstractJavaScriptComponent {
 		setId(getDomId());
 		getState().setDomId(getDomId());
 		getState().setHcjs("");
+		String string = "localStorage.setItem('chartID', '" + getDomId() + "')";
+		Page.getCurrent().getJavaScript().execute(string);
 	}
 
 	/**
