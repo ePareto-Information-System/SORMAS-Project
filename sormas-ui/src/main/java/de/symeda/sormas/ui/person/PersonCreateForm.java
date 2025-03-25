@@ -136,8 +136,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		TextField approximateAgeField = addField(PersonDto.APPROXIMATE_AGE, TextField.class);
 		ComboBox approximateAgeTypeField = addField(PersonDto.APPROXIMATE_AGE_TYPE, ComboBox.class);
 
-		/*setRequiredWithValidation(approximateAgeField, "Age is required.");
-		setRequiredWithValidation(approximateAgeTypeField, "Unit is required.");*/
 
 		setVisible(false, PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE);
 
@@ -687,15 +685,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	public void handleMeasles(){
 		setVisible(true, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
 		setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.EMAIL_ADDRESS, PersonDto.PHONE, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD);
-	}
-
-	private void setRequiredWithValidation(AbstractField<?> field, String errorMessage) {
-		field.setRequired(true);
-		field.addValidator(value -> {
-			if (value == null || value.toString().trim().isEmpty()) {
-				throw new Validator.InvalidValueException(errorMessage);
-			}
-		});
 	}
 
 }

@@ -28,6 +28,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.ui.afpimmunization.AfpImmunizationForm;
@@ -589,6 +590,22 @@ public class CaseController {
 	}
 
 	protected CaseDataDto saveCase(CaseDataDto cazeDto) {
+
+		PersonReferenceDto casePersonReference = cazeDto.getPerson();
+		if (casePersonReference == null || casePersonReference.getUuid() == null) {
+			Notification.show("Person details are required.", Notification.Type.ERROR_MESSAGE);
+			return null;
+		}
+		PersonDto personDto = FacadeProvider.getPersonFacade().getByUuid(casePersonReference.getUuid());
+
+		if (personDto != null) {
+			boolean missingApproximateAge = personDto.getApproximateAge() == null || personDto.getApproximateAge().toString().isEmpty();
+			boolean missingApproximateAgeType = personDto.getApproximateAgeType() == null;
+
+			if (missingApproximateAge || missingApproximateAgeType) {
+				throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.approximateAgeAndType));
+			}
+		}
 
 		if (cazeDto.getReInfection() == YesNoUnknown.NO || cazeDto.getReInfection() == YesNoUnknown.UNKNOWN) {
 			cazeDto.setPreviousInfectionDate(null);
