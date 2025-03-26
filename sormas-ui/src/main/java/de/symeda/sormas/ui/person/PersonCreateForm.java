@@ -138,6 +138,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 
 		setVisible(false, PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE);
+		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME);
 
 		if (showPersonSearchButton) {
 			searchPersonButton = createPersonSearchButton(PERSON_SEARCH_LOC);
