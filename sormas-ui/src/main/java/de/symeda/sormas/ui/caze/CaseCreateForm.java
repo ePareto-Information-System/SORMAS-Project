@@ -137,9 +137,9 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 			+ fluidRowLocs(POINT_OF_ENTRY_REGION, POINT_OF_ENTRY_DISTRICT)
 			+ fluidRowLocs(CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS)
 			+ fluidRowLocs(PERSON_INFO_LABEL)
-			+ fluidRowLocs(CaseDataDto.PERSON)
-            + fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
-            + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE);
+			+ fluidRowLocs(CaseDataDto.PERSON);
+            /*+ fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
+            + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE)*/
 	//@formatter:on
 
     public CaseCreateForm() {
@@ -651,12 +651,12 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
     }
 
     private void handleMonkeyPox(){
-        personCreateForm.hideFields();
+//        personCreateForm.hideFields();
         reportDate.setVisible(false);
         reportDate.setRequired(false);
         setRequired(true, CaseDataDto.HEALTH_FACILITY);
 
-        addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
+        /* addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
 
         Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
         coorLabel.addStyleName(H4);
@@ -679,7 +679,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
             FieldHelper.updateItems(districtOfResidence,
                     regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
 
-        });
+        });*/
     }
 
     private void updateDiseaseVariant(Disease disease) {

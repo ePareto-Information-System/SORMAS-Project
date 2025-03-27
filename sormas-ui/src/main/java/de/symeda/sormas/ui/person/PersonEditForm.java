@@ -237,7 +237,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			fluidRow(
 					fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
 					fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE))
-			+ fluidRowLocs(6, PersonDto.SEX);
+			+ fluidRowLocs(6, PersonDto.SEX)
+			+ fluidRowLocs(PersonDto.NATIONALITY, PersonDto.ETHNICITY, PersonDto.OCCUPATION_DETAILS)
+			+ fluidRowLocs(PersonDto.ADDRESS);
 
 	public final Label occupationHeader = new Label(I18nProperties.getString(Strings.headingPersonOccupation));
 	final Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
@@ -283,6 +285,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	public TextField homeaddrecreational;
 	public TextField passport;
 	public TextField nationalHealthId;
+	public TextField occuDetails;
 
 	private PersonDto person;
 	//@formatter:on
@@ -804,7 +807,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		TextArea additionalDetails = addField(PersonDto.ADDITIONAL_DETAILS, TextArea.class);
 		additionalDetails.setRows(6);
 
-		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
+		occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 		occuDetails.setCaption("Please Specify Occupation");
 
 //		ethnicity
@@ -1081,38 +1084,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		return HTML_LAYOUT;
 	}
 
-
-	/*@Override
-	protected String createHtmlLayout() {
-		String DISEASE_LAYOUT = "";
-
-		if (disease== null) {
-			return HTML_LAYOUT;
-		}
-
-		switch (disease) {
-			case GUINEA_WORM:
-				DISEASE_LAYOUT = GUINEA_WORM_LAYOUT;
-				break;
-			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
-				DISEASE_LAYOUT = IDSR_LAYOUT;
-				break;
-			case CSM:
-				DISEASE_LAYOUT = CSM_LAYOUT;
-				break;
-			case YELLOW_FEVER:
-				DISEASE_LAYOUT = YELLOW_FEVER_LAYOUT;
-				break;
-			case MONKEYPOX:
-				DISEASE_LAYOUT = MPOX_LAYOUT;
-			default:
-				DISEASE_LAYOUT = HTML_LAYOUT;
-				break;
-
-		}
-
-		return DISEASE_LAYOUT;
-	}*/
 
 	private void updateReadyOnlyApproximateAge() {
 		boolean readonly = false;

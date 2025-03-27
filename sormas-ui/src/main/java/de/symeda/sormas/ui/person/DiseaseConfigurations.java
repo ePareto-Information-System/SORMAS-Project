@@ -106,6 +106,8 @@ public abstract class DiseaseConfigurations extends AbstractEditForm<PersonDto> 
 
         CONFIGURATIONS.put(Disease.MONKEYPOX, form -> {
             form.personContactDetailsField.setVisible(false);
+            form.nationality.setVisible(true);
+            form.ethnicityField.setVisible(true);
         });
 
         CONFIGURATIONS.put(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, form -> {

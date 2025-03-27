@@ -331,19 +331,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     CLASSIFICATION_RULES_LOC,
                     CASE_CONFIRMATION_BASIS,
                     CASE_CLASSIFICATION_CALCULATE_BTN_LOC) +
-            fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY) +
-            fluidRowLocs(MPOX_COORDINATE_LABEL) +
-            fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT) +
             fluidRowLocs(CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT, CaseDataDto.RESPONSIBLE_COMMUNITY) +
             fluidRowLocs(CaseDataDto.HEALTH_FACILITY, CaseDataDto.HEALTH_FACILITY_DETAILS) +
             loc(NOTIFY_INVESTIGATE) +
             fluidRowLocs(CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
             loc(INDICATE_CATEGORY_LOC) +
-//            fluidRowLocs(PERSON_INFO_LABEL) +
-            fluidRowLocs(CaseDataDto.PERSON) +
-            fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY) +
-            fluidRowLocs(6, CaseDataDto.OCCUPATION)+
-            fluidRowLocs(CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE)+
             loc(INVESTIGATING_OFFICER_INFO) +
             fluidRowLocs(6, CaseDataDto.REPORTING_OFFICER_NAME) +
             fluidRowLocs(CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.INVESTIGATION_OFFICER_ADDRESS) +
@@ -1924,39 +1916,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     }
 
     private void handleMonkeyPox(){
-        personEditForm.showFields();
-        personEditForm.setFieldsEnabled();
 
         placeOfStayHeadingLabel.setVisible(false);
         createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
         setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
         createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H4, INDICATE_CATEGORY_LOC);
 
-        Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
-        coorLabel.addStyleName(H4);
-        getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
-
-        Label personInfoLabel = new Label(I18nProperties.getCaption(Captions.personInfoLabel));
-        personInfoLabel.addStyleName(H4);
-        getContent().addComponent(personInfoLabel, PERSON_INFO_LABEL);
-
-        addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
-        tfReportLon.setVisible(true);
-        tfReportLat.setVisible(true);
-
-        addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY, CaseDataDto.OCCUPATION);
-
-        ComboBox regionOfResidence  = addInfrastructureField(CaseDataDto.REGION_OF_RESIDENCE);
-        ComboBox districtOfResidence  = addInfrastructureField(CaseDataDto.DISTRICT_OF_RESIDENCE);
-
-        FieldHelper.updateItems(regionOfResidence, FacadeProvider.getRegionFacade().getAllActiveAsReference());
-
-        regionOfResidence.addValueChangeListener(e -> {
-            RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
-            FieldHelper.updateItems(districtOfResidence,
-                    regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
-
-        });
         createLabel(I18nProperties.getString(Strings.headingInvestigatingOfficer), H3, INVESTIGATING_OFFICER_INFO);
         reportingOfficerName.setCaption("Name");
         reportingOfficerTitle.setCaption("Job Title");

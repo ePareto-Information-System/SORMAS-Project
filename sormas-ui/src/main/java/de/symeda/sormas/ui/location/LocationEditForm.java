@@ -84,7 +84,9 @@ import de.symeda.sormas.ui.utils.PhoneNumberValidator;
 import de.symeda.sormas.ui.utils.StringToAngularLocationConverter;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
+import static de.symeda.sormas.ui.caze.CaseCreateForm.MPOX_COORDINATE_LABEL;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
+import static de.symeda.sormas.ui.utils.CssStyles.H4;
 import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
 public class LocationEditForm extends AbstractEditForm<LocationDto> {
@@ -117,6 +119,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			fluidRowLocs(6, LocationDto.NEAREST_HEALTH_FACILITY_TO_VILLAGE),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.CONTACT_PERSON_LAST_NAME),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_PHONE, LocationDto.CONTACT_PERSON_EMAIL),
+			fluidRowLocs(MPOX_COORDINATE_LABEL),
 			fluidRow(
 				//fluidColumnLoc(4, 0, LocationDto.DETAILS),
 				fluidColumnLoc(2, 0, GEO_BUTTONS_LOC),
@@ -144,6 +147,12 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 					fluidRowLocs(LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.AREA_TYPE) +
 					fluidRowLocs(LocationDto.POSTAL_CODE, LocationDto.LAND_MARK) +
 					fluidRowLocs(LocationDto.LATITUDE, LocationDto.LONGITUDE);
+
+	private static final String MONKEYPOX_LAYOUT =
+			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT) +
+			fluidRowLocs(LocationDto.LOCALITY, LocationDto.CITY) +
+			fluidRowLocs(MPOX_COORDINATE_LABEL) +
+			fluidRowLocs(LocationDto.LONGITUDE, LocationDto.LATITUDE);
 
 	private MapPopupView leafletMapPopup;
 	private ComboBox addressType;
@@ -178,6 +187,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private TextField residentialAddress;
 	private Disease caseDisease;
 	private ComboBox facilityName;
+	private TextField cityField;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
@@ -295,7 +305,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		additionalInformationField = addField(LocationDto.ADDITIONAL_INFORMATION, TextField.class);
 		additionalInformationField.setVisible(false);
 		addField(LocationDto.DETAILS, TextField.class);
-		TextField cityField = addField(LocationDto.CITY, TextField.class);
+		cityField = addField(LocationDto.CITY, TextField.class);
 		postalCodeField = addField(LocationDto.POSTAL_CODE, TextField.class);
 
 		residentialAddress = addField(LocationDto.RESIDENTIAL_ADDRESS, TextField.class);
@@ -873,6 +883,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 					return CSM_LAYOUT;
 				case YELLOW_FEVER:
 					return YELLOW_FEVER_LAYOUT;
+				case MONKEYPOX:
+					return MONKEYPOX_LAYOUT;
 				default:
 					return HTML_LAYOUT;
 			}
@@ -1050,6 +1062,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				houseNumberField.setCaption("House Number/Location");
 				break;
+			case MONKEYPOX:
+				handleMpox();
+				break;
 			default:
 				break;
 			}
@@ -1100,6 +1115,19 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		for (String field : disabledFields) {
 			disableField(field);
 		}
+	}
+
+	public void handleMpox() {
+		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LOCALITY);
+		setVisible(false, LocationDto.AREA_TYPE, LocationDto.POSTAL_CODE, LocationDto.COMMUNITY, LocationDto.HOUSE_NUMBER);
+		region.setCaption("Region of Residence");
+		district.setCaption("District of Residence");
+		cityField.setCaption("Community/Village");
+		localityField.setCaption("Address");
+
+		Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
+		coorLabel.addStyleName(H4);
+		getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
 	}
 
 	private void disableField(String field) {

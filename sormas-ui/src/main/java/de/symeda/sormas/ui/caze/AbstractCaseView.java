@@ -162,7 +162,6 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			|| viewConfiguration.getViewMode() != ViewMode.SIMPLE;
 		if (showExtraMenuEntries) {
 			Disease disease = caze.getDisease();
-			if (disease != Disease.MONKEYPOX) {
 				if (disease == Disease.FOODBORNE_ILLNESS) {
 					menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PATIENT_CLIENT), params);
 				} else if (disease == Disease.NEW_INFLUENZA) {
@@ -171,7 +170,6 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				else {
 					menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PERSON), params);
 				}
-			}
 			if (caze.getDisease() == Disease.CONGENITAL_RUBELLA) {
 				menu.addView(
 					MaternalHistoryView.VIEW_NAME,
