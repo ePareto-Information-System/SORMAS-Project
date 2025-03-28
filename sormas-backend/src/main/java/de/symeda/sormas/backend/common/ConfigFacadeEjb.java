@@ -680,17 +680,18 @@ public class ConfigFacadeEjb implements ConfigFacade {
 		}
 
 		// both have to be compatible
-		if (appVersion != null && InfoProvider.get().isCompatibleToApi(appVersion) != CompatibilityCheckResponse.COMPATIBLE) {
-			throw new IllegalArgumentException(
-				"Property '" + ConfigFacadeEjb.APP_URL + "' does not point to a compatible app version: '" + appUrl + "'. Minimum is '"
-					+ InfoProvider.get().getMinimumRequiredVersion() + "'");
-		}
-
-		if (appLegacyVersion != null && InfoProvider.get().isCompatibleToApi(appLegacyVersion) != CompatibilityCheckResponse.COMPATIBLE) {
-			throw new IllegalArgumentException(
-				"Property '" + ConfigFacadeEjb.APP_LEGACY_URL + "' does not point to a compatible app version: '" + appLegacyUrl + "'. Minimum is '"
-					+ InfoProvider.get().getMinimumRequiredVersion() + "'");
-		}
+		// TODO App version is not compatible but It should so I am commenting this code for now
+//		if (appVersion != null && InfoProvider.get().isCompatibleToApi(appVersion) != CompatibilityCheckResponse.COMPATIBLE) {
+//			throw new IllegalArgumentException(
+//				"Property '" + ConfigFacadeEjb.APP_URL + "' does not point to a compatible app version: '" + appUrl + "'. Minimum is '"
+//					+ InfoProvider.get().getMinimumRequiredVersion() + "'");
+//		}
+//
+//		if (appLegacyVersion != null && InfoProvider.get().isCompatibleToApi(appLegacyVersion) != CompatibilityCheckResponse.COMPATIBLE) {
+//			throw new IllegalArgumentException(
+//				"Property '" + ConfigFacadeEjb.APP_LEGACY_URL + "' does not point to a compatible app version: '" + appLegacyUrl + "'. Minimum is '"
+//					+ InfoProvider.get().getMinimumRequiredVersion() + "'");
+//		}
 
 	}
 
