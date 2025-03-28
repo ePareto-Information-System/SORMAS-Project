@@ -3390,6 +3390,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			// Log or display the restore location
 			Log.d("DatabaseRestore", "Restore successful from: " + fileName);
 			Toast.makeText(context, "Database restored from: " + fileName, Toast.LENGTH_LONG).show();
+			ConfigProvider.clearUserLogin();
+			ConfigProvider.clearPin();
 
 			return true; // Restore successful
 		} catch (IOException e) {
