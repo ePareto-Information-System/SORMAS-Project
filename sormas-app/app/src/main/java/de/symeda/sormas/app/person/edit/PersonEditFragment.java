@@ -687,11 +687,11 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.personEthnicity.setCaption("Ethnic Group");
 		contentBinding.personTelNumber.setCaption("Tel/Contact Number");
 
-		if (rootData instanceof Contact) {
+		/*if (rootData instanceof Contact) {
 			contentBinding.personApproximateAgeType.setVisibility(View.GONE);
 			contentBinding.personApproximateAge.setVisibility(View.GONE);
 			contentBinding.personApproximateAgeReferenceDate.setVisibility(View.GONE);
-		}
+		}*/
 
 	}
 

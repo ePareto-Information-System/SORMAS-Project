@@ -27,6 +27,8 @@
     <data>
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
         <import type="de.symeda.sormas.api.person.PersonAddressType" />
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Captions" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.location.Location" />
     </data>
@@ -190,6 +192,13 @@
                 app:value="@={data.details}" />
 
             <ImageView style="@style/FullHorizontalDividerStyle" />
+
+            <TextView
+                android:id="@+id/location_caseCoordLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getCaption(Captions.coorLabel)}"
+                style="@style/SubHeadingStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlButton
                 android:id="@+id/pick_gps_coordinates"
