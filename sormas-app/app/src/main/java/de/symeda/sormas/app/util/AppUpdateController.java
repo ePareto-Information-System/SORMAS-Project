@@ -31,6 +31,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.StrictMode;
+ import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
@@ -38,6 +39,7 @@ import androidx.fragment.app.FragmentActivity;
 import de.symeda.sormas.app.BuildConfig;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.SormasApplication;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
 
@@ -155,6 +157,8 @@ public class AppUpdateController {
 			// File is not present, attempt to download it
 			displayedDialog = buildDownloadAppDialog();
 		}
+
+		backupDatabase();
 
 		displayedDialog.show();
 	}
@@ -361,6 +365,8 @@ public class AppUpdateController {
 			return;
 		}
 
+		backupDatabase();
+
 		Intent installIntent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
 		installIntent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
 		installIntent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
@@ -377,6 +383,16 @@ public class AppUpdateController {
 		}
 		installIntent.setDataAndType(fileUri, "application/vnd.android.package-archive");
 		activity.startActivityForResult(installIntent, AppUpdateController.INSTALL_RESULT);
+	}
+
+	public void backupDatabase() {
+		Context context = activity.getBaseContext();
+		try {
+			DatabaseHelper.backupDatabase(context, "sormas.db");
+			Toast.makeText(context, "Backup successful", Toast.LENGTH_LONG).show();
+		} catch (Exception e) {
+			Toast.makeText(context, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
 	}
 
 	/**
