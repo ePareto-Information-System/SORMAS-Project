@@ -1232,7 +1232,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		MEASLES,
 		CORONAVIRUS,
-		NEONATAL_TETANUS
+		NEONATAL_TETANUS,
+		MONKEYPOX
 	})
 	@Outbreaks
 	private Date onsetDate;

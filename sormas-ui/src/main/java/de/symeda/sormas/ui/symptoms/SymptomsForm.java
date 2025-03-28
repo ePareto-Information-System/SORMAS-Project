@@ -1165,6 +1165,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			createLabel(I18nProperties.getString(Strings.headingPatientStatus), H3, PATIENT_STATUS);
 //            setVisible(false, OUTCOME);
             symptomsHeadingLabel.setVisible(true);
+			setVisible(true, ONSET_DATE);
             tickSymptomField.setVisible(true);
 
 			TextField symptomsSelectedOther = addField(SYMPTOMS_SELECTED_OTHER, TextField.class);
