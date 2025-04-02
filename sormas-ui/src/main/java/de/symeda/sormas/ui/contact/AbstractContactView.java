@@ -24,6 +24,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Component;
 
 import de.symeda.sormas.api.CoreFacade;
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.contact.ContactCriteria;
@@ -103,9 +104,12 @@ public abstract class AbstractContactView extends AbstractEditAllowedDetailView<
 			menu.addView(ContactVisitsView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.VISITS), params);
 		}
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW) || isFormAvailable(FormType.SAMPLE_EDIT)) {
-			menu.addView(ContactSamplesView.VIEW_NAME, I18nProperties.getCaption(Captions.Contact_samples), params);
+		if(!contact.getDisease().equals(Disease.FOODBORNE_ILLNESS) && !contact.getDisease().equals(Disease.NEONATAL_TETANUS)) {
+			if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW) || isFormAvailable(FormType.SAMPLE_EDIT)) {
+				menu.addView(ContactSamplesView.VIEW_NAME, I18nProperties.getCaption(Captions.Contact_samples), params);
+			}
 		}
+
 
 		setMainHeaderComponent(ControllerProvider.getContactController().getContactViewTitleLayout(contact));
 
