@@ -237,7 +237,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			fluidRow(
 					fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
 					fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE))
-			+ fluidRowLocs(6, PersonDto.SEX)
+			+ fluidRowLocs(PersonDto.SEX, PersonDto.PASSPORT_NUMBER)
 			+ fluidRowLocs(PersonDto.NATIONALITY, PersonDto.ETHNICITY, PersonDto.OCCUPATION_DETAILS)
 			+ fluidRowLocs(PersonDto.ADDRESS);
 
