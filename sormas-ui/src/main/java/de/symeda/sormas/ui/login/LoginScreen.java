@@ -62,6 +62,7 @@ public class LoginScreen extends CssLayout {
 
 	private static final String UTF_8 = "UTF-8";
 	private static final int LOGO_WIDTH = 250;
+	private static final int SPONSOR_WIDTHS = 320;
 	private static final int CUSTOM_BRANDING_LOGO_WIDTH = 150;
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -311,19 +312,9 @@ public class LoginScreen extends CssLayout {
 			CssStyles.style(poweredByLayout, CssStyles.VSPACE_TOP_1);
 		}
 
-		Image imgHzi = new Image(null, new ThemeResource("img/hzi-logo.png"));
-		imgHzi.setWidth(isCustomBranding ? CUSTOM_BRANDING_LOGO_WIDTH : LOGO_WIDTH, Unit.PIXELS);
-		poweredByLayout.addComponent(imgHzi);
-
-		Image imgSymeda = new Image(null, new ThemeResource("img/vitagroup-logo.png"));
-		imgSymeda.setWidth(isCustomBranding ? CUSTOM_BRANDING_LOGO_WIDTH : LOGO_WIDTH, Unit.PIXELS);
-		poweredByLayout.addComponent(imgSymeda);
-
-		if (!isCustomBranding) {
-			Image imgGiz = new Image(null, new ThemeResource("img/giz-logo.png"));
-			imgGiz.setWidth(isCustomBranding ? CUSTOM_BRANDING_LOGO_WIDTH : LOGO_WIDTH, Unit.PIXELS);
-			poweredByLayout.addComponent(imgGiz);
-		}
+		Image ghanaHealthImg = new Image(null, new ThemeResource("img/sponsors-logo.png"));
+		ghanaHealthImg.setWidth(isCustomBranding ? CUSTOM_BRANDING_LOGO_WIDTH : SPONSOR_WIDTHS, Unit.PIXELS);
+		poweredByLayout.addComponent(ghanaHealthImg);
 
 		loginSidebarLayout.addComponent(poweredByLayout);
 
