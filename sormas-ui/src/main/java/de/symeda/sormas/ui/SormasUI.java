@@ -145,7 +145,7 @@ public class SormasUI extends UI implements HasUserProvider, HasViewModelProvide
 		String currentLocation = "";
 		currentLocation = path.substring(path.indexOf("/") + 1, path.lastIndexOf("/"));
 		//check if location starts with cases
-		if(!currentLocation.startsWith("cases/")) {
+		if(!path.startsWith("cases/")) {
 			return "";
 		}
 		Disease currentDisease = FacadeProvider.getCaseFacade().getByUuid(caseUuid).getDisease();

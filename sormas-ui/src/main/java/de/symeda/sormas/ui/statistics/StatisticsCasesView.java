@@ -505,6 +505,7 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 		chart.setWidth(100, Unit.PERCENTAGE);
 		chart.setHeight(580, Unit.PIXELS);
 
+
 		StringBuilder hcjs = new StringBuilder();
 		hcjs.append("var options = {").append("chart:{ " + " ignoreHiddenSeries: false, " + " type: '");
 		switch (chartType) {
@@ -760,7 +761,7 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 						"                    'downloadPNG',\n" +
 						"                    'downloadJPEG',\n" +
 						"                    'downloadPDF',\n" +
-						"                    'downloadSVG',\n" +
+//						"                    'downloadSVG',\n" +
 						"                    'downloadCSV',\n" +
 						"                    'downloadXLS'\n" +
 						"                ]\n" +
