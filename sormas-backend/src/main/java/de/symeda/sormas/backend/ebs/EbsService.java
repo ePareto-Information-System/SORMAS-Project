@@ -332,7 +332,7 @@ public class EbsService extends AbstractCoreAdoService<Ebs> {
 			if (currentUser.getRegion() != null || currentUser.getDistrict() != null || currentUser.getCommunity() != null) {
 
 				// Apply region filter if exists
-				if (currentUser.getRegion() != null) {
+				if (currentUser.getRegion() != null && currentUser.getDistrict() != null) {
 					Predicate regionPredicate = cb.equal(ebsJoins.getLocation().get(Location.REGION).get(Region.ID), currentUser.getRegion().getId());
 					Predicate districtPredicate =
 						cb.equal(ebsJoins.getLocation().get(Location.DISTRICT).get(District.ID), currentUser.getDistrict().getId());
