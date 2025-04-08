@@ -186,7 +186,7 @@ public class SampleDataView extends AbstractSampleView {
 		layout.addComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
 //		}
 
-		if (UserProvider.getCurrent().hasUserRole(DefaultUserRole.ADMIN)) {
+		if (UserProvider.getCurrent().hasUserRole(DefaultUserRole.ADMIN.name().toLowerCase())) {
 			EntityAuditLogComponent userActivityList = new EntityAuditLogComponent(SampleDto.class, getSampleRef().getUuid());
 			userActivityList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(userActivityList, USER_ACTIVITY_LOG_LOC);

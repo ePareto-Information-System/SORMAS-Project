@@ -61,7 +61,13 @@ public class UserProvider {
 	}
 
 	public boolean hasUserRole(DefaultUserRole userRole) {
-		return getUser().getUserRoles().contains(userRole);
+		String defaultUSerRole = DefaultUserRole.ADMIN.name().toLowerCase();
+		return getUser().getUserRoles().stream().anyMatch(r -> r.getCaption().toLowerCase().equals(defaultUSerRole));
+	}
+
+
+	public boolean hasUserRole(String userRole) {
+		return getUser().getUserRoles().stream().anyMatch(r -> r.getCaption().toLowerCase().equals(userRole));
 	}
 
 	public Set<UserRight> getUserRights() {
