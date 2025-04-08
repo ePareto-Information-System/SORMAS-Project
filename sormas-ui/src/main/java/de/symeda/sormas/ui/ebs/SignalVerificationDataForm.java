@@ -372,6 +372,10 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 	}
 
 	private Date clearTime(Date date) {
+		if (date == null) {
+			return null;
+		}
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -379,6 +383,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar.getTime();
+
 	}
 
 	private void addVerificationDateValidator() {
