@@ -353,10 +353,8 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 				return;
 			if (value.equals(ManualScanningType.ONLINE)) {
 				sourceName.setCaption("NAME OF WEBSITE");
-				contactPhone.setVisible(false);
 			} else {
 				sourceName.setCaption("NAME OF MEDIA");
-				contactPhone.setVisible(false);
 			}
 		});
 		reportDate.addValueChangeListener(valueChangeEvent -> validateDateFields());
