@@ -2,9 +2,13 @@ package de.symeda.sormas.ui;
 
 import java.util.Set;
 
+import com.vaadin.ui.JavaScript;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.auditlog.AuditLogEntryDto;
+import de.symeda.sormas.api.auditlog.ChangeType;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.uuid.HasUuid;
 
 public class UiUtil {
 
@@ -29,5 +33,21 @@ public class UiUtil {
 
 	public static boolean enabled(Set<FeatureType> features) {
 		return FacadeProvider.getFeatureConfigurationFacade().areAllFeatureEnabled(features.toArray(new FeatureType[] {}));
+	}
+
+	public static void logActivity (HasUuid entity) {
+		logActivity(ChangeType.VIEW, entity);
+	}
+
+	public static void logActivity (ChangeType activityType, HasUuid entity) {
+		JavaScript.getCurrent().execute(
+				"setTimeout(function () {" +
+						"de.symeda.sormas.ui.auditlog.logActivity({" +
+						"activityType: '" + activityType.name() + "'," +
+						"clazz: '" + AuditLogEntryDto.getEntityClazz(entity.getClass()) + "'," +
+						"uuid: '" + entity.getUuid() + "'," +
+						"});" +
+						"}, 2000)"
+		);
 	}
 }

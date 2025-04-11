@@ -20,6 +20,14 @@
       <property name="serverName" value="localhost"></property>
     </jdbc-connection-pool>
     <jdbc-resource pool-name="sormasDataPool" jndi-name="jdbc/sormasDataPool"></jdbc-resource>
+    <jdbc-connection-pool datasource-classname="org.postgresql.xa.PGXADataSource" name="sormasAuditlogPool" validation-classname="org.glassfish.api.jdbc.validation.PostgresConnectionValidation" is-connection-validation-required="true" connection-validation-method="custom-validation" res-type="javax.sql.XADataSource">
+      <property name="user" value="sormas_user"></property>
+      <property name="password" value="sormas_user"></property>
+      <property name="portNumber" value="5432"></property>
+      <property name="databaseName" value="sormas_audit_187_db_main"></property>
+      <property name="serverName" value="localhost"></property>
+    </jdbc-connection-pool>
+    <jdbc-resource pool-name="sormasAuditlogPool" jndi-name="jdbc/AuditlogPool"></jdbc-resource>
     <mail-resource auth="false" host="localhost" from="info@sormas.org" user="user" jndi-name="mail/MailSession"></mail-resource>
     <custom-resource factory-class="org.glassfish.resources.custom.factory.PropertiesFactory" res-type="java.util.Properties" jndi-name="sormas/Properties">
       <property name="org.glassfish.resources.custom.factory.PropertiesFactory.fileName" value="${com.sun.aas.instanceRoot}/sormas.properties"></property>

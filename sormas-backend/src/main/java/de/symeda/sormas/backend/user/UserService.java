@@ -15,20 +15,14 @@
 package de.symeda.sormas.backend.user;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.FlushModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -846,6 +840,28 @@ public class UserService extends AdoServiceWithUserFilterAndJurisdiction<User> {
 	 */
 	private Predicate createDefaultFilter(CriteriaBuilder cb, From<?, ?> root) {
 		return cb.isTrue(root.get(User.ACTIVE));
+	}
+
+	public Long getIdByUsername(String username) {
+
+		java.math.BigInteger id = (java.math.BigInteger) em.createNativeQuery("SELECT " + User.ID + " FROM " + User.TABLE_NAME + " WHERE " + User.USER_NAME + " = :username")
+				.setParameter("username", username)
+				.setFlushMode(FlushModeType.COMMIT)
+				.getResultStream()
+				.findFirst()
+				.orElse(null);
+
+		return id == null ? null : Long.parseLong(id.toString());
+	}
+
+	public User getSystemUser() {
+		User systemUser = new User();
+		systemUser.setUserName("SYSTEM");
+		systemUser.setFirstName("SYSTEM");
+		systemUser.setLastName("");
+		systemUser.setUserRoles(new HashSet<UserRole>(0));
+
+		return systemUser;
 	}
 
 	public List<User> getAllActive() {

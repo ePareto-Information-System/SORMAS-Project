@@ -2710,5 +2710,10 @@ public interface Captions {
 	String WeeklyReportRegionSummary_officerZeroReports = "WeeklyReportRegionSummary.officerZeroReports";
 	String WeeklyReportRegionSummary_region = "WeeklyReportRegionSummary.region";
 	String weeklyReportsInDistrict = "weeklyReportsInDistrict";
+	String EntityAuditLogComponent_heading = "EntityAuditLogComponent.heading";
+	String EntityAuditLogComponent_noActivities = "EntityAuditLogComponent.noActivities";
+	String EntityAuditLogComponent_filters = "EntityAuditLogComponent.filters";
+	String EntityAuditLogComponent_showUniqueActivities = "EntityAuditLogComponent.showUniqueActivities";
+	String EntityAuditLogComponent_selectActivities = "EntityAuditLogComponent.selectActivities";
 	String years = "years";
 }

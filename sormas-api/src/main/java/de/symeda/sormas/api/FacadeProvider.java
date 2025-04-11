@@ -20,6 +20,7 @@ import javax.naming.NamingException;
 
 import de.symeda.sormas.api.action.ActionFacade;
 import de.symeda.sormas.api.audit.AuditLoggerFacade;
+import de.symeda.sormas.api.auditlog.AuditLogEntryFacade;
 import de.symeda.sormas.api.bagexport.BAGExportFacade;
 import de.symeda.sormas.api.campaign.CampaignFacade;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataFacade;
@@ -415,6 +416,10 @@ public class FacadeProvider {
 
 	public static QuarantineOrderFacade getQuarantineOrderFacade() {
 		return get().lookupEjbRemote(QuarantineOrderFacade.class);
+	}
+
+	public static AuditLogEntryFacade getAuditLogEntryFacade() {
+		return get().lookupEjbRemote(AuditLogEntryFacade.class);
 	}
 
 	public static EventDocumentFacade getEventDocumentFacade() {

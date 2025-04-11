@@ -1010,6 +1010,14 @@ public class UserFacadeEjb implements UserFacade {
 		}
 	}
 
+	public List<User> getByIds (List<Long> ids) {
+		return userService.getByIds(ids);
+	}
+
+	public User getSystemUser () {
+		return userService.getSystemUser();
+	}
+
 	@Override
 	@RightsAllowed(UserRight._USER_ROLE_VIEW)
 	public long getUserCountHavingRole(UserRoleReferenceDto userRoleRef) {
