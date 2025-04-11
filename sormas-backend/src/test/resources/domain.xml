@@ -24,7 +24,7 @@
       <property name="user" value="sormas_user"></property>
       <property name="password" value="sormas_user"></property>
       <property name="portNumber" value="5432"></property>
-      <property name="databaseName" value="sormas_audit_187_db_main"></property>
+      <property name="databaseName" value="sormas_audit_db"></property>
       <property name="serverName" value="localhost"></property>
     </jdbc-connection-pool>
     <jdbc-resource pool-name="sormasAuditlogPool" jndi-name="jdbc/AuditlogPool"></jdbc-resource>
