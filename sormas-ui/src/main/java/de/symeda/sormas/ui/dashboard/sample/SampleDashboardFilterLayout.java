@@ -15,24 +15,17 @@
 
 package de.symeda.sormas.ui.dashboard.sample;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.vaadin.v7.ui.ComboBox;
-
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.sample.SampleDashboardFilterDateType;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.ui.dashboard.components.DashboardFilterLayout;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
-import de.symeda.sormas.ui.utils.components.datetypeselector.DateTypeSelectorComponent;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SampleDashboardFilterLayout extends DashboardFilterLayout<SampleDashboardDataProvider> {
 
@@ -48,7 +41,7 @@ public class SampleDashboardFilterLayout extends DashboardFilterLayout<SampleDas
 		DISEASE_FILTER };
 
 	public SampleDashboardFilterLayout(SampleDashboardView dashboardView, SampleDashboardDataProvider dashboardDataProvider) {
-		super();
+		super(dashboardView, dashboardDataProvider, FILTERS);
 	}
 
 	@Override
@@ -58,7 +51,7 @@ public class SampleDashboardFilterLayout extends DashboardFilterLayout<SampleDas
 		//createDateTypeSelector();
 		createRegionFilter(I18nProperties.getDescription(Descriptions.sampleDashboardRegionFilter));
 		createDistrictFilter(I18nProperties.getDescription(Descriptions.sampleDashboardDistrictFilter));
-		createSampleMaterialFilter();
+//		createSampleMaterialFilter();
 		createDiseaseFilter();
 	}
 
@@ -76,61 +69,61 @@ public class SampleDashboardFilterLayout extends DashboardFilterLayout<SampleDas
 //		addCustomComponent(dateTypeSelectorComponent, DATE_TYPE_FILTER);
 //	}
 
-//	private void createDiseaseFilter() {
-//		ComboBox diseaseFilter = ComboBoxHelper.createComboBoxV7();
-//		diseaseFilter.setWidth(200, Unit.PIXELS);
-//		diseaseFilter.setInputPrompt(I18nProperties.getString(Strings.promptDisease));
-//		diseaseFilter.setDescription(I18nProperties.getDescription(Descriptions.sampleDashboardDiseaseFilter));
-//		List<?> availableDisease = FacadeProvider.getDiseaseConfigurationFacade().getAllDiseasesWithFollowUp(true, true, true);
-//
-//		diseaseFilter
-//			.addItems(Stream.concat(availableDisease.stream(), Stream.of(SampleDashboardCustomDiseaseFilter.values())).collect(Collectors.toList()));
-//		diseaseFilter.setValue(dashboardDataProvider.getDisease());
-//
-//		diseaseFilter.addValueChangeListener(e -> {
-//			Object filterValue = diseaseFilter.getValue();
-//			if (filterValue instanceof Disease) {
-//				dashboardDataProvider.setDisease((Disease) filterValue);
-//				dashboardDataProvider.setWithNoDisease(null);
-//			} else if (filterValue == SampleDashboardCustomDiseaseFilter.NO_DISEASE) {
-//				dashboardDataProvider.setDisease(null);
-//				dashboardDataProvider.setWithNoDisease(true);
-//			} else if (filterValue == null) {
-//				dashboardDataProvider.setDisease(null);
-//				dashboardDataProvider.setWithNoDisease(null);
-//			} else {
-//				throw new RuntimeException("Disease filter [" + filterValue + "] not handled!");
-//			}
-//		});
-//
-//		addCustomComponent(diseaseFilter, DISEASE_FILTER);
-//	}
-private void createDiseaseFilter() {
-	this.diseaseFilter = new ComboBox();
-	diseaseFilter.setWidth(200, Unit.PIXELS);
-	diseaseFilter.setInputPrompt(I18nProperties.getString(Strings.promptDisease));
-	diseaseFilter.addItems(FacadeProvider.getDiseaseConfigurationFacade().getAllDiseasesWithFollowUp(true, true, true).toArray());
-	diseaseFilter.setValue(dashboardDataProvider.getDisease());
-	diseaseFilter.addValueChangeListener(e -> {
-		dashboardDataProvider.setDisease((Disease) diseaseFilter.getValue());
-	});
-	addComponent(diseaseFilter);
-}
+	private void createDiseaseFilter() {
+		ComboBox diseaseFilter = ComboBoxHelper.createComboBoxV7();
+		diseaseFilter.setWidth(200, Unit.PIXELS);
+		diseaseFilter.setInputPrompt(I18nProperties.getString(Strings.promptDisease));
+		diseaseFilter.setDescription(I18nProperties.getDescription(Descriptions.sampleDashboardDiseaseFilter));
+		List<?> availableDisease = FacadeProvider.getDiseaseConfigurationFacade().getAllDiseasesWithFollowUp(true, true, true);
 
-	private void createSampleMaterialFilter() {
-		ComboBox sampleMaterialFilter = ComboBoxHelper.createComboBoxV7();
-		sampleMaterialFilter.setWidth(200, Unit.PIXELS);
-		sampleMaterialFilter.setInputPrompt(I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_MATERIAL));
-		sampleMaterialFilter
-			.addItems(Stream.of(SampleMaterial.values()).sorted(Comparator.comparing(SampleMaterial::toString)).collect(Collectors.toList()));
-		//sampleMaterialFilter.setValue(dashboardDataProvider.getSampleMaterial());
+		diseaseFilter
+			.addItems(Stream.concat(availableDisease.stream(), Stream.of(SampleDashboardCustomDiseaseFilter.values())).collect(Collectors.toList()));
+		diseaseFilter.setValue(dashboardDataProvider.getDisease());
 
-//		sampleMaterialFilter.addValueChangeListener(e -> {
-//			dashboardDataProvider.setSampleMaterial((SampleMaterial) sampleMaterialFilter.getValue());
-//		});
+		diseaseFilter.addValueChangeListener(e -> {
+			Object filterValue = diseaseFilter.getValue();
+			if (filterValue instanceof Disease) {
+				dashboardDataProvider.setDisease((Disease) filterValue);
+				dashboardDataProvider.setWithNoDisease(null);
+			} else if (filterValue == SampleDashboardCustomDiseaseFilter.NO_DISEASE) {
+				dashboardDataProvider.setDisease(null);
+				dashboardDataProvider.setWithNoDisease(true);
+			} else if (filterValue == null) {
+				dashboardDataProvider.setDisease(null);
+				dashboardDataProvider.setWithNoDisease(null);
+			} else {
+				throw new RuntimeException("Disease filter [" + filterValue + "] not handled!");
+			}
+		});
 
-		addCustomComponent(sampleMaterialFilter, SAMPLE_MATERIAL_FILTER);
+		addCustomComponent(diseaseFilter, DISEASE_FILTER);
 	}
+//private void createDiseaseFilter() {
+//	this.diseaseFilter = new ComboBox();
+//	diseaseFilter.setWidth(200, Unit.PIXELS);
+//	diseaseFilter.setInputPrompt(I18nProperties.getString(Strings.promptDisease));
+//	diseaseFilter.addItems(FacadeProvider.getDiseaseConfigurationFacade().getAllDiseasesWithFollowUp(true, true, true).toArray());
+//	diseaseFilter.setValue(dashboardDataProvider.getDisease());
+//	diseaseFilter.addValueChangeListener(e -> {
+//		dashboardDataProvider.setDisease((Disease) diseaseFilter.getValue());
+//	});
+//	addComponent(diseaseFilter);
+//}
+
+//	private void createSampleMaterialFilter() {
+//		ComboBox sampleMaterialFilter = ComboBoxHelper.createComboBoxV7();
+//		sampleMaterialFilter.setWidth(200, Unit.PIXELS);
+//		sampleMaterialFilter.setInputPrompt(I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_MATERIAL));
+//		sampleMaterialFilter
+//			.addItems(Stream.of(SampleMaterial.values()).sorted(Comparator.comparing(SampleMaterial::toString)).collect(Collectors.toList()));
+//		//sampleMaterialFilter.setValue(dashboardDataProvider.getSampleMaterial());
+//
+////		sampleMaterialFilter.addValueChangeListener(e -> {
+////			dashboardDataProvider.setSampleMaterial((SampleMaterial) sampleMaterialFilter.getValue());
+////		});
+//
+//		addCustomComponent(sampleMaterialFilter, SAMPLE_MATERIAL_FILTER);
+//	}
 
 	enum SampleDashboardCustomDiseaseFilter {
 

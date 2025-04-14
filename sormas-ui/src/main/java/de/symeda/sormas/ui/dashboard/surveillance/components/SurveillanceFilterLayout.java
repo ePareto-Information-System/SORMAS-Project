@@ -19,7 +19,8 @@ public class SurveillanceFilterLayout extends DashboardFilterLayout<DashboardDat
 		DATE_TYPE_SELECTOR_FILTER,
 		REGION_FILTER,
 		DISTRICT_FILTER,
-		CASE_CLASSIFICATION_FILTER };
+		CASE_CLASSIFICATION_FILTER
+	};
 	private DateTypeSelectorComponent dateTypeSelectorComponent;
 
 	public SurveillanceFilterLayout(SurveillanceDashboardView dashboardView, DashboardDataProvider dashboardDataProvider) {
@@ -31,7 +32,7 @@ public class SurveillanceFilterLayout extends DashboardFilterLayout<DashboardDat
 		super.populateLayout();
 		createDateTypeSelectorFilter();
 		createRegionAndDistrictFilter();
-		createCaseClassificationFilter();
+//		createCaseClassificationFilter();
 	}
 
 	public void addDateTypeValueChangeListener(Property.ValueChangeListener listener) {

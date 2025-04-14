@@ -1,9 +1,7 @@
 package de.symeda.sormas.ui.dashboard.samples;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Label;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.ComboBox;
@@ -14,7 +12,6 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
-import de.symeda.sormas.ui.dashboard.DashboardType;
 import de.symeda.sormas.ui.dashboard.components.DashboardFilterLayout;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.components.datetypeselector.DateTypeSelectorComponent;
@@ -43,9 +40,9 @@ public class SampleFilterLayout extends DashboardFilterLayout{
 		createDateFilters();
 		createInfoLabel();
 		createRegionAndDistrictFilter();
-		if (dashboardDataProvider.getDashboardType() == DashboardType.SAMPLES) {
-			createDiseaseFilter();
-		}
+//		if (dashboardDataProvider.getDashboardType() == DashboardType.SAMPLES) {
+//			createDiseaseFilter();
+//		}
 		//createResetAndApplyButtons();		
 	}
 	
