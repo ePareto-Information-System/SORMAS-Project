@@ -170,12 +170,12 @@ public class SampleDashboardMapComponent extends BaseDashboardMapComponent<Sampl
 			samplesLegendLayout.addComponent(legendEntry);
 		}
 
-		if (shouldShowEventParticipantSamples()) {
-			HorizontalLayout legendEntry = buildMarkerLegendEntry(
-				MarkerIcon.SAMPLE_EVENT_PARTICIPANT,
-				I18nProperties.getCaption(Captions.sampleDashboardEventParticipantSamples));
-			samplesLegendLayout.addComponent(legendEntry);
-		}
+//		if (shouldShowEventParticipantSamples()) {
+//			HorizontalLayout legendEntry = buildMarkerLegendEntry(
+//				MarkerIcon.SAMPLE_EVENT_PARTICIPANT,
+//				I18nProperties.getCaption(Captions.sampleDashboardEventParticipantSamples));
+//			samplesLegendLayout.addComponent(legendEntry);
+//		}
 
 		return Collections.singletonList(samplesLegendLayout);
 	}
