@@ -150,6 +150,16 @@ public class VisitEditForm extends AbstractEditForm<VisitDto> {
 		getFieldGroup().bind(symptomsForm, VisitDto.SYMPTOMS);
 		getContent().addComponent(symptomsForm, VisitDto.SYMPTOMS);
 
+		visitStatus.addValueChangeListener(e -> {
+			VisitStatus visitStatusValue = (VisitStatus) e.getProperty().getValue();
+			if (visitStatusValue != null && visitStatusValue == VisitStatus.COOPERATIVE) {
+				symptomsForm.setOnsetDateFieldValidation(true);
+			} else {
+				symptomsForm.setOnsetDateFieldValidation(false);
+			}
+		});
+
+
 		setRequired(true, VisitDto.VISIT_DATE_TIME, VisitDto.VISIT_STATUS);
 
 		initializeAccessAndAllowedAccesses();

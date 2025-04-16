@@ -1436,6 +1436,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		return label;
 	}
 
+	public void setOnsetDateFieldValidation(boolean onsetDateFieldValidation) {
+		setRequired(onsetDateFieldValidation, ONSET_DATE);
+	}
+
 	@Override
 	protected String createHtmlLayout() {
 		String SELECTED_HTML_LAYOUT = "";
