@@ -15,6 +15,15 @@
 
 package de.symeda.sormas.ui.dashboard;
 
+import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.NewCaseDateType;
+import de.symeda.sormas.api.dashboard.DashboardCriteria;
+import de.symeda.sormas.api.dashboard.NewDateFilterType;
+import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.SignalCategory;
+import de.symeda.sormas.api.event.RiskLevel;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.ui.dashboard.components.DashboardFilterLayout;
 import java.util.Date;
 
 import de.symeda.sormas.api.Disease;
@@ -31,6 +40,16 @@ public abstract class AbstractDashboardDataProvider<C extends BaseDashboardCrite
 	protected RegionReferenceDto region;
 	protected DistrictReferenceDto district;
 	protected Disease disease;
+	private DashboardType dashboardType;
+	private CommunityReferenceDto community;
+
+	private NewDateFilterType dateFilterType;
+	private EbsSourceType eventSourceTypeForFilter;
+	private SignalCategory signalCategory;
+	private RiskLevel riskLevel;
+	private EbsSourceType eventSourceType;
+	private CaseClassification caseClassification;
+	private NewCaseDateType newCaseDateType ;
 
 	public abstract void refreshData();
 
@@ -99,8 +118,91 @@ public abstract class AbstractDashboardDataProvider<C extends BaseDashboardCrite
 	public void setDisease(Disease disease) {
 		this.disease = disease;
 	}
+	public DashboardType getDashboardType() {
+		return dashboardType;
+	}
+
+	public void setDashboardType(DashboardType dashboardType) {
+		this.dashboardType = dashboardType;
+	}
+
+	public CommunityReferenceDto getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(CommunityReferenceDto community) {
+		this.community = community;
+	}
+
+	public NewDateFilterType getDateFilterType() {
+		return dateFilterType;
+	}
+
+	public void setDateFilterType(NewDateFilterType dateFilterType) {
+		this.dateFilterType = dateFilterType;
+	}
+
+	public EbsSourceType getEventSourceTypeForFilter() {
+		return eventSourceTypeForFilter;
+	}
+
+	public void setEventSourceTypeForFilter(EbsSourceType eventSourceTypeForFilter) {
+		this.eventSourceTypeForFilter = eventSourceTypeForFilter;
+	}
+
+	public SignalCategory getSignalCategory() {
+		return signalCategory;
+	}
+
+	public void setSignalCategory(SignalCategory signalCategory) {
+		this.signalCategory = signalCategory;
+	}
+
+	public RiskLevel getRiskLevel() {
+		return riskLevel;
+	}
+
+	public void setRiskLevel(RiskLevel riskLevel) {
+		this.riskLevel = riskLevel;
+	}
+	public void setEventSourceType(EbsSourceType eventSourceType) {
+		this.eventSourceType = eventSourceType;
+	}
+
+	public EbsSourceType getEventSourceType() {
+		return eventSourceType;
+	}
 
 
+	public CaseClassification getCaseClassification() {
+		return caseClassification;
+	}
 
+	public void setCaseClassification(CaseClassification caseClassification) {
+		this.caseClassification = caseClassification;
+	}
 
+	public NewCaseDateType getNewCaseDateType() {
+		if (newCaseDateType == null) {
+			return NewCaseDateType.MOST_RELEVANT;
+		}
+		return newCaseDateType;
+	}
+
+	public void setNewCaseDateType(NewCaseDateType newCaseDateType) {
+		this.newCaseDateType = newCaseDateType;
+	}
+	public DashboardCriteria getCriteria() {
+		return new DashboardCriteria().region(region)
+				.district(district)
+				.community(community)
+				.sourceInformation(eventSourceType)
+				.signalCategory(signalCategory)
+				.riskLevel(riskLevel)
+				.disease(disease)
+				.dateBetween(fromDate, toDate)
+				.caseClassification(caseClassification)
+				.newCaseDateType(newCaseDateType)
+				.dateFilterType(dateFilterType);
+	}
 }

@@ -3818,5 +3818,17 @@ public interface Captions {
 	String dashboardHotline = "dashboardHotline";
 	String dashboardNewSources = "dashboardNewSources";
     String ebsMap = "ebsMap";
+	String dashboardPendingTriage = "dashboardPendingTriage";
+	String dashboardPendingRiskAssessment = "dashboardPendingRiskAssessment";
+    String dashboadLessThanTwentyFourHrs = "dashboadLessThanTwentyFourHrs";
+	String dashboardTwentyFourToFortyEightHrs ="dashboardTwentyFourToFortyEightHrs";
+	String dashboardFortyEightHrs = "dashboardFortyEightHrs";
+	String dashboardCompletedTriage = "dashboardCompletedTriage";
+	String dashboardReferred = "dashboardReferred";
+	String dashboardProceedToVerification = "dashboardProceedToVerification" ;
+	String dashboardEbsOutcome = "dashboardEbsOutcome";
+    String dashboardSignalCategorySourceType = "dashboardSignalCategorySourceType";
+    String dashboardPendingSignalVerification = "dashboardPendingSignalVerification";
+	String dashboardSignalVerificationOutcome = "dashboardSignalVerificationOutcome";
 }
 

@@ -3,6 +3,12 @@ package de.symeda.sormas.api.dashboard;
 import de.symeda.sormas.api.EbsEvent;
 import de.symeda.sormas.api.ebs.EbsEventBurdenDto;
 import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.EbsTimeMetric;
+import de.symeda.sormas.api.ebs.RiskAssesment;
+import de.symeda.sormas.api.ebs.SignalCategory;
+import de.symeda.sormas.api.event.RiskLevel;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.user.UserRight;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -67,14 +73,35 @@ public interface DashboardFacade {
 	List<EbsEventBurdenDto> getEbsEventBurden(
 			RegionReferenceDto region,
 			DistrictReferenceDto district,
+			CommunityReferenceDto community,
 			Date fromDate,
 			Date toDate,
 			Date previousFromDate,
 			Date previousToDate,
 			CriteriaDateType newCaseDateType,
-			CaseClassification caseClassification);
+			SignalCategory signalCategory,
+			EbsSourceType ebsSourceType,
+			RiskLevel riskLevel
+			);
+
+
+	Map<EbsTimeMetric, Integer> getCompletedCountByEbsTimeMetric(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent);
 
 	Map<EbsSourceType, Integer> getSourceTypeCount(DashboardCriteria dashboardCriteria);
 
-    List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType ebsSourceType, EbsEvent ebsEvent);
+
+
+	Map<EbsTimeMetric, Integer> getPendingCountByTimeMetric(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent);
+
+	List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType ebsSourceType, EbsEvent ebsEvent);
+
+	List<EbsEventOutcomeDto> getEbsEventOutcome(EbsEvent ebsEvent);
+	Map<EbsSourceType, Map<SignalCategory, Integer>> getSignalCategoryBySourceType(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent);
+
+	Map<EbsTimeMetric, Map<RiskAssesment, Integer>> getRiskAssessmentTimeMetric(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent);
+
+	Map<EbsSourceType, Map<RiskAssesment, Integer>> getRiskAssessmentSourceType(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent);
+
+	Map<EbsSourceType, Map<EbsTimeMetric, Integer>> getTimeMetricBySourceType(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent);
+
 }

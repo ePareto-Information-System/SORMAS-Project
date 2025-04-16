@@ -5,8 +5,14 @@ import static de.symeda.sormas.api.dashboard.DashboardContactStatisticDto.CURREN
 import static de.symeda.sormas.api.dashboard.DashboardContactStatisticDto.PREVIOUS_CONTACTS;
 
 import de.symeda.sormas.api.dashboard.EbsCategoryOfInformantDto;
+import de.symeda.sormas.api.dashboard.EbsEventOutcomeDto;
 import de.symeda.sormas.api.ebs.EbsEventBurdenDto;
 import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.EbsTimeMetric;
+import de.symeda.sormas.api.ebs.RiskAssesment;
+import de.symeda.sormas.api.ebs.SignalCategory;
+import de.symeda.sormas.api.event.RiskLevel;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.backend.ebs.EbsEventFacadeEjb;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -821,12 +827,15 @@ public class DashboardFacadeEjb implements DashboardFacade {
 	public List<EbsEventBurdenDto> getEbsEventBurden(
 			RegionReferenceDto region,
 			DistrictReferenceDto district,
+			CommunityReferenceDto community,
 			Date fromDate,
 			Date toDate,
 			Date previousFromDate,
 			Date previousToDate,
 			CriteriaDateType newCaseDateType,
-			CaseClassification caseClassification) {
+			SignalCategory signalCategory,
+			EbsSourceType ebsSourceType,
+			RiskLevel riskLevel) {
 
 		//ebsEvents
 		List<EbsEvent> ebsEvents = ebsEventFacade.getAllEbsEvents();
@@ -834,9 +843,12 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		DashboardCriteria dashboardCriteria = new DashboardCriteria()
 				.region(region)
 				.district(district)
+				.community(community)
 				.newCaseDateType(newCaseDateType)
 				.dateBetween(fromDate, toDate)
-				.caseClassification(caseClassification)
+				.signalCategory(signalCategory)
+				.riskLevel(riskLevel)
+				.sourceInformation(ebsSourceType)
 				.previousDateFrom(previousFromDate)
 				.previousDateTo(previousToDate);
 
@@ -858,9 +870,9 @@ public class DashboardFacadeEjb implements DashboardFacade {
 			Long ebsEventCount = newEbsEventCountDb.getOrDefault(ebsEvent,0L);
 			Long previousEbsEventCount = previousEbsEventCountDb.getOrDefault(ebsEvent,0L);
 			Date lastReportDate = latestEbsEventsDate.getOrDefault(ebsEvent,new Date());
-			EbsSourceType ebsEventSource = latestEbsEventsSource.getOrDefault(ebsEvent,EbsSourceType.NONE);
+			EbsSourceType ebsEventSource = latestEbsEventsSource.getOrDefault(ebsEvent,null);
 			District lastReportedDistrict = lastReportedDistricts.getOrDefault(ebsEvent, null);
-			String lastReportedDistrictName = lastReportedDistrict == null ? "" : lastReportedDistrict.getName();
+			String lastReportedDistrictName = lastReportedDistrict == null ? "None" : lastReportedDistrict.getName();
 
 			return new EbsEventBurdenDto(
 					ebsEvent,
@@ -882,11 +894,56 @@ public class DashboardFacadeEjb implements DashboardFacade {
 	}
 
 	@Override
+	public List<EbsEventOutcomeDto> getEbsEventOutcome(
+		 EbsEvent ebsEvent){
+
+		DashboardCriteria dashboardCriteria = new DashboardCriteria();
+		return dashboardService.getEbsEventOutcome(dashboardCriteria,ebsEvent);
+	}
+
+	@Override
+	@RightsAllowed({
+			UserRight._DASHBOARD_EBS_VIEW
+	})
+	public Map<EbsTimeMetric, Integer> getPendingCountByTimeMetric(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent){
+		return dashboardService.getPendingCountByEbsTimeMetric(dashboardCriteria,ebsEvent);
+	}
+
+	@Override
+	@RightsAllowed({
+			UserRight._DASHBOARD_EBS_VIEW
+	})
+	public Map<EbsTimeMetric, Integer> getCompletedCountByEbsTimeMetric(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent){
+		return dashboardService.getCompletedCountByEbsTimeMetric(dashboardCriteria,ebsEvent);
+	}
+
+
+	@Override
 	@RightsAllowed({
 			UserRight._DASHBOARD_EBS_VIEW
 	})
 	public Map<EbsSourceType, Integer> getSourceTypeCount(DashboardCriteria dashboardCriteria) {
 		return dashboardService.getSourceTypeCount(dashboardCriteria);
+	}
+
+	@Override
+	public Map<EbsSourceType, Map<SignalCategory, Integer>> getSignalCategoryBySourceType(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent) {
+		return dashboardService.getSignalCategoryBySourceType(dashboardCriteria,ebsEvent);
+	}
+
+	@Override
+	public Map<EbsTimeMetric, Map<RiskAssesment, Integer>> getRiskAssessmentTimeMetric(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent) {
+		return dashboardService.getRiskAssessmentCountByTimeMetric(dashboardCriteria,ebsEvent);
+	}
+
+	@Override
+	public Map<EbsSourceType, Map<RiskAssesment, Integer>> getRiskAssessmentSourceType(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent) {
+		return dashboardService.getRiskAssessmentBySourceType(dashboardCriteria,ebsEvent);
+	}
+
+	@Override
+	public Map<EbsSourceType, Map<EbsTimeMetric, Integer>> getTimeMetricBySourceType(DashboardCriteria dashboardCriteria, EbsEvent ebsEvent) {
+		return dashboardService.getTimeMetricBySourceType(dashboardCriteria,ebsEvent);
 	}
 
 	@LocalBean

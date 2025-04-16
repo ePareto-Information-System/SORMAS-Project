@@ -1618,6 +1618,8 @@ public interface Strings {
 	String promptActionEpiWeekTo = "promptActionEpiWeekTo";
 	String promptAllAreas = "promptAllAreas";
 	String promptAllCommunities = "promptAllCommunities";
+	String promptAllRiskLevels = "promptAllRiskLevels";
+	String promptAllSignalCategories = "promptAllSignalCategories";
 	String promptAllDistricts = "promptAllDistricts";
 	String promptAllRegions = "promptAllRegions";
 	String promptArea = "promptArea";
@@ -1781,4 +1783,5 @@ public interface Strings {
 	String messageTriagingSavedShort = "messageTriagingSavedShort";
 	String messageAlertSavedShort = "messageAlertSavedShort";
 	String messageSignalVerificationSavedShort = "messageSignalVerificationSavedShort";
+    String promptAllSourceTypes = "promptAllSourceTypes";
 }

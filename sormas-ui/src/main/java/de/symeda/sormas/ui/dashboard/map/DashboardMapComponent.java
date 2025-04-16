@@ -54,7 +54,6 @@ import de.symeda.sormas.api.caze.CaseFacade;
 import de.symeda.sormas.api.caze.MapCaseDto;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.MapContactDto;
-import de.symeda.sormas.api.dashboard.DashboardCriteria;
 import de.symeda.sormas.api.dashboard.DashboardEventDto;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.geo.GeoLatLon;
@@ -275,7 +274,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			showUnconfirmedContacts = true;
 			showEbsEvents = false;
 		}
-		else if (dashboardDataProvider.getDashboardType() == DashboardType.EBS) {
+		else if (dashboardDataProvider.getDashboardType() == DashboardType.EVENTS) {
 			map.setZoom(6);
 			showCases = false;
 			caseClassificationOption = null;
@@ -555,7 +554,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			showUnconfirmedContacts = true;
 		}
 
-		else if (dashboardDataProvider.getDashboardType() == DashboardType.EBS) {
+		else if (dashboardDataProvider.getDashboardType() == DashboardType.EVENTS) {
 			map.setZoom(6);
 			showCases = false;
 			caseClassificationOption = null;
@@ -748,7 +747,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			mapLabel.setValue(I18nProperties.getCaption(Captions.diseaseDetailMap));
 			CssStyles.style(mapLabel, CssStyles.H4, CssStyles.VSPACE_4, CssStyles.VSPACE_NONE);
 		}
-		else if (dashboardDataProvider.getDashboardType() == DashboardType.EBS) {
+		else if (dashboardDataProvider.getDashboardType() == DashboardType.EVENTS) {
 			mapLabel.setValue(I18nProperties.getCaption(Captions.ebsMap));
 			CssStyles.style(mapLabel, CssStyles.H4, CssStyles.VSPACE_4, CssStyles.VSPACE_NONE);
 		}

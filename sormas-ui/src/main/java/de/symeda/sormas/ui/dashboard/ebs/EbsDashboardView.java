@@ -38,13 +38,13 @@ public class EbsDashboardView extends AbstractDashboardView {
 
 	public EbsDashboardView() {
 		//super(VIEW_NAME);
-		super(VIEW_NAME, DashboardType.EBS);
+		super(VIEW_NAME, DashboardType.EVENTS);
 
 		//dashboardDataProvider = new DashboardDataProvider();
 		
 		dashboardDataProvider = new DashboardDataProvider(NewCaseDateType.class);
 		if (dashboardDataProvider.getDashboardType() == null) {
-			dashboardDataProvider.setDashboardType(DashboardType.EBS);
+			dashboardDataProvider.setDashboardType(DashboardType.EVENTS);
 		}
 		if (DashboardType.CONTACTS.equals(dashboardDataProvider.getDashboardType())) {
 			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
@@ -57,7 +57,7 @@ public class EbsDashboardView extends AbstractDashboardView {
 		});
 		dashboardLayout.addComponent(filterLayout);
 
-		dashboardSwitcher.setValue(DashboardType.EBS);
+		dashboardSwitcher.setValue(DashboardType.EVENTS);
 		dashboardSwitcher.addValueChangeListener(e -> {
 			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
 			navigateToDashboardView(e);

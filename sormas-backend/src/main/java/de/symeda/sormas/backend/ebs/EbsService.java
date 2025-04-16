@@ -437,63 +437,63 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 	 * Creates a filter that checks whether the Ebs has "started" within the time frame specified by {@code fromDate} and {@code toDate}.
 	 * By default (if {@code dateType} is null)
 	 */
-	public Predicate createNewEbsFilter(EbsQueryContext ebsQueryContext, Date fromDate, Date toDate, CriteriaDateType dateType) {
-		final CriteriaBuilder cb = ebsQueryContext.getCriteriaBuilder();
-		final From<?, Ebs> from = ebsQueryContext.getRoot();
-		final CriteriaQuery<?> cq = ebsQueryContext.getQuery();
-		final EbsJoins joins = ebsQueryContext.getJoins();
-
-		Date toDateEndOfDay = DateHelper.getEndOfDay(toDate);
-
-		Predicate newEbsFilter = null;
-
-		// The issue is here - using if/else if, but then starting a new if statement
-		if (dateType == NewEbsDateType.REPORT) {
-			newEbsFilter = cb.between(from.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
-		} else if (dateType == NewEbsDateType.TRIAGE_DECISION) {
-			newEbsFilter = cb.between(joins.getTriaging().get(Triaging.DATE_OF_DECISION), fromDate, toDate);
-		} else if (dateType == NewEbsDateType.VERIFIED_DATE) {
-			newEbsFilter = cb.between(joins.getSignalVerification().get(SignalVerification.VERIFICATION_COMPLETE_DATE), fromDate, toDate);
-		}
-		else if (dateType == NewEbsDateType.ASSESSMENT_DATE) {
-			Join<Ebs, SignalVerification> signalVerification = joins.getSignalVerification();
-			Subquery<Long> subquery = cq.subquery(Long.class);
-			Root<RiskAssessment> subRoot = subquery.from(RiskAssessment.class);
-			subquery.select(subRoot.get(RiskAssessment.EBS).get("id"))
-					.where(
-							cb.and(
-									cb.equal(subRoot.get(RiskAssessment.EBS), from),
-									cb.between(subRoot.get(RiskAssessment.ASSESSMENT_DATE), fromDate, toDate)
-							)
-					);
-			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
-			newEbsFilter = cb.and(cb.exists(subquery), verifiedPredicate);
-		} else if (dateType == NewEbsDateType.ALERT_DATE) {
-			Join<Ebs, SignalVerification> signalVerification = joins.getSignalVerification();
-			Subquery<Long> subquery = cq.subquery(Long.class);
-			Root<EbsAlert> subRoot = subquery.from(EbsAlert.class);
-			subquery.select(subRoot.get(EbsAlert.EBS).get("id"))
-					.where(
-							cb.and(
-									cb.equal(subRoot.get(EbsAlert.EBS), from),
-									cb.between(subRoot.get(EbsAlert.ALERTDATE), fromDate, toDate)
-							)
-					);
-			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
-			newEbsFilter = cb.and(cb.exists(subquery), verifiedPredicate);
-		}else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
-			newEbsFilter = externalShareInfoService.buildLatestSurvToolShareDateFilter(
-					cq,
-					cb,
-					from,
-					ExternalShareInfo.EBS,
-					(latestShareDate) -> cb.between(latestShareDate, fromDate, toDateEndOfDay));
-		} else {
-			newEbsFilter = cb.between(from.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
-		}
-
-		return newEbsFilter;
-	}
+//	public Predicate createNewEbsFilter(EbsQueryContext ebsQueryContext, Date fromDate, Date toDate, CriteriaDateType dateType) {
+//		final CriteriaBuilder cb = ebsQueryContext.getCriteriaBuilder();
+//		final From<?, Ebs> from = ebsQueryContext.getRoot();
+//		final CriteriaQuery<?> cq = ebsQueryContext.getQuery();
+//		final EbsJoins joins = ebsQueryContext.getJoins();
+//
+//		Date toDateEndOfDay = DateHelper.getEndOfDay(toDate);
+//
+//		Predicate newEbsFilter = null;
+//
+//		// The issue is here - using if/else if, but then starting a new if statement
+//		if (dateType == NewEbsDateType.REPORT) {
+//			newEbsFilter = cb.between(from.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
+//		} else if (dateType == NewEbsDateType.TRIAGE_DECISION) {
+//			newEbsFilter = cb.between(joins.getTriaging().get(Triaging.DATE_OF_DECISION), fromDate, toDate);
+//		} else if (dateType == NewEbsDateType.VERIFIED_DATE) {
+//			newEbsFilter = cb.between(joins.getSignalVerification().get(SignalVerification.VERIFICATION_COMPLETE_DATE), fromDate, toDate);
+//		}
+//		else if (dateType == NewEbsDateType.ASSESSMENT_DATE) {
+//			Join<Ebs, SignalVerification> signalVerification = joins.getSignalVerification();
+//			Subquery<Long> subquery = cq.subquery(Long.class);
+//			Root<RiskAssessment> subRoot = subquery.from(RiskAssessment.class);
+//			subquery.select(subRoot.get(RiskAssessment.EBS).get("id"))
+//					.where(
+//							cb.and(
+//									cb.equal(subRoot.get(RiskAssessment.EBS), from),
+//									cb.between(subRoot.get(RiskAssessment.ASSESSMENT_DATE), fromDate, toDate)
+//							)
+//					);
+//			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
+//			newEbsFilter = cb.and(cb.exists(subquery), verifiedPredicate);
+//		} else if (dateType == NewEbsDateType.ALERT_DATE) {
+//			Join<Ebs, SignalVerification> signalVerification = joins.getSignalVerification();
+//			Subquery<Long> subquery = cq.subquery(Long.class);
+//			Root<EbsAlert> subRoot = subquery.from(EbsAlert.class);
+//			subquery.select(subRoot.get(EbsAlert.EBS).get("id"))
+//					.where(
+//							cb.and(
+//									cb.equal(subRoot.get(EbsAlert.EBS), from),
+//									cb.between(subRoot.get(EbsAlert.ALERTDATE), fromDate, toDate)
+//							)
+//					);
+//			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
+//			newEbsFilter = cb.and(cb.exists(subquery), verifiedPredicate);
+//		}else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
+//			newEbsFilter = externalShareInfoService.buildLatestSurvToolShareDateFilter(
+//					cq,
+//					cb,
+//					from,
+//					ExternalShareInfo.EBS,
+//					(latestShareDate) -> cb.between(latestShareDate, fromDate, toDateEndOfDay));
+//		} else {
+//			newEbsFilter = cb.between(from.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
+//		}
+//
+//		return newEbsFilter;
+//	}
 
 	public List<Ebs> getByExternalId(String externalId) {
 
@@ -671,25 +671,25 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		Predicate onsetDateFilter = cb.between(ebs.get(Ebs.DATE_ONSET), fromDate, toDateEndOfDay);
 		Predicate reportDateFilter = cb.between(ebs.get(Ebs.REPORT_DATE_TIME), fromDate, toDateEndOfDay);
 
-		Predicate newCaseFilter = null;
+		Predicate newEbsEventFilter = null;
 		if (dateType == null || dateType == NewCaseDateType.MOST_RELEVANT) {
-			newCaseFilter = cb.or(onsetDateFilter, cb.and(cb.isNull(ebs.get(Ebs.DATE_ONSET)), reportDateFilter));
+			newEbsEventFilter = cb.or(onsetDateFilter, cb.and(cb.isNull(ebs.get(Ebs.DATE_ONSET)), reportDateFilter));
 		} else if (dateType == NewCaseDateType.ONSET) {
-			newCaseFilter = onsetDateFilter;
+			newEbsEventFilter = onsetDateFilter;
 
 		} else if (dateType == NewCaseDateType.REPORT) {
 
-			newCaseFilter = cb.between(ebs.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
+			newEbsEventFilter = cb.between(ebs.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
 
 		}
 		else if (dateType == NewCaseDateType.CREATION) {
-			newCaseFilter = cb.between(ebs.get(Case.CREATION_DATE), fromDate, toDate);
+			newEbsEventFilter = cb.between(ebs.get(Case.CREATION_DATE), fromDate, toDate);
 		}
 		else {
-			newCaseFilter = reportDateFilter;
+			newEbsEventFilter = reportDateFilter;
 		}
 
-		return newCaseFilter;
+		return newEbsEventFilter;
 	}
 
 

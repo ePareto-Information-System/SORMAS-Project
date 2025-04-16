@@ -14,6 +14,10 @@
  */
 package de.symeda.sormas.backend.ebs;
 
+import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.SignalCategory;
+import de.symeda.sormas.api.event.RiskLevel;
+import java.util.Arrays;
 import static java.util.Objects.isNull;
 
 import java.sql.Timestamp;
@@ -52,7 +56,6 @@ import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.ebs.SignalVerificationDto;
 import de.symeda.sormas.api.ebs.TriagingDto;
-import de.symeda.sormas.backend.event.EventParticipant;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -77,23 +80,17 @@ import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.sormastosormas.ShareTreeCriteria;
-import de.symeda.sormas.api.sormastosormas.SormasToSormasException;
-import de.symeda.sormas.api.sormastosormas.SormasToSormasRuntimeException;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
-import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.externalsurveillancetool.ExternalSurveillanceToolGatewayFacadeEjb.ExternalSurveillanceToolGatewayFacadeEjbLocal;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -430,6 +427,22 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	public long eventCount(EbsCriteria ebsCriteria) {
 		return executeCountQuery(ebsCriteria, true);
 	}
+
+	@Override
+	public List<EbsSourceType> getAllEbsSourceInformation() {
+		return Arrays.asList(EbsSourceType.values());
+	}
+
+	@Override
+	public List<SignalCategory> getAllEbsSignalCategory() {
+		return Arrays.asList(SignalCategory.values());
+	}
+
+	@Override
+	public List<RiskLevel> getAllEbsRiskLevel() {
+		return Arrays.asList(RiskLevel.values());
+	}
+
 
 	@Override
 	public List<EbsIndexDto> getIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
