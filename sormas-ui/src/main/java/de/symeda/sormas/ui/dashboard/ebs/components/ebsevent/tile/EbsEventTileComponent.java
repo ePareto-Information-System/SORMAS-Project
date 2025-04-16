@@ -164,7 +164,11 @@ public class EbsEventTileComponent extends VerticalLayout {
 	private void addStatsLayout(EbsEventBurdenDto ebsEventBurden,DashboardDataProvider dashboardDataProvider) {
 
 		EbsSourceType eventSource = ebsEventBurden.getEbsEventSource();
+		String ebsSourceTypeName= eventSource==null?"None" : eventSource.name();
+
 		Date lastReportedDate = ebsEventBurden.getLastReportedDate();
+		String lastReportDateStr = (lastReportedDate != null) ? lastReportedDate.toString() : "No Date Found";
+
 		String district = ebsEventBurden.getLastReportedDistrictName();
 		EbsEvent ebsEvent = ebsEventBurden.getEbsEvent();
 		Date dateFrom = ebsEventBurden.getFrom();
@@ -181,8 +185,8 @@ public class EbsEventTileComponent extends VerticalLayout {
 		lastReportItem.addStyleName(CssStyles.VSPACE_TOP_4);
 		layout.addComponent(lastReportItem);
 		layout.addComponent(
-				new StatsItem.Builder(Captions.EbsEventBurdenSource, String.valueOf(eventSource)).singleColumn(true).build());
-		StatsItem noOfEventsItem = new StatsItem.Builder(Captions.EbsEventBurdenLastReportedDate, String.valueOf(lastReportedDate)).singleColumn(true).build();
+				new StatsItem.Builder(Captions.EbsEventBurdenSource, ebsSourceTypeName).singleColumn(true).build());
+		StatsItem noOfEventsItem = new StatsItem.Builder(Captions.EbsEventBurdenLastReportedDate, lastReportDateStr).singleColumn(true).build();
 		noOfEventsItem.addStyleName(CssStyles.VSPACE_4);
 		layout.addComponent(noOfEventsItem);
 

@@ -17,11 +17,16 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard.components;
 
+import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.SignalCategory;
+import de.symeda.sormas.api.event.RiskLevel;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import static de.symeda.sormas.ui.utils.AbstractFilterForm.FILTER_ITEM_STYLE;
 import static de.symeda.sormas.ui.utils.LayoutUtil.filterLocs;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -70,7 +75,6 @@ import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.DashboardType;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardDataProvider;
-import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -84,8 +88,11 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 	public static final String DATE_FILTER = "dateFilter";
 	public static final String REGION_FILTER = "regionFilter";
 	public static final String CASE_CLASSIFICATION_FILTER = "caseClassificationFilter";
-
 	public static final String DISTRICT_FILTER = "districtFilter";
+	public static final String COMMUNITY_FILTER = "communityFilter";
+	public static final String SIGNAL_CATEGORY_FILTER = "signalCategoryFilter";
+	public static final String SOURCE_INFORMATION_FILTER = "sourceInformationFilter";
+	public static final String RISK_LEVEL_FILTER = "riskLevelFilter";
 	private static final String RESET_AND_APPLY_BUTTONS = "resetAndApplyButtons";
 	private static final String INFO_LABEL_FILTER = "infoLabelFilter";
 	public static final String DISEASE_FILTER = "diseaseFilter";
@@ -101,6 +108,10 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 	// Filters
 	private ComboBox regionFilter;
 	private ComboBox districtFilter;
+	private ComboBox communityFilter;
+	private ComboBox sourceInformationFilter;
+	private ComboBox riskLevelFilter;
+	private ComboBox signalCategoryFilter;
 	private ComboBox caseClassificationFilter;
 	private PopupButton btnCurrentPeriod;
 	private PopupButton btnComparisonPeriod;
@@ -135,6 +146,10 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 		this.dashboardDataProvider = dashboardDataProvider;
 		this.regionFilter = ComboBoxHelper.createComboBoxV7();
 		this.districtFilter = ComboBoxHelper.createComboBoxV7();
+		this.communityFilter = ComboBoxHelper.createComboBoxV7();
+		this.sourceInformationFilter = ComboBoxHelper.createComboBoxV7();
+		this.riskLevelFilter = ComboBoxHelper.createComboBoxV7();
+		this.signalCategoryFilter = ComboBoxHelper.createComboBoxV7();
 		this.caseClassificationFilter = ComboBoxHelper.createComboBoxV7();
 		dateFilterButtons = new HashSet<>();
 		dateComparisonButtons = new HashSet<>();
@@ -169,6 +184,13 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 			createRegionAndDistrictFilter();
 			//createDiseaseFilter();
 		}
+
+//		if (dashboardDataProvider.getDashboardType() == DashboardType.EBS) {
+//			createRegionAndDistrictFilter();
+//			createDistrict2Filter(null);
+//			createCommunityFilter(null);
+//			//createDiseaseFilter();
+//		}
 	}
 	
 	
@@ -265,6 +287,32 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 		}
 	}
 
+	protected void createRegionFilter2(String description) {
+		if (UserProvider.getCurrent().getUser().getRegion() == null) {
+			regionFilter.setWidth(200, Unit.PIXELS);
+			regionFilter.setInputPrompt(I18nProperties.getString(Strings.promptRegion));
+			regionFilter.setDescription(description);
+			regionFilter.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
+			regionFilter.addValueChangeListener(e -> {
+				RegionReferenceDto selectedRegion = (RegionReferenceDto) regionFilter.getValue();
+				dashboardDataProvider.setRegion(selectedRegion);
+
+				// Clear dependent filters
+				districtFilter.removeAllItems();
+				communityFilter.removeAllItems();
+				dashboardDataProvider.setDistrict(null);
+				dashboardDataProvider.setCommunity(null);
+
+				// Update district filter based on selected region
+				if (selectedRegion != null) {
+					createDistrictFilter2(null);
+				}
+			});
+			addCustomComponent(regionFilter, REGION_FILTER);
+			dashboardDataProvider.setRegion((RegionReferenceDto) regionFilter.getValue());
+		}
+	}
+
 	protected void createDistrictFilter(String description) {
 		if (UserProvider.getCurrent().getUser().getRegion() != null && UserProvider.getCurrent().getUser().getDistrict() == null) {
 			districtFilter.setWidth(200, Unit.PIXELS);
@@ -279,7 +327,80 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 			dashboardDataProvider.setDistrict((DistrictReferenceDto) districtFilter.getValue());
 		}
 	}
+	protected void createDistrictFilter2(String description) {
+		districtFilter.setWidth(200, Unit.PIXELS);
+		districtFilter.setInputPrompt(I18nProperties.getString(Strings.promptDistrict));
+		districtFilter.setDescription(description);
+		RegionReferenceDto selectedRegion = (RegionReferenceDto) regionFilter.getValue();
 
+		if (selectedRegion != null) {
+			districtFilter.addItems(FacadeProvider.getDistrictFacade().getAllActiveByRegion(selectedRegion.getUuid()));
+			districtFilter.addValueChangeListener(e -> {
+				DistrictReferenceDto selectedDistrict = (DistrictReferenceDto) districtFilter.getValue();
+				dashboardDataProvider.setDistrict(selectedDistrict);
+
+				// Clear dependent filter
+				communityFilter.removeAllItems();
+				dashboardDataProvider.setCommunity(null);
+
+				// Update community filter based on selected district
+				if (selectedDistrict != null) {
+					createCommunityFilter(null);
+				}
+			});
+			addCustomComponent(districtFilter, DISTRICT_FILTER);
+		}
+	}
+
+	protected void createCommunityFilter(String description) {
+		communityFilter.setWidth(200, Unit.PIXELS);
+		communityFilter.setInputPrompt(I18nProperties.getString(Strings.promptAllCommunities));
+		communityFilter.setDescription(description);
+		DistrictReferenceDto selectedDistrict = (DistrictReferenceDto) districtFilter.getValue();
+
+		if (selectedDistrict != null) {
+			communityFilter.addItems(FacadeProvider.getCommunityFacade().getAllActiveByDistrict(selectedDistrict.getUuid()));
+			communityFilter.addValueChangeListener(e -> {
+				dashboardDataProvider.setCommunity((CommunityReferenceDto) communityFilter.getValue());
+			});
+			addCustomComponent(communityFilter, COMMUNITY_FILTER);
+		}
+	}
+
+	protected void createSourceInformationFilter(String description) {
+		sourceInformationFilter.setWidth(200, Unit.PIXELS);
+		sourceInformationFilter.setInputPrompt(I18nProperties.getString(Strings.promptAllSourceTypes));
+		sourceInformationFilter.setDescription(description);
+		List<EbsSourceType> ebsSourceTypeList = FacadeProvider.getEbsFacade().getAllEbsSourceInformation();
+		sourceInformationFilter.addItems(ebsSourceTypeList);
+		sourceInformationFilter.addValueChangeListener(e -> {
+			dashboardDataProvider.setEventSourceTypeForFilter((EbsSourceType) sourceInformationFilter.getValue());
+		});
+		addCustomComponent(sourceInformationFilter, SOURCE_INFORMATION_FILTER);
+	}
+
+	protected void createRiskLevelFilter(String description) {
+		riskLevelFilter.setWidth(200, Unit.PIXELS);
+		riskLevelFilter.setInputPrompt(I18nProperties.getString(Strings.promptAllRiskLevels));
+		riskLevelFilter.setDescription(description);
+
+		riskLevelFilter.addItems(FacadeProvider.getEbsFacade().getAllEbsRiskLevel());
+		riskLevelFilter.addValueChangeListener(e -> {
+			dashboardDataProvider.setRiskLevel((RiskLevel) riskLevelFilter.getValue());
+		});
+		addCustomComponent(riskLevelFilter, RISK_LEVEL_FILTER);
+	}
+
+	protected void createSignalCategoryFilter(String description) {
+		signalCategoryFilter.setWidth(200, Unit.PIXELS);
+		signalCategoryFilter.setInputPrompt(I18nProperties.getString(Strings.promptAllSignalCategories));
+		signalCategoryFilter.setDescription(description);
+		signalCategoryFilter.addItems(FacadeProvider.getEbsFacade().getAllEbsSignalCategory());
+		signalCategoryFilter.addValueChangeListener(e -> {
+			dashboardDataProvider.setSignalCategory((SignalCategory) signalCategoryFilter.getValue());
+		});
+		addCustomComponent(signalCategoryFilter, SIGNAL_CATEGORY_FILTER);
+	}
 	public void createResetAndApplyButtons() {
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		Button.ClickListener resetListener = e -> dashboardView.navigateTo(null);
@@ -392,13 +513,8 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 		CssStyles.removeStyles(btnPeriodBefore, CssStyles.BUTTON_FILTER_LIGHT);
 		activeComparisonButton = btnPeriodBefore;
 		
-
-		
 		setDateFilter(dashboardDataProvider.getFromDate(), dashboardDataProvider.getToDate());
-		
-		
-		//setDateFilter(DateHelper.getStartOfWeek(new Date()), new Date());
-		
+
 		updateComparisonButtons(dashboardDataProvider.getDateFilterType(), dashboardDataProvider.getFromDate(), dashboardDataProvider.getToDate(), false);
 
 		//updateComparisonButtons(DateFilterType.THIS_WEEK, DateHelper.getStartOfWeek(new Date()), new Date(), false);
@@ -873,7 +989,6 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 		if (criteria.getDateFilterType().equals(NewDateFilterType.CUSTOM)) {
 			btnCurrentPeriod.setCaption(DateFormatHelper.buildPeriodString(criteria.getDateFrom(), criteria.getDateTo()));
 		}
-
 	}
 
 	public void updateFilterDates(DashboardCriteria criteria) {
@@ -914,7 +1029,6 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 			updateFilterDates(criteria);
 		}
 		setCriteria(criteria);
-
 	}
 
 	public void setCriteria(DashboardCriteria criteria) {

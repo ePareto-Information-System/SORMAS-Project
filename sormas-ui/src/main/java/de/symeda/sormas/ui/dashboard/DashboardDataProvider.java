@@ -19,8 +19,14 @@ package de.symeda.sormas.ui.dashboard;
 
 import de.symeda.sormas.api.EbsEvent;
 import de.symeda.sormas.api.dashboard.EbsCategoryOfInformantDto;
+import de.symeda.sormas.api.dashboard.EbsEventOutcomeDto;
 import de.symeda.sormas.api.ebs.EbsEventBurdenDto;
 import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.EbsTimeMetric;
+import de.symeda.sormas.api.ebs.RiskAssesment;
+import de.symeda.sormas.api.ebs.SignalCategory;
+import de.symeda.sormas.api.event.RiskLevel;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -110,14 +116,23 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 
 	private Map<EbsSourceType, Integer> sourceTypeCount = new HashMap<>();
 	private EbsSourceType eventSourceType;
+
+	private EbsSourceType eventSourceTypeForFilter;
+
 	private List<EbsCategoryOfInformantDto> ebsCategoryOfInformantDtoBySourceType;
 	private List<EbsCategoryOfInformantDto>  ebsCategoryOfInformantDtoBySourceTypeForHeb;
 	private List<EbsCategoryOfInformantDto>  ebsCategoryOfInformantDtoBySourceTypeForMediaScan;
 	private List<EbsCategoryOfInformantDto>  ebsCategoryOfInformantDtoBySourceTypeForHotline;
 
-	;
+	private CommunityReferenceDto community;
+	private Map<EbsSourceType, Map<SignalCategory, Integer>> signalCategoryBySourceType;
+	private Map<EbsSourceType, Map<EbsTimeMetric, Integer>> timeframeCounts;
 
-	//private final Class<? extends CriteriaDateType> dateTypeClass;
+	private Map<EbsTimeMetric, Map<RiskAssesment, Integer>> riskAssessmentTimeMetric;
+
+	private Map<EbsSourceType, Map<RiskAssesment, Integer>>riskAssessmentSourceType;
+
+	private Map<EbsSourceType, Map<EbsTimeMetric, Integer>> timeMetricBySourceType;
 
 	public DashboardDataProvider(Class<? extends CriteriaDateType> dateTypeClass) {
 		this.dateTypeClass = dateTypeClass;
@@ -129,6 +144,14 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	private List<RegionDto> regionDtoList;
 
 	private Map<PathogenTestResultType, Long> testResultCountByResultType;
+	private SignalCategory signalCategory;
+	private RiskLevel riskLevel;
+
+	private Map<EbsTimeMetric,Integer> ebsPendingTimeMetricByEbsEvent;
+
+	private Map<EbsTimeMetric,Integer> ebsCompletedTimeMetricByEbsEvent;
+
+	private List<EbsEventOutcomeDto>ebsEventOutcome;
 
 	public void refreshData() {
 		//this.getCriteria();
@@ -140,6 +163,7 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 
 		this.refreshDataForSelectedDisease();
 	}
+
 
 
 
@@ -218,11 +242,7 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	}
 
 	private void refreshDataForConvertedContactsToCase() {
-//		DashboardCriteria dashboardCriteria = new DashboardCriteria(dateTypeClass).region(region)
-//			.district(district)
-//			.disease(disease)
-//			.dateBetween(fromDate, toDate)
-//			.caseClassification(caseClassification);
+
 		DashboardCriteria dashboardCriteria = buildDashboardCriteriaWithDates();
 		setContactsConvertedToCaseCount(FacadeProvider.getDashboardFacade().countCasesConvertedFromContacts(dashboardCriteria));
 	}
@@ -238,7 +258,6 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 				,newCaseDateType
 				,caseClassification);
 
-		
 		setDiseaseBurdenDetail(dbd);
 
 		setOutbreakDistrictCount(
@@ -248,131 +267,6 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 
 		this.refreshDataForSelectedDisease();
 	}
-
-//	public void refreshDataForSelectedDisease() {
-//
-//		// Update the entities lists according to the filters
-//
-//		if (getDashboardType() == DashboardType.CONTACTS) {
-//			// Contacts
-//			setContacts(FacadeProvider.getContactFacade().getContactsForDashboard(region, district, disease, fromDate, toDate, caseClassification));
-//			setPreviousContacts(
-//				FacadeProvider.getContactFacade()
-//					.getContactsForDashboard(region, district, disease, previousFromDate, previousToDate, caseClassification));
-//
-//			this.refreshDataForQuarantinedContacts();
-//		}
-//
-//		if (getDashboardType() == DashboardType.SAMPLES) {
-//			//Samples counts
-//			setSampleCount(FacadeProvider.getSampleFacade().getSampleCounts(region, district, disease, fromDate, toDate));
-//			setPreviousSampleCount(FacadeProvider.getSampleFacade().getSampleCounts(region, district, disease, previousFromDate, previousToDate));
-//		}
-//
-//		if (getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES || this.disease != null) {
-//			// Cases
-////			DashboardCriteria dashboardCriteria = new DashboardCriteria(dateTypeClass).region(region)
-////				.district(district)
-////				.disease(disease)
-////				.newCaseDateType(newCaseDateType)
-////				.dateBetween(fromDate, toDate)
-////				.caseClassification(caseClassification);
-////			setCases(FacadeProvider.getDashboardFacade().getCases(dashboardCriteria));
-////			setLastReportedDistrict(FacadeProvider.getDashboardFacade().getLastReportedDistrictName(dashboardCriteria));
-//		// if (getDashboardType() == DashboardType.CONTACTS || this.disease != null) {1.87.0
-//		 	DashboardCriteria caseDashboardCriteria = buildDashboardCriteria(fromDate, toDate);
-//
-//		// 	// Cases
-//		// 	setCases(FacadeProvider.getDashboardFacade().getCases(caseDashboardCriteria));
-//		// 	setLastReportedDistrict(FacadeProvider.getDashboardFacade().getLastReportedDistrictName(caseDashboardCriteria));
-//		// 	setCasesCountByClassification(
-//		// 		FacadeProvider.getDashboardFacade()
-//		// 			.getCasesCountByClassification(buildDashboardCriteria(fromDate, toDate).includeNotACaseClassification(true)));
-//
-//
-//			setPreviousCases(FacadeProvider.getDashboardFacade().getCases(buildDashboardCriteria(previousFromDate, previousToDate)));
-//
-//			// test results
-//			if (getDashboardType() != DashboardType.CONTACTS) {
-//				setNewCasesFinalLabResultCountByResultType(
-//					FacadeProvider.getDashboardFacade().getNewCasesFinalLabResultCountByResultType(caseDashboardCriteria));
-//			}
-//
-//			dashboardCriteria.dateBetween(fromDate, toDate).includeNotACaseClassification(true);
-//
-//			setCasesCountByClassification(FacadeProvider.getDashboardFacade().getCasesCountByClassification(dashboardCriteria));
-//
-//			System.out.println("===dashboardCriteria===");
-//
-//			System.out.println(dashboardCriteria);
-//
-//		}
-//
-//		//if (this.disease == null || getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES) {
-//		if (getDashboardType() == DashboardType.SAMPLES) {
-//			//Samples counts
-//			setSampleCounts(FacadeProvider.getSampleFacade().getSampleCounts(region, district, disease, fromDate, toDate));
-//			setPreviousSampleCounts(FacadeProvider.getSampleFacade().getSampleCounts(region, district, disease, previousFromDate, previousToDate));
-//		}
-//
-//		if (getDashboardType() == DashboardType.DISEASE || this.disease != null) {
-//			// Cases
-//			CaseCriteria caseCriteria = new CaseCriteria();
-//			caseCriteria.region(region).district(district).disease(disease).newCaseDateBetween(fromDate, toDate, newCaseDateType);
-//			//setCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
-//			setLastReportedDistrict(FacadeProvider.getCaseFacade().getLastReportedDistrictName(caseCriteria, true, true));
-//
-//			caseCriteria.newCaseDateBetween(previousFromDate, previousToDate, newCaseDateType);
-//			caseCriteria.setCaseClassification(caseClassification);
-//			caseCriteria.setNewCaseDateType(newCaseDateType);
-//
-//			//setCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
-//
-//			setPreviousCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
-//
-//			if (getCases().size() > 0) {
-//				setTestResultCountByResultType(
-//					FacadeProvider.getSampleFacade()
-//						.getNewTestResultCountByResultType(getCases().stream().map(c -> c.getId()).collect(Collectors.toList())));
-//			} else {
-//				setTestResultCountByResultType(new HashMap<>());
-//			}
-//
-//		}
-//
-//		if (this.disease == null || getDashboardType() == DashboardType.CONTACTS) {
-//			return;
-//		}
-//
-//		// Events
-//		DashboardCriteria dashboardCriteria = new DashboardCriteria(dateTypeClass).region(region)
-//			.district(district)
-//			.disease(disease)
-//			.dateBetween(fromDate, toDate)
-//			.caseClassification(caseClassification);
-//
-//		setEvents(FacadeProvider.getDashboardFacade().getNewEvents(dashboardCriteria));
-//
-//		setEventCountByStatus(FacadeProvider.getDashboardFacade().getEventCountByStatus(dashboardCriteria));
-//		// DashboardCriteria eventDashboardCriteria = buildDashboardCriteriaWithDates(); 1.87.0
-//		// setEvents(FacadeProvider.getDashboardFacade().getNewEvents(eventDashboardCriteria));
-//		// setEventCountByStatus(FacadeProvider.getDashboardFacade().getEventCountByStatus(eventDashboardCriteria));
-//
-//		setOutbreakDistrictCount(
-//			FacadeProvider.getOutbreakFacade()
-//				.getOutbreakDistrictCount(
-//					new OutbreakCriteria().region(region)
-//						.district(district)
-//						.disease(disease)
-//						.reportedBetween(fromDate, toDate)
-//						.caseClassification(caseClassification)));
-//
-//		refreshDataForQuarantinedCases();
-//		refreshDataForConvertedContactsToCase();
-//		refreshDataForCasesWithReferenceDefinitionFulfilled();
-//
-//
-//	}
 
 
 	public void refreshDataForSelectedDisease() {
@@ -571,77 +465,73 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	}
 
 	public void refreshDataForSelectedEbsEvent() {
+		DashboardCriteria ebsDashboardCriteria = buildDashboardCriteria(fromDate, toDate);
 
-//		if (getDashboardType() == DashboardType.CONTACTS) {
-//			// Contacts
-//			setContacts(FacadeProvider.getContactFacade().getContactsForDashboard(region, district, disease, fromDate, toDate));
-//			setPreviousContacts(
-//					FacadeProvider.getContactFacade().getContactsForDashboard(region, district, disease, previousFromDate, previousToDate));
-//
-//			this.refreshDataForQuarantinedContacts();
-//		}
-
-		//getDashboardType() == DashboardType.CONTACTS ||
 		if ( this.ebsEvent != null) {
-			DashboardCriteria caseDashboardCriteria = buildDashboardCriteria(fromDate, toDate);
+			if(this.ebsEvent==EbsEvent.SIGNAL_INFORMATION) {
+				setLastReportedDistrict(FacadeProvider.getDashboardFacade().getLastReportedDistrictName(ebsDashboardCriteria));
 
-			// Cases
-			//setCases(FacadeProvider.getDashboardFacade().getCases(caseDashboardCriteria));
-			setLastReportedDistrict(FacadeProvider.getDashboardFacade().getLastReportedDistrictName(caseDashboardCriteria));
-//			setCasesCountByClassification(
-//					FacadeProvider.getDashboardFacade()
-//							.getCasesCountByClassification(buildDashboardCriteria(fromDate, toDate).includeNotACaseClassification(true)));
+				setSourceTypeCount(
+						FacadeProvider.getDashboardFacade()
+								.getSourceTypeCount(buildDashboardCriteria(fromDate, toDate)));
 
-			setSourceTypeCount(
-					FacadeProvider.getDashboardFacade()
-							.getSourceTypeCount(buildDashboardCriteria(fromDate, toDate)));
-//-------
 
-			setEbsCategoryOfInformantDtoBySourceType(
-					FacadeProvider.getDashboardFacade()
-							.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.CEBS,ebsEvent));
+				setEbsCategoryOfInformantDtoBySourceType(
+						FacadeProvider.getDashboardFacade()
+								.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.CEBS, ebsEvent));
 
-			setEbsCategoryOfInformantDtoBySourceTypeForHeb(
-					FacadeProvider.getDashboardFacade()
-							.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HEBS,ebsEvent));
+				setEbsCategoryOfInformantDtoBySourceTypeForHeb(
+						FacadeProvider.getDashboardFacade()
+								.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HEBS, ebsEvent));
 
-			setEbsCategoryOfInformantDtoBySourceTypeForMediaScan(
-					FacadeProvider.getDashboardFacade()
-							.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.MEDIA_NEWS,ebsEvent));
+				setEbsCategoryOfInformantDtoBySourceTypeForMediaScan(
+						FacadeProvider.getDashboardFacade()
+								.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.MEDIA_NEWS, ebsEvent));
 
-			setEbsCategoryOfInformantDtoBySourceTypeForHotline(
-					FacadeProvider.getDashboardFacade()
-							.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HOTLINE_PERSON,ebsEvent));
-			//setPreviousCases(FacadeProvider.getDashboardFacade().getCases(buildDashboardCriteria(previousFromDate, previousToDate)));
+				setEbsCategoryOfInformantDtoBySourceTypeForHotline(
+						FacadeProvider.getDashboardFacade()
+								.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HOTLINE_PERSON, ebsEvent));
+			}
 
-			// test results
-//			if (getDashboardType() != DashboardType.CONTACTS) {
-//				setNewCasesFinalLabResultCountByResultType(
-//						FacadeProvider.getDashboardFacade().getNewCasesFinalLabResultCountByResultType(caseDashboardCriteria));
-//			}
+			if(this.ebsEvent.equals(EbsEvent.TRIAGING)){
+				setEbsPendingTimeMetricByEbsEvent(
+						FacadeProvider.getDashboardFacade()
+									.getPendingCountByTimeMetric(ebsDashboardCriteria,this.ebsEvent));
+
+				setEbsCompletedTimeMetricByEbsEvent(
+						FacadeProvider.getDashboardFacade()
+								.getCompletedCountByEbsTimeMetric(ebsDashboardCriteria,this.ebsEvent));
+
+				setEbsEventOutcome(
+						FacadeProvider.getDashboardFacade().getEbsEventOutcome(this.ebsEvent)
+				);
+
+				setSignalCategoryBySourceType(
+						FacadeProvider.getDashboardFacade().getSignalCategoryBySourceType(ebsDashboardCriteria,this.ebsEvent)
+				);
+
+			}
+
+			if(this.ebsEvent.equals(EbsEvent.SIGNAL_VERIFICATION)){
+				setEbsPendingTimeMetricByEbsEvent(
+						FacadeProvider.getDashboardFacade()
+								.getPendingCountByTimeMetric(ebsDashboardCriteria,this.ebsEvent));
+
+				setEbsEventOutcome(
+						FacadeProvider.getDashboardFacade().getEbsEventOutcome(this.ebsEvent)
+				);
+
+				setTimeMetricBySourceType(
+						FacadeProvider.getDashboardFacade().getTimeMetricBySourceType(ebsDashboardCriteria,this.ebsEvent)
+				);
+			}
+
+			if(this.ebsEvent.equals(EbsEvent.RISK_ASSESSMENT)||this.ebsEvent.equals(EbsEvent.ALERT)){
+				setRiskAssessmentSourceType(FacadeProvider.getDashboardFacade().getRiskAssessmentSourceType(ebsDashboardCriteria,this.ebsEvent));
+				setRiskAssessmentTimeMetric(FacadeProvider.getDashboardFacade().getRiskAssessmentTimeMetric(ebsDashboardCriteria,this.ebsEvent));
+			}
 		}
-
-		if (this.ebsEvent == null || getDashboardType() == DashboardType.EBS) {
-			return;
-		}
-
-
-
-		// Events
-//		DashboardCriteria eventDashboardCriteria = buildDashboardCriteriaWithDates();
-//		setEvents(FacadeProvider.getDashboardFacade().getNewEvents(eventDashboardCriteria));
-//		setEventCountByStatus(FacadeProvider.getDashboardFacade().getEventCountByStatus(eventDashboardCriteria));
-
-//		setOutbreakDistrictCount(
-//				FacadeProvider.getOutbreakFacade()
-//						.getOutbreakDistrictCount(
-//								new OutbreakCriteria().region(region).district(district).disease(disease).reportedBetween(fromDate, toDate)));
-//
-//		refreshDataForQuarantinedCases();
-//		refreshDataForConvertedContactsToCase();
-//		refreshDataForCasesWithReferenceDefinitionFulfilled();
 	}
-
 
 	public CaseClassification getCaseClassification() {
 		return caseClassification;
@@ -828,6 +718,10 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	public DashboardCriteria getCriteria() {
 		return new DashboardCriteria().region(region)
 				.district(district)
+				.community(community)
+				.sourceInformation(eventSourceType)
+				.signalCategory(signalCategory)
+				.riskLevel(riskLevel)
 				.disease(disease)
 				.dateBetween(fromDate, toDate)
 				.caseClassification(caseClassification)
@@ -862,6 +756,14 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 		return eventSourceType;
 	}
 
+	public EbsSourceType getEventSourceTypeForFilter() {
+		return eventSourceTypeForFilter;
+	}
+
+	public void setEventSourceTypeForFilter(EbsSourceType eventSourceTypeForFilter) {
+		this.eventSourceTypeForFilter = eventSourceTypeForFilter;
+	}
+
 	public List<EbsCategoryOfInformantDto> getEbsCategoryOfInformantDtoBySourceType() {
 		return ebsCategoryOfInformantDtoBySourceType;
 	}
@@ -876,23 +778,8 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 		// EbsEvent burden
 		setEbsEventBurden(
 				FacadeProvider.getDashboardFacade()
-						.getEbsEventBurden(region, district, fromDate, toDate, previousFromDate, previousToDate, newCaseDateType, caseClassification));
+						.getEbsEventBurden(region, district,community, fromDate, toDate, previousFromDate, previousToDate, newCaseDateType, signalCategory,eventSourceTypeForFilter,riskLevel));
 
-//		setEbsCategoryOfInformantDtoBySourceType(
-//				FacadeProvider.getDashboardFacade()
-//						.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.CEBS, ebsEvent));
-//
-//		setEbsCategoryOfInformantDtoBySourceTypeForHeb(
-//				FacadeProvider.getDashboardFacade()
-//						.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HEBS, ebsEvent));
-//
-//		setEbsCategoryOfInformantDtoBySourceTypeForMediaScan(
-//				FacadeProvider.getDashboardFacade()
-//						.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.MEDIA_NEWS, ebsEvent));
-//
-//		setEbsCategoryOfInformantDtoBySourceTypeForHotline(
-//				FacadeProvider.getDashboardFacade()
-//						.getEbsCategoryOfInformantDtoBySourceInformation(EbsSourceType.HOTLINE_PERSON, ebsEvent));
 
 		this.refreshDataForSelectedEbsEvent();
 	}
@@ -920,5 +807,94 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 
 	public void setEbsCategoryOfInformantDtoBySourceTypeForHotline(List<EbsCategoryOfInformantDto> ebsCategoryOfInformantDtoBySourceTypeForHotline) {
 		this.ebsCategoryOfInformantDtoBySourceTypeForHotline = ebsCategoryOfInformantDtoBySourceTypeForHotline;
+	}
+
+	public CommunityReferenceDto getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(CommunityReferenceDto community) {
+		this.community = community;
+	}
+
+	public SignalCategory getSignalCategory() {
+		return signalCategory;
+	}
+
+	public void setSignalCategory(SignalCategory signalCategory) {
+		this.signalCategory = signalCategory;
+	}
+
+	public RiskLevel getRiskLevel() {
+		return riskLevel;
+	}
+
+	public void setRiskLevel(RiskLevel riskLevel) {
+		this.riskLevel = riskLevel;
+	}
+
+	public Map<EbsTimeMetric, Integer> getEbsPendingTimeMetricByEbsEvent() {
+		return ebsPendingTimeMetricByEbsEvent;
+	}
+
+	public void setEbsPendingTimeMetricByEbsEvent(Map<EbsTimeMetric, Integer> ebsPendingTimeMetricByEbsEvent) {
+		this.ebsPendingTimeMetricByEbsEvent = ebsPendingTimeMetricByEbsEvent;
+	}
+
+	public Map<EbsTimeMetric, Integer> getEbsCompletedTimeMetricByEbsEvent() {
+		return ebsCompletedTimeMetricByEbsEvent;
+	}
+
+	public void setEbsCompletedTimeMetricByEbsEvent(Map<EbsTimeMetric, Integer> ebsCompletedTimeMetricByEbsEvent) {
+		this.ebsCompletedTimeMetricByEbsEvent = ebsCompletedTimeMetricByEbsEvent;
+	}
+
+
+	public List<EbsEventOutcomeDto> getEbsEventOutcome() {
+		return ebsEventOutcome;
+	}
+
+	public void setEbsEventOutcome(List<EbsEventOutcomeDto> ebsEventOutcome) {
+		this.ebsEventOutcome = ebsEventOutcome;
+	}
+
+	public Map<EbsSourceType, Map<SignalCategory, Integer>> getSignalCategoryBySourceType() {
+		return signalCategoryBySourceType;
+	}
+
+	public void setSignalCategoryBySourceType(Map<EbsSourceType, Map<SignalCategory, Integer>> signalCategoryBySourceType) {
+		this.signalCategoryBySourceType = signalCategoryBySourceType;
+	}
+
+	public Map<EbsSourceType, Map<EbsTimeMetric, Integer>> getTimeframeCounts() {
+		return timeframeCounts;
+	}
+
+	public void setTimeframeCounts(Map<EbsSourceType, Map<EbsTimeMetric, Integer>> timeframeCounts) {
+		this.timeframeCounts = timeframeCounts;
+	}
+
+	public Map<EbsTimeMetric, Map<RiskAssesment, Integer>> getRiskAssessmentTimeMetric() {
+		return riskAssessmentTimeMetric;
+	}
+
+	public void setRiskAssessmentTimeMetric(Map<EbsTimeMetric, Map<RiskAssesment, Integer>> riskAssessmentTimeMetric) {
+		this.riskAssessmentTimeMetric = riskAssessmentTimeMetric;
+	}
+
+	public Map<EbsSourceType, Map<RiskAssesment, Integer>> getRiskAssessmentSourceType() {
+		return riskAssessmentSourceType;
+	}
+
+	public void setRiskAssessmentSourceType(Map<EbsSourceType, Map<RiskAssesment, Integer>> riskAssessmentSourceType) {
+		this.riskAssessmentSourceType = riskAssessmentSourceType;
+	}
+
+	public Map<EbsSourceType, Map<EbsTimeMetric, Integer>> getTimeMetricBySourceType() {
+		return timeMetricBySourceType;
+	}
+
+	public void setTimeMetricBySourceType(Map<EbsSourceType, Map<EbsTimeMetric, Integer>> timeMetricBySourceType) {
+		this.timeMetricBySourceType = timeMetricBySourceType;
 	}
 }

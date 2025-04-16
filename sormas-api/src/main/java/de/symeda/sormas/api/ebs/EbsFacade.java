@@ -21,14 +21,11 @@ import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
-import de.symeda.sormas.api.event.*;
+import de.symeda.sormas.api.event.RiskLevel;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.task.TaskDto;
-import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
-import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
@@ -38,7 +35,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Remote
 public interface EbsFacade extends CoreFacade<EbsDto, EbsIndexDto, EbsReferenceDto, EbsCriteria> {
@@ -83,11 +79,18 @@ public interface EbsFacade extends CoreFacade<EbsDto, EbsIndexDto, EbsReferenceD
 
 	void setEbsAlertAssociations(EbsReferenceDto ebsRef);
 
+	List<RiskLevel> getAllEbsRiskLevel();
+
 	public List<EbsIndexDto> getEventIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
 
 	List<String> delete(List<String> uuids, DeletionDetails deletionDetails);
 
 
 	public long eventCount(EbsCriteria ebsCriteria);
+
+	public List<EbsSourceType> getAllEbsSourceInformation();
+
+	public List<SignalCategory> getAllEbsSignalCategory();
+
 
 }

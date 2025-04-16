@@ -599,25 +599,25 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		Predicate onsetDateFilter = cb.between(ebs.get(Ebs.DATE_ONSET), fromDate, toDateEndOfDay);
 		Predicate reportDateFilter = cb.between(ebs.get(Ebs.REPORT_DATE_TIME), fromDate, toDateEndOfDay);
 
-		Predicate newCaseFilter = null;
+		Predicate newEbsEventFilter = null;
 		if (dateType == null || dateType == NewCaseDateType.MOST_RELEVANT) {
-			newCaseFilter = cb.or(onsetDateFilter, cb.and(cb.isNull(ebs.get(Ebs.DATE_ONSET)), reportDateFilter));
+			newEbsEventFilter = cb.or(onsetDateFilter, cb.and(cb.isNull(ebs.get(Ebs.DATE_ONSET)), reportDateFilter));
 		} else if (dateType == NewCaseDateType.ONSET) {
-			newCaseFilter = onsetDateFilter;
+			newEbsEventFilter = onsetDateFilter;
 
 		} else if (dateType == NewCaseDateType.REPORT) {
 
-			newCaseFilter = cb.between(ebs.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
+			newEbsEventFilter = cb.between(ebs.get(Ebs.REPORT_DATE_TIME), fromDate, toDate);
 
 		}
 		else if (dateType == NewCaseDateType.CREATION) {
-			newCaseFilter = cb.between(ebs.get(Case.CREATION_DATE), fromDate, toDate);
+			newEbsEventFilter = cb.between(ebs.get(Case.CREATION_DATE), fromDate, toDate);
 		}
 		else {
-			newCaseFilter = reportDateFilter;
+			newEbsEventFilter = reportDateFilter;
 		}
 
-		return newCaseFilter;
+		return newEbsEventFilter;
 	}
 
 

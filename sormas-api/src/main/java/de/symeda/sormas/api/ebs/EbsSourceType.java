@@ -22,8 +22,7 @@ public enum EbsSourceType {
 	CEBS,
 	HEBS,
 	MEDIA_NEWS,
-	HOTLINE_PERSON,
-	NONE;
+	HOTLINE_PERSON;
 
 	@Override
 	public String toString() {

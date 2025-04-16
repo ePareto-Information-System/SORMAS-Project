@@ -34,8 +34,11 @@ import de.symeda.sormas.ui.dashboard.map.DashboardMapComponent;
 import de.symeda.sormas.ui.dashboard.ebs.components.epicurve.EbsEpiCurveComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
 public class EbsEventCarouselLayout extends VerticalLayout {
@@ -58,7 +61,13 @@ public class EbsEventCarouselLayout extends VerticalLayout {
 
 		//epiCurveComponent = new EbsEpiCurveComponent(dashboardDataProvider);
 		mapComponent = new DashboardMapComponent(dashboardDataProvider);
-		ebsEvents = FacadeProvider.getEbsEventFacade().getAllEbsEvents();
+
+		Set<EbsEvent> excludedEvents = EnumSet.of(EbsEvent.EVENT);
+
+		ebsEvents = FacadeProvider.getEbsEventFacade().getAllEbsEvents()
+				.stream()
+				.filter(event -> !excludedEvents.contains(event))
+				.collect(Collectors.toList());
 
 		this.initLayout();
 	}

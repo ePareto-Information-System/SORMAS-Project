@@ -4,6 +4,10 @@ import de.symeda.sormas.api.CaseMeasure;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EbsEvent;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.SignalCategory;
+import de.symeda.sormas.api.event.RiskLevel;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
@@ -23,6 +27,14 @@ public class DashboardCriteria extends BaseDashboardCriteria<DashboardCriteria> 
 	private Boolean includeNotACaseClassification;
 
 	private EbsEvent ebsEvent;
+
+	private CommunityReferenceDto community;
+
+	private EbsSourceType sourceInformation;
+
+	private RiskLevel riskLevel;
+
+	private SignalCategory signalCategory;
 
 	public DashboardCriteria(Class<DashboardCriteria> dashboardCriteriaClass) {
 		super(dashboardCriteriaClass);
@@ -69,6 +81,7 @@ public class DashboardCriteria extends BaseDashboardCriteria<DashboardCriteria> 
 		this.newCaseDateType = newCaseDateType;
 		return this;
 	}
+
 
 	public Date getDateFrom() {
 		return dateFrom;
@@ -137,8 +150,26 @@ public class DashboardCriteria extends BaseDashboardCriteria<DashboardCriteria> 
 		return this;
 	}//..
 
-	
-	
+
+	public DashboardCriteria community(CommunityReferenceDto community) {
+		this.community=community;
+		return this;
+	}
+
+	public DashboardCriteria sourceInformation(EbsSourceType sourceInformation) {
+		this.sourceInformation=sourceInformation;
+		return this;
+	}
+
+	public DashboardCriteria riskLevel(RiskLevel riskLevel) {
+		this.riskLevel=riskLevel;
+		return this;
+	}
+
+	public DashboardCriteria signalCategory(SignalCategory signalCategory) {
+		this.signalCategory=signalCategory;
+		return this;
+	}
 
 	public void setRegion(RegionReferenceDto region) {
 		this.region = region;
@@ -146,6 +177,14 @@ public class DashboardCriteria extends BaseDashboardCriteria<DashboardCriteria> 
 
 	public void setDistrict(DistrictReferenceDto district) {
 		this.district = district;
+	}
+
+	public void setCommunity(CommunityReferenceDto community) {
+		this.community = community;
+	}
+
+	public CommunityReferenceDto getCommunity() {
+		return community;
 	}
 
 	public void setDisease(Disease disease) {
@@ -192,14 +231,42 @@ public class DashboardCriteria extends BaseDashboardCriteria<DashboardCriteria> 
 		this.ebsEvent = ebsEvent;
 	}
 
-	@Override
-	public String toString() {
-		return "DashboardCriteria [region=" + region + ", district=" + district + ", disease=" + disease
-				+ ", newCaseDateType=" + newCaseDateType + ", dateFrom=" + dateFrom + ", dateTo=" + dateTo
-				+ ", previousDateFrom=" + previousDateFrom + ", previousDateTo=" + previousDateTo
-				+ ", epiCurveGrouping=" + epiCurveGrouping + ", showMinimumEntries=" + showMinimumEntries
-				+ ", caseMeasure=" + caseMeasure + ", caseClassification=" + caseClassification + ", dateFilterType="
-				+ dateFilterType + ", includeNotACaseClassification=" + includeNotACaseClassification + "]";
+	public EbsSourceType getSourceInformation() {
+		return sourceInformation;
 	}
+
+	public void setSourceInformation(EbsSourceType sourceInformation) {
+		this.sourceInformation = sourceInformation;
+	}
+
+	public RiskLevel getRiskLevel() {
+		return riskLevel;
+	}
+
+	public void setRiskLevel(RiskLevel riskLevel) {
+		this.riskLevel = riskLevel;
+	}
+
+	public SignalCategory getSignalCategory() {
+		return signalCategory;
+	}
+
+	public void setSignalCategory(SignalCategory signalCategory) {
+		this.signalCategory = signalCategory;
+	}
+//	@Override
+//	public String toString() {
+//		return "DashboardCriteria [region=" + region + ", district=" + district + ", disease=" + disease
+//				+ ", newCaseDateType=" + newCaseDateType + ", dateFrom=" + dateFrom + ", dateTo=" + dateTo
+//				+ ", previousDateFrom=" + previousDateFrom + ", previousDateTo=" + previousDateTo
+//				+ ", epiCurveGrouping=" + epiCurveGrouping + ", showMinimumEntries=" + showMinimumEntries
+//				+ ", caseMeasure=" + caseMeasure + ", caseClassification=" + caseClassification
+//				+ ", dateFilterType=" + dateFilterType + ", includeNotACaseClassification=" + includeNotACaseClassification
+//				+ ", ebsEvent=" + ebsEvent + ", community=" + community + ", sourceInformation=" + sourceInformation
+//				+ ", riskLevel=" + riskLevel + ", signalCategory=" + signalCategory + ", self=" + self + "]";
+//	}
+
+
+
 
 }
