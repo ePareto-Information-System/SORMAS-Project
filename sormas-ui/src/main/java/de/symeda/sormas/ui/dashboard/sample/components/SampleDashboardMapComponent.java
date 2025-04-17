@@ -127,21 +127,22 @@ public class SampleDashboardMapComponent extends BaseDashboardMapComponent<Sampl
 
 		layersLayout.addComponent(showContactSamplesCheckBox);
 
-		CheckBox showEventParticipantSamplesCheckBox = new CheckBox();
-		showEventParticipantSamplesCheckBox.setId(Captions.sampleDashboardShowEventParticipantSamples);
-		showEventParticipantSamplesCheckBox.setCaption(I18nProperties.getCaption(Captions.sampleDashboardShowEventParticipantSamples));
-		showEventParticipantSamplesCheckBox.setValue(shouldShowEventParticipantSamples());
-		showEventParticipantSamplesCheckBox.addValueChangeListener(e -> {
-			if ((boolean) e.getProperty().getValue()) {
-				displayedSamples.add(SampleAssociationType.EVENT_PARTICIPANT);
-			} else {
-				displayedSamples.remove(SampleAssociationType.EVENT_PARTICIPANT);
-			}
+		// EBS Disease not connected to sample so it has been commented out
+//		CheckBox showEventParticipantSamplesCheckBox = new CheckBox();
+//		showEventParticipantSamplesCheckBox.setId(Captions.sampleDashboardShowEventParticipantSamples);
+//		showEventParticipantSamplesCheckBox.setCaption(I18nProperties.getCaption(Captions.sampleDashboardShowEventParticipantSamples));
+//		showEventParticipantSamplesCheckBox.setValue(shouldShowEventParticipantSamples());
+//		showEventParticipantSamplesCheckBox.addValueChangeListener(e -> {
+//			if ((boolean) e.getProperty().getValue()) {
+//				displayedSamples.add(SampleAssociationType.EVENT_PARTICIPANT);
+//			} else {
+//				displayedSamples.remove(SampleAssociationType.EVENT_PARTICIPANT);
+//			}
+//
+//			refreshMap(true);
+//		});
 
-			refreshMap(true);
-		});
-
-		layersLayout.addComponent(showEventParticipantSamplesCheckBox);
+//		layersLayout.addComponent(showEventParticipantSamplesCheckBox);
 
 	}
 
@@ -169,12 +170,12 @@ public class SampleDashboardMapComponent extends BaseDashboardMapComponent<Sampl
 			samplesLegendLayout.addComponent(legendEntry);
 		}
 
-		if (shouldShowEventParticipantSamples()) {
-			HorizontalLayout legendEntry = buildMarkerLegendEntry(
-				MarkerIcon.SAMPLE_EVENT_PARTICIPANT,
-				I18nProperties.getCaption(Captions.sampleDashboardEventParticipantSamples));
-			samplesLegendLayout.addComponent(legendEntry);
-		}
+//		if (shouldShowEventParticipantSamples()) {
+//			HorizontalLayout legendEntry = buildMarkerLegendEntry(
+//				MarkerIcon.SAMPLE_EVENT_PARTICIPANT,
+//				I18nProperties.getCaption(Captions.sampleDashboardEventParticipantSamples));
+//			samplesLegendLayout.addComponent(legendEntry);
+//		}
 
 		return Collections.singletonList(samplesLegendLayout);
 	}

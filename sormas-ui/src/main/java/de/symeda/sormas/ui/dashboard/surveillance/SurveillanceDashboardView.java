@@ -88,7 +88,7 @@ public class SurveillanceDashboardView extends AbstractDashboardView {
 
 	@Override
 	public void enter(ViewChangeListener.ViewChangeEvent event) {
-		filterLayout.reload(event);
+//		filterLayout.reload(event);
 		refreshDashboard();
 	}
 
