@@ -1334,22 +1334,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.pregnant = pregnant;
 	}
 
-	public YesNoUnknown getIpSampleSent() {
-		return ipSampleSent;
-	}
-
-	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
-		this.ipSampleSent = ipSampleSent;
-	}
-
-	public Disease getIpSampleResults(){
-		return ipSampleResults;
-	}
-
-	public void setIpSampleResults(Disease ipSampleResults) {
-		this.ipSampleResults = ipSampleResults;
-	}
-
 	public VaccinationStatus getVaccinationStatus() {
 		return vaccinationStatus;
 	}

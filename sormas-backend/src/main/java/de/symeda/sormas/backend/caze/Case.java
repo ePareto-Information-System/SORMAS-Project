@@ -1137,24 +1137,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getIpSampleSent() {
-		return ipSampleSent;
-	}
-
-	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
-		this.ipSampleSent = ipSampleSent;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public Disease getIpSampleResults(){
-		return ipSampleResults;
-	}
-
-	public void setIpSampleResults(Disease ipSampleResults) {
-		this.ipSampleResults = ipSampleResults;
-	}
-
-	@Enumerated(EnumType.STRING)
 	public VaccinationStatus getVaccinationStatus() {
 		return vaccinationStatus;
 	}
