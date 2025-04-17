@@ -14736,3 +14736,6 @@ INSERT INTO schema_version(version_number, comment) VALUES (646, 'Added barcode 
 
 ALTER TABLE contacts_visits REPLICA IDENTITY FULL;
 INSERT INTO schema_version(version_number, comment) VALUES (647, 'Resolved replica saving error with contacts_visits table');
+
+UPDATE samples SET samplematerial = 'NASOPHARYNGEAL_SWAB' WHERE samplematerial = 'NP_SWAB';
+INSERT INTO schema_version(version_number, comment) VALUES (648, 'Resolved replica saving error with contacts_visits table');
