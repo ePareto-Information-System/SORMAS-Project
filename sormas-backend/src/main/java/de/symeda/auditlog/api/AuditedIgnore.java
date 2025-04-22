@@ -15,34 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.auditlog;
+package de.symeda.auditlog.api;
 
-import de.symeda.sormas.api.i18n.I18nProperties;
+import java.lang.annotation.*;
 
-public enum ChangeType {
+/**
+ * Interface for preventing elements from being audited.
+ * 
+ * @author Mate Strysewske
+ */
+@Target({
+	ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface AuditedIgnore {
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
-	}
-	
-	public static String toString(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
-
-		return value.toString();
-	}
-	
-	public static String toPastTense(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
-
-		return I18nProperties.getEnumCaption(value, "Past");
-	}
 }

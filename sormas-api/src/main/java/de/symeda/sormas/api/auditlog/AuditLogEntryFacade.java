@@ -17,11 +17,10 @@
  *******************************************************************************/
 package de.symeda.sormas.api.auditlog;
 
-import java.util.List;
+import de.symeda.sormas.api.utils.SortProperty;
 
 import javax.ejb.Remote;
-
-import de.symeda.sormas.api.utils.SortProperty;
+import java.util.List;
 
 @Remote
 public interface AuditLogEntryFacade {

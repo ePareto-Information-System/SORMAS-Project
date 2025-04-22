@@ -15,34 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.auditlog;
+package de.symeda.auditlog.api.value.format;
 
-import de.symeda.sormas.api.i18n.I18nProperties;
+/**
+ * Formats the given value as String.
+ * 
+ * @author Stefan Kock
+ * @param <V>
+ *            Type of the {@code value} to format.
+ */
+public interface ValueFormatter<V> {
 
-public enum ChangeType {
-
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
-	}
-	
-	public static String toString(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
-
-		return value.toString();
-	}
-	
-	public static String toPastTense(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
-
-		return I18nProperties.getEnumCaption(value, "Past");
-	}
+	/**
+	 * Formats the given value as String.
+	 * 
+	 * @param value
+	 *            Value to format.
+	 * @return String format of the given value.
+	 */
+	String format(V value);
 }

@@ -15,34 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.auditlog;
+package de.symeda.auditlog.api;
 
-import de.symeda.sormas.api.i18n.I18nProperties;
+import javax.inject.Qualifier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public enum ChangeType {
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
-	}
-	
-	public static String toString(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
+@Qualifier
+@Target({
+	TYPE,
+	METHOD,
+	PARAMETER,
+	FIELD })
+@Retention(RUNTIME)
+@Documented
+public @interface Current {
 
-		return value.toString();
-	}
-	
-	public static String toPastTense(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
-
-		return I18nProperties.getEnumCaption(value, "Past");
-	}
 }

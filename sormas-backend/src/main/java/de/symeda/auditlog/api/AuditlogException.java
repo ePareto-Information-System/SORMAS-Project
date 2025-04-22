@@ -15,34 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.auditlog;
+package de.symeda.auditlog.api;
 
-import de.symeda.sormas.api.i18n.I18nProperties;
+/**
+ * @author Stefan Kock
+ */
+public class AuditlogException extends RuntimeException {
 
-public enum ChangeType {
+	private static final long serialVersionUID = -6278141238374863137L;
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
+	public AuditlogException(String message) {
+		super(message);
 	}
-	
-	public static String toString(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
 
-		return value.toString();
-	}
-	
-	public static String toPastTense(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
-
-		return I18nProperties.getEnumCaption(value, "Past");
+	public AuditlogException(String message, Throwable cause) {
+		super(message, cause);
 	}
 }

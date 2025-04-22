@@ -21,7 +21,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
-
 import de.symeda.sormas.api.auditlog.AuditLogEntryDto;
 import de.symeda.sormas.api.auditlog.ChangeType;
 import de.symeda.sormas.ui.utils.CssStyles;

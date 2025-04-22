@@ -17,12 +17,12 @@
  *******************************************************************************/
 package de.symeda.sormas.api.auditlog;
 
+import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.criteria.BaseCriteria;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
-import de.symeda.sormas.api.utils.criteria.BaseCriteria;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 
 public class AuditLogEntryCriteria extends BaseCriteria implements Cloneable {
 

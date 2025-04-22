@@ -27,7 +27,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.OptionGroup;
-
 import de.symeda.sormas.api.auditlog.AuditLogEntryCriteria;
 import de.symeda.sormas.api.auditlog.ChangeType;
 import de.symeda.sormas.api.i18n.Captions;
@@ -35,6 +34,9 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import org.vaadin.hene.popupbutton.PopupButton;
+
+import java.lang.reflect.Type;
 
 @SuppressWarnings("serial")
 public class EntityAuditLogComponent extends VerticalLayout {

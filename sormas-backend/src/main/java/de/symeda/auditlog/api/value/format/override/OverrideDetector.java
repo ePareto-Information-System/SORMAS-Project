@@ -15,34 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.auditlog;
+package de.symeda.auditlog.api.value.format.override;
 
-import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.auditlog.api.value.format.ValueFormatter;
 
-public enum ChangeType {
+import java.lang.reflect.Method;
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
-	}
-	
-	public static String toString(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
+public interface OverrideDetector<T> {
 
-		return value.toString();
-	}
-	
-	public static String toPastTense(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
-
-		return I18nProperties.getEnumCaption(value, "Past");
-	}
+	/**
+	 * Returns a {@link ValueFormatter} that is adjusted to the entity property.
+	 * 
+	 * @param m
+	 *            The method that describes the entity property.
+	 * @return Returns <code>null</code> if no reasonable derivation can be found. Returns a respective {@link ValueFormatter}
+	 *         if a derivation is possible, e.g. according to the annotations.
+	 */
+	ValueFormatter<T> override(Method m);
 }

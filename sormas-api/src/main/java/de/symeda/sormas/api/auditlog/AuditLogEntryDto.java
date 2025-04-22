@@ -17,11 +17,11 @@
  *******************************************************************************/
 package de.symeda.sormas.api.auditlog;
 
-import java.util.Date;
-import java.util.Map;
-
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.user.UserDto;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * For saving changes on entities.

@@ -15,34 +15,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.auditlog;
+package de.symeda.auditlog.api;
 
-import de.symeda.sormas.api.i18n.I18nProperties;
 
-public enum ChangeType {
+import de.symeda.sormas.api.uuid.HasUuid;
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
-	}
-	
-	public static String toString(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
+/**
+ * Interface to build the entity listener for JPA entities.
+ * 
+ * @author Oliver Milke
+ * @since 14.04.2016
+ */
+public interface AuditListener {
 
-		return value.toString();
-	}
-	
-	public static String toPastTense(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
+	/**
+	 * To be used for
+	 * <ul>
+	 * <li>PrePersist</li>
+	 * <li>PreUpdate</li>
+	 * </ul>
+	 * Performs the comparison of the entity with its original state.
+	 * 
+	 * @param o
+	 *            The entity to be audited.
+	 */
+	void prePersist(HasUuid o);
 
-		return I18nProperties.getEnumCaption(value, "Past");
-	}
+	/**
+	 * To be used for
+	 * <ul>
+	 * <li>PostLoad</li>
+	 * </ul>
+	 * Saves the original state of an entity for later comparison.
+	 * 
+	 * @param o
+	 *            The entity to be audited.
+	 */
+	void postLoad(HasUuid o);
+
+	/**
+	 * To be used for
+	 * <ul>
+	 * <li>PreRemove</li>
+	 * </ul>
+	 * Logs the deleting of an entity.
+	 * 
+	 * @param o
+	 *            The entity to be audited.
+	 */
+	void preRemove(HasUuid o);
 }

@@ -15,34 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.auditlog;
+package de.symeda.auditlog.api;
 
-import de.symeda.sormas.api.i18n.I18nProperties;
+import java.io.Serializable;
+import java.util.Date;
 
-public enum ChangeType {
+/**
+ * Identifies the transaction in which a change has happened.
+ * 
+ * @author Oliver Milke
+ * @since 15.01.2016
+ */
+public class TransactionId implements Serializable {
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
-	}
-	
-	public static String toString(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
+	private static final long serialVersionUID = 1L;
 
-		return value.toString();
-	}
-	
-	public static String toPastTense(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
+	private String transactionId = Integer.toString(new Date().hashCode());
 
-		return I18nProperties.getEnumCaption(value, "Past");
+	public String getTransactionId() {
+		return transactionId;
 	}
 }

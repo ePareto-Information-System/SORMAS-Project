@@ -15,34 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.auditlog;
+package de.symeda.auditlog.api.value.format;
 
-import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.auditlog.api.value.SimpleValueContainer;
 
-public enum ChangeType {
+import java.io.Serializable;
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
-	}
-	
-	public static String toString(ChangeType value) {
+/**
+ * Formats Enums:
+ * <ol>
+ * <li>{@code null} -> {@link SimpleValueContainer.DEFAULT_NULL_STRING}</li>
+ * <li>{@code value.name()}</li>
+ * 
+ * @author Oliver Milke
+ */
+public class EnumFormatter implements ValueFormatter<Enum<?>>, Serializable {
+
+	private static final long serialVersionUID = 4528994776862288356L;
+
+	@Override
+	public String format(Enum<?> value) {
+
 		if (value == null) {
-			return "";
+			return SimpleValueContainer.DEFAULT_NULL_STRING;
+		} else {
+			return value.name();
 		}
-
-		return value.toString();
-	}
-	
-	public static String toPastTense(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
-
-		return I18nProperties.getEnumCaption(value, "Past");
 	}
 }

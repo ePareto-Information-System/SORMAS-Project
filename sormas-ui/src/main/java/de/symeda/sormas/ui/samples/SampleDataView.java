@@ -23,6 +23,7 @@ import com.vaadin.ui.VerticalLayout;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.auditlog.ChangeType;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactDto;
@@ -65,6 +66,8 @@ public class SampleDataView extends AbstractSampleView {
 	public static final String ADDITIONAL_TESTS_LOC = "additionalTests";
 	public static final String USER_ACTIVITY_LOG_LOC = "userActivityLog";
 	public static final String SORMAS_TO_SORMAS_LOC = "sormsToSormas";
+	public static final String USER_ACTIVITY_LOG_LOC = "userActivityLog";
+
 
 	private CommitDiscardWrapperComponent<SampleEditForm> editComponent;
 	private Disease disease;
@@ -121,6 +124,7 @@ public class SampleDataView extends AbstractSampleView {
 			EVENT_PARTICIPANT_LOC,
 			PATHOGEN_TESTS_LOC,
 			ADDITIONAL_TESTS_LOC,
+			USER_ACTIVITY_LOG_LOC,
 			SORMAS_TO_SORMAS_LOC);
 
 		container.addComponent(layout);
@@ -150,6 +154,12 @@ public class SampleDataView extends AbstractSampleView {
 			layout.addSidePanelComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
 		}
 
+		if (UserProvider.getCurrent().isAdmin()) {
+			EntityAuditLogComponent userActivityList = new EntityAuditLogComponent(SampleDto.class, getSampleRef().getUuid());
+			userActivityList.addStyleName(CssStyles.SIDE_COMPONENT);
+			layout.addSidePanelComponent(userActivityList, USER_ACTIVITY_LOG_LOC);
+		}
+
 		if (FacadeProvider.getSormasToSormasFacade()
 			.isAnyFeatureConfigured(
 				FeatureType.SORMAS_TO_SORMAS_SHARE_CASES,
@@ -171,6 +181,8 @@ public class SampleDataView extends AbstractSampleView {
 
 		layout.disableIfNecessary(deleted, null);
 		editComponent.setEnabled(isEditAllowed());
+
+		UiUtil.logActivity(sampleDto);
 	}
 
 	private AbstractInfoLayout<EntityDto> getDependentSideComponent(SampleDto sampleDto) {

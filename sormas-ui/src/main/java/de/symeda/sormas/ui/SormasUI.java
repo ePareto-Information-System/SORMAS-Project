@@ -96,7 +96,7 @@ public class SormasUI extends UI implements HasUserProvider, HasViewModelProvide
 	protected void initMainScreen() {
 		addStyleName(ValoTheme.UI_WITH_MENU);
 		setContent(new MainScreen(SormasUI.this));
-		
+
 		initUserActivityLogging();
 	}
 
@@ -233,20 +233,20 @@ public class SormasUI extends UI implements HasUserProvider, HasViewModelProvide
 		}
 		return query;
 	}
-	
+
 	private void initUserActivityLogging () {
 		JavaScript.getCurrent().addFunction("de.symeda.sormas.ui.auditlog.logActivity",
 		   new JavaScriptFunction() {
 				@Override
 				public void call(JsonArray arguments) {
-					
+
 					JsonObject params = arguments.getObject(0);
 					String activityType = params.getString("activityType");
 					String clazz = params.getString("clazz");
 					String uuid = params.getString("uuid");
-					
+
 					ChangeType changeType = ChangeType.valueOf(activityType);
-					
+
 					FacadeProvider.getAuditLogEntryFacade().logActivity(changeType, clazz, uuid);
 				}
 			}

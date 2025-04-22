@@ -17,73 +17,69 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.auditlog;
 
-import de.symeda.auditlog.api.*;
-import de.symeda.sormas.api.auditlog.ChangeType;
+import de.symeda.auditlog.api.AuditListener;
 import de.symeda.sormas.api.uuid.HasUuid;
 
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
-import javax.swing.event.ChangeEvent;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Collections;
 
-/**
- * Entity life cycle listener that can detect changes on entities.
- *
- * @author Oliver Milke
- * @since 13.01.2016
- */
-public class DefaultAuditListener implements Serializable, AuditListener {
+public class AuditListenerCdiWrapper implements Serializable, AuditListener {
 
 	private static final long serialVersionUID = 1L;
 
-	@Inject
-	@Current
-	private Auditor auditor;
+	private BeanManager beanManager;
 
-	@Inject
-	@Current
-	private TransactionId transactionId;
+	private BeanManager getBeanManager() {
 
-	@Inject
-	@Current
-	private UserId userId;
+		if (beanManager == null) {
+			try {
+				InitialContext initialContext = new InitialContext();
+				beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+				return beanManager;
+			} catch (NamingException e) {
+				throw new IllegalStateException("Couldn't get BeanManager through JNDI", e);
+			}
+		}
 
-	@Inject
-	Event<ChangeEvent> event;
+		return beanManager;
+	}
+
+	private AuditListener getBeanByName() {
+
+		BeanManager beanManager = this.getBeanManager();
+
+		Bean<?> bean = beanManager.resolve(beanManager.getBeans(DefaultAuditListener.class));
+		AuditListener someBean = (AuditListener) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+
+		return someBean;
+	}
 
 	@Override
-	@PrePersist
 	@PreUpdate
+	@PrePersist
 	public void prePersist(HasUuid o) {
 
-		ChangeEvent data = new ChangeEvent(this.auditor.detectChanges(o), EntityId.getOidFromHasUuid(o), LocalDateTime.now(), userId, transactionId);
-		event.fire(data);
+		this.getBeanByName().prePersist(o);
 	}
 
 	@Override
 	@PostLoad
 	public void postLoad(HasUuid o) {
 
-		auditor.register(o);
+		this.getBeanByName().postLoad(o);
 	}
 
 	@Override
 	@PreRemove
 	public void preRemove(HasUuid o) {
 
-		ChangeEvent data = new ChangeEvent(
-			EntityId.getOidFromHasUuid(o),
-			Collections.emptySortedMap(),
-			ChangeType.DELETE,
-			LocalDateTime.now(),
-			userId,
-			transactionId);
-		event.fire(data);
+		this.getBeanByName().preRemove(o);
 	}
 }

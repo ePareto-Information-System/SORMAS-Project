@@ -1,8 +1,8 @@
 package de.symeda.sormas.ui;
 
-import com.vaadin.ui.JavaScript;
 import java.util.Set;
 
+import com.vaadin.ui.JavaScript;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.auditlog.AuditLogEntryDto;
 import de.symeda.sormas.api.auditlog.ChangeType;
@@ -34,11 +34,11 @@ public class UiUtil {
 	public static boolean enabled(Set<FeatureType> features) {
 		return FacadeProvider.getFeatureConfigurationFacade().areAllFeatureEnabled(features.toArray(new FeatureType[] {}));
 	}
-	
+
 	public static void logActivity (HasUuid entity) {
 		logActivity(ChangeType.VIEW, entity);
 	}
-	
+
 	public static void logActivity (ChangeType activityType, HasUuid entity) {
 		JavaScript.getCurrent().execute(
 			"setTimeout(function () {" +

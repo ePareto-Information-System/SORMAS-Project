@@ -20,7 +20,6 @@ package de.symeda.sormas.ui.auditlog;
 import java.util.List;
 
 import com.vaadin.ui.Label;
-
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.auditlog.AuditLogEntryCriteria;
 import de.symeda.sormas.api.auditlog.AuditLogEntryDto;

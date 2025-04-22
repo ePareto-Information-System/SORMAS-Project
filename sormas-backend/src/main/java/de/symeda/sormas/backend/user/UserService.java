@@ -15,22 +15,14 @@
 package de.symeda.sormas.backend.user;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.persistence.FlushModeType;
 import javax.inject.Inject;
+import javax.persistence.FlushModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -596,7 +588,6 @@ public class UserService extends AdoServiceWithUserFilterAndJurisdiction<User> {
 			cb.equal(from.get(User.LABORATORY), facility),
 			from.get(User.JURISDICTION_LEVEL).in(JurisdictionLevel.LABORATORY, JurisdictionLevel.EXTERNAL_LABORATORY));
 
-			//joinRoles.in(Arrays.asList(UserRole.LAB_USER, UserRole.EXTERNAL_LAB_USER, UserRole.LAB_ATTENDANT, UserRole.LAB_SUPERVISOR)));
 		cq.where(filter).distinct(true);
 
 		return em.createQuery(cq).getResultList();
@@ -873,21 +864,21 @@ public class UserService extends AdoServiceWithUserFilterAndJurisdiction<User> {
 		systemUser.setFirstName("SYSTEM");
 		systemUser.setLastName("");
 		systemUser.setUserRoles(new HashSet<UserRole>(0));
-		
+
 		return systemUser;
 	}
-	
+
 	//needed to use setFlushMode
 	//and also have a performant query
 	public Long getIdByUsername(String username) {
-		
+
 		java.math.BigInteger id = (java.math.BigInteger) em.createNativeQuery("SELECT " + User.ID + " FROM " + User.TABLE_NAME + " WHERE " + User.USER_NAME + " = :username")
 						.setParameter("username", username)
 						.setFlushMode(FlushModeType.COMMIT)
 						.getResultStream()
 						.findFirst()
 						.orElse(null);
-		
+
 		return id == null ? null : Long.parseLong(id.toString());
 	}
 	public List<User> getAllActive() {

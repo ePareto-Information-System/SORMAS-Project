@@ -15,34 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.auditlog;
+package de.symeda.auditlog.api;
 
-import de.symeda.sormas.api.i18n.I18nProperties;
+import java.io.Serializable;
 
-public enum ChangeType {
+/**
+ * Describes the currently logged in user.
+ * 
+ * @author Oliver Milke
+ * @since 12.11.2015
+ */
+public final class UserId implements Serializable {
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
+	private static final long serialVersionUID = 1L;
+
+	private final String name;
+
+	public UserId(String name) {
+		this.name = name;
 	}
-	
-	public static String toString(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
 
-		return value.toString();
-	}
-	
-	public static String toPastTense(ChangeType value) {
-		if (value == null) {
-			return "";
-		}
-
-		return I18nProperties.getEnumCaption(value, "Past");
+	public String getName() {
+		return name;
 	}
 }
