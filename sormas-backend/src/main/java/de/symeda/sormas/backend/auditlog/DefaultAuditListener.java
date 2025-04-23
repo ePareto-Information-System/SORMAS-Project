@@ -27,7 +27,6 @@ import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
-import javax.swing.event.ChangeEvent;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;

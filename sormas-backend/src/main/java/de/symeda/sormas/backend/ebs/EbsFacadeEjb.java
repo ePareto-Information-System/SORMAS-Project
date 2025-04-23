@@ -156,7 +156,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	@EJB
 	private EbsAlertService ebsAlertService;
 
-	@PersistenceContext
+	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private  EntityManager entityManager ;
 
 	public EbsFacadeEjb() {
@@ -228,7 +228,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		if (source.getTriaging() != null) {
 			target.setTriaging(TriagingFacadeEjb.toDto(source.getTriaging()));
 		}
-//		if (source.getSignalVerification() != null) {
+//		if (source.getSignalVerification() != null) {His
 //			target.setSignalVerification(SignalVerificationFacadeEjb.toDto(source.getSignalVerification()));
 //		}
 		// Instead of using the proxy which is causing the EntityNotFoundException

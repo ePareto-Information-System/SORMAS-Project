@@ -504,10 +504,6 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(DocumentFacade.class);
 	}
 	
-	public static AuditLogEntryFacade getAuditLogEntryFacade() {
-		return get().lookupEjbRemote(AuditLogEntryFacade.class);
-	}
-
 	public static SystemEventFacade getSystemEventFacade() {
 
 		return get().lookupEjbRemote(SystemEventFacade.class);

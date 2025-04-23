@@ -66,7 +66,6 @@ public class SampleDataView extends AbstractSampleView {
 	public static final String ADDITIONAL_TESTS_LOC = "additionalTests";
 	public static final String USER_ACTIVITY_LOG_LOC = "userActivityLog";
 	public static final String SORMAS_TO_SORMAS_LOC = "sormsToSormas";
-	public static final String USER_ACTIVITY_LOG_LOC = "userActivityLog";
 
 
 	private CommitDiscardWrapperComponent<SampleEditForm> editComponent;
