@@ -230,10 +230,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	// public static final int DATABASE_VERSION = 307;
-	//public static final int DATABASE_VERSION = 343;
-	// public static final int DATABASE_VERSION = 410;
-	public static final int DATABASE_VERSION = 431;
+	public static final int DATABASE_VERSION = 402;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -3498,10 +3495,204 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 			case 343:
 				currentVersion = 343;
-				getDao(Task.class).executeRaw("ALTER TABLE tasks ADD COLUMN assignedByUser_id BIGINT REFERENCES users(id);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN generalizedRash boolean;");
 
 			case 344:
 				currentVersion = 344;
+				getDao(Ebs.class).executeRaw(
+						"CREATE TABLE ebs (" +
+								"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+								"uuid VARCHAR(256)," +
+								"localChangeDate timestamp not null," +
+								"changeDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+								"creationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+								"lastOpenedDate timestamp," +
+								"ebstdate TIMESTAMP," +
+								"endDate TIMESTAMP," +
+								"pseudonymized boolean," +
+								"triageDate TIMESTAMP," +
+								"reportDateTime TIMESTAMP," +
+								"reportingUser_id BIGINT," +
+								"location_id BIGINT," +
+								"externalToken VARCHAR(512)," +
+								"internalToken TEXT," +
+								"deleted BOOLEAN DEFAULT FALSE," +
+								"archiveUndoneReason VARCHAR(512)," +
+								"change_user_id BIGINT," +
+								"deletionReason VARCHAR(255)," +
+								"automaticScanningType VARCHAR(512)," +
+								"manualScanningType VARCHAR(512)," +
+								"scanningType VARCHAR(512)," +
+								"descriptionOccurrence VARCHAR(512)," +
+								"sourceName VARCHAR(512)," +
+								"sourceUrl VARCHAR(512)," +
+								"dateOnset TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+								"personRegistering VARCHAR(512)," +
+								"personDesignation VARCHAR(512)," +
+								"personPhone VARCHAR(512)," +
+								"other VARCHAR(512)," +
+								"ebsLongitude DOUBLE PRECISION," +
+								"ebsLatitude DOUBLE PRECISION," +
+								"ebsLatLon DOUBLE PRECISION," +
+								"ebslocation_id BIGINT," +
+								"sourceInformation VARCHAR(255)," +
+								"archived BOOLEAN DEFAULT FALSE," +
+								"sormasToSormasOriginInfo_id BIGINT," +
+								"categoryOfInformant VARCHAR(255)," +
+								" modified SMALLINT DEFAULT 0," +
+								" snapshot SMALLINT DEFAULT 0,"  +
+								"informantName VARCHAR(512)," +
+								"informantTel VARCHAR(20)," +
+								"responsibleUser_id BIGINT," +
+								"otherDeletionReason VARCHAR(255)," +
+								"externalId VARCHAR(512)," +
+								"otherInformant VARCHAR(255)," +
+								"triaging_id BIGINT," +
+								"signalverification_id BIGINT," +
+								"riskassessment_id BIGINT," +
+								"ebsalert_id BIGINT," +
+								// Define Foreign Key Constraints
+								"FOREIGN KEY (reportingUser_id) REFERENCES users(id)," +
+								"FOREIGN KEY (location_id) REFERENCES location(id)," +
+								"FOREIGN KEY (change_user_id) REFERENCES users(id)," +
+								"FOREIGN KEY (ebslocation_id) REFERENCES location(id)," +
+								"FOREIGN KEY (triaging_id) REFERENCES triaging(id)," +
+								"FOREIGN KEY (signalVerification_id) REFERENCES signalVerification(id)," +
+								"FOREIGN KEY (riskAssessment_id) REFERENCES riskAssessment(id)," +
+								"FOREIGN KEY (ebsalert_id) REFERENCES ebsAlert(id)" +
+								");"
+				);
+				case 345:
+					currentVersion = 345;
+					getDao(Triaging.class).executeRaw(
+							"CREATE TABLE triaging(" +
+									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+									"uuid varchar(256)," +
+									"earlyWarning varchar(3)," +
+									"pseudonymized boolean," +
+									"specificSignal varchar(3)," +
+									"signalCategory varchar(255)," +
+									"healthConcern varchar(3)," +
+									"categoryDetails varchar(255)," +
+									"occurrencePreviously varchar(3)," +
+									"triagingDecision varchar(255)," +
+									"decisionDate date," +
+									"triageDate date," +
+									"referredTo varchar(255)," +
+									"changeDate timestamp not null," +
+									"creationDate timestamp," +
+									"lastOpenedDate timestamp," +
+									"localChangeDate timestamp not null," +
+									"change_user_id bigint," +
+									"responsibleUser_id bigint," +
+									" modified SMALLINT DEFAULT 0," +
+									" snapshot SMALLINT DEFAULT 0,"  +
+									"triagingDecisionString varchar(255)," +
+									"categoryDetailsString varchar(255)," +
+									"outcomeSupervisor varchar(255)," +
+									"notSignal boolean default false," +
+									"humanLaboratoryCategoryDetails varchar(255)," +
+									"humanCommunityCategoryDetails varchar(255)," +
+									"humanFacilityCategoryDetails varchar(255)," +
+									"animalCommunityCategoryDetails varchar(255)," +
+									"animalFacilityCategoryDetails varchar(255)," +
+									"environmentalCategoryDetails varchar(255)," +
+									"poeCategoryDetails varchar(255)," +
+									"animalLaboratoryCategoryDetails varchar(255)," +
+									"categoryDetailsLevel varchar(255)," +
+									"supervisorReview varchar(3)," +
+									"potentialRisk varchar(3)," +
+									"referred varchar(3)," +
+									"ebs_id INTEGER," +
+									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
+									");"
+					);
+				case 346:
+					currentVersion = 346;
+					getDao(RiskAssessment.class).executeRaw(
+							"CREATE TABLE riskAssessment(" +
+									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+									"uuid VARCHAR(256)," +
+									"changeDate timestamp not null," +
+									"creationDate timestamp not null," +
+									"pseudonymized boolean," +
+									"lastOpenedDate timestamp," +
+									"localChangeDate timestamp not null," +
+									"morbidityMortality VARCHAR(3)," +
+									"spreadProbability VARCHAR(3)," +
+									"controlMeasures VARCHAR(3)," +
+									"riskAssessment VARCHAR(255)," +
+									"assessmentDate TIMESTAMP," +
+									"assessmentTime VARCHAR(255)," +
+									" modified SMALLINT DEFAULT 0," +
+									" snapshot SMALLINT DEFAULT 0,"  +
+									"ebs_id INTEGER," +
+									"morbidityMortalityComment VARCHAR(255)," +
+									"spreadProbabilityComment VARCHAR(255)," +
+									"controlMeasuresComment VARCHAR(255)," +
+									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
+									");"
+					);
+
+				case 347:
+					currentVersion = 347;
+					getDao(EbsAlert.class).executeRaw(
+							"CREATE TABLE ebsAlert(" +
+									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+									"uuid VARCHAR(256)," +
+									"changeDate timestamp not null," +
+									"creationDate timestamp not null," +
+									"pseudonymized boolean," +
+									"lastOpenedDate timestamp," +
+									"localChangeDate timestamp not null," +
+									"actionInitiated varchar(3)," +
+									"responseStatus varchar(255)," +
+									"responseDate timestamp," +
+									"detailsResponseActivities varchar(255)," +
+									"detailsGiven varchar(255)," +
+									"alertIssued varchar(3)," +
+									"detailsAlertUsed varchar(255)," +
+									"ebs_id INTEGER," +
+									" modified SMALLINT DEFAULT 0," +
+									" snapshot SMALLINT DEFAULT 0,"  +
+									"alertDate timestamp," +
+									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
+									");"
+					);
+				case 348:
+					currentVersion = 348;
+					getDao(SignalVerification.class).executeRaw(
+							"CREATE TABLE signalverification (" +
+									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+									"uuid VARCHAR(256)," +
+									"verificationSent TEXT," +
+									"verified TEXT," +
+									"pseudonymized boolean," +
+									"verificationCompleteDate TIMESTAMP," +
+									"lastOpenedDate timestamp," +
+									"localChangeDate timestamp not null," +
+									"dateOfOccurrence timestamp," +
+									"numberOfPersonAnimal TEXT," +
+									"numberOfDeath TEXT," +
+									" modified SMALLINT DEFAULT 0," +
+									" snapshot SMALLINT DEFAULT 0,"  +
+									"numberOfPersonCases TEXT," +
+									"numberOfDeathPerson TEXT," +
+									"description TEXT," +
+									"whyNotVerify TEXT," +
+									"creationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+									"changeDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+									"ebs_id INTEGER," +
+									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
+									");"
+					);
+
+			case 349:
+				currentVersion = 349;
+				getDao(Task.class).executeRaw("ALTER TABLE tasks ADD COLUMN assignedByUser_id BIGINT REFERENCES users(id);");
+
+			case 350:
+				currentVersion = 350;
 				getDao(Environment.class).executeRaw(
 					"CREATE TABLE environments(id integer primary key autoincrement, uuid VARCHAR(36) NOT NULL, "
 						+ "changeDate TIMESTAMP NOT NULL, creationDate TIMESTAMP NOT NULL, lastOpenedDate TIMESTAMP, localChangeDate TIMESTAMP NOT NULL, modified INTEGER, "
@@ -3510,8 +3701,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "waterType varchar(255), otherWaterType text, infrastructureDetails varchar(255), otherInfrastructureDetails text, waterUse text, "
 						+ "otherWaterUse text, location_id BIGINT, UNIQUE(snapshot, uuid));");
 
-			case 345:
-				currentVersion = 345;
+			case 351:
+				currentVersion = 351;
 				getDao(Environment.class).executeRaw("ALTER TABLE environments RENAME TO tmp_environments;");
 				getDao(Environment.class).executeRaw(
 					"CREATE TABLE environments(id integer primary key autoincrement, uuid VARCHAR(36) NOT NULL UNIQUE, "
@@ -3529,12 +3720,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "waterType, otherWaterType, infrastructureDetails, otherInfrastructureDetails, waterUse, otherWaterUse, location_id, id FROM tmp_environments");
 				getDao(Environment.class).executeRaw("DROP TABLE tmp_environments");
 
-			case 346:
-				currentVersion = 346;
+			case 352:
+				currentVersion = 352;
 				getDao(FeatureConfiguration.class).executeRaw("DELETE FROM featureConfiguration WHERE featureType = 'DASHBOARD';");
 				// update
-			case 347:
-				currentVersion = 347;
+			case 353:
+				currentVersion = 353;
 				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE diseaseConfiguration RENAME TO tmp_diseaseConfiguration");
 				getDao(DiseaseConfiguration.class).executeRaw(
 					"CREATE TABLE diseaseConfiguration(id integer primary key autoincrement, uuid VARCHAR(36) NOT NULL, "
@@ -3554,26 +3745,26 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "extendedClassificationMulti, ageGroupsString, NOT caseBased " + "FROM tmp_diseaseConfiguration;");
 				getDao(DiseaseConfiguration.class).executeRaw("DROP TABLE tmp_diseaseConfiguration");
 
-			case 348:
-				currentVersion = 348;
+			case 354:
+				currentVersion = 354;
 				getDao(UserRole.class).executeRaw(
 					"UPDATE userRoles set userRights = replace(replace(replace(userRights, '\"CONTACT_CLASSIFY\"', ''), '\"CONTACT_ASSIGN\"', ''), ',,', ',')");
 
-			case 349:
-				currentVersion = 349;
+			case 355:
+				currentVersion = 355;
 				getDao(FeatureConfiguration.class).executeRaw(
 					"UPDATE featureConfiguration set featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES' where featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES_WITH_CONTACTS_AND_SAMPLES'");
 
-			case 350:
-				currentVersion = 350;
+			case 356:
+				currentVersion = 356;
 				getDao(CustomizableEnumValue.class).executeRaw("ALTER TABLE customizableEnumValue ADD COLUMN defaultValue boolean;");
 
-			case 351:
-				currentVersion = 351;
+			case 357:
+				currentVersion = 357;
 				getDao(UserRole.class).executeRaw("ALTER TABLE userRoles ADD COLUMN linkedDefaultUserRole varchar(255);");
 
-			case 352:
-				currentVersion = 352;
+			case 358:
+				currentVersion = 358;
 
 				if (columnDoesNotExist("vaccination", "lastOpenedDate")) {
 					getDao(Vaccination.class).executeRaw("ALTER TABLE vaccination ADD COLUMN lastOpenedDate timestamp;");
@@ -3584,14 +3775,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				if (columnDoesNotExist("vaccination", "modified")) {
 					getDao(Vaccination.class).executeRaw("ALTER TABLE vaccination ADD COLUMN modified SMALLINT DEFAULT 0;");
 				}
-			case 353:
-				currentVersion = 353;
+			case 359:
+				currentVersion = 359;
 				getDao(FormBuilder.class).executeRaw(
 					"CREATE TABLE forms_form_fields(" + "form_id bigint not null," + "formField_id bigint not null,"
 						+ "PRIMARY KEY (form_id, formField_id)," + "FOREIGN KEY (form_id) REFERENCES forms(id),"
 						+ "FOREIGN KEY (formField_id) REFERENCES form_fields(id)" + ");");
-			case 354:
-				currentVersion = 354;
+			case 360:
+				currentVersion = 360;
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN otherName varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN ghanaCard varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN phone varchar(255);");
@@ -3604,8 +3795,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN pst14MonthsZone varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN pst14MonthsVillage varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN marriageStatus varchar(255);");
-			case 355:
-				currentVersion = 355;
+
+			case 361:
+				currentVersion = 361;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingVillage varchar(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingZone varchar(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN investigationOfficerName varchar(255);");
@@ -3621,19 +3813,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN functionOfReportingOfficer varchar(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerContactPhone varchar(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerEmail varchar(255);");
-			case 356:
-				currentVersion = 356;
+
+			case 362:
+				currentVersion = 362;
 				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN landMark varchar(255);");
 				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN village varchar(255);");
 				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN zone varchar(255);");
-			case 357:
-				currentVersion = 357;
+
+			case 363:
+				currentVersion = 363;
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN hospitalRecordNumber varchar(255);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN selectInpatientOutpatient VARCHAR(255);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateFirstSeen DATE;");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN notifyDistrictDate DATE;");
-			case 358:
-				currentVersion = 358;
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN seenAtAHealthFacility VARCHAR(255);");
+
+			case 364:
+				currentVersion = 364;
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN abdominalCramps varchar(255);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateOfOnset DATE;");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN provisionalDiagnosis VARCHAR(512);");
@@ -3662,7 +3858,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN feverBodyTempGreater VARCHAR(10);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN difficultySwallow VARCHAR(255);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN skinRashNew VARCHAR(255);");
-				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN generalizedRash VARCHAR(255);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN redEyes VARCHAR(255);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN swollenLymphNodesBehindEars VARCHAR(255);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN muscleTone VARCHAR(255);");
@@ -3720,19 +3915,32 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "    treatedWithAbate VARCHAR(255)," + "    abateTreatmentDate VARCHAR(255)," + "		lastOpenedDate BIGINT,"
 						+ "		localChangeDate BIGINT NOT NULL," + "		modified SMALLINT," + "		snapshot SMALLINT,"
 						+ "		UNIQUE (snapshot ASC, uuid ASC)" + ");");
-			case 359:
-				currentVersion = 359;
+
+			case 365:
+				currentVersion = 365;
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleDispatchMode VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleSent VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleTestResultsString VARCHAR(512);");
 
-			case 360:
-				currentVersion = 360;
+			case 366:
+				currentVersion = 366;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN idsrDiagnosis varchar(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN specifyEventDiagnosis varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccinationRoutine VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN lastVaccinationDate DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN secondVaccinationDate DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN numberOfPeopleInSameHousehold VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN dateLatestUpdateRecord DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN otherNotesAndObservations VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedByList varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedOther varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN mobileTeamNo varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN informationGivenBy varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN familyLinkWithPatient varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN nameOfVillagePersonGotIll varchar(255);");
 
-			case 361:
-				currentVersion = 361;
+			case 367:
+				currentVersion = 367;
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultIGM VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultIGMDate DATE;");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultPcr VARCHAR(255);");
@@ -3757,8 +3965,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN remarks VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN confirmedAsGuineaWorm VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN requestedSampleMaterialsString varchar(512);");
-			case 362:
-				currentVersion = 362;
+
+			case 368:
+				currentVersion = 368;
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN virusDetectionGenotype varchar(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateLabResultsSentDistrict Date;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN finalClassification varchar(255);");
@@ -3770,13 +3979,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "    dateOfGuineaWormExpelled VARCHAR(255)," + "    regularBandaging VARCHAR(255),"
 						+ "    completelyExtracted VARCHAR(255)," + "		lastOpenedDate BIGINT," + "		localChangeDate BIGINT NOT NULL,"
 						+ "		modified SMALLINT," + "		snapshot SMALLINT," + "		UNIQUE (snapshot ASC, uuid ASC)" + ");");
-			case 363:
-				currentVersion = 363;
-				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN receivedHealthEducation VARCHAR(255);");
-				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientEnteredWaterSource VARCHAR(255);");
-				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN placeManaged VARCHAR(255);");
-			case 364:
-				currentVersion = 364;
+
+
+			case 369:
+				currentVersion = 369;
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN specimenSavedAndPreservedInAlcohol VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN specimenSavedAndPreservedInAlcoholWhy VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSpecimenSentToRegion DATE;");
@@ -3793,13 +3999,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN frequencyOfChangingFilters VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN remarks VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN confirmedAsGuineaWorm VARCHAR(255);");
-			case 365:
-				currentVersion = 365;
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN secondVaccinationDate DATE;");
+
+			case 370:
+				currentVersion = 370;
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN patientVentilated VARCHAR(255);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateFormSentToDistrict DATE;");
-			case 366:
-				currentVersion = 366;
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN wasPatientAdmitted VARCHAR(255);");
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateFormSentToDistrict Date;");
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN admittedToHealthFacilityNew varchar(255);");
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN memberFamilyHelpingPatient varchar(255);");
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateOfDeath Date;");
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN terminationDateHospitalStay DATE ;");
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN diseaseOnsetDate Date;");
+
+
+			case 371:
+				currentVersion = 371;
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN receivedHealthEducation VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientEnteredWaterSource VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN placeManaged VARCHAR(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledTwoWeeksPrior VARCHAR(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInCountryOne VARCHAR(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInCountryTwo VARCHAR(255);");
@@ -3812,125 +4030,59 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientVisitedHealthCareFacility VARCHAR(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientCloseContactWithARI VARCHAR(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCase VARCHAR(255);");
-				getDao(EpiData.class)
-					.executeRaw("ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationCityCountry VARCHAR(255);");
-			case 367:
-				currentVersion = 367;
-				getDao(EpiData.class)
-					.executeRaw("ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationsString VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationCityCountry VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationsString VARCHAR(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientCloseContactWithARIContactSettingsString VARCHAR(255);");
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormSentToDistrict DATE;");
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormReceivedAtDistrict DATE;");
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN labLocation VARCHAR(255);");
-			case 368:
-				currentVersion = 368;
-				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN applicable varchar(255);");
-			case 369:
-				currentVersion = 369;
-				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateFormSentToDistrict Date;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN recentTravelOutbreak varchar(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN contactSimilarOutbreak varchar(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN contactSickAnimals varchar(255);");
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN suspectedDisease VARCHAR(255);");
-
-			case 370:
-				currentVersion = 370;
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateLabResultsSentClinician Date;");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN labLocation VARCHAR(255);");
-			case 371:
-				currentVersion = 371;
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccinationRoutine VARCHAR(255);");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN lastVaccinationDate DATE;");
-			case 372:
-				currentVersion = 372;
-				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN residentialAddress VARCHAR(255);");
-			case 373:
-				currentVersion = 373;
-				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN seenAtAHealthFacility VARCHAR(255);");
-			case 374:
-				currentVersion = 374;
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN historyOfTravelOutsideTheVillageTownDistrict VARCHAR(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN historyOfTravelRegion_id bigint REFERENCES region(id);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN historyOfTravelDistrict_id bigint REFERENCES district(id);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN historyOfTravelSubDistrict_id bigint REFERENCES community(id);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN historyOfTravelVillage VARCHAR(255);");
-			case 375:
-				currentVersion = 375;
+
+			case 372:
+				currentVersion = 372;
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormSentToDistrict DATE;");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormReceivedAtDistrict DATE;");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN labLocation VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormSentToHigherLevel DATE;");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN personCompletingForm VARCHAR(255);");
-			case 376:
-				currentVersion = 376;
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN suspectedDisease VARCHAR(255);");
+
+
+			case 373:
+				currentVersion = 373;
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateLabResultsSentClinician Date;");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN labLocation VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN virusDetectionGenotype VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSurveillanceSentResultsToDistrict DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateDistrictReceivedLabResults DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryDateResultsSentDSD DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN finalClassification VARCHAR(255);");
-			case 377:
-				currentVersion = 377;
-				getDao(Ebs.class).executeRaw(
-					"CREATE TABLE ebs(" + "id bigint primary key not null," + "uuid varchar(36) not null unique,"
-						+ "changedate timestamp not null default CURRENT_TIMESTAMP," + "creationdate timestamp not null default CURRENT_TIMESTAMP,"
-						+ "ebstdate timestamp," + "reportdatetime timestamp not null," + "reportinguser_id bigint," + "location_id bigint,"
-						+ "externaltoken varchar(512)," + "internaltoken text," + "deleted boolean default false,"
-						+ "archiveundonereason varchar(512)," + "change_user_id bigint," + "deletionreason varchar(255),"
-						+ "automaticScanningType varchar(512)," + "manualScanningType varchar(512)," + "scanningType varchar(512),"
-						+ "descriptionOccurrence varchar(512)," + "sourceName varchar(512)," + "sourceUrl varchar(512)," + "dateOnset timestamp,"
-						+ "personRegistering varchar(512)," + "personDesignation varchar(512)," + "personPhone varchar(512)," + "other varchar(512),"
-						+ "ebsLongitude double precision," + "ebsLatitude double precision," + "ebsLatLon double precision,"
-						+ "ebslocation_id bigint," + "sourceInformation varchar(255)," + "archived boolean default false,"
-						+ "sormasToSormasOriginInfo_id bigint," + "categoryOfInformant varchar(255)," + "informantName varchar(512),"
-						+ "informantTel varchar(20)," + "responsibleuser_id bigint," + "otherdeletionreason varchar(255),"
-						+ "externalid varchar(512)," + "otherInformant varchar(255)," + "triaging_id bigint," + "signalVerification_id bigint,"
-						+ "riskAssessment_id bigint," + "ebsalert_id bigint" + ");");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampletestsstring VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCR VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCRDate DATE;");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultAntigen VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultAntigenDate DATE;");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGM VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGMDate DATE;");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGG VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGGDate DATE;");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultImmuno VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultImmunoDate DATE;");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN secondTestedDisease VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN testResultForSecondDisease VARCHAR(255);");
 
-				getDao(Ebs.class)
-					.executeRaw("ALTER TABLE ebs ADD CONSTRAINT fk_ebs_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users(id);");
+			case 374:
+				currentVersion = 374;
+				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN residentialAddress VARCHAR(255);");
+				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN nearestHealthFacilityToVillage VARCHAR(255);");
+				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN locality varchar(255);");
 
-				getDao(Ebs.class).executeRaw("ALTER TABLE ebs ADD CONSTRAINT fk_ebs_location_id FOREIGN KEY (location_id) REFERENCES location(id);");
-
-				getDao(Ebs.class)
-					.executeRaw("ALTER TABLE ebs ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users(id);");
-
-				getDao(Ebs.class)
-					.executeRaw("ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebslocation_id FOREIGN KEY (ebslocation_id) REFERENCES location(id);");
-				getDao(Ebs.class).executeRaw("ALTER TABLE ebs ADD CONSTRAINT fk_ebs_triaging_id FOREIGN KEY (triaging_id) REFERENCES triaging (id);");
-				getDao(Ebs.class).executeRaw(
-					"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_signalVerification_id FOREIGN KEY (signalVerification_id) REFERENCES signalVerification (id);");
-				getDao(Ebs.class).executeRaw(
-					"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_riskAssessment_id FOREIGN KEY (riskAssessment_id) REFERENCES riskAssessment (id);");
-				getDao(Ebs.class).executeRaw("ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebsAlert_id FOREIGN KEY (ebsAlert_id) REFERENCES ebsAlert (id);");
-			case 378:
-				currentVersion = 378;
-				getDao(Triaging.class).executeRaw(
-					"CREATE TABLE triaging(" + "id bigint primary key not null," + "uuid varchar(36) not null unique," + "earlyWarning varchar(3),"
-						+ "specificSignal varchar(3)," + "signalCategory varchar(255)," + "healthConcern varchar(3),"
-						+ "categoryDetails varchar(255)," + "occurrencePreviously varchar(3)," + "triagingDecision varchar(255),"
-						+ "decisionDate date," + "referredTo varchar(255)," + "changedate timestamp not null," + "creationdate timestamp not null,"
-						+ "change_user_id bigint," + "responsibleuser_id bigint," + "triagingDecisionString varchar(255),"
-						+ "categoryDetailsString varchar(255)," + "outcomeSupervisor varchar(255)," + "notSignal boolean default false,"
-						+ "humanLaboratoryCategoryDetails varchar(255)," + "animalCommunityCategoryDetails varchar(255),"
-						+ "animalFacilityCategoryDetails varchar(255)," + "environmentalCategoryDetails varchar(255),"
-						+ "poeCategoryDetails varchar(255)," + "animalLaboratoryCategoryDetails varchar(255),"
-						+ "humanCommunityCategoryDetails varchar(255)," + "categoryDetailsLevel varchar(255)," + "supervisorreview varchar(3),"
-						+ "referred varchar(3)" + ");");
-			case 379:
-				currentVersion = 379;
-				getDao(RiskAssessment.class).executeRaw(
-					"CREATE TABLE riskAssessment(" + "id bigint primary key autoincrement," + "morbidityMortality varchar(3),"
-						+ "spreadProbability varchar(3)," + "controlMeasures varchar(3)," + "riskAssessment varchar(255),"
-						+ "assessmentDate timestamp," + "assessmentTime varchar(255)," + "ebs_id bigint," + "morbidityMortalityComment varchar(255),"
-						+ "spreadProbabilityComment varchar(255)," + "controlMeasuresComment varchar(255),"
-						+ "FOREIGN KEY (ebs_id) REFERENCES ebs(id)" + // Foreign key constraint
-						");");
-			case 380:
-				currentVersion = 380;
-				getDao(EbsAlert.class).executeRaw(
-					"CREATE TABLE ebsAlert(" + "id bigint primary key autoincrement," + "actionInitiated varchar(3)," + "responseStatus varchar(255),"
-						+ "responseDate timestamp," + "detailsResponseActivities varchar(255)," + "detailsGiven varchar(255),"
-						+ "alertIssued varchar(3)," + "detailsAlertUsed varchar(255)," + "ebs_id bigint," + "alertDate timestamp,"
-						+ "FOREIGN KEY (ebs_id) REFERENCES ebs(id)" + ");");
-			case 381:
-				currentVersion = 381;
+			case 375:
+				currentVersion = 375;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherVaccinatedWithTT VARCHAR(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherHaveCard VARCHAR(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherNumberOfDoses VARCHAR(255);");
@@ -3949,8 +4101,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails VARCHAR(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN dateOfNotification DATE;");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedBy VARCHAR(255);");
-			case 382:
-				currentVersion = 382;
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccineType varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN addressMpox varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN village varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN city varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN nationality varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN ethnicity varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN occupation varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN investigationOfficerAddress varchar(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN regionOfResidence_id bigint REFERENCES region(id);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN districtOfResidence_id bigint REFERENCES district(id);");
+
+			case 376:
+				currentVersion = 376;
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN applicable varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN locationOfBirth VARCHAR(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN birthInInstitution VARCHAR(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN receivedAntenatalCare VARCHAR(255);");
@@ -3961,17 +4126,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN cutCordWithSterileBlade VARCHAR(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN cordTreatedWithAnything VARCHAR(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN cordTreatedWithAnythingWhere VARCHAR(255);");
-			case 383:
-				currentVersion = 383;
-				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN nearestHealthFacilityToVillage VARCHAR(255);");
-			case 384:
-				currentVersion = 384;
-				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN wasPatientAdmitted VARCHAR(255);");
-			case 385:
-				currentVersion = 385;
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;");
-			case 386:
-				currentVersion = 386;
+
+			case 377:
+				currentVersion = 377;
 				getDao(RiskFactor.class).executeRaw(
 					"CREATE TABLE riskfactor (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL UNIQUE,"
 						+ "    changedate BIGINT NOT NULL," + "		pseudonymized SMALLINT," + "    creationdate BIGINT NOT NULL,"
@@ -3994,21 +4151,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "		localChangeDate BIGINT NOT NULL," + "		modified SMALLINT," + "		snapshot SMALLINT,"
 						+ "		UNIQUE (snapshot ASC, uuid ASC)" + ");");
 
-			case 387:
-				currentVersion = 387;
-				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN exposedToRiskFactor VARCHAR(255);");
-				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN waterUsedByPatientAfterExposure VARCHAR(255);");
-				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);");
-				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);");
-				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);");
-			case 388:
-				currentVersion = 388;
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN numberOfPeopleInSameHousehold VARCHAR(255);");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN dateLatestUpdateRecord DATE;");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN otherNotesAndObservations VARCHAR(255);");
 
-			case 389:
-				currentVersion = 389;
+			case 378:
+				currentVersion = 378;
 				getDao(FormBuilder.class).executeRaw(
 					"BEGIN TRANSACTION;" + "CREATE TABLE forms_form_fields_new (" + "form_id BIGINT NOT NULL," + "formField_id BIGINT NOT NULL,"
 						+ "displayOrder INTEGER," + "PRIMARY KEY (form_id, formField_id)," + "FOREIGN KEY (form_id) REFERENCES forms(id),"
@@ -4016,23 +4161,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "INSERT INTO forms_form_fields_new (form_id, formField_id) " + "SELECT form_id, formField_id FROM forms_form_fields;"
 						+ "DROP TABLE forms_form_fields;" + "ALTER TABLE forms_form_fields_new RENAME TO forms_form_fields;" + "COMMIT;");
 
-			case 390:
-				currentVersion = 390;
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedByList varchar(255);");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedOther varchar(255);");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN mobileTeamNo varchar(255);");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN informationGivenBy varchar(255);");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN familyLinkWithPatient varchar(255);");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN nameOfVillagePersonGotIll varchar(255);");
 
-			case 391:
-				currentVersion = 391;
-				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN admittedToHealthFacilityNew varchar(255);");
-				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN memberFamilyHelpingPatient varchar(255);");
-				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateOfDeath Date;");
-
-			case 392:
-				currentVersion = 392;
+			case 379:
+				currentVersion = 379;
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN exposedToRiskFactor VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN waterUsedByPatientAfterExposure VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN contactDeadAnimals varchar(255) ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelDuringIllness varchar(255) ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN comm1 varchar(255) ;");
@@ -4067,8 +4203,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN dateOfLastContactWithSuspectCase date ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE samples ADD COLUMN hasSampleBeenCollected varchar(255) ;");
 
-			case 393:
-				currentVersion = 393;
+			case 380:
+				currentVersion = 380;
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN nationality varchar(255) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN ethnicity varchar(255) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN headHouseHold varchar(255) ;");
@@ -4077,41 +4213,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN qualification varchar(255) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientOther varchar(255) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientString varchar(255) ;");
-
-			case 394:
-				currentVersion = 394;
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatient varchar(512) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientOther varchar(255) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientString varchar(255) ;");
-
-			case 395:
-				currentVersion = 395;
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampletestsstring VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCR VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCRDate DATE;");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultAntigen VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultAntigenDate DATE;");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGM VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGMDate DATE;");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGG VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGGDate DATE;");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultImmuno VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultImmunoDate DATE;");
-
-			case 396:
-				currentVersion = 396;
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN investigatorName varchar(255) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN investigatorTitle varchar(255) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN investigatorUnit varchar(255) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN investigatorAddress varchar(255) ;");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN investigatorTel varchar(255) ;");
 
-			case 397:
-				currentVersion = 397;
-				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN terminationDateHospitalStay DATE ;");
 
-			case 398:
-				currentVersion = 398;
+			case 381:
+				currentVersion = 381;
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN previouslyVaccinatedAgainstInfluenza varchar(255) ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN nameOfVaccine varchar(255) ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN yearOfVaccination Integer ;");
@@ -4124,21 +4237,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN otherSpecify varchar(255) ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN ifYesSpecifySick varchar(255) ;");
 
-			case 399:
-				currentVersion = 399;
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN secondTestedDisease VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN testResultForSecondDisease VARCHAR(255);");
 
-			case 400:
-				currentVersion = 400;
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccineType varchar(255);");
-
-			case 401:
-				currentVersion = 401;
-				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN diseaseOnsetDate Date;");
-
-			case 402:
-				currentVersion = 402;
+			case 382:
+				currentVersion = 382;
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN appearanceOfCsf varchar(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN inoculationTimeTransportMedia Date;");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleSentToLab varchar(255);");
@@ -4154,8 +4255,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormReceivedAtRegion Date;");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormSentToNational Date;");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormReceivedAtNational Date;");
-			case 403:
-				currentVersion = 403;
+
+			case 383:
+				currentVersion = 383;
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryType VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCytology VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCytologyPmn VARCHAR(255);");
@@ -4183,11 +4285,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalResults VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalClassification VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSampleSentRegLab DATE;");
-			case 404:
-				currentVersion = 404;
-				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN locality varchar(255);");
-			case 405:
-				currentVersion = 405;
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogenTest ADD COLUMN vibrioCholeraeIdentifiedInStools VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogenTest ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogenTest ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN testResultVariant VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN variantOtherSpecify VARCHAR(255);");
+
+			case 384:
+				currentVersion = 384;
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN intlTravel varchar(255) ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN specifyCountries varchar(255) ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN dateOfDeparture DATE ;");
@@ -4199,21 +4304,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN contactIllPerson varchar(255) ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN contactDate DATE ;");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN specifyIllness varchar(255) ;");
-			case 406:
-				currentVersion = 406;
+
+			case 385:
+				currentVersion = 385;
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN requestedSymptomsSelectedString varchar(512);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN otherSymptomSelected varchar(512);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN onsetOfSymptomDatetime DATE;");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN symptomsOngoing varchar(16);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN durationHours varchar(16);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN soughtMedicalAttention varchar(16);");
-
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN soughtRegion_id bigint REFERENCES region(id);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN soughtDistrict_id bigint REFERENCES district(id);");
-				getDao(Hospitalization.class)
-					.executeRaw("ALTER TABLE hospitalizations ADD COLUMN soughtCommunity_id bigint REFERENCES community(id);");
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN soughtCommunity_id bigint REFERENCES community(id);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN nameOfFacility_id bigint REFERENCES facility(id);");
-
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateOfVisitHospital DATE;");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN hospitalizationYesNo varchar(16);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN physicianName varchar(255);");
@@ -4221,8 +4324,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN labTestConducted varchar(16);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN typeOfSample varchar(255);");
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN agentIdentified varchar(255);");
-			case 407:
-				currentVersion = 407;
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN locationtype_id bigint;");
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD CONSTRAINT fk_hospitalization_locationtype_id FOREIGN KEY (locationtype_id) REFERENCES location (id);;");
+
+			case 386:
+				currentVersion = 386;
 				getDao(FoodHistory.class).executeRaw(
 					"CREATE TABLE foodhistory (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    suspectedFood VARCHAR(255),"
 						+ "    dateConsumed DATE," + "    foodSource VARCHAR(255)," + "    eventType VARCHAR(255),"
@@ -4247,8 +4353,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "    totalNoPersonsS3 VARCHAR(255)," + "    foodConsumedS3 VARCHAR(255)," + "    sourceOfFoodS3 VARCHAR(255),"
 						+ "    consumedAtPlaceS3 VARCHAR(55)," + "    numberOfPeopleAteImplicatedFood INTEGER," + "    numberAffected VARCHAR(256),"
 						+ "    changeDate BIGINT," + "    changeUserId BIGINT," + "    creationDate DATE," + "    uuid VARCHAR(512)" + ");");
-			case 408:
-				currentVersion = 408;
+
+			case 387:
+				currentVersion = 387;
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN place varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationMonths varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationDays varchar(255);");
@@ -4258,13 +4365,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN place3 varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationMonths3 varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationDays3 varchar(255);");
-			case 409:
-				currentVersion = 409;
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN place4 varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationMonths4 varchar(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationDays4 varchar(255);");
-			case 410:
-				currentVersion = 410;
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN telNumber varchar(255);");
+
+			case 388:
+				currentVersion = 388;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN afpImmunization_id BIGINT;");
 				getDao(AfpImmunization.class).executeRaw(
 					"CREATE TABLE afpImmunization (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL UNIQUE,"
@@ -4279,8 +4386,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "		UNIQUE (snapshot ASC, uuid ASC)" + ");");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN foodhistory_id BIGINT;");
 
-			case 411:
-				currentVersion = 411;
+			case 389:
+				currentVersion = 389;
 				getDao(AffectedPerson.class).executeRaw(
 					"CREATE TABLE affectedperson (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL UNIQUE,"
 						+ "    changedate BIGINT NOT NULL," + "    creationdate BIGINT NOT NULL," + "    foodhistory_id BIGINT NOT NULL,"
@@ -4288,8 +4395,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "    pseudonymized SMALLINT," + "    lastOpenedDate BIGINT," + "    localChangeDate BIGINT NOT NULL,"
 						+ "    modified SMALLINT," + "    snapshot SMALLINT," + "    UNIQUE (snapshot ASC, uuid ASC)" + ");");
 
-			case 412:
-				currentVersion = 412;
+			case 390:
+				currentVersion = 390;
 				getDao(InvestigationNotes.class).executeRaw(
 					"CREATE TABLE investigationnotes (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    investigationNotesData VARCHAR(255),"
 						+ "    suspectedDiagnosis VARCHAR(255)," + "    confirmedDiagnosis VARCHAR(255)," + "    investigatedBy VARCHAR(255),"
@@ -4298,8 +4405,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "    lastOpenedDate BIGINT," + "    localChangeDate BIGINT NOT NULL," + "    modified SMALLINT," + "    snapshot SMALLINT,"
 						+ "    UNIQUE (snapshot ASC, uuid ASC)" + ");");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN investigationnotes_id BIGINT;");
-			case 413:
-				currentVersion = 413;
+
+			case 391:
+				currentVersion = 391;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN sixtyday_id BIGINT;");
 				getDao(SixtyDay.class).executeRaw(
 					"CREATE TABLE sixtyday (" + "     id INTEGER PRIMARY KEY AUTOINCREMENT," + "     uuid VARCHAR(36) NOT NULL UNIQUE,"
@@ -4322,7 +4430,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "		pseudonymized SMALLINT," + "     creationdate BIGINT NOT NULL," + "		lastOpenedDate BIGINT,"
 						+ "		localChangeDate BIGINT NOT NULL," + "		modified SMALLINT," + "		snapshot SMALLINT,"
 						+ "		UNIQUE (snapshot ASC, uuid ASC)" + ");");
-			case 414:
+
+			case 392:
+				currentVersion = 392;
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFirstSpecimen DATE;");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSecondSpecimen DATE;");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSpecimenSentNationalLevel DATE;");
@@ -4348,175 +4458,138 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN immunocompromisedStatusSuspected VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN afpFinalClassification VARCHAR(255);");
 				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN laboratorySampleDateReceived DATE;");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD csfReason varchar(255)");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN discordant VARCHAR(255);");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN finalLabResults DATE;");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD reasonNotSentToLab varchar(255)");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD csfSampleCollected varchar(255)");
 
-			case 415:
-				currentVersion = 415;
+			case 393:
+				currentVersion = 393;
 				getDao(FoodHistory.class).executeRaw("ALTER TABLE foodhistory ADD COLUMN foodSourceOther varchar(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN testResultVariant VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN variantOtherSpecify VARCHAR(255);");
-			case 416:
-				currentVersion = 416;
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogenTest ADD COLUMN vibrioCholeraeIdentifiedInStools VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogenTest ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogenTest ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);");
 
-				case 417:
-					currentVersion = 417;
-					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN telNumber varchar(255);");
-				case 418:
-					currentVersion = 418;
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN tuberculosis VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN asplenia VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN hepatitis VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN diabetes VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN hiv VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN hivArt VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicLiverDisease VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN malignancyChemotherapy VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicHeartFailure VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicPulmonaryDisease VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicKidneyDisease VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicNeurologicCondition VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN downSyndrome VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN congenitalSyphilis VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN immunodeficiencyOtherThanHiv VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN cardiovascularDiseaseIncludingHypertension VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN obesity VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN currentSmoker VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN formerSmoker VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN asthma VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN sickleCellDisease VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN immunodeficiencyIncludingHiv VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN lungDisease VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN stroke VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN cancer VARCHAR(255);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN otherConditions VARCHAR(255);");
-				case 419:
-					currentVersion = 419;
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN addressMpox varchar(255);");
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN village varchar(255);");
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN city varchar(255);");
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN nationality varchar(255);");
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN ethnicity varchar(255);");
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN occupation varchar(255);");
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN investigationOfficerAddress varchar(255);");
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN regionOfResidence_id bigint REFERENCES region(id);");
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN districtOfResidence_id bigint REFERENCES district(id);");
+			case 394:
+				currentVersion = 394;
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN tuberculosis VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN asplenia VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN hepatitis VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN diabetes VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN hiv VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN hivArt VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicLiverDisease VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN malignancyChemotherapy VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicHeartFailure VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicPulmonaryDisease VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicKidneyDisease VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicNeurologicCondition VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN downSyndrome VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN congenitalSyphilis VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN immunodeficiencyOtherThanHiv VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN cardiovascularDiseaseIncludingHypertension VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN obesity VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN currentSmoker VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN formerSmoker VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN asthma VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN sickleCellDisease VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN immunodeficiencyIncludingHiv VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN lungDisease VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN stroke VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN cancer VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN otherConditions VARCHAR(255);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateOfDeath Date;");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN placeOfDeath varchar(255);");
 
-				case 420:
-					currentVersion = 420;
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateOfDeath Date;");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN placeOfDeath varchar(255);");
+			case 395:
+				currentVersion = 395;
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientSpoxVaccinationScarPresent varchar(255);");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelledAnywhere3WeeksPrior varchar(255);");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelled3WeeksIfYesIndicate varchar(255);");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelledPeriodOfIllness varchar(255);");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelledIllnessIfYesIndicate varchar(255);");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN otherPlaces varchar(255);");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN during3WeeksPatientContactWithSimilarSymptoms varchar(255);");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN during3WeeksPatientContactWithSimilarSymptomsIfYes varchar(255);");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN dateOfContactWithIllPerson Date;");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTouchDomesticWildAnimal varchar(255);");
+				getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTouchDomesticWildAnimalIfYes varchar(255);");
 
-				case 421:
-					currentVersion = 421;
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientSpoxVaccinationScarPresent varchar(255);");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelledAnywhere3WeeksPrior varchar(255);");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelled3WeeksIfYesIndicate varchar(255);");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelledPeriodOfIllness varchar(255);");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelledIllnessIfYesIndicate varchar(255);");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN otherPlaces varchar(255);");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN during3WeeksPatientContactWithSimilarSymptoms varchar(255);");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN during3WeeksPatientContactWithSimilarSymptomsIfYes varchar(255);");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN dateOfContactWithIllPerson Date;");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTouchDomesticWildAnimal varchar(255);");
-					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTouchDomesticWildAnimalIfYes varchar(255);");
+			case 396:
+                currentVersion = 396;
+				getDao(PatientSymptomsPrecedence.class).executeRaw(
+						"CREATE TABLE patientsymptomsprecedence ("
+								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "    changedate BIGINT NOT NULL,"
+								+ "		pseudonymized SMALLINT,"
+								+ "    creationdate BIGINT NOT NULL,"
+								+ "    riskfactor_id BIGINT NOT NULL,"
+								+ "    contactaddress VARCHAR(255),"
+								+ "    name VARCHAR(255),"
+								+ "    phone VARCHAR(255),"
+								+ "		lastOpenedDate BIGINT,"
+								+ "		localChangeDate BIGINT NOT NULL,"
+								+ "		modified SMALLINT,"
+								+ "		snapshot SMALLINT,"
+								+ "		UNIQUE (snapshot ASC, uuid ASC)"
+								+ ");"
+				);
+			case 397:
+				currentVersion = 397;
+				getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD surname varchar(255)");
+				getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD firstName varchar(255)");
+				getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD middleName varchar(255)");
+				getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD telNo varchar(255)");
+				getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD dateOfCompletionOfForm Date");
+				getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD nameOfHealthFacility varchar(255)");
 
-				case 422:
-					currentVersion = 422;
-					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN locationtype_id bigint;");
-					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD CONSTRAINT fk_hospitalization_locationtype_id FOREIGN KEY (locationtype_id) REFERENCES location (id);;");
+			case 398:
+				currentVersion = 398;
+				getDao(Facility.class).executeRaw(
+						"UPDATE facility SET type = 'HOSPITAL' WHERE type = null AND uuid NOT IN ('SORMAS-CONSTID-NOTBASED-FACILITY','SORMAS-CONSTID-NOTSET-FACILITY');");
 
-				case 423:
-                    currentVersion = 423;
-					getDao(PatientSymptomsPrecedence.class).executeRaw(
-							"CREATE TABLE patientsymptomsprecedence ("
-									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
-									+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
-									+ "    changedate BIGINT NOT NULL,"
-									+ "		pseudonymized SMALLINT,"
-									+ "    creationdate BIGINT NOT NULL,"
-									+ "    riskfactor_id BIGINT NOT NULL,"
-									+ "    contactaddress VARCHAR(255),"
-									+ "    name VARCHAR(255),"
-									+ "    phone VARCHAR(255),"
-									+ "		lastOpenedDate BIGINT,"
-									+ "		localChangeDate BIGINT NOT NULL,"
-									+ "		modified SMALLINT,"
-									+ "		snapshot SMALLINT,"
-									+ "		UNIQUE (snapshot ASC, uuid ASC)"
-									+ ");"
-					);
+			case 399:
+				currentVersion = 399;
+				getDao(DiseaseConfiguration.class).executeRaw("CREATE TABLE IF NOT EXISTS facility_diseaseconfiguration(diseaseConfiguration_id integer, facility_id integer);");
 
-				case 424:
-                    currentVersion = 424;
-					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD csfReason varchar(255)");
-					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN discordant VARCHAR(255);");
-					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN finalLabResults DATE;");
-					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD reasonNotSentToLab varchar(255)");
-
-				case 425:
-					currentVersion = 425;
-					getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD surname varchar(255)");
-					getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD firstName varchar(255)");
-					getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD middleName varchar(255)");
-					getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD telNo varchar(255)");
-					getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD dateOfCompletionOfForm Date");
-					getDao(InvestigationNotes.class).executeRaw("ALTER TABLE investigationnotes ADD nameOfHealthFacility varchar(255)");
-
-				case 426:
-					currentVersion = 426;
-					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD csfSampleCollected varchar(255)");
-
-				case 427:
-					currentVersion = 427;
-					getDao(Facility.class).executeRaw(
-							"UPDATE facility SET type = 'HOSPITAL' WHERE type = null AND uuid NOT IN ('SORMAS-CONSTID-NOTBASED-FACILITY','SORMAS-CONSTID-NOTSET-FACILITY');");
-				case 428:
-					currentVersion = 428;
-					getDao(DiseaseConfiguration.class).executeRaw("CREATE TABLE IF NOT EXISTS facility_diseaseconfiguration(diseaseConfiguration_id integer, facility_id integer);");
-
-				case 429:
-					currentVersion = 429;
-					getDao(PatientTravelDetailsDuring.class).executeRaw(
-							"CREATE TABLE patienttraveldetailsduring ("
-									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
-									+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
-									+ "    changedate BIGINT NOT NULL,"
-									+ "    creationdate BIGINT NOT NULL,"
-									+ "    riskfactor_id BIGINT NOT NULL,"
-									+ "    dateOfTravel DATE,"
-									+ "    placeOfTravel VARCHAR(255),"
-									+ "    pseudonymized SMALLINT,"
-									+ "    lastOpenedDate BIGINT,"
-									+ "    localChangeDate BIGINT NOT NULL,"
-									+ "    modified SMALLINT,"
-									+ "    snapshot SMALLINT,"
-									+ "    UNIQUE (snapshot ASC, uuid ASC)"
-									+ ");"
-					);
-
-					getDao(PatientTravelDetailsPrior.class).executeRaw(
-							"CREATE TABLE patienttraveldetailsprior ("
-									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
-									+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
-									+ "    changedate BIGINT NOT NULL,"
-									+ "    creationdate BIGINT NOT NULL,"
-									+ "    riskfactor_id BIGINT NOT NULL,"
-									+ "    dateOfTravel DATE,"
-									+ "    placeOfTravel VARCHAR(255),"
-									+ "    pseudonymized SMALLINT,"
-									+ "    lastOpenedDate BIGINT,"
-									+ "    localChangeDate BIGINT NOT NULL,"
-									+ "    modified SMALLINT,"
-									+ "    snapshot SMALLINT,"
-									+ "    UNIQUE (snapshot ASC, uuid ASC)"
-									+ ");"
-					);
-
-				case 430:
-					currentVersion = 430;
-					getDao(Sample.class).executeRaw("ALTER TABLE sixtyday ADD barcode varchar(255)");
+			case 400:
+				currentVersion = 400;
+				getDao(PatientTravelDetailsDuring.class).executeRaw(
+						"CREATE TABLE patienttraveldetailsduring ("
+								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "    changedate BIGINT NOT NULL,"
+								+ "    creationdate BIGINT NOT NULL,"
+								+ "    riskfactor_id BIGINT NOT NULL,"
+								+ "    dateOfTravel DATE,"
+								+ "    placeOfTravel VARCHAR(255),"
+								+ "    pseudonymized SMALLINT,"
+								+ "    lastOpenedDate BIGINT,"
+								+ "    localChangeDate BIGINT NOT NULL,"
+								+ "    modified SMALLINT,"
+								+ "    snapshot SMALLINT,"
+								+ "    UNIQUE (snapshot ASC, uuid ASC)"
+								+ ");"
+				);
+				getDao(PatientTravelDetailsPrior.class).executeRaw(
+						"CREATE TABLE patienttraveldetailsprior ("
+								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "    changedate BIGINT NOT NULL,"
+								+ "    creationdate BIGINT NOT NULL,"
+								+ "    riskfactor_id BIGINT NOT NULL,"
+								+ "    dateOfTravel DATE,"
+								+ "    placeOfTravel VARCHAR(255),"
+								+ "    pseudonymized SMALLINT,"
+								+ "    lastOpenedDate BIGINT,"
+								+ "    localChangeDate BIGINT NOT NULL,"
+								+ "    modified SMALLINT,"
+								+ "    snapshot SMALLINT,"
+								+ "    UNIQUE (snapshot ASC, uuid ASC)"
+								+ ");"
+				);
+			case 401:
+				currentVersion = 401;
+				getDao(Sample.class).executeRaw("ALTER TABLE sixtyday ADD barcode varchar(255)");
 					// ATTENTION: break should only be done after last version
 				break;
 			default:
