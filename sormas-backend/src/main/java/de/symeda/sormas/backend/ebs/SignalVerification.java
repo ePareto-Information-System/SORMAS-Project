@@ -53,7 +53,7 @@ public class SignalVerification extends AbstractDomainObject {
 	private Date verificationSentDate;
 
 
-	private Ebs ebs;
+	//private Ebs ebs;
 
 	private Long ebsId;
 	public YesNo getVerificationSent() {
@@ -137,24 +137,24 @@ public class SignalVerification extends AbstractDomainObject {
 		this.numberOfDeathPerson = numberOfDeathPerson;
 	}
 
-	@ManyToOne(cascade = {})
-	@JoinColumn(nullable = false)
-	public Ebs getEbs() {
-		return ebs;
-	}
-
-	public void setEbs(Ebs ebs) {
-		this.ebs = ebs;
-	}
-	@Column(name = "ebs_id", updatable = false, insertable = false)
-	public Long getEbsId() {
-		return ebsId;
-	}
-
-	public void setEbsId(Long ebsId) {
-		this.ebsId = ebsId;
-	}
-
+//	@ManyToOne(cascade = {})
+//	@JoinColumn(nullable = false)
+//	public Ebs getEbs() {
+//		return ebs;
+//	}
+//
+//	public void setEbs(Ebs ebs) {
+//		this.ebs = ebs;
+//	}
+//	@Column(name = "ebs_id", updatable = false, insertable = false)
+//	public Long getEbsId() {
+//		return ebsId;
+//	}
+//
+//	public void setEbsId(Long ebsId) {
+//		this.ebsId = ebsId;
+//	}
+//
 	public Date getVerificationSentDate() {
 		return verificationSentDate;
 	}
