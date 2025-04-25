@@ -656,7 +656,13 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 									DateHelper.getEpiWeekYearBefore(fromWeek).toShortString() + " - "
 											+ DateHelper.getEpiWeekYearBefore(toWeek).toShortString()));
 				}
+				dashboardDataProvider.setDateFilterType(NewDateFilterType.CUSTOM);
+				updateComparisonButtons(DateFilterType.CUSTOM, null, null, true);
 				updateComparisonButtons(NewDateFilterType.CUSTOM, null, null, true);
+				if (DashboardType.DISEASE.equals(dashboardDataProvider.getDashboardType()))
+					dashboardView.refreshDiseaseData();
+				else
+					dashboardView.refreshDashboard();
 			} else {
 				if (dateFilterOption == DateFilterOption.DATE) {
 					new Notification(
@@ -730,6 +736,71 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 			customDateFilterLayout.setVisible(false);
 	}
 
+	private void updateComparisonButtons(DateFilterType dateFilterType, Date from, Date to, boolean skipChangeButtonCaptions) {
+		Language userLanguage = I18nProperties.getUserLanguage();
+
+		if (!skipChangeButtonCaptions) {
+			switch (dateFilterType) {
+				case TODAY:
+				case YESTERDAY:
+					btnPeriodBefore.setCaption(
+							String.format(
+									I18nProperties.getCaption(Captions.dashboardDayBefore),
+									DateFormatHelper.formatDate(DateHelper.subtractDays(from, 1))));
+					btnPeriodLastYear.setCaption(
+							String.format(
+									I18nProperties.getCaption(Captions.dashboardSameDayLastYear),
+									DateFormatHelper.formatDate(DateHelper.subtractYears(from, 1))));
+					dashboardDataProvider.setDateFilterType(NewDateFilterType.TODAY);
+					break;
+				case THIS_WEEK:
+					btnPeriodBefore.setCaption(
+							String.format(
+									I18nProperties.getCaption(Captions.dashboardWeekBefore),
+									DateHelper.getPreviousEpiWeek(from).toString(DateHelper.subtractWeeks(to, 1), userLanguage)));
+					int daysBetweenEpiWeekStartAndNow =
+							DateHelper.getFullDaysBetween(DateHelper.getEpiWeekStart(DateHelper.getEpiWeek(from)), new Date());
+					btnPeriodLastYear.setCaption(
+							String.format(
+									I18nProperties.getCaption(Captions.dashboardSameWeekLastYear),
+									DateHelper.getEpiWeekYearBefore(DateHelper.getEpiWeek(from)).toString(daysBetweenEpiWeekStartAndNow, userLanguage)));
+					dashboardDataProvider.setDateFilterType(NewDateFilterType.THIS_WEEK);
+					break;
+				case LAST_WEEK:
+					btnPeriodBefore.setCaption(
+							String
+									.format(I18nProperties.getCaption(Captions.dashboardWeekBefore), DateHelper.getPreviousEpiWeek(from).toString(userLanguage)));
+					btnPeriodLastYear.setCaption(
+							String.format(
+									I18nProperties.getCaption(Captions.dashboardSameWeekLastYear),
+									DateHelper.getEpiWeekYearBefore(DateHelper.getEpiWeek(from)).toString(userLanguage)));
+					dashboardDataProvider.setDateFilterType(NewDateFilterType.LAST_WEEK);
+					break;
+				case THIS_YEAR:
+					btnPeriodLastYear.setCaption(
+							String.format(
+									I18nProperties.getCaption(Captions.dashboardSamePeriodLastYear),
+									DateFormatHelper.buildPeriodString(DateHelper.subtractYears(from, 1), DateHelper.subtractYears(to, 1))));
+					dashboardDataProvider.setDateFilterType(NewDateFilterType.THIS_YEAR);
+					break;
+				case CUSTOM:
+					throw new UnsupportedOperationException(
+							"Captions for custom filter should be changed elsewhere to account for the differences between epi weeks and dates.");
+			}
+		}
+
+		if (dateFilterType == DateFilterType.THIS_YEAR) {
+			btnPeriodBefore.setVisible(false);
+			activeComparisonButton = btnPeriodLastYear;
+			changeCustomDateFilterPanelStyle(btnPeriodLastYear, dateComparisonButtons);
+		} else {
+			btnPeriodBefore.setVisible(true);
+		}
+
+		btnComparisonPeriod.setCaption(activeComparisonButton.getCaption());
+	}
+
+
 	private void updateComparisonButtons(NewDateFilterType dateFilterType, Date from, Date to, boolean skipChangeButtonCaptions) {
 		Language userLanguage = I18nProperties.getUserLanguage();
 
@@ -745,6 +816,7 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 							String.format(
 									I18nProperties.getCaption(Captions.dashboardSameDayLastYear),
 									DateFormatHelper.formatDate(DateHelper.subtractYears(from, 1))));
+					dashboardDataProvider.setDateFilterType(NewDateFilterType.YESTERDAY);
 					break;
 				case THIS_WEEK:
 					btnPeriodBefore.setCaption(
@@ -757,6 +829,7 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 							String.format(
 									I18nProperties.getCaption(Captions.dashboardSameWeekLastYear),
 									DateHelper.getEpiWeekYearBefore(DateHelper.getEpiWeek(from)).toString(daysBetweenEpiWeekStartAndNow, userLanguage)));
+					dashboardDataProvider.setDateFilterType(NewDateFilterType.THIS_WEEK);
 					break;
 				case LAST_WEEK:
 					btnPeriodBefore.setCaption(
@@ -766,16 +839,17 @@ public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvi
 							String.format(
 									I18nProperties.getCaption(Captions.dashboardSameWeekLastYear),
 									DateHelper.getEpiWeekYearBefore(DateHelper.getEpiWeek(from)).toString(userLanguage)));
+					dashboardDataProvider.setDateFilterType(NewDateFilterType.LAST_WEEK);
 					break;
 				case THIS_YEAR:
 					btnPeriodLastYear.setCaption(
 							String.format(
 									I18nProperties.getCaption(Captions.dashboardSamePeriodLastYear),
 									DateFormatHelper.buildPeriodString(DateHelper.subtractYears(from, 1), DateHelper.subtractYears(to, 1))));
+					dashboardDataProvider.setDateFilterType(NewDateFilterType.THIS_YEAR);
 					break;
 				case CUSTOM:
-					throw new UnsupportedOperationException(
-							"Captions for custom filter should be changed elsewhere to account for the differences between epi weeks and dates.");
+					dashboardDataProvider.setDateFilterType(NewDateFilterType.CUSTOM);
 			}
 		}
 
