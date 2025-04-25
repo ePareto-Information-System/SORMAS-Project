@@ -194,7 +194,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		return toEbsDto(source);
 	}
 
-	public  EbsDto toEbsDto(Ebs source) {
+	public static EbsDto toEbsDto(Ebs source) {
 
 		if (source == null) {
 			return null;
@@ -228,19 +228,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		if (source.getTriaging() != null) {
 			target.setTriaging(TriagingFacadeEjb.toDto(source.getTriaging()));
 		}
-//		if (source.getSignalVerification() != null) {His
-//			target.setSignalVerification(SignalVerificationFacadeEjb.toDto(source.getSignalVerification()));
-//		}
-		// Instead of using the proxy which is causing the EntityNotFoundException
-		if (source.getSignalVerificationId() != null) {
-			// Option 1: Fetch the entity directly instead of relying on the proxy
-			SignalVerification verification = entityManager.find(SignalVerification.class, source.getSignalVerificationId());
-			if (verification != null) {
-				target.setSignalVerification(SignalVerificationFacadeEjb.toDto(verification));
-			} else {
-				// Log warning about missing entity
-				System.out.println("Referenced SignalVerification with ID " + source.getSignalVerificationId() + " not found in database");
-			}
+		if (source.getSignalVerification() != null) {
+			target.setSignalVerification(SignalVerificationFacadeEjb.toDto(source.getSignalVerification()));
 		}
 		target.setOtherInformant(source.getOtherInformant());
 		return target;

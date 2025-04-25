@@ -30,6 +30,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -49,6 +51,10 @@ import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShar
 import de.symeda.sormas.backend.user.User;
 
 @Entity(name = "ebs")
+@NamedEntityGraph(
+		name = "Entity.withSignalVerification",
+		attributeNodes = @NamedAttributeNode("signalVerification")
+)
 public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternalData {
 
 	public static final String DATE_ONSET = "dateOnset" ;
@@ -393,7 +399,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 		this.triaging = triaging;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "signalverification_id")
 	public SignalVerification getSignalVerification() {
 		return signalVerification;
