@@ -140,7 +140,11 @@ public class DashboardService {
 		final Map<Long, PathogenTestResultDto> caseTestResults = new HashMap<>();
 		queryResult.forEach(caseTestsDto -> {
 			final Long caseId = caseTestsDto.getCaseId();
-			if (!caseTestResults.containsKey(caseId) || caseTestResults.get(caseId).getSampleDateTime().before(caseTestsDto.getSampleDateTime())) {
+			PathogenTestResultDto existing = caseTestResults.get(caseId);
+
+			if (existing == null ||
+					(existing.getSampleDateTime() != null && caseTestsDto.getSampleDateTime() != null &&
+							existing.getSampleDateTime().before(caseTestsDto.getSampleDateTime()))) {
 				caseTestResults.put(caseId, caseTestsDto);
 			}
 		});
