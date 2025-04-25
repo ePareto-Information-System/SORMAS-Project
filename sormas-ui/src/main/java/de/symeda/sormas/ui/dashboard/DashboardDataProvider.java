@@ -371,16 +371,20 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 
 			this.refreshDataForQuarantinedContacts();
 		}
-
-		if (getDashboardType() == DashboardType.CONTACTS || this.disease != null) {
+		
+		DashboardType dashboardType = getDashboardType();
+		if (dashboardType == DashboardType.CONTACTS || this.disease != null) {
 			DashboardCriteria caseDashboardCriteria = buildDashboardCriteria(fromDate, toDate);
+			if (this.disease != null) {
+				caseDashboardCriteria.setDisease(disease);
+			}
 
 			// Cases
 			setCases(FacadeProvider.getDashboardFacade().getCases(caseDashboardCriteria));
 			setLastReportedDistrict(FacadeProvider.getDashboardFacade().getLastReportedDistrictName(caseDashboardCriteria));
 			setCasesCountByClassification(
 					FacadeProvider.getDashboardFacade()
-							.getCasesCountByClassification(buildDashboardCriteria(fromDate, toDate).includeNotACaseClassification(true)));
+							.getCasesCountByClassification(caseDashboardCriteria.includeNotACaseClassification(true)));
 
 			setPreviousCases(FacadeProvider.getDashboardFacade().getCases(buildDashboardCriteria(previousFromDate, previousToDate)));
 

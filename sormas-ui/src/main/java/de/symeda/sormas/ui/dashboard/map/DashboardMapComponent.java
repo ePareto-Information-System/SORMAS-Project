@@ -429,16 +429,16 @@ public class DashboardMapComponent extends VerticalLayout {
 				showConfirmedContactsCheckBox.setEnabled(showContacts);
 				showUnconfirmedContactsCheckBox.setEnabled(showContacts);
 
-				CheckBox showEventsCheckBox = new CheckBox();
-				showEventsCheckBox.setId(Captions.dashboardShowEvents);
-				CssStyles.style(showEventsCheckBox, CssStyles.VSPACE_3);
-				showEventsCheckBox.setCaption(I18nProperties.getCaption(Captions.dashboardShowEvents));
-				showEventsCheckBox.setValue(showEvents);
-				showEventsCheckBox.addValueChangeListener(e -> {
-					showEvents = (boolean) e.getProperty().getValue();
-					refreshMap(true);
-				});
-				layersLayout.addComponent(showEventsCheckBox);
+//				CheckBox showEventsCheckBox = new CheckBox();
+//				showEventsCheckBox.setId(Captions.dashboardShowEvents);
+//				CssStyles.style(showEventsCheckBox, CssStyles.VSPACE_3);
+//				showEventsCheckBox.setCaption(I18nProperties.getCaption(Captions.dashboardShowEvents));
+//				showEventsCheckBox.setValue(showEvents);
+//				showEventsCheckBox.addValueChangeListener(e -> {
+//					showEvents = (boolean) e.getProperty().getValue();
+//					refreshMap(true);
+//				});
+//				layersLayout.addComponent(showEventsCheckBox);
 				if (nonNull(UserProvider.getCurrent()) && UserProvider.getCurrent().hasNationJurisdictionLevel()) {
 					OptionGroup regionMapVisualizationSelect = new OptionGroup();
 					regionMapVisualizationSelect.setWidth(100, Unit.PERCENTAGE);
@@ -824,16 +824,16 @@ public class DashboardMapComponent extends VerticalLayout {
 		showConfirmedContactsCheckBox.setEnabled(showContacts);
 		showUnconfirmedContactsCheckBox.setEnabled(showContacts);
 
-		CheckBox showEventsCheckBox = new CheckBox();
-		showEventsCheckBox.setId(Captions.dashboardShowEvents);
-		CssStyles.style(showEventsCheckBox, CssStyles.VSPACE_3);
-		showEventsCheckBox.setCaption(I18nProperties.getCaption(Captions.dashboardShowEvents));
-		showEventsCheckBox.setValue(showEvents);
-		showEventsCheckBox.addValueChangeListener(e -> {
-			showEvents = (boolean) e.getProperty().getValue();
-			refreshMap(true);
-		});
-		layersLayout.addComponent(showEventsCheckBox);
+//		CheckBox showEventsCheckBox = new CheckBox();
+//		showEventsCheckBox.setId(Captions.dashboardShowEvents);
+//		CssStyles.style(showEventsCheckBox, CssStyles.VSPACE_3);
+//		showEventsCheckBox.setCaption(I18nProperties.getCaption(Captions.dashboardShowEvents));
+//		showEventsCheckBox.setValue(showEvents);
+//		showEventsCheckBox.addValueChangeListener(e -> {
+//			showEvents = (boolean) e.getProperty().getValue();
+//			refreshMap(true);
+//		});
+//		layersLayout.addComponent(showEventsCheckBox);
 		if (nonNull(UserProvider.getCurrent()) && UserProvider.getCurrent().hasNationJurisdictionLevel()) {
 			OptionGroup regionMapVisualizationSelect = new OptionGroup();
 			regionMapVisualizationSelect.setWidth(100, Unit.PERCENTAGE);
