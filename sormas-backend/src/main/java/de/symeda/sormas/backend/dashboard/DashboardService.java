@@ -116,7 +116,6 @@ public class DashboardService {
 	private EbsAlertService ebsAlertService;
 	@EJB
 	private EventService eventService;
-
 	@EJB
 	private SampleService sampleService;
 	@EJB
@@ -185,16 +184,14 @@ public class DashboardService {
 		final Map<Long, PathogenTestResultDto> caseTestResults = new HashMap<>();
 		queryResult.forEach(caseTestsDto -> {
 			final Long caseId = caseTestsDto.getCaseId();
-			PathogenTestResultDto existingResult = caseTestResults.get(caseId);
+			PathogenTestResultDto existing = caseTestResults.get(caseId);
 
-			if (existingResult == null ||
-					(existingResult.getSampleDateTime() != null &&
-							caseTestsDto.getSampleDateTime() != null &&
-							existingResult.getSampleDateTime().before(caseTestsDto.getSampleDateTime()))) {
+			if (existing == null ||
+					(existing.getSampleDateTime() != null && caseTestsDto.getSampleDateTime() != null &&
+							existing.getSampleDateTime().before(caseTestsDto.getSampleDateTime()))) {
 				caseTestResults.put(caseId, caseTestsDto);
 			}
 		});
-
 
 		// 3. Count test results by PathogenTestResultType
 		final Map<PathogenTestResultType, Long> result = new HashMap<>();
