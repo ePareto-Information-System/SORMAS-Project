@@ -36,7 +36,7 @@ public class DiseaseStatisticsComponent extends CustomLayout {
 
 	private final CaseStatisticsComponent caseStatisticsComponent;
 	private final DiseaseSummaryComponent diseaseSummaryComponent;
-	private final EventStatisticsComponent eventStatisticsComponent;
+//	private final EventStatisticsComponent eventStatisticsComponent;
 	private final LaboratoryResultsStatisticsComponent labResultsStatisticsComponent;
 
 	private static final String CASE_LOC = "case";
@@ -57,7 +57,7 @@ public class DiseaseStatisticsComponent extends CustomLayout {
 
 		caseStatisticsComponent = new CaseStatisticsComponent();
 		diseaseSummaryComponent = new DiseaseSummaryComponent();
-		eventStatisticsComponent = new EventStatisticsComponent();
+//		eventStatisticsComponent = new EventStatisticsComponent();
 		labResultsStatisticsComponent = new LaboratoryResultsStatisticsComponent(
 			Captions.dashboardNewFinalLaboratoryResults,
 			Descriptions.descDashboardNewFinalLaboratoryResults,
@@ -68,14 +68,14 @@ public class DiseaseStatisticsComponent extends CustomLayout {
 
 		addComponent(caseStatisticsComponent, CASE_LOC);
 		addComponent(diseaseSummaryComponent, OUTBREAK_LOC);
-		addComponent(eventStatisticsComponent, EVENT_LOC);
+//		addComponent(eventStatisticsComponent, EVENT_LOC);
 		addComponent(labResultsStatisticsComponent, SAMPLE_LOC);
 	}
 
 	public void refresh() {
 		caseStatisticsComponent.update(dashboardDataProvider.getCasesCountByClassification());
 		diseaseSummaryComponent.update(dashboardDataProvider);
-		eventStatisticsComponent.update(dashboardDataProvider.getEventCountByStatus());
+//		eventStatisticsComponent.update(dashboardDataProvider.getEventCountByStatus());
 		labResultsStatisticsComponent.update(dashboardDataProvider.getNewCasesFinalLabResultCountByResultType());
 	}
 }
