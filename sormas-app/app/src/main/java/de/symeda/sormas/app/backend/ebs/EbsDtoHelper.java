@@ -81,7 +81,7 @@ public class EbsDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
 		target.setSourceInformation(source.getSourceInformation());
 		target.setDateOnset(source.getDateOnset());
 		target.setEbsLongitude(source.getEbsLongitude());
-		target.setEbsLatitude(source.getEbsLongitude());
+		target.setEbsLatitude(source.getEbsLatitude());
 		target.setOtherInformant(source.getOtherInformant());
 		target.setEbsLocation(locationHelper.fillOrCreateFromDto(target.getEbsLocation(), source.getEbsLocation()));
 		target.setTriaging(triagingDtoHelper.fillOrCreateFromDto(target.getTriaging(), source.getTriaging()));
@@ -108,7 +108,7 @@ public class EbsDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
 		target.setSourceInformation(source.getSourceInformation());
 		target.setDateOnset(source.getDateOnset());
 		target.setEbsLongitude(source.getEbsLongitude());
-		target.setEbsLatitude(source.getEbsLongitude());
+		target.setEbsLatitude(source.getEbsLatitude());
 		if (source.getEbsLocation() != null) {
 			Location location = DatabaseHelper.getLocationDao().queryForId(source.getEbsLocation().getId());
 			target.setEbsLocation(locationHelper.adoToDto(location));
