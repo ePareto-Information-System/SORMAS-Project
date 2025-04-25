@@ -203,9 +203,9 @@ public class DiseaseTileComponent extends VerticalLayout {
 		layout.addComponent(lastReportItem);
 		layout.addComponent(
 				new StatsItem.Builder(Captions.dashboardFatalities, fatalities).critical(fatalities > 0).build());
-		StatsItem noOfEventsItem = new StatsItem.Builder(Captions.DiseaseBurden_eventCount, events).build();
-		noOfEventsItem.addStyleName(CssStyles.VSPACE_4);
-		layout.addComponent(noOfEventsItem);
+//		StatsItem noOfEventsItem = new StatsItem.Builder(Captions.DiseaseBurden_eventCount, events).build();
+//		noOfEventsItem.addStyleName(CssStyles.VSPACE_4);
+//		layout.addComponent(noOfEventsItem);
 
 		Button component = addDiseaseButton(disease, dashboardDataProvider);
 
