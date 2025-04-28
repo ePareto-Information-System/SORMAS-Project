@@ -124,7 +124,7 @@ public class DashboardMapComponent extends VerticalLayout {
 
 	// Others
 	private CaseMeasure caseMeasure = CaseMeasure.CASE_COUNT;
-	private MapCaseDisplayMode mapCaseDisplayMode = MapCaseDisplayMode.FACILITY_OR_CASE_ADDRESS;
+	private MapCaseDisplayMode mapCaseDisplayMode = MapCaseDisplayMode.HEALTH_FACILITY_OR_CASE_ADDRESS;
 	private BigDecimal districtValuesLowerQuartile;
 	private BigDecimal districtValuesMedian;
 	private BigDecimal districtValuesUpperQuartile;
@@ -363,6 +363,8 @@ public class DashboardMapComponent extends VerticalLayout {
 				OptionGroup mapCaseDisplayModeSelect = new OptionGroup();
 				mapCaseDisplayModeSelect.setWidth(100, Unit.PERCENTAGE);
 				mapCaseDisplayModeSelect.addItems((Object[]) MapCaseDisplayMode.values());
+				mapCaseDisplayModeSelect.removeItem(MapCaseDisplayMode.FACILITY);
+				mapCaseDisplayModeSelect.removeItem(MapCaseDisplayMode.FACILITY_OR_CASE_ADDRESS);
 				mapCaseDisplayModeSelect.setValue(mapCaseDisplayMode);
 				mapCaseDisplayModeSelect.addValueChangeListener(event -> {
 					mapCaseDisplayMode = (MapCaseDisplayMode) event.getProperty().getValue();
