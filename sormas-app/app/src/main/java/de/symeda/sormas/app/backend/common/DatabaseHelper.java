@@ -4642,7 +4642,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			Toast.makeText(context, "Database restored from: " + fileName, Toast.LENGTH_LONG).show();
 			ConfigProvider.clearUserLogin();
 			ConfigProvider.clearPin();
-			NavigationHelper.goToLogin(getContext());
 
 			return true; // Restore successful
 		} catch (IOException e) {
