@@ -33,6 +33,7 @@ import de.symeda.sormas.app.ebs.list.EbsListActivity;
 import de.symeda.sormas.app.environment.list.EnvironmentListActivity;
 import de.symeda.sormas.app.event.list.EventListActivity;
 import de.symeda.sormas.app.immunization.list.ImmunizationListActivity;
+import de.symeda.sormas.app.login.LoginActivity;
 import de.symeda.sormas.app.report.ReportActivity;
 import de.symeda.sormas.app.report.aggregate.AggregateReportsActivity;
 import de.symeda.sormas.app.sample.list.SampleListActivity;
@@ -103,6 +104,11 @@ public class NavigationHelper {
 
 	public static void goToSettings(Context context) {
 		Intent intent = new Intent(context, SettingsActivity.class);
+		context.startActivity(intent);
+	}
+
+	public static void goToLogin(Context context) {
+		Intent intent = new Intent(context, LoginActivity.class);
 		context.startActivity(intent);
 	}
 
