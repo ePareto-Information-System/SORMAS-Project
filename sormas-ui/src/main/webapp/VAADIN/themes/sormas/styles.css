@@ -15711,6 +15711,13 @@ div.v-layout.v-horizontal.v-widget {
 	font-style: italic;
 }
 
+.sormas .v-label.v-widget.white.v-label-white.large.v-label-large.bold.v-label-bold.align-center.v-label-align-center.uppercase.v-label-uppercase.v-label-undef-w {
+	white-space: normal !important;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	text-transform: none;
+}
+
 .sormas .v-button, .sormas .v-link.v-link-button {
 	text-transform: uppercase;
 	border-color: #005A9C;

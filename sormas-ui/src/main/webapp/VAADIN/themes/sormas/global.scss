@@ -437,11 +437,18 @@
     font-style: italic;
   }
 
-/*  .v-label.v-widget.h3.v-label-h3.otherPersonHeading-middle.v-label-otherPersonHeading-middle.v-label-undef-w {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }*/
+  .v-label.v-widget.white.v-label-white.large.v-label-large.bold.v-label-bold.align-center.v-label-align-center.uppercase.v-label-uppercase.v-label-undef-w {
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    text-transform: none;
+  }
+
+  /*  .v-label.v-widget.h3.v-label-h3.otherPersonHeading-middle.v-label-otherPersonHeading-middle.v-label-undef-w {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }*/
 
 
 }
