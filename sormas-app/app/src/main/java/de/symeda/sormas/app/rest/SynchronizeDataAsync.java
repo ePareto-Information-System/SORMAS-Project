@@ -682,8 +682,6 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new DiseaseClassificationDtoHelper().pullEntities(false, context, syncCallbacks);
 		new DiseaseConfigurationDtoHelper().pullEntities(false, context, syncCallbacks);
 		new CustomizableEnumValueDtoHelper().pullEntities(false, context, syncCallbacks);
-		new FormFieldDtoHelper().pullEntities(false, context, syncCallbacks);
-		new FormBuilderDtoHelper().pullEntities(false, context, syncCallbacks);
 
 		// feature configurations may be removed, so have to pull the deleted uuids
 		// this may be applied to other entities later as well
@@ -694,6 +692,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		DatabaseHelper.getFeatureConfigurationDao().delete(featureConfigurationConfigUuids);
 
 		new FeatureConfigurationDtoHelper().pullEntities(false, context, syncCallbacks);
+		new FormFieldDtoHelper().pullEntities(false, context, syncCallbacks);
+		new FormBuilderDtoHelper().pullEntities(false, context, syncCallbacks);
 
 		ConfigProvider.setInitialSyncRequired(false);
 	}
@@ -954,10 +954,10 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new PersonDtoHelper().pullMissing(personUuids, syncCallbacks);
 		new CaseDtoHelper().pullMissing(caseUuids, syncCallbacks);
 		new ImmunizationDtoHelper().pullMissing(caseUuids, syncCallbacks);
-		new EventDtoHelper().pullMissing(eventUuids, syncCallbacks);
 		new EbsDtoHelper().pullMissing(ebsUuids, syncCallbacks);
 		new RiskAssessmentDtoHelper().pullMissing(riskUuids, syncCallbacks);
 		new EbsAlertDtoHelper().pullMissing(ebsAlertUuids, syncCallbacks);
+		new EventDtoHelper().pullMissing(eventUuids, syncCallbacks);
 		new EventParticipantDtoHelper().pullMissing(eventParticipantUuids, syncCallbacks);
 		new SampleDtoHelper().pullMissing(sampleUuids, syncCallbacks);
 		new EnvironmentDtoHelper().pullMissing(environmentUuids, syncCallbacks);

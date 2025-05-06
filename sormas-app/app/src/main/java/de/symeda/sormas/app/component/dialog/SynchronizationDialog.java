@@ -26,6 +26,9 @@ import de.symeda.sormas.api.clinicalcourse.ClinicalVisitDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumValueDto;
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
+import de.symeda.sormas.api.ebs.EbsAlertDto;
+import de.symeda.sormas.api.ebs.EbsDto;
+import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.api.environment.EnvironmentDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
@@ -34,6 +37,8 @@ import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.immunization.ImmunizationDto;
+import de.symeda.sormas.api.infrastructure.fields.FormFieldsDto;
+import de.symeda.sormas.api.infrastructure.forms.FormBuilderDto;
 import de.symeda.sormas.api.outbreak.OutbreakDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.report.AggregateReportDto;
@@ -309,6 +314,8 @@ public class SynchronizationDialog extends AbstractDialog {
 			allowedEntities.add(Strings.entityCustomizableEnumValues);
 		}
 		allowedEntities.add(Strings.entityFeatureConfigurations);
+		allowedEntities.add(Strings.entityFormBuilder);
+		allowedEntities.add(Strings.entityFormFields);
 		showProgressItems(true, false, allowedEntities);
 	}
 
@@ -317,6 +324,9 @@ public class SynchronizationDialog extends AbstractDialog {
 		List<String> allowedEntities = new ArrayList<>();
 		addEntityIfViewAllowed(CaseDataDto.class, Strings.entityCases, allowedEntities);
 		addEntityIfViewAllowed(ContactDto.class, Strings.entityContacts, allowedEntities);
+		addEntityIfViewAllowed(EbsDto.class, Strings.entityEbs, allowedEntities);
+		addEntityIfViewAllowed(RiskAssessmentDto.class, Strings.entityRiskAssessment, allowedEntities);
+		addEntityIfViewAllowed(EbsAlertDto.class, Strings.entityEbsAlert, allowedEntities);
 		addEntityIfViewAllowed(EventDto.class, Strings.entityEvents, allowedEntities);
 		addEntityIfViewAllowed(EventParticipantDto.class, Strings.entityEventParticipants, allowedEntities);
 		addEntityIfViewAllowed(ImmunizationDto.class, Strings.entityImmunizations, allowedEntities);
@@ -334,6 +344,9 @@ public class SynchronizationDialog extends AbstractDialog {
 		addEntityIfEditAllowed(PersonDto.class, Strings.entityPersons, allowedEntities);
 		addEntityIfEditAllowed(CaseDataDto.class, Strings.entityCases, allowedEntities);
 		addEntityIfEditAllowed(ImmunizationDto.class, Strings.entityImmunizations, allowedEntities);
+		addEntityIfEditAllowed(EbsDto.class, Strings.entityEventParticipants, allowedEntities);
+		addEntityIfEditAllowed(RiskAssessmentDto.class, Strings.entityEventParticipants, allowedEntities);
+		addEntityIfEditAllowed(EbsAlertDto.class, Strings.entityEventParticipants, allowedEntities);
 		addEntityIfEditAllowed(EventDto.class, Strings.entityEvents, allowedEntities);
 		addEntityIfEditAllowed(EventParticipantDto.class, Strings.entityEventParticipants, allowedEntities);
 		addEntityIfEditAllowed(SampleDto.class, Strings.entitySamples, allowedEntities);
@@ -351,6 +364,8 @@ public class SynchronizationDialog extends AbstractDialog {
 		if (!DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS)) {
 			addEntityIfEditAllowed(CampaignFormDataDto.class, Strings.entityCampaignFormData, allowedEntities);
 		}
+		addEntityIfEditAllowed(FormBuilderDto.class, Strings.entityFormBuilder, allowedEntities);
+		addEntityIfEditAllowed(FormFieldsDto.class, Strings.entityFormFields, allowedEntities);
 		showProgressItems(false, true, allowedEntities);
 	}
 
@@ -364,9 +379,14 @@ public class SynchronizationDialog extends AbstractDialog {
 		addEntityIfViewAllowed(DiseaseConfigurationDto.class, Strings.entityDiseaseConfigurations, allowedEntities);
 		addEntityIfViewAllowed(CustomizableEnumValueDto.class, Strings.entityCustomizableEnumValues, allowedEntities);
 		addEntityIfViewAllowed(FeatureConfigurationDto.class, Strings.entityFeatureConfigurations, allowedEntities);
+		addEntityIfViewAllowed(FormBuilderDto.class, Strings.entityFormBuilder, allowedEntities);
+		addEntityIfViewAllowed(FormFieldsDto.class, Strings.entityFormFields, allowedEntities);
 		addEntityIfViewAllowed(PersonDto.class, Strings.entityPersons, allowedEntities);
 		addEntityIfViewAllowed(CaseDataDto.class, Strings.entityCases, allowedEntities);
 		addEntityIfViewAllowed(ImmunizationDto.class, Strings.entityImmunizations, allowedEntities);
+		addEntityIfViewAllowed(EbsDto.class, Strings.entityEbs, allowedEntities);
+		addEntityIfViewAllowed(RiskAssessmentDto.class, Strings.entityRiskAssessment, allowedEntities);
+		addEntityIfViewAllowed(EbsAlertDto.class, Strings.entityEbsAlert, allowedEntities);
 		addEntityIfViewAllowed(EventDto.class, Strings.entityEvents, allowedEntities);
 		addEntityIfViewAllowed(EventParticipantDto.class, Strings.entityEventParticipants, allowedEntities);
 		addEntityIfViewAllowed(SampleDto.class, Strings.entitySamples, allowedEntities);
@@ -393,6 +413,9 @@ public class SynchronizationDialog extends AbstractDialog {
 		addEntityIfViewOrEditAllowed(PersonDto.class, Strings.entityPersons, allowedEntities);
 		addEntityIfViewOrEditAllowed(CaseDataDto.class, Strings.entityCases, allowedEntities);
 		addEntityIfViewOrEditAllowed(ImmunizationDto.class, Strings.entityImmunizations, allowedEntities);
+		addEntityIfViewOrEditAllowed(EbsDto.class, Strings.entityEbs, allowedEntities);
+		addEntityIfViewOrEditAllowed(RiskAssessmentDto.class, Strings.entityRiskAssessment, allowedEntities);
+		addEntityIfViewOrEditAllowed(EbsAlertDto.class, Strings.entityEbsAlert, allowedEntities);
 		addEntityIfViewOrEditAllowed(EventDto.class, Strings.entityEvents, allowedEntities);
 		addEntityIfViewOrEditAllowed(EventParticipantDto.class, Strings.entityEventParticipants, allowedEntities);
 		addEntityIfViewOrEditAllowed(SampleDto.class, Strings.entitySamples, allowedEntities);
@@ -418,6 +441,9 @@ public class SynchronizationDialog extends AbstractDialog {
 			addEntityIfViewAllowed(CaseDataDto.class, Strings.entityCases, allowedEntities);
 		if (DtoFeatureConfigHelper.isFeatureConfigForImmunizationEnabled())
 			addEntityIfViewAllowed(ImmunizationDto.class, Strings.entityImmunizations, allowedEntities);
+		addEntityIfViewAllowed(EbsDto.class, Strings.entityEbs, allowedEntities);
+		addEntityIfViewAllowed(RiskAssessmentDto.class, Strings.entityRiskAssessment, allowedEntities);
+		addEntityIfViewAllowed(EbsAlertDto.class, Strings.entityEbsAlert, allowedEntities);
 		if (DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled())
 			addEntityIfViewAllowed(EventDto.class, Strings.entityEvents, allowedEntities);
 		if (DtoFeatureConfigHelper.isFeatureConfigForEventParticipantsEnabled())
@@ -451,6 +477,8 @@ public class SynchronizationDialog extends AbstractDialog {
 			addEntityIfViewAllowed(CampaignDto.class, Strings.entityCampaigns, allowedEntities);
 			addEntityIfViewAllowed(CampaignFormDataDto.class, Strings.entityCampaignFormData, allowedEntities);
 		}
+		addEntityIfViewAllowed(FormBuilderDto.class, Strings.entityFormBuilder, allowedEntities);
+		addEntityIfViewAllowed(FormFieldsDto.class, Strings.entityFormFields, allowedEntities);
 		showProgressItems(true, false, allowedEntities);
 	}
 
@@ -460,6 +488,9 @@ public class SynchronizationDialog extends AbstractDialog {
 		addEntityIfViewAllowed(PersonDto.class, Strings.entityPersons, allowedEntities);
 		addEntityIfViewAllowed(CaseDataDto.class, Strings.entityCases, allowedEntities);
 		addEntityIfViewAllowed(ImmunizationDto.class, Strings.entityImmunizations, allowedEntities);
+		addEntityIfViewAllowed(EbsDto.class, Strings.entityEbs, allowedEntities);
+		addEntityIfViewAllowed(RiskAssessmentDto.class, Strings.entityRiskAssessment, allowedEntities);
+		addEntityIfViewAllowed(EbsAlertDto.class, Strings.entityEbsAlert, allowedEntities);
 		addEntityIfViewAllowed(EventDto.class, Strings.entityEvents, allowedEntities);
 		addEntityIfViewAllowed(EventParticipantDto.class, Strings.entityEventParticipants, allowedEntities);
 		addEntityIfViewAllowed(SampleDto.class, Strings.entitySamples, allowedEntities);
