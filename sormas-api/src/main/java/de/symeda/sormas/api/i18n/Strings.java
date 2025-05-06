@@ -249,6 +249,9 @@ public interface Strings {
 	String entityDistricts = "entityDistricts";
 	String entityDocuments = "entityDocuments";
 	String entityEnvironment = "entityEnvironment";
+	String entityEbs = "entityEbs";
+	String entityRiskAssessment = "entityRiskAssessment";
+	String entityEbsAlert = "entityEbsAlert";
 	String entityEvent = "entityEvent";
 	String entityEventActions = "entityEventActions";
 	String entityEventGroup = "entityEventGroup";
