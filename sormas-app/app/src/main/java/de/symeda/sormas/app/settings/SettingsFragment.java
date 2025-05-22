@@ -97,6 +97,7 @@ public class SettingsFragment extends BaseLandingFragment {
 		binding.restoreDb.setOnClickListener(v -> pickBackupFile());
 		binding.changePassword.setOnClickListener(v -> changePassword());
 		binding.resynchronizeData.setOnClickListener(v -> repullData());
+		binding.resynchronizeFormBuilder.setOnClickListener(v -> reSyncFormBuilder());
 		binding.showSyncLog.setOnClickListener(v -> openSyncLog());
 		binding.logout.setOnClickListener(v -> logout());
 		binding.kexLbds.setOnClickListener(v -> kexLbds());
@@ -204,6 +205,10 @@ public class SettingsFragment extends BaseLandingFragment {
 		checkAndShowUnsynchronizedChangesDialog(() -> showRepullDataConfirmationDialog(), "SYNC");
 	}
 
+	private  void reSyncFormBuilder() {
+		showRePullFormBuilderConfirmationDialog();
+	}
+
 	private void checkAndShowUnsynchronizedChangesDialog(Callback confirmedCallback, String wordToType) {
 		if (SynchronizeDataAsync.hasAnyUnsynchronizedData()) {
 			final ConfirmationInputDialog unsynchronizedChangesDialog = new ConfirmationInputDialog(
@@ -218,6 +223,25 @@ public class SettingsFragment extends BaseLandingFragment {
 		} else {
 			confirmedCallback.call();
 		}
+	}
+
+	private void showRePullFormBuilderConfirmationDialog() {
+		final ConfirmationDialog confirmationDialog =
+				new ConfirmationDialog(getActivity(), R.string.heading_confirmation_dialog, R.string.info_resync_form);
+
+		confirmationDialog.setPositiveCallback(() -> {
+			getBaseActivity().synchronizeData(SynchronizeDataAsync.SyncMode.FormBuilder, true, true, null, new Callback() {
+
+				@Override
+				public void call() {}
+			}, new Callback() {
+
+				@Override
+				public void call() {}
+			});
+		});
+
+		confirmationDialog.show();
 	}
 
 	private void showRepullDataConfirmationDialog() {

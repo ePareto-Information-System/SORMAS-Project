@@ -221,6 +221,18 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 
 					syncModeTrace.stop();
 					break;
+				case FormBuilder:
+					syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeFormBuilderTrace");
+					syncModeTrace.start();
+
+					syncCallbacks.ifPresent(c ->
+							c.getUpdateSynchronizationStepCallback().accept(SynchronizationDialog.SynchronizationStep.SYNCHRONIZE_FORMS));
+
+					// Pull only form builder data
+					new FormBuilderDtoHelper().pullEntities(false, context, syncCallbacks);
+					new FormFieldDtoHelper().pullEntities(false, context, syncCallbacks);
+					syncModeTrace.stop();
+					break;
 				default:
 					throw new IllegalArgumentException(syncMode.toString());
 			}
@@ -1110,5 +1122,6 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		 * Use to handle conflict states resulting out of bugs.
 		 */
 		CompleteAndRepull,
+		FormBuilder
 	}
 }

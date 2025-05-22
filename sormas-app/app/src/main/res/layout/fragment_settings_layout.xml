@@ -111,6 +111,15 @@
                 app:rounded="true" />
 
             <de.symeda.sormas.app.component.controls.ControlButton
+                android:id="@+id/resynchronize_form_builder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/buttonControlMarginBottom"
+                app:buttonType="@{ControlButtonType.LINE_SECONDARY}"
+                android:text="@string/action_resync_form_builder"
+                app:rounded="true" />
+
+            <de.symeda.sormas.app.component.controls.ControlButton
                 android:id="@+id/show_sync_log"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

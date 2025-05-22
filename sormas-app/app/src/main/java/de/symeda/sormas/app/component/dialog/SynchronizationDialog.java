@@ -146,7 +146,9 @@ public class SynchronizationDialog extends AbstractDialog {
 			showClearUpProgressItems(true);
 			break;
 		case SYNCHRONIZE:
-			showSynchronizeProgressItems();
+			showSynchronizeProgressItems(false);
+		case SYNCHRONIZE_FORMS:
+			showSynchronizeProgressItems(true);
 			break;
 		case CLEAR_UP_INFRASTRUCTURE:
 			showClearUpInfrastructureProgressItems(true);
@@ -404,32 +406,37 @@ public class SynchronizationDialog extends AbstractDialog {
 		showProgressItems(true, false, allowedEntities);
 	}
 
-	private void showSynchronizeProgressItems() {
+	private void showSynchronizeProgressItems(boolean onlyFormBuilder) {
 
 		List<String> allowedEntities = new ArrayList<>();
-		addEntityIfViewOrEditAllowed(OutbreakDto.class, Strings.entityOutbreaks, allowedEntities);
-		addEntityIfViewOrEditAllowed(DiseaseConfigurationDto.class, Strings.entityDiseaseConfigurations, allowedEntities);
-		addEntityIfViewOrEditAllowed(CustomizableEnumValueDto.class, Strings.entityCustomizableEnumValues, allowedEntities);
-		addEntityIfViewOrEditAllowed(PersonDto.class, Strings.entityPersons, allowedEntities);
-		addEntityIfViewOrEditAllowed(CaseDataDto.class, Strings.entityCases, allowedEntities);
-		addEntityIfViewOrEditAllowed(ImmunizationDto.class, Strings.entityImmunizations, allowedEntities);
-		addEntityIfViewOrEditAllowed(EbsDto.class, Strings.entityEbs, allowedEntities);
-		addEntityIfViewOrEditAllowed(RiskAssessmentDto.class, Strings.entityRiskAssessment, allowedEntities);
-		addEntityIfViewOrEditAllowed(EbsAlertDto.class, Strings.entityEbsAlert, allowedEntities);
-		addEntityIfViewOrEditAllowed(EventDto.class, Strings.entityEvents, allowedEntities);
-		addEntityIfViewOrEditAllowed(EventParticipantDto.class, Strings.entityEventParticipants, allowedEntities);
-		addEntityIfViewOrEditAllowed(SampleDto.class, Strings.entitySamples, allowedEntities);
-		addEntityIfViewOrEditAllowed(EnvironmentDto.class, Strings.entityEnvironment, allowedEntities);
-		addEntityIfViewOrEditAllowed(PathogenTestDto.class, Strings.entityPathogenTests, allowedEntities);
-		addEntityIfViewOrEditAllowed(AdditionalTestDto.class, Strings.entityAdditionalTests, allowedEntities);
-		addEntityIfViewOrEditAllowed(ContactDto.class, Strings.entityContacts, allowedEntities);
-		addEntityIfViewOrEditAllowed(VisitDto.class, Strings.entityVisits, allowedEntities);
-		addEntityIfViewOrEditAllowed(TaskDto.class, Strings.entityTasks, allowedEntities);
-		addEntityIfViewOrEditAllowed(WeeklyReportDto.class, Strings.entityWeeklyReports, allowedEntities);
-		addEntityIfViewOrEditAllowed(AggregateReportDto.class, Strings.entityAggregateReports, allowedEntities);
-		addEntityIfViewOrEditAllowed(PrescriptionDto.class, Strings.entityPrescriptions, allowedEntities);
-		addEntityIfViewOrEditAllowed(TreatmentDto.class, Strings.entityTreatments, allowedEntities);
-		addEntityIfViewOrEditAllowed(ClinicalVisitDto.class, Strings.entityClinicalVisits, allowedEntities);
+		if (onlyFormBuilder) {
+			addEntityIfEditAllowed(FormBuilderDto.class, Strings.entityFormBuilder, allowedEntities);
+			addEntityIfEditAllowed(FormFieldsDto.class, Strings.entityFormFields, allowedEntities);
+		} else {
+			addEntityIfViewOrEditAllowed(OutbreakDto.class, Strings.entityOutbreaks, allowedEntities);
+			addEntityIfViewOrEditAllowed(DiseaseConfigurationDto.class, Strings.entityDiseaseConfigurations, allowedEntities);
+			addEntityIfViewOrEditAllowed(CustomizableEnumValueDto.class, Strings.entityCustomizableEnumValues, allowedEntities);
+			addEntityIfViewOrEditAllowed(PersonDto.class, Strings.entityPersons, allowedEntities);
+			addEntityIfViewOrEditAllowed(CaseDataDto.class, Strings.entityCases, allowedEntities);
+			addEntityIfViewOrEditAllowed(ImmunizationDto.class, Strings.entityImmunizations, allowedEntities);
+			addEntityIfViewOrEditAllowed(EbsDto.class, Strings.entityEbs, allowedEntities);
+			addEntityIfViewOrEditAllowed(RiskAssessmentDto.class, Strings.entityRiskAssessment, allowedEntities);
+			addEntityIfViewOrEditAllowed(EbsAlertDto.class, Strings.entityEbsAlert, allowedEntities);
+			addEntityIfViewOrEditAllowed(EventDto.class, Strings.entityEvents, allowedEntities);
+			addEntityIfViewOrEditAllowed(EventParticipantDto.class, Strings.entityEventParticipants, allowedEntities);
+			addEntityIfViewOrEditAllowed(SampleDto.class, Strings.entitySamples, allowedEntities);
+			addEntityIfViewOrEditAllowed(EnvironmentDto.class, Strings.entityEnvironment, allowedEntities);
+			addEntityIfViewOrEditAllowed(PathogenTestDto.class, Strings.entityPathogenTests, allowedEntities);
+			addEntityIfViewOrEditAllowed(AdditionalTestDto.class, Strings.entityAdditionalTests, allowedEntities);
+			addEntityIfViewOrEditAllowed(ContactDto.class, Strings.entityContacts, allowedEntities);
+			addEntityIfViewOrEditAllowed(VisitDto.class, Strings.entityVisits, allowedEntities);
+			addEntityIfViewOrEditAllowed(TaskDto.class, Strings.entityTasks, allowedEntities);
+			addEntityIfViewOrEditAllowed(WeeklyReportDto.class, Strings.entityWeeklyReports, allowedEntities);
+			addEntityIfViewOrEditAllowed(AggregateReportDto.class, Strings.entityAggregateReports, allowedEntities);
+			addEntityIfViewOrEditAllowed(PrescriptionDto.class, Strings.entityPrescriptions, allowedEntities);
+			addEntityIfViewOrEditAllowed(TreatmentDto.class, Strings.entityTreatments, allowedEntities);
+			addEntityIfViewOrEditAllowed(ClinicalVisitDto.class, Strings.entityClinicalVisits, allowedEntities);
+		}
 		showProgressItems(true, true, allowedEntities);
 	}
 
@@ -674,6 +681,7 @@ public class SynchronizationDialog extends AbstractDialog {
 		DELETE_OBSOLETE(R.string.caption_sync_delete_obsolete),
 		CLEAR_UP(R.string.caption_sync_clear_up),
 		SYNCHRONIZE(R.string.caption_sync_synchronize),
+		SYNCHRONIZE_FORMS(R.string.caption_sync_synchronize),
 		PULL_MODIFIED(R.string.caption_sync_pull_modified),
 		REPULL(R.string.caption_sync_repull);
 
