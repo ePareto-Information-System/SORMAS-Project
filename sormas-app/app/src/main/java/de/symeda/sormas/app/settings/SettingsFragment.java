@@ -177,6 +177,7 @@ public class SettingsFragment extends BaseLandingFragment {
 		binding.syncPersonLbds.setVisibility(showLbdsFeatures ? View.VISIBLE : View.GONE);
 		binding.syncCaseLbds.setVisibility(showLbdsFeatures ? View.VISIBLE : View.GONE);
 		binding.settingsLbdsDebugUrl.setVisibility(showLbdsFeatures ? View.VISIBLE : View.GONE);
+		binding.resynchronizeFormBuilder.setVisibility(hasUser ? View.VISIBLE : View.GONE);
 	}
 
 	@Override

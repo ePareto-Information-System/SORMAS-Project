@@ -147,6 +147,7 @@ public class SynchronizationDialog extends AbstractDialog {
 			break;
 		case SYNCHRONIZE:
 			showSynchronizeProgressItems(false);
+			break;
 		case SYNCHRONIZE_FORMS:
 			showSynchronizeProgressItems(true);
 			break;

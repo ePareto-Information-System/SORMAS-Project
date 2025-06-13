@@ -271,6 +271,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 					break;
 				case CompleteAndRepull:
 					break;
+				case FormBuilder:
+					break;
 				default:
 					throw new IllegalArgumentException(syncMode.toString());
 			}
