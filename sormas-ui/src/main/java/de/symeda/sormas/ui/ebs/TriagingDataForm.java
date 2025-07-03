@@ -268,7 +268,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			if (e.getProperty().getValue().toString().equals("[NO]")) {
 				triagingDecision.setValue(EbsTriagingDecision.VERIFY);
 				selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
-				selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
+//				selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
 			} else {
 				triagingDecision.setValue(EbsTriagingDecision.DISCARD);
 				selectedEbs.getSignalVerification().setVerificationSent(YesNo.NO);
@@ -278,7 +278,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			try {
 				if (e.getProperty().getValue().toString().equals("Proceed to verification")) {
 					selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
-					selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
+//					selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
 				} else {
 					selectedEbs.getSignalVerification().setVerificationSent(YesNo.NO);
 					selectedEbs.getSignalVerification().setVerified(SignalOutcome.NON_EVENT);
