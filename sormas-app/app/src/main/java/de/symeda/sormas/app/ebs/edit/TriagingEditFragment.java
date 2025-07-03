@@ -63,7 +63,6 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 	public final String THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE =
 		"The Date of Decision cannot be earlier than the Date of Report or Date of Occurrence.";
 	private Triaging record;
-
 	private List<Item> triagingOutComeSupervisor;
 
 	public static TriagingEditFragment newInstance(Ebs activityRootData) {
@@ -138,7 +137,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 	@Override
 	protected void prepareFragmentData() {
 		record = getActivityRootData();
-		triagingOutComeSupervisor = DataUtils.getEnumItems(OutComeSupervisor.class, true);
+		triagingOutComeSupervisor = DataUtils.getEnumItems(OutComeSupervisor.class,true);
 
 	}
 
@@ -276,21 +275,13 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 	public void setVisibility(String level, SignalCategory category, FragmentTriagingEditLayoutBinding contentBinding) {
 		// Hide all category details by default
 		contentBinding.triagingHumanCommunityCategoryDetails.setVisibility(View.GONE);
-		contentBinding.triagingHumanCommunityCategoryDetails.setValue(null);
 		contentBinding.triagingHumanFacilityCategoryDetails.setVisibility(View.GONE);
-		contentBinding.triagingHumanFacilityCategoryDetails.setValue(null);
 		contentBinding.triagingHumanLaboratoryCategoryDetails.setVisibility(View.GONE);
-		contentBinding.triagingHumanLaboratoryCategoryDetails.setValue(null);
 		contentBinding.triagingAnimalCommunityCategoryDetails.setVisibility(View.GONE);
-		contentBinding.triagingAnimalCommunityCategoryDetails.setValue(null);
 		contentBinding.triagingAnimalFacilityCategoryDetails.setVisibility(View.GONE);
-		contentBinding.triagingAnimalFacilityCategoryDetails.setValue(null);
 		contentBinding.triagingAnimalLaboratoryCategoryDetails.setVisibility(View.GONE);
-		contentBinding.triagingAnimalLaboratoryCategoryDetails.setValue(null);
 		contentBinding.triagingEnvironmentalCategoryDetails.setVisibility(View.GONE);
-		contentBinding.triagingEnvironmentalCategoryDetails.setValue(null);
 		contentBinding.triagingPoeCategoryDetails.setVisibility(View.GONE);
-		contentBinding.triagingPoeCategoryDetails.setValue(null);
 
 		if (level == null || category == null) {
 			return;
@@ -301,25 +292,24 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		boolean isLaboratoryLevel = "Laboratory".equals(level);
 
 		switch (category) {
-		case HUMAN:
-			contentBinding.triagingHumanCommunityCategoryDetails.setVisibility(isCommunityLevel ? View.VISIBLE : View.GONE);
-			contentBinding.triagingHumanFacilityCategoryDetails.setVisibility(isFacilityLevel ? View.VISIBLE : View.GONE);
-			contentBinding.triagingHumanLaboratoryCategoryDetails.setVisibility(isLaboratoryLevel ? View.VISIBLE : View.GONE);
-			break;
-		case ANIMAL:
-			contentBinding.triagingAnimalCommunityCategoryDetails.setVisibility(isCommunityLevel ? View.VISIBLE : View.GONE);
-			contentBinding.triagingAnimalFacilityCategoryDetails.setVisibility(isFacilityLevel ? View.VISIBLE : View.GONE);
-			contentBinding.triagingAnimalLaboratoryCategoryDetails.setVisibility(isLaboratoryLevel ? View.VISIBLE : View.GONE);
-			break;
-		case ENVIRONMENT:
-			contentBinding.triagingEnvironmentalCategoryDetails.setVisibility(View.VISIBLE);
-			break;
-		case POE:
-			contentBinding.triagingPoeCategoryDetails.setVisibility(View.VISIBLE);
-			break;
+			case HUMAN:
+				contentBinding.triagingHumanCommunityCategoryDetails.setVisibility(isCommunityLevel ? View.VISIBLE : View.GONE);
+				contentBinding.triagingHumanFacilityCategoryDetails.setVisibility(isFacilityLevel ? View.VISIBLE : View.GONE);
+				contentBinding.triagingHumanLaboratoryCategoryDetails.setVisibility(isLaboratoryLevel ? View.VISIBLE : View.GONE);
+				break;
+			case ANIMAL:
+				contentBinding.triagingAnimalCommunityCategoryDetails.setVisibility(isCommunityLevel ? View.VISIBLE : View.GONE);
+				contentBinding.triagingAnimalFacilityCategoryDetails.setVisibility(isFacilityLevel ? View.VISIBLE : View.GONE);
+				contentBinding.triagingAnimalLaboratoryCategoryDetails.setVisibility(isLaboratoryLevel ? View.VISIBLE : View.GONE);
+				break;
+			case ENVIRONMENT:
+				contentBinding.triagingEnvironmentalCategoryDetails.setVisibility(View.VISIBLE);
+				break;
+			case POE:
+				contentBinding.triagingPoeCategoryDetails.setVisibility(View.VISIBLE);
+				break;
 		}
 	}
-
 	public void displayCategories(String property, FragmentTriagingEditLayoutBinding contentBinding) {
 		List<CategoryDetailsLevel> categories;
 		contentBinding.triagingCategoryDetailsLevel.setVisibility(View.VISIBLE);
