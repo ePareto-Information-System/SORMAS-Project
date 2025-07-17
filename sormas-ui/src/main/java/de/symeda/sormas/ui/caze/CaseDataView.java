@@ -122,122 +122,125 @@ public class CaseDataView extends AbstractCaseView {
 		final EditPermissionType caseEditAllowed = FacadeProvider.getCaseFacade().getEditPermissionType(uuid);
 		boolean isEditAllowed = isEditAllowed();
 
-		if(disease != Disease.FOODBORNE_ILLNESS) {
-			if(disease != Disease.MONKEYPOX) {
-				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT)
-						&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_VIEW)) {
-					TaskListComponent taskList =
-							new TaskListComponent(TaskContext.CASE, getCaseRef(), caze.getDisease(), this::showUnsavedChangesPopup, isEditAllowed);
-					taskList.addStyleName(CssStyles.SIDE_COMPONENT);
-					layout.addSidePanelComponent(taskList, TASKS_LOC);
-				}
+		// Hide sidebar cards by not adding them to the layout
+		// Commented out: Tasks, Events, Immunization, Reports, Documents, Document Templates
 
-				final boolean externalMessagesEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.MANUAL_EXTERNAL_MESSAGES);
-				final boolean isSmsServiceSetUp = FacadeProvider.getConfigFacade().isSmsServiceSetUp();
-				if (isSmsServiceSetUp && externalMessagesEnabled && UserProvider.getCurrent().hasUserRight(UserRight.SEND_MANUAL_EXTERNAL_MESSAGES)) {
-					SmsListComponent smsList = new SmsListComponent(getCaseRef(), caze.getPerson(), isEditAllowed);
-					smsList.addStyleName(CssStyles.SIDE_COMPONENT);
-					layout.addSidePanelComponent(smsList, SMS_LOC);
-				}
-			}
-			if(disease != Disease.AHF) {
-				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
-						&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
-						&& !caze.checkIsUnreferredPortHealthCase()) {
-					SampleListComponent sampleList = new SampleListComponent(
-							new SampleCriteria().caze(getCaseRef()).sampleAssociationType(SampleAssociationType.CASE).disease(caze.getDisease()),
-							this::showUnsavedChangesPopup,
-							isEditAllowed);
-					SampleListComponentLayout sampleListComponentLayout =
-							new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
-					layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
-				}
-			}
-			if(disease != Disease.MONKEYPOX) {
-				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
-						&& UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
-					VerticalLayout eventLayout = new VerticalLayout();
-					eventLayout.setMargin(false);
-					eventLayout.setSpacing(false);
+		// if(disease != Disease.FOODBORNE_ILLNESS) {
+		// 	if(disease != Disease.MONKEYPOX) {
+		// 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT)
+		// 				&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_VIEW)) {
+		// 			TaskListComponent taskList =
+		// 					new TaskListComponent(TaskContext.CASE, getCaseRef(), caze.getDisease(), this::showUnsavedChangesPopup, isEditAllowed);
+		// 			taskList.addStyleName(CssStyles.SIDE_COMPONENT);
+		// 			layout.addSidePanelComponent(taskList, TASKS_LOC);
+		// 		}
 
-					EventListComponent eventList = new EventListComponent(getCaseRef(), this::showUnsavedChangesPopup, isEditAllowed);
-					eventList.addStyleName(CssStyles.SIDE_COMPONENT);
-					eventLayout.addComponent(eventList);
-					layout.addSidePanelComponent(eventLayout, EVENTS_LOC);
-				}
-			}
-		}
-		if (disease != Disease.CSM && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.MONKEYPOX  && disease != Disease.AFP) {
-			if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_VIEW)
-					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)) {
-				if (!FacadeProvider.getFeatureConfigurationFacade()
-						.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
-					/*final ImmunizationListCriteria immunizationListCriteria =
-							new ImmunizationListCriteria.Builder(caze.getPerson()).withDisease(caze.getDisease()).build();*/
-					layout.addSidePanelComponent(new SideComponentLayout(new ImmunizationListComponent(() -> {
-						CaseDataDto refreshedCase = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
-						return new ImmunizationListCriteria.Builder(refreshedCase.getPerson()).withDisease(refreshedCase.getDisease()).build();
-					}, null, this::showUnsavedChangesPopup, isEditAllowed)), IMMUNIZATION_LOC);
-				} else {
-					layout.addSidePanelComponent(new SideComponentLayout(new VaccinationListComponent(() -> {
-						CaseDataDto refreshedCase = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
-						return new VaccinationCriteria.Builder(refreshedCase.getPerson()).withDisease(refreshedCase.getDisease())
-								.build()
-								.vaccinationAssociationType(VaccinationAssociationType.CASE)
-								.caseReference(getCaseRef())
-								.region(refreshedCase.getResponsibleRegion())
-								.district(refreshedCase.getResponsibleDistrict());
-					}, null, this::showUnsavedChangesPopup, isEditAllowed)), VACCINATIONS_LOC);
-				}
-			}
+		// 		final boolean externalMessagesEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.MANUAL_EXTERNAL_MESSAGES);
+		// 		final boolean isSmsServiceSetUp = FacadeProvider.getConfigFacade().isSmsServiceSetUp();
+		// 		if (isSmsServiceSetUp && externalMessagesEnabled && UserProvider.getCurrent().hasUserRight(UserRight.SEND_MANUAL_EXTERNAL_MESSAGES)) {
+		// 			SmsListComponent smsList = new SmsListComponent(getCaseRef(), caze.getPerson(), isEditAllowed);
+		// 			smsList.addStyleName(CssStyles.SIDE_COMPONENT);
+		// 			layout.addSidePanelComponent(smsList, SMS_LOC);
+		// 		}
+		// 	}
+		// 	if(disease != Disease.AHF) {
+		// 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
+		// 				&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
+		// 			&& !caze.checkIsUnreferredPortHealthCase()) {
+		// 			SampleListComponent sampleList = new SampleListComponent(
+		// 					new SampleCriteria().caze(getCaseRef()).sampleAssociationType(SampleAssociationType.CASE).disease(caze.getDisease()),
+		// 					this::showUnsavedChangesPopup,
+		// 					isEditAllowed);
+		// 			SampleListComponentLayout sampleListComponentLayout =
+		// 					new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
+		// 			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
+		// 		}
+		// 	}
+		// 	if(disease != Disease.MONKEYPOX) {
+		// 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
+		// 				&& UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
+		// 			VerticalLayout eventLayout = new VerticalLayout();
+		// 			eventLayout.setMargin(false);
+		// 			eventLayout.setSpacing(false);
 
-			boolean sormasToSormasEnabled = FacadeProvider.getSormasToSormasFacade().isAnyFeatureConfigured(FeatureType.SORMAS_TO_SORMAS_SHARE_CASES);
-			if (sormasToSormasEnabled || caze.getSormasToSormasOriginInfo() != null || caze.isOwnershipHandedOver()) {
-				VerticalLayout sormasToSormasLocLayout = new VerticalLayout();
-				sormasToSormasLocLayout.setMargin(false);
-				sormasToSormasLocLayout.setSpacing(false);
+		// 			EventListComponent eventList = new EventListComponent(getCaseRef(), this::showUnsavedChangesPopup, isEditAllowed);
+		// 			eventList.addStyleName(CssStyles.SIDE_COMPONENT);
+		// 			eventLayout.addComponent(eventList);
+		// 			layout.addSidePanelComponent(eventLayout, EVENTS_LOC);
+		// 		}
+		// 	}
+		// }
+		// if (disease != Disease.CSM && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.MONKEYPOX  && disease != Disease.AFP) {
+		// 	if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_VIEW)
+		// 			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)) {
+		// 		if (!FacadeProvider.getFeatureConfigurationFacade()
+		// 				.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+		// 			/*final ImmunizationListCriteria immunizationListCriteria =
+		// 				new ImmunizationListCriteria.Builder(caze.getPerson()).withDisease(caze.getDisease()).build();*/
+		// 			layout.addSidePanelComponent(new SideComponentLayout(new ImmunizationListComponent(() -> {
+		// 				CaseDataDto refreshedCase = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
+		// 				return new ImmunizationListCriteria.Builder(refreshedCase.getPerson()).withDisease(refreshedCase.getDisease()).build();
+		// 			}, null, this::showUnsavedChangesPopup, isEditAllowed)), IMMUNIZATION_LOC);
+		// 		} else {
+		// 			layout.addSidePanelComponent(new SideComponentLayout(new VaccinationListComponent(() -> {
+		// 				CaseDataDto refreshedCase = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
+		// 				return new VaccinationCriteria.Builder(refreshedCase.getPerson()).withDisease(refreshedCase.getDisease())
+		// 					.build()
+		// 					.vaccinationAssociationType(VaccinationAssociationType.CASE)
+		// 					.caseReference(getCaseRef())
+		// 					.region(refreshedCase.getResponsibleRegion())
+		// 					.district(refreshedCase.getResponsibleDistrict());
+		// 			}, null, this::showUnsavedChangesPopup, isEditAllowed)), VACCINATIONS_LOC);
+		// 		}
+		// 	}
 
-				SormasToSormasListComponent sormasToSormasListComponent = new SormasToSormasListComponent(caze, isEditAllowed);
-				sormasToSormasListComponent.addStyleNames(CssStyles.SIDE_COMPONENT);
-				sormasToSormasLocLayout.addComponent(sormasToSormasListComponent);
+		// 	boolean sormasToSormasEnabled = FacadeProvider.getSormasToSormasFacade().isAnyFeatureConfigured(FeatureType.SORMAS_TO_SORMAS_SHARE_CASES);
+		// 	if (sormasToSormasEnabled || caze.getSormasToSormasOriginInfo() != null || caze.isOwnershipHandedOver()) {
+		// 		VerticalLayout sormasToSormasLocLayout = new VerticalLayout();
+		// 		sormasToSormasLocLayout.setMargin(false);
+		// 		sormasToSormasLocLayout.setSpacing(false);
 
-				layout.addSidePanelComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
-			}
+		// 		SormasToSormasListComponent sormasToSormasListComponent = new SormasToSormasListComponent(caze, isEditAllowed);
+		// 		sormasToSormasListComponent.addStyleNames(CssStyles.SIDE_COMPONENT);
+		// 		sormasToSormasLocLayout.addComponent(sormasToSormasListComponent);
 
-			ExternalSurveillanceServiceGateway.addComponentToLayout(layout, editComponent, caze, isEditAllowed);
+		// 		layout.addSidePanelComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
+		// 	}
 
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SURVEILLANCE_REPORTS)) {
-				SurveillanceReportListComponent surveillanceReportList =
-						new SurveillanceReportListComponent(caze.toReference(), this::showUnsavedChangesPopup, UserRight.CASE_EDIT, isEditAllowed);
-				surveillanceReportList.addStyleNames(CssStyles.SIDE_COMPONENT);
-				VerticalLayout surveillanceReportListLocLayout = new VerticalLayout();
-				surveillanceReportListLocLayout.setMargin(false);
-				surveillanceReportListLocLayout.setSpacing(false);
-				surveillanceReportListLocLayout.addComponent(surveillanceReportList);
+		// 	ExternalSurveillanceServiceGateway.addComponentToLayout(layout, editComponent, caze, isEditAllowed);
 
-				layout.addSidePanelComponent(surveillanceReportListLocLayout, SURVEILLANCE_REPORTS_LOC);
-			}
-			DocumentListComponent documentList = null;
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS)
-					&& UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_VIEW)) {
+		// 	if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SURVEILLANCE_REPORTS)) {
+		// 		SurveillanceReportListComponent surveillanceReportList =
+		// 				new SurveillanceReportListComponent(caze.toReference(), this::showUnsavedChangesPopup, UserRight.CASE_EDIT, isEditAllowed);
+		// 					surveillanceReportList.addStyleNames(CssStyles.SIDE_COMPONENT);
+		// 		VerticalLayout surveillanceReportListLocLayout = new VerticalLayout();
+		// 		surveillanceReportListLocLayout.setMargin(false);
+		// 		surveillanceReportListLocLayout.setSpacing(false);
+		// 		surveillanceReportListLocLayout.addComponent(surveillanceReportList);
 
-				boolean isDocumentDeleteAllowed =
-						EditPermissionType.ALLOWED.equals(caseEditAllowed) || EditPermissionType.WITHOUT_OWNERSHIP.equals(caseEditAllowed);
-				documentList = new DocumentListComponent(
-						DocumentRelatedEntityType.CASE,
-						getCaseRef(),
-						UserRight.CASE_EDIT,
-						caze.isPseudonymized(),
-						isEditAllowed,
-						isDocumentDeleteAllowed);
-				layout.addSidePanelComponent(new SideComponentLayout(documentList), DOCUMENTS_LOC);
-			}
+		// 		layout.addSidePanelComponent(surveillanceReportListLocLayout, SURVEILLANCE_REPORTS_LOC);
+		// 	}
+		// 	DocumentListComponent documentList = null;
+		// 	if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS)
+		// 			&& UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_VIEW)) {
 
-			QuarantineOrderDocumentsComponent.addComponentToLayout(layout, caze, documentList);
+		// 		boolean isDocumentDeleteAllowed =
+		// 				EditPermissionType.ALLOWED.equals(caseEditAllowed) || EditPermissionType.WITHOUT_OWNERSHIP.equals(caseEditAllowed);
+		// 		documentList = new DocumentListComponent(
+		// 				DocumentRelatedEntityType.CASE,
+		// 				getCaseRef(),
+		// 				UserRight.CASE_EDIT,
+		// 				caze.isPseudonymized(),
+		// 				isEditAllowed,
+		// 				isDocumentDeleteAllowed);
+		// 		layout.addSidePanelComponent(new SideComponentLayout(documentList), DOCUMENTS_LOC);
+		// 	}
 
-			final boolean deleted = FacadeProvider.getCaseFacade().isDeleted(uuid);
-			layout.disableIfNecessary(deleted, caseEditAllowed);
-		}
+		// 	QuarantineOrderDocumentsComponent.addComponentToLayout(layout, caze, documentList);
+
+		// 	final boolean deleted = FacadeProvider.getCaseFacade().isDeleted(uuid);
+		// 	layout.disableIfNecessary(deleted, caseEditAllowed);
+		// }
 
 	}
 }
