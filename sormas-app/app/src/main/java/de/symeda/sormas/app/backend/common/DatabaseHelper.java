@@ -241,7 +241,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 408;
+	public static final int DATABASE_VERSION = 409;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4696,6 +4696,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				currentVersion = 407;
 				getDao(Case.class).executeRaw("ALTER TABLE investigationnotes DROP COLUMN changedate");
 				getDao(Case.class).executeRaw("ALTER TABLE investigationnotes ADD COLUMN changeDate");
+			case 408:
+				currentVersion = 408;
+				// Fix YesNo enum values that contain "UNKNOWN" which is not valid for YesNo enum
+				// This updates any "UNKNOWN" values in pregnant and postpartum fields to "NO"
+				getDao(Case.class).executeRaw("UPDATE cases SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN'");
+				getDao(Case.class).executeRaw("UPDATE cases SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN'");
 
 
 					// ATTENTION: break should only be done after last version
