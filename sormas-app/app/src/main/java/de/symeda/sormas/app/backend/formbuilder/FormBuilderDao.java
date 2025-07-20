@@ -118,8 +118,11 @@ public class FormBuilderDao extends AbstractAdoDao<FormBuilder> {
 			return;
 		super.create(data);
 		if (data.getFormFields() != null) {
-			for (FormField formField : data.getFormFields()) {
-				int resultRowCount = formBuilderFormFieldDao.create(new FormBuilderFormField(data, formField));
+			for (int i = 0; i < data.getFormFields().size(); i++) {
+				FormField formField = data.getFormFields().get(i);
+				FormBuilderFormField formBuilderFormField = new FormBuilderFormField(data, formField);
+				formBuilderFormField.setDisplayOrder(i);
+				int resultRowCount = formBuilderFormFieldDao.create(formBuilderFormField);
 				if (resultRowCount < 1)
 					throw new SQLException(
 							"Database entry was not created - go back and try again.\n" + "Type: " + FormBuilderFormField.class.getSimpleName() + ", FormField-UUID: "
@@ -136,20 +139,27 @@ public class FormBuilderDao extends AbstractAdoDao<FormBuilder> {
 		super.update(data);
 
 		// 1. Delete existing FormBuilderFormField
-		DeleteBuilder<FormBuilderFormField, Long> diseaseFormFieldLongDeleteBuilder = formBuilderFormFieldDao.deleteBuilder();
-		diseaseFormFieldLongDeleteBuilder.where().eq("form_id", data);
-		diseaseFormFieldLongDeleteBuilder.delete();
+		clearFormBuilderFormFields(data);
 
 		// 2. Create new FormBuilderFormField
 		if (data.getFormFields() != null) {
-			for (FormField formField : data.getFormFields()) {
-				int resultRowCount = formBuilderFormFieldDao.create(new FormBuilderFormField(data, formField));
+			for (int i = 0; i < data.getFormFields().size(); i++) {
+				FormField formField = data.getFormFields().get(i);
+				FormBuilderFormField formBuilderFormField = new FormBuilderFormField(data, formField);
+				formBuilderFormField.setDisplayOrder(i);
+				int resultRowCount = formBuilderFormFieldDao.create(formBuilderFormField);
 				if (resultRowCount < 1)
 					throw new SQLException(
 							"Database entry was not created - go back and try again.\n" + "Type: " + FormBuilderFormField.class.getSimpleName() + ", FormField-UUID: "
 									+ data.getUuid());
 			}
 		}
+	}
+
+	public void clearFormBuilderFormFields(FormBuilder formBuilder) throws SQLException {
+		DeleteBuilder<FormBuilderFormField, Long> deleteBuilder = formBuilderFormFieldDao.deleteBuilder();
+		deleteBuilder.where().eq("form_id", formBuilder.getId());
+		deleteBuilder.delete();
 	}
 
 	//get all forms for Disease
@@ -163,6 +173,10 @@ public class FormBuilderDao extends AbstractAdoDao<FormBuilder> {
 			Log.e(getTableName(), "Could not perform getFormBuilders");
 			throw new RuntimeException(e);
 		}
+	}
+
+	public void createFormBuilderFormField(FormBuilderFormField formBuilderFormField) throws SQLException {
+		formBuilderFormFieldDao.create(formBuilderFormField);
 	}
 
 }

@@ -65,10 +65,37 @@ public class FormBuilderDtoHelper extends AdoDtoHelper<FormBuilder, FormBuilderD
 			List<FormField> formFields = Optional.of(target).map(FormBuilder::getFormFields).orElseGet(LinkedList::new);
 			target.setFormFields(formFields);
 			formFields.clear();
-			source.getFormFields()
-					.stream()
-					.map(formFieldReferenceDto -> DatabaseHelper.getFormFieldDao().getByReferenceDto(formFieldReferenceDto))
-					.forEach(formFields::add);
+			
+			// Clear existing form builder form field relationships
+			try {
+				DatabaseHelper.getFormBuilderDao().clearFormBuilderFormFields(target);
+			} catch (Exception e) {
+				// Log error but continue
+			}
+			
+			// Create new form builder form field relationships with displayOrder
+			for (int i = 0; i < source.getFormFields().size(); i++) {
+				de.symeda.sormas.api.infrastructure.fields.FormFieldReferenceDto formFieldReferenceDto = source.getFormFields().get(i);
+				FormField formField = DatabaseHelper.getFormFieldDao().getByReferenceDto(formFieldReferenceDto);
+				if (formField != null) {
+					formFields.add(formField);
+					
+					// Create the junction table entry with displayOrder
+					try {
+						FormBuilderFormField formBuilderFormField = new FormBuilderFormField(target, formField);
+						// Use the displayOrder from the DTO, or fall back to the index if not available
+						Integer displayOrder = formFieldReferenceDto.getDisplayOrder();
+						if (displayOrder == null) {
+							displayOrder = i;
+						}
+						formBuilderFormField.setDisplayOrder(displayOrder);
+						// Use the FormBuilderDao to create the relationship
+						DatabaseHelper.getFormBuilderDao().createFormBuilderFormField(formBuilderFormField);
+					} catch (Exception e) {
+						// Log error but continue
+					}
+				}
+			}
 			target.setFormFields(formFields);
 		}
 	}

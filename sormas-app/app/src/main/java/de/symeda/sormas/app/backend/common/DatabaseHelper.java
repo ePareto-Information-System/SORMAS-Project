@@ -4153,7 +4153,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 377:
 				currentVersion = 377;
 				getDao(RiskFactor.class).executeRaw(
-					"CREATE TABLE riskfactor (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+					"CREATE TABLE riskfactor (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL,"
 						+ "    changeDate BIGINT NOT NULL," + "		pseudonymized SMALLINT," + "    creationDate BIGINT NOT NULL,"
 						+ "    epidata_id BIGINT," + "    drinkingWaterSourceOne VARCHAR(255)," + "    drinkingWaterSourceTwo VARCHAR(255),"
 						+ "    drinkingWaterSourceThree VARCHAR(255)," + "    drinkingWaterSourceFour VARCHAR(255),"
@@ -4449,7 +4449,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				currentVersion = 388;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN afpImmunization_id BIGINT;");
 				getDao(AfpImmunization.class).executeRaw(
-					"CREATE TABLE afpImmunization (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+					"CREATE TABLE afpImmunization (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL,"
 						+ "    changeDate BIGINT NOT NULL," + "		totalNumberDoses int," + "		opvDoseAtBirth VARCHAR(255),"
 						+ "		secondDose VARCHAR(255)," + "		fourthDose VARCHAR(255)," + "		firstDose VARCHAR(255),"
 						+ "		thirdDose VARCHAR(255)," + "		lastDose VARCHAR(255)," + "		totalOpvDosesReceivedThroughSia VARCHAR(255),"
@@ -4464,7 +4464,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 389:
 				currentVersion = 389;
 				getDao(AffectedPerson.class).executeRaw(
-					"CREATE TABLE affectedperson (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+					"CREATE TABLE affectedperson (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL,"
 						+ "    changedate BIGINT NOT NULL," + "    creationDate BIGINT NOT NULL," + "    foodhistory_id BIGINT NOT NULL,"
 						+ "    nameOfAffectedPerson VARCHAR(255)," + "    telNo VARCHAR(255)," + "    dateTime DATE," + "    age VARCHAR(255),"
 						+ "    pseudonymized SMALLINT," + "    lastOpenedDate BIGINT," + "    localChangeDate BIGINT NOT NULL,"
@@ -4485,7 +4485,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				currentVersion = 391;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN sixtyday_id BIGINT;");
 				getDao(SixtyDay.class).executeRaw(
-					"CREATE TABLE sixtyday (" + "     id INTEGER PRIMARY KEY AUTOINCREMENT," + "     uuid VARCHAR(36) NOT NULL UNIQUE,"
+					"CREATE TABLE sixtyday (" + "     id INTEGER PRIMARY KEY AUTOINCREMENT," + "     uuid VARCHAR(36) NOT NULL,"
 						+ "     changeDate BIGINT NOT NULL," + "		personExamineCase VARCHAR(255)," + "		dateOfFollowup DATE,"
 						+ "		dateBirth DATE," + "		residentialLocation VARCHAR(255)," + "		patientFound VARCHAR(255),"
 						+ "		patientFoundReason VARCHAR(255)," + "		locateChildAttempt VARCHAR(255),"
@@ -4593,7 +4593,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PatientSymptomsPrecedence.class).executeRaw(
 						"CREATE TABLE patientsymptomsprecedence ("
 								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
-								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "    uuid VARCHAR(36) NOT NULL,"
 								+ "    changedate BIGINT NOT NULL,"
 								+ "		pseudonymized SMALLINT,"
 								+ "    creationDate BIGINT NOT NULL,"
@@ -4631,7 +4631,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PatientTravelDetailsDuring.class).executeRaw(
 						"CREATE TABLE patienttraveldetailsduring ("
 								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
-								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "    uuid VARCHAR(36) NOT NULL,"
 								+ "    changedate BIGINT NOT NULL,"
 								+ "    creationdate BIGINT NOT NULL,"
 								+ "    riskfactor_id BIGINT NOT NULL,"
@@ -4648,7 +4648,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PatientTravelDetailsPrior.class).executeRaw(
 						"CREATE TABLE patienttraveldetailsprior ("
 								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
-								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "    uuid VARCHAR(36) NOT NULL,"
 								+ "    changedate BIGINT NOT NULL,"
 								+ "    creationdate BIGINT NOT NULL,"
 								+ "    riskfactor_id BIGINT NOT NULL,"
@@ -4704,8 +4704,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Case.class).executeRaw("UPDATE cases SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN'");
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN'");
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN'");
-
-
 					// ATTENTION: break should only be done after last version
 				break;
 
