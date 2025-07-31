@@ -3224,8 +3224,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 								"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
 								");"
 				);
-
-				case 347:
+			case 347:
 				currentVersion = 347;
 				getDao(EbsAlert.class).executeRaw(
 							"CREATE TABLE ebsAlert(" +

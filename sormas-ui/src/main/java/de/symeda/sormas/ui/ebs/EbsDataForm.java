@@ -367,6 +367,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		List<UserReferenceDto> responsibleUsers = new ArrayList<>();
 		responsibleUsers.addAll(regionEventResponsibles);
 		responsibleUsers.addAll(districtEventResponsibles);
+		responsibleUsers.addAll(districtEventResponsibles);
 
 		FieldHelper.updateItems(responsibleUserField, responsibleUsers);
 	}
