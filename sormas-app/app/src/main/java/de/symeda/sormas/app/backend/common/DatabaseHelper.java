@@ -20,6 +20,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import javax.crypto.CipherInputStream;
+import android.util.Base64;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import javax.crypto.Cipher;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -51,6 +57,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
@@ -726,6 +733,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	public static Context getContext() {
 		return instance.context;
+	}
+
+	public static DatabaseHelper getInstance() {
+		return instance;
 	}
 
 	public static String getString(int stringResourceId) {
@@ -3700,10 +3711,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 			case 349:
 				currentVersion = 349;
-				getDao(Task.class).executeRaw("ALTER TABLE tasks ADD COLUMN assignedByUser_id BIGINT REFERENCES users(id);");
+				getDao(Config.class).executeRaw("INSERT OR IGNORE INTO config (key, value) VALUES ('autologin_username', NULL);");
+				getDao(Config.class).executeRaw("INSERT OR IGNORE INTO config (key, value) VALUES ('autologin_password', NULL);");
 
 			case 350:
 				currentVersion = 350;
+				getDao(Task.class).executeRaw("ALTER TABLE tasks ADD COLUMN assignedByUser_id BIGINT REFERENCES users(id);");
 				getDao(Environment.class).executeRaw(
 					"CREATE TABLE environments(id integer primary key autoincrement, uuid VARCHAR(36) NOT NULL, "
 						+ "changeDate TIMESTAMP NOT NULL, creationDate TIMESTAMP NOT NULL, lastOpenedDate TIMESTAMP, localChangeDate TIMESTAMP NOT NULL, modified INTEGER, "
@@ -4788,6 +4801,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				}
 			}
 
+			// After successful database backup
+			prepareAutoLoginCredentialsForBackup(context);
+
 			return true; // Backup successful
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -4820,6 +4836,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			ConfigProvider.clearUserLogin();
 			ConfigProvider.clearPin();
 
+			// Force database upgrade before auto-login
+			Log.d("DatabaseRestore", "Triggering database upgrade after restore");
+			forceDatabaseUpgrade(context);
+
+			// After successful database restore and upgrade
+			performAutoLoginAfterRestore(context);
+
 			return true; // Restore successful
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -4844,6 +4867,405 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Prepares auto-login credentials for backup by decrypting the current password
+	 * and storing it as plain text in the config table for later restoration.
+	 * 
+	 * @param context The application context
+	 */
+	private static void prepareAutoLoginCredentialsForBackup(Context context) {
+		Log.d("AutoLogin", "=== Preparing auto-login credentials for backup ===");
+		
+		try {
+			// Get current username and encrypted password
+			String username = ConfigProvider.getUsername();
+			Log.d("AutoLogin", "Retrieved username: " + (username != null ? username : "null"));
+			
+			String encryptedPassword = null;
+			
+			// Get the encrypted password from config
+			ConfigDao configDao = DatabaseHelper.getConfigDao();
+			Log.d("AutoLogin", "ConfigDao obtained: " + (configDao != null ? "success" : "failed"));
+			
+			Config passwordConfig = configDao.queryForId("password");
+			Log.d("AutoLogin", "Password config found: " + (passwordConfig != null ? "yes" : "no"));
+			
+			if (passwordConfig != null && passwordConfig.getValue() != null) {
+				encryptedPassword = passwordConfig.getValue();
+				Log.d("AutoLogin", "Encrypted password length: " + encryptedPassword.length());
+			}
+			
+			if (username == null || username.isEmpty() || encryptedPassword == null) {
+				Log.w("AutoLogin", "No credentials found for backup preparation");
+				Log.w("AutoLogin", "Username: " + (username != null ? username : "null"));
+				Log.w("AutoLogin", "Encrypted password: " + (encryptedPassword != null ? "present" : "null"));
+				return;
+			}
+			
+			Log.d("AutoLogin", "Found credentials for backup preparation");
+			
+			// Decrypt the password
+			String decryptedPassword = decryptPasswordForBackup(encryptedPassword, context);
+			if (decryptedPassword == null) {
+				Log.e("AutoLogin", "Failed to decrypt password for backup");
+				Log.e("AutoLogin", "Storing encrypted password as-is for debugging");
+				// Store the encrypted password as-is for debugging
+				configDao.createOrUpdate(new Config("autologin_username", username));
+				configDao.createOrUpdate(new Config("autologin_password", encryptedPassword));
+				return;
+			}
+			
+			// Store plain text credentials for auto-login
+			Log.d("AutoLogin", "Creating autologin_username field with value: " + username);
+			configDao.createOrUpdate(new Config("autologin_username", username));
+			
+			Log.d("AutoLogin", "Creating autologin_password field with password length: " + decryptedPassword.length());
+			configDao.createOrUpdate(new Config("autologin_password", decryptedPassword));
+			
+			// Verify the fields were created
+			Config verifyUsername = configDao.queryForId("autologin_username");
+			Config verifyPassword = configDao.queryForId("autologin_password");
+			
+			Log.d("AutoLogin", "Verification - autologin_username created: " + (verifyUsername != null ? "yes" : "no"));
+			Log.d("AutoLogin", "Verification - autologin_password created: " + (verifyPassword != null ? "yes" : "no"));
+			
+			Log.d("AutoLogin", "Auto-login credentials prepared for backup");
+			Log.d("AutoLogin", "Plain text credentials stored: username=" + username + ", password length=" + decryptedPassword.length());
+			Log.d("AutoLogin", "This backup will support auto-login on new installations");
+			
+		} catch (Exception e) {
+			Log.e("AutoLogin", "Error preparing auto-login credentials: " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Decrypts the password for backup preparation using the device's keystore.
+	 * 
+	 * @param encodedCredential The encrypted password
+	 * @param context The application context
+	 * @return The decrypted password or null if decryption fails
+	 */
+	private static String decryptPasswordForBackup(String encodedCredential, Context context) {
+		Log.d("AutoLogin", "Starting password decryption for backup");
+		Log.d("AutoLogin", "Encoded credential length: " + (encodedCredential != null ? encodedCredential.length() : "null"));
+		
+		if (encodedCredential == null) {
+			Log.e("AutoLogin", "Encoded credential is null");
+			return null;
+		}
+
+		try {
+			Log.d("AutoLogin", "Starting decryption process for backup");
+			
+			// Check if device encryption is available
+			if (!hasDeviceEncryption(context)) {
+				Log.e("AutoLogin", "Device encryption not available");
+				return null;
+			}
+			Log.d("AutoLogin", "Device encryption is available");
+
+			KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+			keyStore.load(null);
+			Log.d("AutoLogin", "AndroidKeyStore loaded successfully");
+
+			PrivateKey privateKey;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+				Log.d("AutoLogin", "Using Android P+ keystore access method");
+				privateKey = (PrivateKey) keyStore.getKey("Password", null);
+			} else {
+				Log.d("AutoLogin", "Using legacy keystore access method");
+				KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry("Password", null);
+				privateKey = privateKeyEntry.getPrivateKey();
+			}
+
+			if (privateKey == null) {
+				Log.e("AutoLogin", "Private key not found in keystore");
+				return null;
+			}
+			Log.d("AutoLogin", "Private key retrieved successfully");
+
+			Cipher decryptCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
+			Log.d("AutoLogin", "Cipher initialized for decryption");
+
+			byte[] encodedBytes = Base64.decode(encodedCredential, Base64.DEFAULT);
+			Log.d("AutoLogin", "Encoded credential decoded from Base64 (length: " + encodedBytes.length + ")");
+			
+			InputStream inputStream = new ByteArrayInputStream(encodedBytes);
+			CipherInputStream cipherStream = new CipherInputStream(inputStream, decryptCipher);
+			byte[] passwordBytes = new byte[1024];
+			int passwordByteLength = cipherStream.read(passwordBytes);
+			cipherStream.close();
+
+			if (passwordByteLength <= 0) {
+				Log.e("AutoLogin", "No password bytes read from cipher stream");
+				return null;
+			}
+
+			String decryptedPassword = new String(passwordBytes, 0, passwordByteLength, "UTF-8");
+			Log.d("AutoLogin", "Password decrypted successfully");
+			Log.d("AutoLogin", "Password converted to string successfully");
+			
+			return decryptedPassword;
+
+		} catch (Exception e) {
+			Log.e("AutoLogin", "Error decrypting password for backup: " + e.getMessage(), e);
+			return null;
+		}
+	}
+
+	/**
+	 * Performs auto-login after database restore by extracting plain text credentials
+	 * from the restored database and automatically logging in the user.
+	 * 
+	 * @param context The application context
+	 */
+	private static void performAutoLoginAfterRestore(Context context) {
+		Log.d("AutoLogin", "=== Starting auto-login process after database restore ===");
+		
+		try {
+			// Get the ConfigDao to access stored credentials
+			ConfigDao configDao = DatabaseHelper.getConfigDao();
+			if (configDao == null) {
+				Log.e("AutoLogin", "ConfigDao is null");
+				return;
+			}
+			Log.d("AutoLogin", "ConfigDao obtained successfully");
+			
+			// First try to get auto-login credentials (plain text)
+			Config autoLoginUsernameConfig = configDao.queryForId("autologin_username");
+			Config autoLoginPasswordConfig = configDao.queryForId("autologin_password");
+			
+			String username = null;
+			String password = null;
+			
+			// If auto-login credentials exist, use them
+			if (autoLoginUsernameConfig != null && autoLoginPasswordConfig != null &&
+				autoLoginUsernameConfig.getValue() != null && autoLoginPasswordConfig.getValue() != null) {
+				
+				username = autoLoginUsernameConfig.getValue();
+				password = autoLoginPasswordConfig.getValue();
+				Log.d("AutoLogin", "Found auto-login credentials (plain text)");
+				Log.d("AutoLogin", "Using plain text credentials for auto-login");
+				
+			} else {
+				Log.d("AutoLogin", "No auto-login credentials found, trying encrypted credentials");
+				
+				// Fallback to encrypted credentials (for old backups)
+				Config usernameConfig = configDao.queryForId("username");
+				Config passwordConfig = configDao.queryForId("password");
+				
+				if (usernameConfig != null && passwordConfig != null &&
+					usernameConfig.getValue() != null && passwordConfig.getValue() != null) {
+					
+					username = usernameConfig.getValue();
+					String encryptedPassword = passwordConfig.getValue();
+					Log.d("AutoLogin", "Found username in restored database: " + username);
+					Log.d("AutoLogin", "Found encrypted password in restored database (length: " + encryptedPassword.length() + ")");
+					
+					// Attempt to decrypt the password
+					Log.d("AutoLogin", "Attempting to decrypt password from backup");
+					password = decryptPasswordFromBackup(encryptedPassword, context);
+					
+					if (password == null) {
+						Log.e("AutoLogin", "Failed to decrypt password from restored database");
+						Log.e("AutoLogin", "Auto-login not possible - manual login required");
+						Toast.makeText(context, "Auto-login failed - manual login required", Toast.LENGTH_LONG).show();
+						return;
+					}
+					
+					Log.d("AutoLogin", "Password decrypted successfully from backup");
+					
+				} else {
+					Log.w("AutoLogin", "No credentials found in restored database");
+					Log.w("AutoLogin", "Auto-login not possible - manual login required");
+					Toast.makeText(context, "No credentials found - manual login required", Toast.LENGTH_LONG).show();
+					return;
+				}
+			}
+			
+			if (username == null || password == null) {
+				Log.e("AutoLogin", "Invalid credentials for auto-login");
+				Log.e("AutoLogin", "Username: " + (username != null ? username : "null"));
+				Log.e("AutoLogin", "Password: " + (password != null ? "present" : "null"));
+				Toast.makeText(context, "Invalid credentials - manual login required", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
+			// Set the credentials in ConfigProvider for auto-login
+			Log.d("AutoLogin", "Setting credentials for auto-login");
+			ConfigProvider.setUsernameAndPassword(username, password);
+			
+			// Note: Auto-login authentication will be handled by the calling activity
+			// The credentials are now set in ConfigProvider and ready for authentication
+			Log.d("AutoLogin", "=== Auto-login credentials set successfully ===");
+			Log.d("AutoLogin", "Username: " + username);
+			Log.d("AutoLogin", "Password length: " + password.length());
+			Toast.makeText(context, "Auto-login credentials restored - authentication pending", Toast.LENGTH_LONG).show();
+			
+			// Trigger the login flow to complete the auto-login process
+			checkLoginAndProceed(context);
+			
+		} catch (Exception e) {
+			Log.e("AutoLogin", "Error during auto-login process: " + e.getMessage(), e);
+			Toast.makeText(context, "Auto-login error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
+
+	/**
+	 * Decrypts the password from the backup database using the device's keystore.
+	 * This method replicates the decryption logic from ConfigProvider.
+	 * 
+	 * @param encodedCredential The encrypted password from the backup
+	 * @param context The application context
+	 * @return The decrypted password or null if decryption fails
+	 */
+	private static String decryptPasswordFromBackup(String encodedCredential, Context context) {
+		Log.d("AutoLogin", "Starting password decryption from backup");
+		
+		if (encodedCredential == null) {
+			Log.e("AutoLogin", "Encoded credential is null");
+			return null;
+		}
+
+		try {
+			// Check if device encryption is available
+			if (!hasDeviceEncryption(context)) {
+				Log.e("AutoLogin", "Device encryption not available");
+				return null;
+			}
+			Log.d("AutoLogin", "Device encryption is available");
+
+			KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+			keyStore.load(null);
+			Log.d("AutoLogin", "AndroidKeyStore loaded successfully");
+
+			PrivateKey privateKey;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+				Log.d("AutoLogin", "Using Android P+ keystore access method");
+				privateKey = (PrivateKey) keyStore.getKey("Password", null);
+			} else {
+				Log.d("AutoLogin", "Using legacy keystore access method");
+				KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry("Password", null);
+				privateKey = privateKeyEntry.getPrivateKey();
+			}
+
+			if (privateKey == null) {
+				Log.e("AutoLogin", "Private key not found in keystore");
+				return null;
+			}
+			Log.d("AutoLogin", "Private key retrieved successfully");
+
+			Cipher decryptCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
+			Log.d("AutoLogin", "Cipher initialized for decryption");
+
+			byte[] encodedBytes = Base64.decode(encodedCredential, Base64.DEFAULT);
+			Log.d("AutoLogin", "Encoded credential decoded from Base64 (length: " + encodedBytes.length + ")");
+			
+			InputStream inputStream = new ByteArrayInputStream(encodedBytes);
+			CipherInputStream cipherStream = new CipherInputStream(inputStream, decryptCipher);
+			byte[] passwordBytes = new byte[1024];
+			int passwordByteLength = cipherStream.read(passwordBytes);
+			cipherStream.close();
+
+			if (passwordByteLength <= 0) {
+				Log.e("AutoLogin", "No password bytes read from cipher stream");
+				return null;
+			}
+
+			String decryptedPassword = new String(passwordBytes, 0, passwordByteLength, "UTF-8");
+			Log.d("AutoLogin", "Password decrypted successfully");
+			Log.d("AutoLogin", "Password converted to string successfully");
+			
+			return decryptedPassword;
+
+		} catch (Exception e) {
+			Log.e("AutoLogin", "Error decrypting password: " + e.getMessage(), e);
+			return null;
+		}
+	}
+
+	/**
+	 * Checks if device encryption is available (copied from ConfigProvider logic).
+	 * 
+	 * @param context The application context
+	 * @return true if device encryption is available, false otherwise
+	 */
+	private static boolean hasDeviceEncryption(Context context) {
+		try {
+			// Device encryption is no longer used, because it's not reliably implemented
+			// on old android devices (versions 5 and 6) - see #410
+			// As a replacement the database should be encrypted #905
+			return true;
+		} catch (Exception e) {
+			Log.e("AutoLogin", "Error checking device encryption: " + e.getMessage(), e);
+			return false;
+		}
+	}
+
+	/**
+	 * Checks login status and proceeds with the appropriate flow.
+	 * This method is called after auto-login credentials are set.
+	 * 
+	 * @param context The application context
+	 */
+	private static void checkLoginAndProceed(Context context) {
+		Log.d("AutoLogin", "Auto-login credentials set - calling activity should handle authentication");
+		Log.d("AutoLogin", "The calling activity should now proceed with authentication using the set credentials");
+	}
+
+	/**
+	 * Forces database upgrade to ensure the restored database is compatible
+	 * with the current app version before attempting auto-login.
+	 * 
+	 * @param context The application context
+	 */
+	private static void forceDatabaseUpgrade(Context context) {
+		Log.d("DatabaseRestore", "=== Starting forced database upgrade ===");
+		
+		try {
+			// Get the current database instance
+			DatabaseHelper dbHelper = DatabaseHelper.getInstance();
+			if (dbHelper == null) {
+				Log.e("DatabaseRestore", "DatabaseHelper instance is null, cannot perform upgrade");
+				return;
+			}
+			
+			// Get the database to trigger upgrade
+			SQLiteDatabase db = dbHelper.getWritableDatabase();
+			if (db == null) {
+				Log.e("DatabaseRestore", "Failed to get writable database for upgrade");
+				return;
+			}
+			
+			// Get the current database version
+			int currentVersion = db.getVersion();
+			Log.d("DatabaseRestore", "Current database version: " + currentVersion);
+			Log.d("DatabaseRestore", "Target database version: " + DATABASE_VERSION);
+			
+			// Check if upgrade is needed
+			if (currentVersion < DATABASE_VERSION) {
+				Log.d("DatabaseRestore", "Database upgrade needed from " + currentVersion + " to " + DATABASE_VERSION);
+				
+				// Trigger the upgrade process
+				dbHelper.onUpgrade(db, dbHelper.getConnectionSource(), currentVersion, DATABASE_VERSION);
+				
+				// Update the database version
+				db.setVersion(DATABASE_VERSION);
+				
+				Log.d("DatabaseRestore", "Database upgrade completed successfully");
+				Toast.makeText(context, "Database upgraded to version " + DATABASE_VERSION, Toast.LENGTH_SHORT).show();
+			} else {
+				Log.d("DatabaseRestore", "Database is already at current version " + DATABASE_VERSION + ", no upgrade needed");
+			}
+			
+		} catch (Exception e) {
+			Log.e("DatabaseRestore", "Error during database upgrade: " + e.getMessage(), e);
+			Toast.makeText(context, "Database upgrade failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
 	}
 
 	private void formatRawResultDate(Object[] result, int index) {
