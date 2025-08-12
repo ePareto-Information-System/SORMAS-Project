@@ -683,6 +683,15 @@
     <string name="message_unsynchronized_changes">There are unsynchronized changes on your device.\nIf you proceed, they will be lost and you will not be able to restore them.</string>
     <string name="message_update_app_required">A new version of the SORMAS app is available. It is strongly recommended to download it by clicking the \'Download\' button below.</string>
     <string name="message_version_too_new">Could not synchronize because the app version is newer than the server version.</string>
+    
+    <!-- Debug package uninstallation strings -->
+    <string name="heading_debug_package_detected">Debug Package Detected</string>
+    <string name="message_debug_package_uninstall_required">A debug version of SORMAS is currently installed. This must be uninstalled before installing the release version.</string>
+    <string name="action_uninstall_debug">Uninstall Debug</string>
+    <string name="heading_uninstalling_debug">Uninstalling Debug Package</string>
+    <string name="info_uninstalling_debug">Please wait while the debug package is being uninstalled...</string>
+    <string name="heading_uninstall_debug_failed">Uninstall Failed</string>
+    <string name="message_uninstall_debug_failed">Failed to uninstall the debug package. Please try again or close the app.</string>
     <string name="message_weekly_report_submitted">Thank you for submitting your weekly report.</string>
     <string name="message_case_numbers_submitted">Thank you for submitting your collected case numbers.</string>
     <string name="message_change_final_laboratory_result">The result of this pathogen test differs from the current final laboratory result of the sample. Do you want to update the final laboratory result?</string>

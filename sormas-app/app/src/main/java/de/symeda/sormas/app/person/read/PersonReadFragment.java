@@ -155,6 +155,7 @@ public class PersonReadFragment extends BaseReadFragment<FragmentPersonReadLayou
 			disease = ((Case) ado).getDisease();
 		} else if (ado instanceof Contact) {
 			record = ((Contact) ado).getPerson();
+			disease = ((Contact) ado).getDisease();
 			rootData = ado;
 		} else if (ado instanceof EventParticipant) {
 			record = ((EventParticipant) ado).getPerson();

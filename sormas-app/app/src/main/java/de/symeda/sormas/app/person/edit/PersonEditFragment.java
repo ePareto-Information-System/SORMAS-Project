@@ -595,6 +595,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 			caseData = ((Case) ado);
 		} else if (ado instanceof Contact) {
 			record = ((Contact) ado).getPerson();
+			disease = ((Contact) ado).getDisease();
 			rootData = ado;
 		} else if (ado instanceof EventParticipant) {
 			record = ((EventParticipant) ado).getPerson();
