@@ -51,7 +51,7 @@ android {
     }
     buildTypes {
         debug {
-            applicationIdSuffix ".debug"
+            // applicationIdSuffix ".debug"  // Removed to maintain KeyStore compatibility
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
