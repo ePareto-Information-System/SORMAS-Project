@@ -121,25 +121,25 @@ public interface PersonSideComponentsElement {
 				layout.addComponent(new SideComponentLayout(caseListComponent), CASES_LOC);
 			}
 
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CONTACT_TRACING)
-					&& currentUser != null
-					&& currentUser.hasUserRight(UserRight.CONTACT_VIEW)) {
-				contactListComponent =
-						new ContactListComponent(person, entityType == CoreEntityType.CONTACT ? entityUuid : null, showUnsavedChangesPopup, isEditAllowed);
-				layout.addComponent(new SideComponentLayout(contactListComponent), CONTACTS_LOC);
-			}
+//			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CONTACT_TRACING)
+//					&& currentUser != null
+//					&& currentUser.hasUserRight(UserRight.CONTACT_VIEW)) {
+//				contactListComponent =
+//						new ContactListComponent(person, entityType == CoreEntityType.CONTACT ? entityUuid : null, showUnsavedChangesPopup, isEditAllowed);
+//				layout.addComponent(new SideComponentLayout(contactListComponent), CONTACTS_LOC);
+//			}
 
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
-					&& currentUser != null
-					&& currentUser.hasUserRight(UserRight.EVENT_VIEW)
-					&& currentUser.hasUserRight(UserRight.EVENTPARTICIPANT_VIEW)) {
-				eventParticipantListComponent = new EventParticipantListComponent(
-						person,
-						entityType == CoreEntityType.EVENT_PARTICIPANT ? entityUuid : null,
-						showUnsavedChangesPopup,
-						isEditAllowed);
-				layout.addComponent(new SideComponentLayout(eventParticipantListComponent), EVENT_PARTICIPANTS_LOC);
-			}
+//			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
+//					&& currentUser != null
+//					&& currentUser.hasUserRight(UserRight.EVENT_VIEW)
+//					&& currentUser.hasUserRight(UserRight.EVENTPARTICIPANT_VIEW)) {
+//				eventParticipantListComponent = new EventParticipantListComponent(
+//						person,
+//						entityType == CoreEntityType.EVENT_PARTICIPANT ? entityUuid : null,
+//						showUnsavedChangesPopup,
+//						isEditAllowed);
+//				layout.addComponent(new SideComponentLayout(eventParticipantListComponent), EVENT_PARTICIPANTS_LOC);
+//			}
 
 //			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
 //					&& currentUser != null
