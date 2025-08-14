@@ -135,10 +135,17 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
         addItemClickListener(
                 new ShowDetailsListener<>(SampleIndexDto.UUID, e -> ControllerProvider.getSampleController().navigateToData(e.getUuid())));
 
-        if (nonNull(UserProvider.getCurrent()) && UserProvider.getCurrent().hasLaboratoryOrExternalLaboratoryJurisdictionLevel()) {
-            removeColumn(SampleIndexDto.SHIPMENT_DATE);
+        if (nonNull(UserProvider.getCurrent()) &&
+                UserProvider.getCurrent().hasLaboratoryOrExternalLaboratoryJurisdictionLevel()) {
+
+            if (getColumn(SampleIndexDto.SHIPMENT_DATE) != null) {
+                removeColumn(SampleIndexDto.SHIPMENT_DATE);
+            }
+
         } else {
-            removeColumn(SampleIndexDto.RECEIVED_DATE);
+            if (getColumn(SampleIndexDto.RECEIVED_DATE) != null) {
+                removeColumn(SampleIndexDto.RECEIVED_DATE);
+            }
         }
 
 //        if (!UserProvider.getCurrent().hasUserRight(UserRight.CASE_VIEW)) {
