@@ -406,7 +406,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         foodHistoryHeadingLabel.setVisible(false);
 
         DateField onsetDateField = addField(ONSET_DATE, DateField.class);
-		if (disease != Disease.AFP && disease != Disease.NEW_INFLUENZA) {
+		if (DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
 			onsetDateField.setRequired(true);
 		}
 		ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
@@ -1275,7 +1275,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		onsetSymptom.addValueChangeListener(f -> {
 			if (f.getProperty().getValue() != null) {
 				setRequired(true, ONSET_DATE);
-			} else {
+			} else if (!DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
 				setRequired(false, ONSET_DATE);
 			}
 		});
@@ -1437,7 +1437,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	}
 
 	public void setOnsetDateFieldValidation(boolean onsetDateFieldValidation) {
-		setRequired(onsetDateFieldValidation, ONSET_DATE);
+		// For diseases requiring onset date, always maintain required status
+		if (DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+			setRequired(true, ONSET_DATE);
+		} else {
+			setRequired(onsetDateFieldValidation, ONSET_DATE);
+		}
 	}
 
 	@Override
@@ -1550,6 +1555,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			return;
 		}
 
+		// For diseases requiring onset date, always maintain required status for onset date field
+		if (targetPropertyId.equals(ONSET_DATE) && DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+			FieldHelper.addSoftRequiredStyle(targetField);
+			return;
+		}
+
 		if (visitStatusField != null) {
 			if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getNullableValue() == VisitStatus.COOPERATIVE) {
 				FieldHelper.addSoftRequiredStyle(targetField);
@@ -1568,6 +1579,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		for (Object sourcePropertyId : sourcePropertyIds) {
 			Field sourceField = fieldGroup.getField(sourcePropertyId);
 			sourceField.addValueChangeListener(event -> {
+				// For diseases requiring onset date, always maintain required status for onset date field
+				if (targetPropertyId.equals(ONSET_DATE) && DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+					FieldHelper.addSoftRequiredStyle(targetField);
+					return;
+				}
+				
 				if (visitStatusField != null) {
 					if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getValue() == VisitStatus.COOPERATIVE) {
 						FieldHelper.addSoftRequiredStyle(targetField);
@@ -1586,6 +1603,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		if (visitStatusField != null) {
 			visitStatusField.addValueChangeListener((ValueChangeListener) event -> {
+				// For diseases requiring onset date, always maintain required status for onset date field
+				if (targetPropertyId.equals(ONSET_DATE) && DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+					FieldHelper.addSoftRequiredStyle(targetField);
+					return;
+				}
+				
                 if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getValue() == VisitStatus.COOPERATIVE) {
                     FieldHelper.addSoftRequiredStyle(targetField);
                 } else {
@@ -1749,5 +1772,17 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			}
 		}, ValoTheme.BUTTON_LINK);
 	}
+
+	// Diseases that require onset date validation
+	private static final Set<Disease> DISEASES_REQUIRING_ONSET_DATE = new HashSet<>(Arrays.asList(
+		Disease.YELLOW_FEVER,
+		Disease.NEONATAL_TETANUS,
+		Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
+		Disease.CSM,
+		Disease.CORONAVIRUS,
+		Disease.CHOLERA,
+		Disease.AHF,
+        Disease.MONKEYPOX
+	));
 
 }
