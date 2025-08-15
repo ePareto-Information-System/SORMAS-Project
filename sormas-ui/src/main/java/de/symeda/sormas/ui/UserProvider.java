@@ -117,6 +117,9 @@ public class UserProvider {
 	public boolean isAdmin() {
 		return (user.getUserRoles().stream().filter(i -> i.getCaption().contains(I18nProperties.getEnumCaption(DefaultUserRole.ADMIN))).count() == 1);
 	}
+	public boolean isLabAttendant() {
+		return (user.getUserRoles().stream().filter(i -> i.getCaption().contains(I18nProperties.getEnumCaption(DefaultUserRole.LAB_ATTENDANT))).count() == 1);
+	}
 
 	public boolean hasRegionJurisdictionLevel() {
 		return getJurisdictionLevel() == JurisdictionLevel.REGION;

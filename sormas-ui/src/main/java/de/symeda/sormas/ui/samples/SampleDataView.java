@@ -138,20 +138,25 @@ public class SampleDataView extends AbstractSampleView {
 			}
 		}
 
-		SampleReferenceDto sampleReferenceDto = getSampleRef();
-		PathogenTestListComponent pathogenTestListComponent =
-			new PathogenTestListComponent(sampleReferenceDto, this::showUnsavedChangesPopup, isEditAllowed());
-		layout.addSidePanelComponent(new SideComponentLayout(pathogenTestListComponent), PATHOGEN_TESTS_LOC);
+		if( UserProvider.getCurrent() != null){
+			if (!UserProvider.getCurrent().isLabAttendant()) {
+				SampleReferenceDto sampleReferenceDto = getSampleRef();
+				PathogenTestListComponent pathogenTestListComponent =
+						new PathogenTestListComponent(sampleReferenceDto, this::showUnsavedChangesPopup, isEditAllowed());
+				layout.addSidePanelComponent(new SideComponentLayout(pathogenTestListComponent), PATHOGEN_TESTS_LOC);
 
-		if (UserProvider.getCurrent() != null
-			&& UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
-			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.ADDITIONAL_TESTS)) {
+				if (UserProvider.getCurrent() != null
+						&& UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
+						&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.ADDITIONAL_TESTS)) {
 
-			AdditionalTestListComponent additionalTestList =
-				new AdditionalTestListComponent(sampleReferenceDto.getUuid(), this::showUnsavedChangesPopup, isEditAllowed());
-			additionalTestList.addStyleName(CssStyles.SIDE_COMPONENT);
-			layout.addSidePanelComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
+					AdditionalTestListComponent additionalTestList =
+							new AdditionalTestListComponent(sampleReferenceDto.getUuid(), this::showUnsavedChangesPopup, isEditAllowed());
+					additionalTestList.addStyleName(CssStyles.SIDE_COMPONENT);
+					layout.addSidePanelComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
+				}
+			}
 		}
+
 
 		if (UserProvider.getCurrent().isAdmin()) {
 			EntityAuditLogComponent userActivityList = new EntityAuditLogComponent(SampleDto.class, getSampleRef().getUuid());
