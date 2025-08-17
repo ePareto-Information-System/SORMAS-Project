@@ -14759,3 +14759,6 @@ SELECT 'postpartum' as field_name, postpartum as value, COUNT(*) as count
 FROM cases
 WHERE postpartum IN ('YES', 'NO', 'UNKNOWN')
 GROUP BY postpartum;
+
+INSERT INTO schema_version (version_number, comment) VALUES (651, 'Set all forms to active');
+UPDATE forms SET active = true;

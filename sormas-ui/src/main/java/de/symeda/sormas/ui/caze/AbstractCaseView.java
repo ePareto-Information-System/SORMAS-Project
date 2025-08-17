@@ -292,7 +292,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 						&& !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
             /*menu.addView(
                 ClinicalCourseView.VIEW_NAME,
-                I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
+                I18nProperties.getPrefixCa	ption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
                 params);*/
 				}
 			}
@@ -303,7 +303,9 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 //			}
 
 			if(FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)) {
-				menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseContacts), params);
+				if (!Disease.NEONATAL_TETANUS.equals(caze.getDisease())) {
+					menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseContacts), params);
+				}
 			}
 
 			if (caze.getExternalData() != null && !caze.getExternalData().isEmpty()) {

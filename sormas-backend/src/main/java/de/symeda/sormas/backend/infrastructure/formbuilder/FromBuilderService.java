@@ -32,6 +32,9 @@ public class FromBuilderService extends AbstractInfrastructureAdoService<FormBui
     public Predicate buildCriteriaFilter(FormBuilderCriteria criteria, CriteriaBuilder cb, Root<FormBuilder> from) {
         Predicate filter = null;
 
+        // Always filter for active forms
+        filter = CriteriaBuilderHelper.and(cb, filter, cb.isTrue(from.get("active")));
+
         if(criteria.getDisease() != null) {
             filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get("disease"), criteria.getDisease()));
         }
