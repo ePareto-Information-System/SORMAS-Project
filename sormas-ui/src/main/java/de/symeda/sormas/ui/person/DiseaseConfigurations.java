@@ -65,6 +65,7 @@ public abstract class DiseaseConfigurations extends AbstractEditForm<PersonDto> 
             form.addField(PersonDto.QUALIFICATION, TextField.class);
 
             form.occupationHeader.setVisible(false);
+            form.occupationTitleHeadingLabel.setVisible(false);
             form.personContactDetailsField.setVisible(false);
         });
 
