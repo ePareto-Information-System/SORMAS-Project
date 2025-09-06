@@ -66,6 +66,7 @@ public abstract class DiseaseConfigurations extends AbstractEditForm<PersonDto> 
 
             form.occupationHeader.setVisible(false);
             form.personContactDetailsField.setVisible(false);
+            form.occupationTitleHeadingLabel.setVisible(false);
         });
 
         CONFIGURATIONS.put(Disease.AFP, form -> {
@@ -88,12 +89,8 @@ public abstract class DiseaseConfigurations extends AbstractEditForm<PersonDto> 
             form.addField(PersonDto.DURATION_DAYS4, TextField.class);
 
             form.setFieldsVisible(true,
-                    form.investigatorName, form.investigatorTitle, form.investigatorUnit, form.investigatorAddress, form.investigatorTel, form.homeaddrecreational);
-
-            form.generalCommentLabel.setVisible(false);
-            form.occupationHeader.setVisible(false);
-            form.addressesHeader.setVisible(false);
-            form.contactInformationHeader.setVisible(false);
+                    form.investigatorName, form.investigatorTitle, form.investigatorUnit, form.investigatorAddress, form.investigatorTel, form.homeaddrecreational, form.marriageStatus);
+            form.setComponentsVisible(false, form.generalCommentLabel, form.occupationHeader, form.addressesHeader, form.contactInformationHeader);
         });
 
         CONFIGURATIONS.put(Disease.FOODBORNE_ILLNESS, form -> {

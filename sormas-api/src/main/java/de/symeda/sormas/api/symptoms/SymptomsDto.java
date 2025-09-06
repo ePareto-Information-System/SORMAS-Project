@@ -731,7 +731,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(UNEXPLAINED_BLEEDING)
+//	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState eyesBleeding;
@@ -801,7 +801,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(UNEXPLAINED_BLEEDING)
+//	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState gumsBleeding;
@@ -866,7 +866,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(UNEXPLAINED_BLEEDING)
+//	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState injectionSiteBleeding;
@@ -1198,7 +1198,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(UNEXPLAINED_BLEEDING)
+//	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState noseBleeding;
@@ -1413,7 +1413,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(UNEXPLAINED_BLEEDING)
+//	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState redBloodVomit;

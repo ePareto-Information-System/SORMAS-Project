@@ -540,17 +540,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		}
 
-		if(caze.getDisease() == Disease.AFP){
-			hospitalizationReason.setVisible(false);
-			hospitalizedPreviouslyField.setVisible(false);
-			previousHospitalizationsHeadingLabel.setVisible(false);
-
-			admittedToHealthFacilityNew.setVisible(true);
-			hospitalRecordNumber.setVisible(true);
-			dateFirstSeen.setVisible(true);
-			dateFirstSeen.setCaption("Date of admission to hospital, if applicable:");
-		}
-
 		if(caze.getDisease() == Disease.AHF){
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);

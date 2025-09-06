@@ -321,6 +321,17 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF){
 			contentBinding.symptomsDateOfOnset.setCaption("Date Of Onset For The Fever");
 		}
+		if (disease == Disease.AHF){
+			contentBinding.symptomsPatientHaveFever.addValueChangedListener(field -> {
+				int visibility = field.getValue() == YesNo.YES ? VISIBLE : GONE;
+				contentBinding.symptomsDateOfOnset.setVisibility(visibility);
+			});
+
+			YesNo initialValue = (YesNo) contentBinding.symptomsPatientHaveFever.getValue();
+			int initialVisibility = initialValue == YesNo.YES ? VISIBLE : GONE;
+			contentBinding.symptomsDateOfOnset.setVisibility(initialVisibility);
+
+		}
 
 		if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
 			contentBinding.btnClearAll.setVisibility(GONE);

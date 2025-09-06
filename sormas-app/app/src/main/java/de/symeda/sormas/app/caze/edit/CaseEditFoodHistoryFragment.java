@@ -43,6 +43,9 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
+import de.symeda.sormas.app.core.NotificationContext;
+import de.symeda.sormas.app.core.notification.NotificationHelper;
+import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.FragmentCaseEditFoodhistoryLayoutBinding;
 import de.symeda.sormas.app.foodhistory.AffectedPersonDialog;
 import de.symeda.sormas.app.util.DataUtils;
@@ -140,9 +143,29 @@ public class CaseEditFoodHistoryFragment extends BaseEditFragment<FragmentCaseEd
 	private void setUpControlListeners(final FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
 
 		contentBinding.btnAddAffectedPerson.setOnClickListener(v -> {
+			// Parse numberAffected safely from String input
+			String rawValue = contentBinding.foodHistoryNumberAffected.getValue();
+			Integer numberAffected = null;
+
+			if (rawValue != null && !rawValue.trim().isEmpty()) {
+				try {
+					numberAffected = Integer.parseInt(rawValue.trim());
+				} catch (NumberFormatException e) {
+					numberAffected = null;
+				}
+			}
+
+			// Validate before adding
+			if (numberAffected == null || numberAffected <= 0) {
+				NotificationHelper
+						.showDialogNotification((NotificationContext) getContext(), NotificationType.WARNING, R.string.message_number_affected_required);
+				return;
+			}
+
+			// Continue with adding affected person if valid
 			final AffectedPerson affectedPerson = DatabaseHelper.getAffectedPersonDao().build();
 			final AffectedPersonDialog dialog =
-				new AffectedPersonDialog(CaseEditActivity.getActiveActivity(), affectedPerson, getActivityRootData(), true);
+					new AffectedPersonDialog(CaseEditActivity.getActiveActivity(), affectedPerson, getActivityRootData(), true);
 			dialog.setPositiveCallback(() -> addAffectedPerson(affectedPerson));
 			dialog.show();
 		});

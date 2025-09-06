@@ -286,6 +286,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	public TextField passport;
 	public TextField nationalHealthId;
 	public TextField occuDetails;
+	public ComboBox marriageStatus;
 
 	private PersonDto person;
 	//@formatter:on
@@ -428,7 +429,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		mothername = addField(PersonDto.MOTHERS_NAME);
 		addFields(PersonDto.NAMES_OF_GUARDIANS);
 		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
-		ComboBox marriageStatus = addField(PersonDto.MARRIAGE_STATUS, ComboBox.class);
+		marriageStatus = addField(PersonDto.MARRIAGE_STATUS, ComboBox.class);
 		nationality = addField(PersonDto.NATIONALITY, TextField.class);
 		birthDateDay = addField(PersonDto.BIRTH_DATE_DD, ComboBox.class);
 		// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
@@ -1020,7 +1021,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 			} else if (disease == Disease.AFP) {
-				setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.MARRIAGE_STATUS, PersonDto.OCCUPATION_DETAILS);
+				setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.OCCUPATION_DETAILS);
 				setVisible(true, PersonDto.OTHER_ID);
 			} else if (disease == Disease.MEASLES) {
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);

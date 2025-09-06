@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.vaadin.ui.Component;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.Validator;
@@ -495,6 +496,15 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 			}
 		}
 	}
+
+	public void setComponentsVisible(boolean visible, Component... components) {
+		for (Component component : components) {
+			if (component != null) {
+				component.setVisible(visible);
+			}
+		}
+	}
+
 
 	protected void setVisibleClear(boolean visible, String... fieldOrPropertyIds) {
 

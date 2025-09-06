@@ -459,5 +459,14 @@ public class LocationDialog extends FormDialog {
 			return;
 		}
 		super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, formType);
+
+		if (caseDisease == Disease.MONKEYPOX){
+			getContentBinding().locationRegion.setCaption("Region of Residence");
+			getContentBinding().locationDistrict.setCaption("District of Residence");
+			getContentBinding().locationCommunity.setCaption("Community/Village");
+		}
+		if (caseDisease == Disease.NEONATAL_TETANUS){
+			getContentBinding().locationCommunity.setCaption("Community");
+		}
 	}
 }

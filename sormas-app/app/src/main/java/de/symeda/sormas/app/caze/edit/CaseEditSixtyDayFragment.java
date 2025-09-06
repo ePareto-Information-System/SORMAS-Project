@@ -137,8 +137,11 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 			}
 		});
 
-		if (getContentBinding().sixtyDayPackagingTypeOther.getValue() != null) {
+		PackagingType initialInput = (PackagingType) getContentBinding().sixtyDayPackagingType.getValue();
+		if (initialInput == PackagingType.OTHER) {
 			getContentBinding().sixtyDayPackagingTypeOther.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().sixtyDayPackagingTypeOther.setVisibility(GONE);
 		}
 
 		contentBinding.buttonScanFieldSixtyDayId.setOnClickListener((View v) -> {
