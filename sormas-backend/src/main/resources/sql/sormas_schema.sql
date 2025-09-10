@@ -14750,15 +14750,6 @@ UPDATE cases SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN';
 UPDATE cases SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN';
 UPDATE symptoms SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN';
 UPDATE symptoms SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN';
-SELECT 'pregnant' as field_name, pregnant as value, COUNT(*) as count
-FROM cases
-WHERE pregnant IN ('YES', 'NO', 'UNKNOWN')
-GROUP BY pregnant
-UNION ALL
-SELECT 'postpartum' as field_name, postpartum as value, COUNT(*) as count
-FROM cases
-WHERE postpartum IN ('YES', 'NO', 'UNKNOWN')
-GROUP BY postpartum;
 
 INSERT INTO schema_version (version_number, comment) VALUES (651, 'Set all forms to active');
 UPDATE forms SET active = true;
