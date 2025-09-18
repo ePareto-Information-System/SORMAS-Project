@@ -248,7 +248,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 409;
+	public static final int DATABASE_VERSION = 410;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4097,7 +4097,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSurveillanceSentResultsToDistrict DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateDistrictReceivedLabResults DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryDateResultsSentDSD DATE;");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampletestsstring VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestsString VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCR VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCRDate DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultAntigen VARCHAR(255);");
@@ -4718,9 +4718,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN'");
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN'");
 					// ATTENTION: break should only be done after last version
+			case 409:
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET hospitalizedPreviously = 'NO' WHERE hospitalizedPreviously = 'UNKNOWN'");
 				break;
 
-			default:
+				default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
 			}
 		} catch (
