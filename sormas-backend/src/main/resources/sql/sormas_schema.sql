@@ -14753,3 +14753,10 @@ UPDATE symptoms SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN';
 
 INSERT INTO schema_version (version_number, comment) VALUES (651, 'Set all forms to active');
 UPDATE forms SET active = true;
+
+INSERT INTO schema_version (version_number, comment) VALUES (652, 'Updated symptoms to fix unknown values');
+UPDATE symptoms SET otherComplications = 'YES' WHERE otherComplications = '0';
+UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '0';
+UPDATE symptoms SET papularRash = 'NO' WHERE papularRash = '0';
+
+
