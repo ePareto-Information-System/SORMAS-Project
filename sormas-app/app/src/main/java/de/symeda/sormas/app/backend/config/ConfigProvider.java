@@ -333,6 +333,54 @@ public final class ConfigProvider {
 		instance.pin = pin;
 
 		DatabaseHelper.getConfigDao().createOrUpdate(new Config(KEY_PIN, pin));
+		
+		// Refresh user data after PIN is set to ensure sidebar menus are populated
+		refreshUserDataAfterPinSet();
+	}
+	
+	/**
+	 * Clears cached user data without affecting credentials.
+	 * This forces the next getUser() call to reload user data from the database.
+	 */
+	public static void clearUserCache() {
+		synchronized (ConfigProvider.class) {
+			instance.user = null;
+			instance.userRights = null;
+			Log.d("ConfigProvider", "User cache cleared");
+		}
+	}
+	
+	/**
+	 * Refreshes user data after PIN is set to ensure sidebar menus are properly populated.
+	 * This is particularly important after database restoration when user roles might not be loaded.
+	 */
+	private static void refreshUserDataAfterPinSet() {
+		try {
+			Log.d("ConfigProvider", "Refreshing user data after PIN set");
+			
+			// Clear cached user data to force reload
+			clearUserCache();
+			
+			// Try to reload user and roles
+			User user = getUser();
+			if (user != null) {
+				Log.d("ConfigProvider", "User reloaded after PIN set: " + user.getUserName());
+				
+				// Force reload of user roles
+				DatabaseHelper.getUserDao().initUserRoles(user);
+				Log.d("ConfigProvider", "User roles reloaded: " + user.getUserRolesString());
+				
+				// Reload user rights
+				Set<UserRight> userRights = getUserRights();
+				Log.d("ConfigProvider", "User rights reloaded: " + (userRights != null ? userRights.size() : 0) + " rights");
+				
+			} else {
+				Log.w("ConfigProvider", "No user found after PIN set");
+			}
+			
+		} catch (Exception e) {
+			Log.e("ConfigProvider", "Error refreshing user data after PIN set: " + e.getMessage(), e);
+		}
 	}
 
 	private String encodeCredential(String clearCredential, String keyStoreAlias) {

@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -72,11 +73,13 @@ import de.symeda.sormas.api.exposure.AnimalContactType;
 import de.symeda.sormas.api.exposure.ExposureType;
 import de.symeda.sormas.api.exposure.HabitationType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.immunization.ImmunizationManagementStatus;
 import de.symeda.sormas.api.immunization.ImmunizationStatus;
 import de.symeda.sormas.api.immunization.MeansOfImmunization;
 import de.symeda.sormas.api.person.PersonContactDetailType;
 import de.symeda.sormas.api.user.JurisdictionLevel;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
@@ -248,7 +251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 409;
+	public static final int DATABASE_VERSION = 410;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4097,7 +4100,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSurveillanceSentResultsToDistrict DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateDistrictReceivedLabResults DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryDateResultsSentDSD DATE;");
-				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampletestsstring VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestsString VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCR VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCRDate DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultAntigen VARCHAR(255);");
@@ -4718,9 +4721,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN'");
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN'");
 					// ATTENTION: break should only be done after last version
+			case 409:
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET hospitalizedPreviously = 'NO' WHERE hospitalizedPreviously = 'UNKNOWN'");
 				break;
 
-			default:
+				default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
 			}
 		} catch (
@@ -5105,8 +5110,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			Log.d("AutoLogin", "Password length: " + password.length());
 			Toast.makeText(context, "Auto-login credentials restored - authentication pending", Toast.LENGTH_LONG).show();
 			
-			// Trigger the login flow to complete the auto-login process
-			checkLoginAndProceed(context);
+			// Complete auto-login process without forcing synchronization
+			completeAutoLoginProcess(context);
 			
 		} catch (Exception e) {
 			Log.e("AutoLogin", "Error during auto-login process: " + e.getMessage(), e);
@@ -5206,6 +5211,163 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		}
 	}
 
+	/**
+	 * Completes the auto-login process by loading user data from the restored database
+	 * without forcing synchronization with the server.
+	 * 
+	 * @param context The application context
+	 */
+	private static void completeAutoLoginProcess(Context context) {
+		Log.d("AutoLogin", "Completing auto-login process from restored database");
+		
+		try {
+			// Clear cached user data to force reload from restored database
+			Log.d("AutoLogin", "Clearing cached user data to reload from restored database");
+			ConfigProvider.clearUserCache();
+			
+			// Try to load user from the restored database
+			User user = ConfigProvider.getUser();
+			if (user != null) {
+				Log.d("AutoLogin", "User loaded successfully from restored database: " + user.getUserName());
+				Log.d("AutoLogin", "User ID: " + user.getId());
+				Log.d("AutoLogin", "User roles: " + user.getUserRolesString());
+				
+				// Debug: Check if user roles are properly loaded
+				Set<UserRole> userRoles = user.getUserRoles();
+				Log.d("AutoLogin", "User roles count: " + (userRoles != null ? userRoles.size() : 0));
+				if (userRoles != null && !userRoles.isEmpty()) {
+					for (UserRole role : userRoles) {
+						Log.d("AutoLogin", "Role: " + role.getCaption() + " (enabled: " + role.isEnabled() + ")");
+						Log.d("AutoLogin", "Role rights count: " + (role.getUserRights() != null ? role.getUserRights().size() : 0));
+					}
+				} else {
+					Log.w("AutoLogin", "No user roles found for user: " + user.getUserName());
+					
+					// Try to manually reload user roles
+					try {
+						DatabaseHelper.getUserDao().initUserRoles(user);
+						Log.d("AutoLogin", "Attempted to reload user roles manually");
+						Log.d("AutoLogin", "User roles after reload: " + user.getUserRolesString());
+					} catch (Exception e) {
+						Log.e("AutoLogin", "Error reloading user roles: " + e.getMessage(), e);
+					}
+				}
+				
+				// Load user rights
+				Set<UserRight> userRights = ConfigProvider.getUserRights();
+				Log.d("AutoLogin", "User rights loaded: " + (userRights != null ? userRights.size() : 0) + " rights");
+				
+				// Check if PIN is set
+				String pin = ConfigProvider.getPin();
+				if (pin == null) {
+					Log.d("AutoLogin", "No PIN set - user will need to create one");
+					Toast.makeText(context, "Please set a new PIN to complete setup", Toast.LENGTH_LONG).show();
+				} else {
+					Log.d("AutoLogin", "PIN is already set");
+				}
+				
+				// Navigate to the appropriate activity based on user permissions
+				navigateToAppropriateActivity(context);
+				
+			} else {
+				Log.e("AutoLogin", "Failed to load user from restored database");
+				Toast.makeText(context, "Auto-login failed - User not found in restored database", Toast.LENGTH_LONG).show();
+			}
+			
+		} catch (Exception e) {
+			Log.e("AutoLogin", "Error during complete auto-login process: " + e.getMessage(), e);
+			Toast.makeText(context, "Auto-login error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	/**
+	 * Forces a full synchronization after database restoration to ensure all user data
+	 * and permissions are properly loaded from the server.
+	 * 
+	 * @param context The application context
+	 */
+	private static void forceFullSynchronizationAfterRestore(Context context) {
+		Log.d("AutoLogin", "Forcing full synchronization after database restoration");
+		
+		try {
+			// Clear cached user data to force reload from server
+			// Note: We don't call clearUserLogin() here because we want to keep the credentials
+			// We just need to clear the cached user data to force reload from server
+			Log.d("AutoLogin", "Clearing cached user data to force server reload");
+			ConfigProvider.clearUserCache();
+			
+			// Set repull needed flag to force complete synchronization
+			ConfigProvider.setRepullNeeded(true);
+			Log.d("AutoLogin", "Set repull needed flag to true");
+			Log.d("AutoLogin", "This will trigger SyncMode.CompleteAndRepull for full data synchronization");
+			
+			// Verify the flag was set correctly
+			boolean repullNeeded = ConfigProvider.isRepullNeeded();
+			Log.d("AutoLogin", "Repull needed flag verification: " + repullNeeded);
+			
+			// Navigate to LoginActivity to trigger full synchronization
+			Log.d("AutoLogin", "Navigating to LoginActivity for full synchronization");
+			NavigationHelper.goToLogin(context);
+			
+		} catch (Exception e) {
+			Log.e("AutoLogin", "Error during force full synchronization: " + e.getMessage(), e);
+			Toast.makeText(context, "Synchronization error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	/**
+	 * Navigates to the appropriate activity based on user permissions after successful auto-login.
+	 * 
+	 * @param context The application context
+	 */
+	private static void navigateToAppropriateActivity(Context context) {
+		try {
+			User user = ConfigProvider.getUser();
+			if (user == null) {
+				Log.e("AutoLogin", "Cannot navigate - user is null");
+				return;
+			}
+			
+			Log.d("AutoLogin", "Navigating to appropriate activity for user: " + user.getUserName());
+			
+			// Check feature configurations
+			boolean caseSurveillance = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CASE_SURVEILANCE);
+			boolean campaigns = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS);
+			
+			Log.d("AutoLogin", "Case surveillance enabled: " + caseSurveillance);
+			Log.d("AutoLogin", "Campaigns enabled: " + campaigns);
+			
+			// Navigate based on user rights and feature configuration
+			if (caseSurveillance) {
+				if (ConfigProvider.hasUserRight(UserRight.CASE_VIEW)
+					&& (ConfigProvider.hasUserRight(UserRight.CASE_RESPONSIBLE)
+						|| user.hasJurisdictionLevel(JurisdictionLevel.HEALTH_FACILITY, JurisdictionLevel.COMMUNITY, JurisdictionLevel.POINT_OF_ENTRY))) {
+					Log.d("AutoLogin", "Navigating to Cases activity");
+					NavigationHelper.goToCases(context);
+				} else if (ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW) && ConfigProvider.hasUserRight(UserRight.CONTACT_RESPONSIBLE)) {
+					Log.d("AutoLogin", "Navigating to Contacts activity");
+					NavigationHelper.goToContacts(context);
+				} else if (ConfigProvider.hasUserRight(UserRight.CASE_VIEW)) {
+					Log.d("AutoLogin", "Navigating to Cases activity (view only)");
+					NavigationHelper.goToCases(context);
+				} else {
+					Log.d("AutoLogin", "Navigating to Settings activity (no case rights)");
+					NavigationHelper.goToSettings(context);
+				}
+			} else if (campaigns && ConfigProvider.hasUserRight(UserRight.CAMPAIGN_FORM_DATA_VIEW)) {
+				Log.d("AutoLogin", "Navigating to Campaigns activity");
+				NavigationHelper.goToCampaigns(context);
+			} else {
+				Log.d("AutoLogin", "Navigating to Settings activity (no features enabled)");
+				NavigationHelper.goToSettings(context);
+			}
+			
+		} catch (Exception e) {
+			Log.e("AutoLogin", "Error during navigation: " + e.getMessage(), e);
+			Toast.makeText(context, "Navigation error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
+	
 	/**
 	 * Checks login status and proceeds with the appropriate flow.
 	 * This method is called after auto-login credentials are set.
