@@ -2032,7 +2032,6 @@ public class Symptoms extends AbstractDomainObject {
 		this.sensoryLoss = sensoryLoss;
 	}
 
-	@Enumerated(EnumType.STRING)
 	public SymptomState getOtherComplications() {
 		return otherComplications;
 	}
@@ -2082,7 +2081,6 @@ public class Symptoms extends AbstractDomainObject {
 		this.rashes = rashes;
 	}
 
-    @Enumerated(EnumType.STRING)
 	public SymptomState getPapularRash() {
 		return papularRash;
 	}
@@ -2091,7 +2089,6 @@ public class Symptoms extends AbstractDomainObject {
 		this.papularRash = papularRash;
 	}
 
-    @Enumerated(EnumType.STRING)
 	public SymptomState getMacularRash() {
 		return macularRash;
 	}
@@ -2124,7 +2121,6 @@ public class Symptoms extends AbstractDomainObject {
 		this.provisionalDiagnosis = provisionalDiagnosis;
 	}
 
-	@Enumerated
 	public SymptomState getNonVascular() {
 		return nonVascular;
 	}
