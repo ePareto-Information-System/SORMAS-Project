@@ -4481,7 +4481,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				currentVersion = 389;
 				getDao(AffectedPerson.class).executeRaw(
 					"CREATE TABLE affectedperson (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    uuid VARCHAR(36) NOT NULL,"
-						+ "    changedate BIGINT NOT NULL," + "    creationDate BIGINT NOT NULL," + "    foodhistory_id BIGINT NOT NULL,"
+						+ "    changeDate BIGINT NOT NULL," + "    creationDate BIGINT NOT NULL," + "    foodhistory_id BIGINT NOT NULL,"
 						+ "    nameOfAffectedPerson VARCHAR(255)," + "    telNo VARCHAR(255)," + "    dateTime DATE," + "    age VARCHAR(255),"
 						+ "    pseudonymized SMALLINT," + "    lastOpenedDate BIGINT," + "    localChangeDate BIGINT NOT NULL,"
 						+ "    modified SMALLINT," + "    snapshot SMALLINT," + "    UNIQUE (snapshot ASC, uuid ASC)" + ");");
@@ -4491,7 +4491,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(InvestigationNotes.class).executeRaw(
 					"CREATE TABLE investigationnotes (" + "    id INTEGER PRIMARY KEY AUTOINCREMENT," + "    investigationNotesData VARCHAR(255),"
 						+ "    suspectedDiagnosis VARCHAR(255)," + "    confirmedDiagnosis VARCHAR(255)," + "    investigatedBy VARCHAR(255),"
-						+ "    investigatorSignature VARCHAR(255)," + "    investigatorDate DATE," + "    changedate BIGINT,"
+						+ "    investigatorSignature VARCHAR(255)," + "    investigatorDate DATE," + "    changeDate BIGINT NOT NULL,"
 						+ "    changeUserId BIGINT," + "    creationDate DATE," + "    uuid VARCHAR(512)," + "    pseudonymized SMALLINT,"
 						+ "    lastOpenedDate BIGINT," + "    localChangeDate BIGINT NOT NULL," + "    modified SMALLINT," + "    snapshot SMALLINT,"
 						+ "    UNIQUE (snapshot ASC, uuid ASC)" + ");");
