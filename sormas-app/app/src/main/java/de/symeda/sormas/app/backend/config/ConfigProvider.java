@@ -59,6 +59,7 @@ import javax.security.auth.x500.X500Principal;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.config.Config;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.backend.user.UserRole;
@@ -87,6 +88,7 @@ public final class ConfigProvider {
 	private static String LBDS_SERVICE_PUBLIC_KEY = "lbdsServicePublicKey";
 	private static String LBDS_AES_SECRET = "lbdsAesSecret";
 	private static String LBDS_DEBUG_URL = "lbdsDebugUrl";
+	private static String KEY_UI_REFRESH_NEEDED = "uiRefreshNeeded";
 
 	private static String LBDS_KEYSTORE_ALIAS_SORMAS_PRIVATE_KEY_AES_SECRET = "LBDS_PRIVATE_KEY_AES_SECRET";
 	private static String LBDS_KEYSTORE_ALIAS_AES_SECRET = "LBDS_AES_SECRET";
@@ -125,6 +127,8 @@ public final class ConfigProvider {
 	private PublicKey lbdsServicePublicKey;
 	private String lbdsAesSecret;
 	private String serverLbdsDebugUrl;
+	private Boolean uiRefreshNeeded;
+	private Boolean autoLoginFlag;
 
 	private ConfigProvider(Context context) {
 		this.context = context;
@@ -949,5 +953,61 @@ public final class ConfigProvider {
 
 		instance.serverLbdsDebugUrl = serverRestUrl;
 		saveConfigEntry(LBDS_DEBUG_URL, serverRestUrl);
+	}
+
+	/**
+	 * Gets the UI refresh needed flag to indicate if UI components need to be refreshed
+	 * after database restoration or user data changes.
+	 * 
+	 * @return true if UI refresh is needed, false otherwise
+	 */
+	public static boolean isUIRefreshNeeded() {
+		if (instance.uiRefreshNeeded == null)
+			synchronized (ConfigProvider.class) {
+				if (instance.uiRefreshNeeded == null) {
+					Config config = DatabaseHelper.getConfigDao().queryForId(KEY_UI_REFRESH_NEEDED);
+					if (config != null) {
+						instance.uiRefreshNeeded = Boolean.parseBoolean(config.getValue());
+					} else {
+						instance.uiRefreshNeeded = false;
+					}
+				}
+			}
+		return instance.uiRefreshNeeded;
+	}
+
+	/**
+	 * Sets the UI refresh needed flag to indicate that UI components need to be refreshed
+	 * after database restoration or user data changes.
+	 * 
+	 * @param uiRefreshNeeded true if UI refresh is needed, false otherwise
+	 */
+	public static void setUIRefreshNeeded(boolean uiRefreshNeeded) {
+		if (instance.uiRefreshNeeded != null && instance.uiRefreshNeeded.equals(uiRefreshNeeded)) {
+			return;
+		}
+
+		instance.uiRefreshNeeded = uiRefreshNeeded;
+		DatabaseHelper.getConfigDao().createOrUpdate(new Config(KEY_UI_REFRESH_NEEDED, String.valueOf(uiRefreshNeeded)));
+	}
+
+	/**
+	 * Sets the auto login flag to indicate that this is an auto login session.
+	 * This flag is used to automatically set PIN and variables after successful login.
+	 * 
+	 * @param autoLogin true if this is an auto login session, false otherwise
+	 */
+	public static void setAutoLoginFlag(boolean autoLogin) {
+		instance.autoLoginFlag = autoLogin;
+		Log.d("ConfigProvider", "Auto login flag set to: " + autoLogin);
+	}
+
+	/**
+	 * Gets the auto login flag to check if this is an auto login session.
+	 * 
+	 * @return true if this is an auto login session, false otherwise
+	 */
+	public static boolean isAutoLoginFlag() {
+		return instance.autoLoginFlag != null && instance.autoLoginFlag;
 	}
 }

@@ -251,7 +251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 410;
+	public static final int DATABASE_VERSION = 404;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4140,7 +4140,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails VARCHAR(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN dateOfNotification DATE;");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedBy VARCHAR(255);");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN riskFactor_id BIGINT;");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccineType varchar(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN addressMpox varchar(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN village varchar(255);");
@@ -4497,9 +4497,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "    UNIQUE (snapshot ASC, uuid ASC)" + ");");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN investigationNotes_id BIGINT;");
 
+
 			case 391:
 				currentVersion = 391;
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN sixtyday_id BIGINT;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN sixtyDay_id BIGINT;");
 				getDao(SixtyDay.class).executeRaw(
 					"CREATE TABLE sixtyday (" + "     id INTEGER PRIMARY KEY AUTOINCREMENT," + "     uuid VARCHAR(36) NOT NULL,"
 						+ "     changeDate BIGINT NOT NULL," + "		personExamineCase VARCHAR(255)," + "		dateOfFollowup DATE,"
@@ -4693,39 +4694,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 402:
 				currentVersion = 402;
 				getDao(EpiData.class).executeRaw("ALTER TABLE cases ADD COLUMN smallpoxLastVaccinationDate BIGINT;");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleDispatchDate BIGINT;");
 			case 403:
 				currentVersion = 403;
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleDispatchDate BIGINT;");
-			case 404:
-				currentVersion = 404;
-				getDao(Case.class).executeRaw("ALTER TABLE cases DROP COLUMN investigationNotes_id;");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN investigationNotes_id BIGINT;");
-			case 405:
-				currentVersion = 405;
-				getDao(Case.class).executeRaw("ALTER TABLE cases DROP COLUMN riskfactor_id;");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN riskFactor_id BIGINT;");
-			case 406:
-				currentVersion = 406;
-				getDao(Case.class).executeRaw("ALTER TABLE cases DROP COLUMN sixtyDay_id;");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN sixtyDay_id BIGINT;");
-			case 407:
-				currentVersion = 407;
-				getDao(Case.class).executeRaw("ALTER TABLE investigationnotes DROP COLUMN changedate");
-				getDao(Case.class).executeRaw("ALTER TABLE investigationnotes ADD COLUMN changeDate");
-			case 408:
-				currentVersion = 408;
-				// Fix YesNo enum values that contain "UNKNOWN" which is not valid for YesNo enum
-				// This updates any "UNKNOWN" values in pregnant and postpartum fields to "NO"
 				getDao(Case.class).executeRaw("UPDATE cases SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN'");
 				getDao(Case.class).executeRaw("UPDATE cases SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN'");
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN'");
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN'");
-					// ATTENTION: break should only be done after last version
-			case 409:
 				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET hospitalizedPreviously = 'NO' WHERE hospitalizedPreviously = 'UNKNOWN'");
 				break;
 
-				default:
+			default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
 			}
 		} catch (
@@ -5110,8 +5089,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			Log.d("AutoLogin", "Password length: " + password.length());
 			Toast.makeText(context, "Auto-login credentials restored - authentication pending", Toast.LENGTH_LONG).show();
 			
-			// Complete auto-login process without forcing synchronization
-			completeAutoLoginProcess(context);
+			// Set a flag to indicate this is an auto login so PIN can be set automatically
+			ConfigProvider.setAutoLoginFlag(true);
+			Log.d("AutoLogin", "Set auto login flag for automatic PIN setting");
+			
+			// Navigate to LoginActivity to handle authentication and synchronization properly
+			Log.d("AutoLogin", "Navigating to LoginActivity for proper authentication flow");
+			NavigationHelper.goToLogin(context);
 			
 		} catch (Exception e) {
 			Log.e("AutoLogin", "Error during auto-login process: " + e.getMessage(), e);
@@ -5257,17 +5241,60 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				Set<UserRight> userRights = ConfigProvider.getUserRights();
 				Log.d("AutoLogin", "User rights loaded: " + (userRights != null ? userRights.size() : 0) + " rights");
 				
-				// Check if PIN is set
-				String pin = ConfigProvider.getPin();
-				if (pin == null) {
-					Log.d("AutoLogin", "No PIN set - user will need to create one");
-					Toast.makeText(context, "Please set a new PIN to complete setup", Toast.LENGTH_LONG).show();
-				} else {
-					Log.d("AutoLogin", "PIN is already set");
+				// Verify feature configurations are loaded
+				Log.d("AutoLogin", "Verifying feature configurations are loaded");
+				try {
+					FeatureConfigurationDao featureConfigDao = DatabaseHelper.getFeatureConfigurationDao();
+					if (featureConfigDao != null) {
+						Log.d("AutoLogin", "Feature configuration DAO loaded successfully");
+						// Test a few key feature configurations
+						boolean caseSurveillance = !featureConfigDao.isFeatureDisabled(FeatureType.CASE_SURVEILANCE);
+						boolean taskManagement = !featureConfigDao.isFeatureDisabled(FeatureType.TASK_MANAGEMENT);
+						Log.d("AutoLogin", "Case surveillance enabled: " + caseSurveillance);
+						Log.d("AutoLogin", "Task management enabled: " + taskManagement);
+					} else {
+						Log.w("AutoLogin", "Feature configuration DAO is null");
+					}
+				} catch (Exception e) {
+					Log.e("AutoLogin", "Error verifying feature configurations: " + e.getMessage(), e);
 				}
 				
-				// Navigate to the appropriate activity based on user permissions
-				navigateToAppropriateActivity(context);
+				// Set variables that were cleared in clearUserLogin() and set PIN to 1234
+				Log.d("AutoLogin", "Setting variables after successful auto login");
+				
+				// Set the variables that were cleared in clearUserLogin()
+				ConfigProvider.setAccessGranted(true);
+				ConfigProvider.setLastNotificationDate(new java.util.Date());
+				ConfigProvider.setLastObsoleteUuidsSyncDate(new java.util.Date());
+				
+				// Set PIN to 1234 - this will trigger user data refresh
+				ConfigProvider.setPin("1234");
+				Log.d("AutoLogin", "PIN set to 1234 after auto login");
+				
+				// Show success message
+				Toast.makeText(context, "Auto-login successful! Variables restored and PIN set to 1234", Toast.LENGTH_LONG).show();
+				
+				// Delay UI refresh to ensure user data is fully loaded after PIN set
+				new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// Verify user data is loaded
+						User user = ConfigProvider.getUser();
+						if (user != null) {
+							Log.d("AutoLogin", "User data verified after PIN set: " + user.getUserName());
+							Log.d("AutoLogin", "User roles: " + user.getUserRolesString());
+						} else {
+							Log.w("AutoLogin", "User data not loaded after PIN set");
+						}
+						
+						// Set a flag to indicate that UI components need to be refreshed after navigation
+						ConfigProvider.setUIRefreshNeeded(true);
+						Log.d("AutoLogin", "Set UI refresh flag to ensure sidebar and sync components are updated");
+						
+						// Navigate to the appropriate activity based on user permissions
+						navigateToAppropriateActivity(context);
+					}
+				}, 1000); // Wait 1 second for user data refresh to complete
 				
 			} else {
 				Log.e("AutoLogin", "Failed to load user from restored database");

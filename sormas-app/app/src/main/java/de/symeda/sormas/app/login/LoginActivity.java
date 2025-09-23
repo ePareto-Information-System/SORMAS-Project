@@ -273,6 +273,25 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 
 		User user = ConfigProvider.getUser();
 
+		// Set variables that were cleared in clearUserLogin() and set PIN to 1234 after successful login
+		Log.d("LoginActivity", "Setting variables after successful login");
+		ConfigProvider.setAccessGranted(true);
+		ConfigProvider.setLastNotificationDate(new java.util.Date());
+		ConfigProvider.setLastObsoleteUuidsSyncDate(new java.util.Date());
+		
+		// Check if this is an auto login session and set PIN automatically
+		if (ConfigProvider.isAutoLoginFlag()) {
+			Log.d("LoginActivity", "Auto login detected - setting PIN to 1234");
+			ConfigProvider.setPin("1234");
+			ConfigProvider.setAutoLoginFlag(false); // Clear the flag
+			Log.d("LoginActivity", "PIN set to 1234 after auto login");
+		} else {
+			Log.d("LoginActivity", "Regular login - PIN not set automatically");
+		}
+		
+		// Show success message
+		android.widget.Toast.makeText(this, "Login successful! Variables restored and PIN set to 1234", android.widget.Toast.LENGTH_LONG).show();
+
 		boolean caseSuveillance = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CASE_SURVEILANCE);
 		boolean campaigns = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS);
 
