@@ -33,6 +33,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -219,6 +220,13 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 		}
 
 		updatePageMenu();
+
+		// Check if UI refresh is needed after database restoration
+		if (ConfigProvider.isUIRefreshNeeded()) {
+			Log.d("BaseActivity", "UI refresh needed after database restoration - refreshing sidebar and components");
+			refreshUIAfterDatabaseRestore();
+			ConfigProvider.setUIRefreshNeeded(false);
+		}
 
 		if (ConfigProvider.getUser() == null || !LocationService.instance().validateGpsAccessAndEnabled(this)) {
 			return;
@@ -880,5 +888,41 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 	@Override
 	protected void attachBaseContext(Context newBase) {
 		super.attachBaseContext(newBase);
+	}
+
+	/**
+	 * Refreshes UI components after database restoration to ensure sidebar menus
+	 * and synchronization entities are properly displayed based on restored user data.
+	 */
+	private void refreshUIAfterDatabaseRestore() {
+		Log.d("BaseActivity", "Refreshing UI components after database restoration");
+		
+		try {
+			// Force refresh of user data cache
+			ConfigProvider.clearUserCache();
+			
+			// Refresh sidebar menu visibility
+			if (navigationView != null) {
+				Log.d("BaseActivity", "Refreshing sidebar menu visibility");
+				setupDrawer(navigationView);
+			}
+			
+			// Refresh page menu
+			if (pageMenu != null) {
+				Log.d("BaseActivity", "Refreshing page menu");
+				updatePageMenu();
+			}
+			
+			// Refresh status frame
+			updateStatusFrame();
+			
+			// Invalidate options menu to refresh action bar items
+			invalidateOptionsMenu();
+			
+			Log.d("BaseActivity", "UI refresh completed successfully");
+			
+		} catch (Exception e) {
+			Log.e("BaseActivity", "Error during UI refresh after database restoration: " + e.getMessage(), e);
+		}
 	}
 }

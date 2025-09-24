@@ -10,6 +10,7 @@ import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.databinding.DataBindingUtil;
@@ -56,6 +57,7 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DtoFeatureConfigHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.common.DtoUserRightsHelper;
+import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.databinding.DialogSynchronizationProgressItemLayoutBinding;
 import de.symeda.sormas.app.databinding.DialogSynchronizationRootLayoutBinding;
 
@@ -99,6 +101,11 @@ public class SynchronizationDialog extends AbstractDialog {
 	protected void setContentBinding(Context context, ViewDataBinding binding, String layoutName) {
 		this.contentBinding = (DialogSynchronizationRootLayoutBinding) binding;
 		contentBinding.setLifecycleOwner(getActivity());
+		
+		// Check if UI refresh is needed after database restoration
+		if (ConfigProvider.isUIRefreshNeeded()) {
+			Log.d("SynchronizationDialog", "UI refresh needed - synchronization entities will be refreshed based on restored user data");
+		}
 	}
 
 	@Override
