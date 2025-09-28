@@ -157,6 +157,15 @@
                         style="@style/PrimaryButtonStyle"
                         android:onClick="login" />
 
+                    <Button
+                        android:id="@+id/btn_autoLogin"
+                        style="@style/PrimaryButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/loginButtonMarginTop"
+                        android:onClick="populateAutoLoginCredentials"
+                        android:text="@string/action_autologin" />
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

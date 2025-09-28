@@ -72,6 +72,7 @@
     <string name="action_install_later">Install later</string>
     <string name="action_loadMore">Load more</string>
     <string name="action_login">Sign in</string>
+    <string name="action_autologin">Auto Login</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_login_default_user">Sign in as demo user</string>
     <string name="action_logout">Logout</string>

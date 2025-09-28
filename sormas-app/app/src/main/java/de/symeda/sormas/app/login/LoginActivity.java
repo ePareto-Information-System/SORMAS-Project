@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,6 +40,8 @@ import de.symeda.sormas.app.LocaleManager;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.SormasApplication;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.config.Config;
+import de.symeda.sormas.app.backend.config.ConfigDao;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.component.dialog.SynchronizationDialog;
@@ -221,6 +224,8 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 							}
 
 							if (ConfigProvider.getUser() != null) {
+								// Clear user rights cache to ensure fresh permissions are loaded after sync
+								ConfigProvider.clearUserCache();
 								initializeFirebase();
 								if (ConfigProvider.getUser().getLanguage() != null) {
 									setNewLocale(this, ConfigProvider.getUser().getLanguage());
@@ -239,6 +244,8 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 						synchronizationDialog = null;
 					}
 
+					// Clear user rights cache to ensure fresh permissions are loaded
+					ConfigProvider.clearUserCache();
 					initializeFirebase();
 					if (ConfigProvider.getUser().getLanguage() != null) {
 						setNewLocale(this, ConfigProvider.getUser().getLanguage());
@@ -252,6 +259,8 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 				}
 
 				if (ConfigProvider.getUser() != null) {
+					// Clear user rights cache to ensure fresh permissions are loaded
+					ConfigProvider.clearUserCache();
 					initializeFirebase();
 					if (ConfigProvider.getUser().getLanguage() != null) {
 						setNewLocale(this, ConfigProvider.getUser().getLanguage());
@@ -274,23 +283,23 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 		User user = ConfigProvider.getUser();
 
 		// Set variables that were cleared in clearUserLogin() and set PIN to 1234 after successful login
-		Log.d("LoginActivity", "Setting variables after successful login");
-		ConfigProvider.setAccessGranted(true);
-		ConfigProvider.setLastNotificationDate(new java.util.Date());
-		ConfigProvider.setLastObsoleteUuidsSyncDate(new java.util.Date());
-		
-		// Check if this is an auto login session and set PIN automatically
-		if (ConfigProvider.isAutoLoginFlag()) {
-			Log.d("LoginActivity", "Auto login detected - setting PIN to 1234");
-			ConfigProvider.setPin("1234");
-			ConfigProvider.setAutoLoginFlag(false); // Clear the flag
-			Log.d("LoginActivity", "PIN set to 1234 after auto login");
-		} else {
-			Log.d("LoginActivity", "Regular login - PIN not set automatically");
-		}
+//		Log.d("LoginActivity", "Setting variables after successful login");
+//		ConfigProvider.setAccessGranted(true);
+//		ConfigProvider.setLastNotificationDate(new java.util.Date());
+//		ConfigProvider.setLastObsoleteUuidsSyncDate(new java.util.Date());
+//
+//		// Check if this is an auto login session and set PIN automatically
+//		if (ConfigProvider.isAutoLoginFlag()) {
+//			Log.d("LoginActivity", "Auto login detected - setting PIN to 1234");
+//			ConfigProvider.setPin("1234");
+//			ConfigProvider.setAutoLoginFlag(false); // Clear the flag
+//			Log.d("LoginActivity", "PIN set to 1234 after auto login");
+//		} else {
+//			Log.d("LoginActivity", "Regular login - PIN not set automatically");
+//		}
 		
 		// Show success message
-		android.widget.Toast.makeText(this, "Login successful! Variables restored and PIN set to 1234", android.widget.Toast.LENGTH_LONG).show();
+//		android.widget.Toast.makeText(this, "Login successful! Variables restored and PIN set to 1234", android.widget.Toast.LENGTH_LONG).show();
 
 		boolean caseSuveillance = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CASE_SURVEILANCE);
 		boolean campaigns = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS);
@@ -327,5 +336,51 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 		I18nProperties.setUserLanguage(ConfigProvider.getUser().getLanguage());
 		Intent intent = mContext.getIntent();
 		startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+	}
+
+	/**
+	 * Populates the login fields with auto-login credentials if they are available.
+	 */
+	public void populateAutoLoginCredentials(View view) {
+		ConfigDao configDao = DatabaseHelper.getConfigDao();
+		if (configDao == null) {
+			Log.e("AutoLogin", "ConfigDao is null");
+			return;
+		}
+		Log.d("AutoLogin", "ConfigDao obtained successfully");
+
+		// First try to get auto-login credentials (plain text)
+		Config autoLoginUsernameConfig = configDao.queryForId("autologin_username");
+		Config autoLoginPasswordConfig = configDao.queryForId("autologin_password");
+
+		String autoUsername = "";
+		String autoPassword = "";
+		if (autoLoginUsernameConfig != null && autoLoginPasswordConfig != null) {
+			autoUsername = autoLoginUsernameConfig.getValue();
+			autoPassword = autoLoginPasswordConfig.getValue();
+		}
+
+
+
+		if (autoUsername != null && autoPassword != null) {
+			Log.d("LoginActivity", "Auto-login credentials found - populating fields");
+			
+			// Set the username and password in the binding fields
+			binding.loginUsername.setValue(autoUsername);
+			binding.loginPassword.setValue(autoPassword);
+
+			login(view);
+
+			
+			// Clear the auto-login credentials after using them
+//			ConfigProvider.clearAutoLoginCredentials();
+			
+			Log.d("LoginActivity", "Auto-login credentials populated and cleared");
+			
+			// Show a toast to inform the user
+			Toast.makeText(this, "Auto-login credentials loaded", Toast.LENGTH_SHORT).show();
+		} else {
+			Log.d("LoginActivity", "No auto-login credentials found");
+		}
 	}
 }
