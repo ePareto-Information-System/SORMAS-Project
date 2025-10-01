@@ -16,8 +16,10 @@
 package de.symeda.sormas.app.rest;
 
 import java.util.List;
+import java.util.Set;
 
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.user.UserRoleDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -45,4 +47,7 @@ public interface UserFacadeRetro {
 
 	@GET("users/generatePassword")
 	Call<String> generatePassword();
+
+	@GET("users/roles/{uuid}")
+	Call<Set<UserRoleDto>> getUserRoles(@Path("uuid") String uuid);
 }
