@@ -251,7 +251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 405;
+	public static final int DATABASE_VERSION = 406;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4706,6 +4706,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 404:
 				currentVersion = 404;
 				getDao(EbsAlert.class).executeRaw("UPDATE ebsAlert SET responseStatus = 'ON_GOING' WHERE responseStatus = 'NOT_STARTED'");
+			case 405:
+				currentVersion = 405;
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET hospitalizedPreviously = 'NO' WHERE hospitalizedPreviously = 'UNKNOWN'");
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET admittedToHealthFacility = 'NO' WHERE admittedToHealthFacility = 'UNKNOWN'");
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET admittedToHealthFacilityNew = 'NO' WHERE admittedToHealthFacilityNew = 'UNKNOWN'");
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET isolated = 'NO' WHERE isolated = 'UNKNOWN'");
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET leftAgainstAdvice = 'NO' WHERE leftAgainstAdvice = 'UNKNOWN'");
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET intensiveCareUnit = 'NO' WHERE intensiveCareUnit = 'UNKNOWN'");
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET soughtMedicalAttention = 'NO' WHERE soughtMedicalAttention = 'UNKNOWN'");
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET labTestConducted = 'NO' WHERE labTestConducted = 'UNKNOWN'");
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET symptomsOngoing = 'NO' WHERE symptomsOngoing = 'UNKNOWN'");
+				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET hospitalizationYesNo = 'NO' WHERE hospitalizationYesNo = 'UNKNOWN'");
 				break;
 
 			default:

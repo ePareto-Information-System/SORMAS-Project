@@ -14754,6 +14754,19 @@ UPDATE symptoms SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN';
 INSERT INTO schema_version (version_number, comment) VALUES (651, 'Set all forms to active');
 UPDATE forms SET active = true;
 
+UPDATE hospitalization SET hospitalizedPreviously = 'NO' WHERE hospitalizedPreviously = 'UNKNOWN';
+UPDATE hospitalization SET admittedToHealthFacility = 'NO' WHERE admittedToHealthFacility = 'UNKNOWN';
+UPDATE hospitalization SET admittedToHealthFacilityNew = 'NO' WHERE admittedToHealthFacilityNew = 'UNKNOWN';
+UPDATE hospitalization SET isolated = 'NO' WHERE isolated = 'UNKNOWN';
+UPDATE hospitalization SET leftAgainstAdvice = 'NO' WHERE leftAgainstAdvice = 'UNKNOWN';
+UPDATE hospitalization SET intensiveCareUnit = 'NO' WHERE intensiveCareUnit = 'UNKNOWN';
+UPDATE hospitalization SET soughtMedicalAttention = 'NO' WHERE soughtMedicalAttention = 'UNKNOWN';
+UPDATE hospitalization SET labTestConducted = 'NO' WHERE labTestConducted = 'UNKNOWN';
+UPDATE hospitalization SET symptomsOngoing = 'NO' WHERE symptomsOngoing = 'UNKNOWN';
+UPDATE hospitalization SET hospitalizationYesNo = 'NO' WHERE hospitalizationYesNo = 'UNKNOWN';
+
+INSERT INTO schema_version (version_number, comment) VALUES (652, 'Fix UNKNOWN values in YesNo enum fields');
+
 -- INSERT INTO schema_version (version_number, comment) VALUES (652, 'Updated symptoms to fix unknown values');
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '0';
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '1';
