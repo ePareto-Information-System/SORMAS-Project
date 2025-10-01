@@ -251,7 +251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 404;
+	public static final int DATABASE_VERSION = 405;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4702,6 +4702,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pregnant = 'NO' WHERE pregnant = 'UNKNOWN'");
 				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET postpartum = 'NO' WHERE postpartum = 'UNKNOWN'");
 				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET hospitalizedPreviously = 'NO' WHERE hospitalizedPreviously = 'UNKNOWN'");
+				
+			case 404:
+				currentVersion = 404;
+				getDao(EbsAlert.class).executeRaw("UPDATE ebsAlert SET responseStatus = 'ON_GOING' WHERE responseStatus = 'NOT_STARTED'");
 				break;
 
 			default:
@@ -4825,7 +4829,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			forceDatabaseUpgrade(context);
 
 			// After successful database restore and upgrade
-			performAutoLoginAfterRestore(context);
+//			performAutoLoginAfterRestore(context);
 
 			return true; // Restore successful
 		} catch (IOException e) {
@@ -5006,102 +5010,93 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	 * 
 	 * @param context The application context
 	 */
-	private static void performAutoLoginAfterRestore(Context context) {
-		Log.d("AutoLogin", "=== Starting auto-login process after database restore ===");
-		
-		try {
-			// Get the ConfigDao to access stored credentials
-			ConfigDao configDao = DatabaseHelper.getConfigDao();
-			if (configDao == null) {
-				Log.e("AutoLogin", "ConfigDao is null");
-				return;
-			}
-			Log.d("AutoLogin", "ConfigDao obtained successfully");
-			
-			// First try to get auto-login credentials (plain text)
-			Config autoLoginUsernameConfig = configDao.queryForId("autologin_username");
-			Config autoLoginPasswordConfig = configDao.queryForId("autologin_password");
-			
-			String username = null;
-			String password = null;
-			
-			// If auto-login credentials exist, use them
-			if (autoLoginUsernameConfig != null && autoLoginPasswordConfig != null &&
-				autoLoginUsernameConfig.getValue() != null && autoLoginPasswordConfig.getValue() != null) {
-				
-				username = autoLoginUsernameConfig.getValue();
-				password = autoLoginPasswordConfig.getValue();
-				Log.d("AutoLogin", "Found auto-login credentials (plain text)");
-				Log.d("AutoLogin", "Using plain text credentials for auto-login");
-				
-			} else {
-				Log.d("AutoLogin", "No auto-login credentials found, trying encrypted credentials");
-				
-				// Fallback to encrypted credentials (for old backups)
-				Config usernameConfig = configDao.queryForId("username");
-				Config passwordConfig = configDao.queryForId("password");
-				
-				if (usernameConfig != null && passwordConfig != null &&
-					usernameConfig.getValue() != null && passwordConfig.getValue() != null) {
-					
-					username = usernameConfig.getValue();
-					String encryptedPassword = passwordConfig.getValue();
-					Log.d("AutoLogin", "Found username in restored database: " + username);
-					Log.d("AutoLogin", "Found encrypted password in restored database (length: " + encryptedPassword.length() + ")");
-					
-					// Attempt to decrypt the password
-					Log.d("AutoLogin", "Attempting to decrypt password from backup");
-					password = decryptPasswordFromBackup(encryptedPassword, context);
-					
-					if (password == null) {
-						Log.e("AutoLogin", "Failed to decrypt password from restored database");
-						Log.e("AutoLogin", "Auto-login not possible - manual login required");
-						Toast.makeText(context, "Auto-login failed - manual login required", Toast.LENGTH_LONG).show();
-						return;
-					}
-					
-					Log.d("AutoLogin", "Password decrypted successfully from backup");
-					
-				} else {
-					Log.w("AutoLogin", "No credentials found in restored database");
-					Log.w("AutoLogin", "Auto-login not possible - manual login required");
-					Toast.makeText(context, "No credentials found - manual login required", Toast.LENGTH_LONG).show();
-					return;
-				}
-			}
-			
-			if (username == null || password == null) {
-				Log.e("AutoLogin", "Invalid credentials for auto-login");
-				Log.e("AutoLogin", "Username: " + (username != null ? username : "null"));
-				Log.e("AutoLogin", "Password: " + (password != null ? "present" : "null"));
-				Toast.makeText(context, "Invalid credentials - manual login required", Toast.LENGTH_LONG).show();
-				return;
-			}
-			
-			// Set the credentials in ConfigProvider for auto-login
-			Log.d("AutoLogin", "Setting credentials for auto-login");
-			ConfigProvider.setUsernameAndPassword(username, password);
-			
-			// Note: Auto-login authentication will be handled by the calling activity
-			// The credentials are now set in ConfigProvider and ready for authentication
-			Log.d("AutoLogin", "=== Auto-login credentials set successfully ===");
-			Log.d("AutoLogin", "Username: " + username);
-			Log.d("AutoLogin", "Password length: " + password.length());
-			Toast.makeText(context, "Auto-login credentials restored - authentication pending", Toast.LENGTH_LONG).show();
-			
-			// Set a flag to indicate this is an auto login so PIN can be set automatically
-			ConfigProvider.setAutoLoginFlag(true);
-			Log.d("AutoLogin", "Set auto login flag for automatic PIN setting");
-			
-			// Navigate to LoginActivity to handle authentication and synchronization properly
-			Log.d("AutoLogin", "Navigating to LoginActivity for proper authentication flow");
-			NavigationHelper.goToLogin(context);
-			
-		} catch (Exception e) {
-			Log.e("AutoLogin", "Error during auto-login process: " + e.getMessage(), e);
-			Toast.makeText(context, "Auto-login error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
+//	private static void performAutoLoginAfterRestore(Context context) {
+//		Log.d("AutoLogin", "=== Starting auto-login process after database restore ===");
+//
+//		try {
+//			// Get the ConfigDao to access stored credentials
+//			ConfigDao configDao = DatabaseHelper.getConfigDao();
+//			if (configDao == null) {
+//				Log.e("AutoLogin", "ConfigDao is null");
+//				return;
+//			}
+//			Log.d("AutoLogin", "ConfigDao obtained successfully");
+//
+//			// First try to get auto-login credentials (plain text)
+//			Config autoLoginUsernameConfig = configDao.queryForId("autologin_username");
+//			Config autoLoginPasswordConfig = configDao.queryForId("autologin_password");
+//
+//			String username = null;
+//			String password = null;
+//
+//			// If auto-login credentials exist, use them
+//			if (autoLoginUsernameConfig != null && autoLoginPasswordConfig != null &&
+//				autoLoginUsernameConfig.getValue() != null && autoLoginPasswordConfig.getValue() != null) {
+//
+//				username = autoLoginUsernameConfig.getValue();
+//				password = autoLoginPasswordConfig.getValue();
+//				Log.d("AutoLogin", "Found auto-login credentials (plain text)");
+//				Log.d("AutoLogin", "Using plain text credentials for auto-login");
+//
+//			} else {
+//				Log.d("AutoLogin", "No auto-login credentials found, trying encrypted credentials");
+//
+//				// Fallback to encrypted credentials (for old backups)
+//				Config usernameConfig = configDao.queryForId("username");
+//				Config passwordConfig = configDao.queryForId("password");
+//
+//				if (usernameConfig != null && passwordConfig != null &&
+//					usernameConfig.getValue() != null && passwordConfig.getValue() != null) {
+//
+//					username = usernameConfig.getValue();
+//					String encryptedPassword = passwordConfig.getValue();
+//					Log.d("AutoLogin", "Found username in restored database: " + username);
+//					Log.d("AutoLogin", "Found encrypted password in restored database (length: " + encryptedPassword.length() + ")");
+//
+//					// Attempt to decrypt the password
+//					Log.d("AutoLogin", "Attempting to decrypt password from backup");
+//					password = decryptPasswordFromBackup(encryptedPassword, context);
+//
+//					if (password == null) {
+//						Log.e("AutoLogin", "Failed to decrypt password from restored database");
+//						Log.e("AutoLogin", "Auto-login not possible - manual login required");
+//						Toast.makeText(context, "Auto-login failed - manual login required", Toast.LENGTH_LONG).show();
+//						return;
+//					}
+//
+//					Log.d("AutoLogin", "Password decrypted successfully from backup");
+//
+//				} else {
+//					Log.w("AutoLogin", "No credentials found in restored database");
+//					Log.w("AutoLogin", "Auto-login not possible - manual login required");
+//					Toast.makeText(context, "No credentials found - manual login required", Toast.LENGTH_LONG).show();
+//					return;
+//				}
+//			}
+//
+//			if (username == null || password == null) {
+//				Log.e("AutoLogin", "Invalid credentials for auto-login");
+//				Log.e("AutoLogin", "Username: " + (username != null ? username : "null"));
+//				Log.e("AutoLogin", "Password: " + (password != null ? "present" : "null"));
+//				Toast.makeText(context, "Invalid credentials - manual login required", Toast.LENGTH_LONG).show();
+//				return;
+//			}
+//
+//			Toast.makeText(context, "Auto-login credentials restored - authentication pending", Toast.LENGTH_LONG).show();
+//
+////			// Store auto-login credentials in ConfigProvider for the login screen
+////			ConfigProvider.setAutoLoginCredentials(username, password);
+////
+////			// Set a flag to indicate this is an auto login so PIN can be set automatically
+////			ConfigProvider.setAutoLoginFlag(true);
+//
+//			NavigationHelper.goToLogin(context);
+//
+//		} catch (Exception e) {
+//			Log.e("AutoLogin", "Error during auto-login process: " + e.getMessage(), e);
+//			Toast.makeText(context, "Auto-login error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//		}
+//	}
 
 	/**
 	 * Decrypts the password from the backup database using the device's keystore.
@@ -5201,112 +5196,122 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	 * 
 	 * @param context The application context
 	 */
-	private static void completeAutoLoginProcess(Context context) {
-		Log.d("AutoLogin", "Completing auto-login process from restored database");
-		
-		try {
-			// Clear cached user data to force reload from restored database
-			Log.d("AutoLogin", "Clearing cached user data to reload from restored database");
-			ConfigProvider.clearUserCache();
-			
-			// Try to load user from the restored database
-			User user = ConfigProvider.getUser();
-			if (user != null) {
-				Log.d("AutoLogin", "User loaded successfully from restored database: " + user.getUserName());
-				Log.d("AutoLogin", "User ID: " + user.getId());
-				Log.d("AutoLogin", "User roles: " + user.getUserRolesString());
-				
-				// Debug: Check if user roles are properly loaded
-				Set<UserRole> userRoles = user.getUserRoles();
-				Log.d("AutoLogin", "User roles count: " + (userRoles != null ? userRoles.size() : 0));
-				if (userRoles != null && !userRoles.isEmpty()) {
-					for (UserRole role : userRoles) {
-						Log.d("AutoLogin", "Role: " + role.getCaption() + " (enabled: " + role.isEnabled() + ")");
-						Log.d("AutoLogin", "Role rights count: " + (role.getUserRights() != null ? role.getUserRights().size() : 0));
-					}
-				} else {
-					Log.w("AutoLogin", "No user roles found for user: " + user.getUserName());
-					
-					// Try to manually reload user roles
-					try {
-						DatabaseHelper.getUserDao().initUserRoles(user);
-						Log.d("AutoLogin", "Attempted to reload user roles manually");
-						Log.d("AutoLogin", "User roles after reload: " + user.getUserRolesString());
-					} catch (Exception e) {
-						Log.e("AutoLogin", "Error reloading user roles: " + e.getMessage(), e);
-					}
-				}
-				
-				// Load user rights
-				Set<UserRight> userRights = ConfigProvider.getUserRights();
-				Log.d("AutoLogin", "User rights loaded: " + (userRights != null ? userRights.size() : 0) + " rights");
-				
-				// Verify feature configurations are loaded
-				Log.d("AutoLogin", "Verifying feature configurations are loaded");
-				try {
-					FeatureConfigurationDao featureConfigDao = DatabaseHelper.getFeatureConfigurationDao();
-					if (featureConfigDao != null) {
-						Log.d("AutoLogin", "Feature configuration DAO loaded successfully");
-						// Test a few key feature configurations
-						boolean caseSurveillance = !featureConfigDao.isFeatureDisabled(FeatureType.CASE_SURVEILANCE);
-						boolean taskManagement = !featureConfigDao.isFeatureDisabled(FeatureType.TASK_MANAGEMENT);
-						Log.d("AutoLogin", "Case surveillance enabled: " + caseSurveillance);
-						Log.d("AutoLogin", "Task management enabled: " + taskManagement);
-					} else {
-						Log.w("AutoLogin", "Feature configuration DAO is null");
-					}
-				} catch (Exception e) {
-					Log.e("AutoLogin", "Error verifying feature configurations: " + e.getMessage(), e);
-				}
-				
-				// Set variables that were cleared in clearUserLogin() and set PIN to 1234
-				Log.d("AutoLogin", "Setting variables after successful auto login");
-				
-				// Set the variables that were cleared in clearUserLogin()
-				ConfigProvider.setAccessGranted(true);
-				ConfigProvider.setLastNotificationDate(new java.util.Date());
-				ConfigProvider.setLastObsoleteUuidsSyncDate(new java.util.Date());
-				
-				// Set PIN to 1234 - this will trigger user data refresh
-				ConfigProvider.setPin("1234");
-				Log.d("AutoLogin", "PIN set to 1234 after auto login");
-				
-				// Show success message
-				Toast.makeText(context, "Auto-login successful! Variables restored and PIN set to 1234", Toast.LENGTH_LONG).show();
-				
-				// Delay UI refresh to ensure user data is fully loaded after PIN set
-				new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// Verify user data is loaded
-						User user = ConfigProvider.getUser();
-						if (user != null) {
-							Log.d("AutoLogin", "User data verified after PIN set: " + user.getUserName());
-							Log.d("AutoLogin", "User roles: " + user.getUserRolesString());
-						} else {
-							Log.w("AutoLogin", "User data not loaded after PIN set");
-						}
-						
-						// Set a flag to indicate that UI components need to be refreshed after navigation
-						ConfigProvider.setUIRefreshNeeded(true);
-						Log.d("AutoLogin", "Set UI refresh flag to ensure sidebar and sync components are updated");
-						
-						// Navigate to the appropriate activity based on user permissions
-						navigateToAppropriateActivity(context);
-					}
-				}, 1000); // Wait 1 second for user data refresh to complete
-				
-			} else {
-				Log.e("AutoLogin", "Failed to load user from restored database");
-				Toast.makeText(context, "Auto-login failed - User not found in restored database", Toast.LENGTH_LONG).show();
-			}
-			
-		} catch (Exception e) {
-			Log.e("AutoLogin", "Error during complete auto-login process: " + e.getMessage(), e);
-			Toast.makeText(context, "Auto-login error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
-	
+//	private static void completeAutoLoginProcess(Context context) {
+//		Log.d("AutoLogin", "Completing auto-login process from restored database");
+//
+//		try {
+//			// Clear cached user data to force reload from restored database
+//			Log.d("AutoLogin", "Clearing cached user data to reload from restored database");
+//			ConfigProvider.clearUserCache();
+//
+//			// Try to load user from the restored database
+//			User user = ConfigProvider.getUser();
+//			if (user != null) {
+//				Log.d("AutoLogin", "User loaded successfully from restored database: " + user.getUserName());
+//				Log.d("AutoLogin", "User ID: " + user.getId());
+//				Log.d("AutoLogin", "User roles: " + user.getUserRolesString());
+//
+//				// Debug: Check if user roles are properly loaded
+//				Set<UserRole> userRoles = user.getUserRoles();
+//				Log.d("AutoLogin", "User roles count: " + (userRoles != null ? userRoles.size() : 0));
+//				if (userRoles != null && !userRoles.isEmpty()) {
+//					for (UserRole role : userRoles) {
+//						Log.d("AutoLogin", "Role: " + role.getCaption() + " (enabled: " + role.isEnabled() + ")");
+//						Log.d("AutoLogin", "Role rights count: " + (role.getUserRights() != null ? role.getUserRights().size() : 0));
+//					}
+//				} else {
+//					Log.w("AutoLogin", "No user roles found for user: " + user.getUserName());
+//
+//					// Try to manually reload user roles
+//					try {
+//						DatabaseHelper.getUserDao().initUserRoles(user);
+//						Log.d("AutoLogin", "Attempted to reload user roles manually");
+//						Log.d("AutoLogin", "User roles after reload: " + user.getUserRolesString());
+//					} catch (Exception e) {
+//						Log.e("AutoLogin", "Error reloading user roles: " + e.getMessage(), e);
+//					}
+//				}
+//
+//				// Load user rights
+//				Set<UserRight> userRights = ConfigProvider.getUserRights();
+//				Log.d("AutoLogin", "User rights loaded: " + (userRights != null ? userRights.size() : 0) + " rights");
+//
+//				// Verify feature configurations are loaded
+//				Log.d("AutoLogin", "Verifying feature configurations are loaded");
+//				try {
+//					FeatureConfigurationDao featureConfigDao = DatabaseHelper.getFeatureConfigurationDao();
+//					if (featureConfigDao != null) {
+//						Log.d("AutoLogin", "Feature configuration DAO loaded successfully");
+//						// Test a few key feature configurations
+//						boolean caseSurveillance = !featureConfigDao.isFeatureDisabled(FeatureType.CASE_SURVEILANCE);
+//						boolean taskManagement = !featureConfigDao.isFeatureDisabled(FeatureType.TASK_MANAGEMENT);
+//						Log.d("AutoLogin", "Case surveillance enabled: " + caseSurveillance);
+//						Log.d("AutoLogin", "Task management enabled: " + taskManagement);
+//					} else {
+//						Log.w("AutoLogin", "Feature configuration DAO is null");
+//					}
+//				} catch (Exception e) {
+//					Log.e("AutoLogin", "Error verifying feature configurations: " + e.getMessage(), e);
+//				}
+//
+//				// Set variables that were cleared in clearUserLogin() and set PIN to 1234
+//				Log.d("AutoLogin", "Setting variables after successful auto login");
+//
+//				// Set the variables that were cleared in clearUserLogin()
+//				ConfigProvider.setAccessGranted(true);
+//				ConfigProvider.setLastNotificationDate(new java.util.Date());
+//				ConfigProvider.setLastObsoleteUuidsSyncDate(new java.util.Date());
+//
+//				// Set PIN to 1234 - this will trigger user data refresh
+//				ConfigProvider.setPin("1234");
+//				Log.d("AutoLogin", "PIN set to 1234 after auto login");
+//
+//				// Show success message
+//				Toast.makeText(context, "Auto-login successful! Variables restored and PIN set to 1234", Toast.LENGTH_LONG).show();
+//
+//				// Delay UI refresh to ensure user data is fully loaded after PIN set
+//				new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// Verify user data is loaded
+//						User user = ConfigProvider.getUser();
+//						if (user != null) {
+//							Log.d("AutoLogin", "User data verified after PIN set: " + user.getUserName());
+//							Log.d("AutoLogin", "User roles: " + user.getUserRolesString());
+//						} else {
+//							Log.w("AutoLogin", "User data not loaded after PIN set");
+//						}
+//
+//						// Set a flag to indicate that UI components need to be refreshed after navigation
+//						ConfigProvider.setUIRefreshNeeded(true);
+//						Log.d("AutoLogin", "Set UI refresh flag to ensure sidebar and sync components are updated");
+//
+//						// Navigate to the appropriate activity based on user permissions
+//						navigateToAppropriateActivity(context);
+//					}
+//				}, 1000); // Wait 1 second for user data refresh to complete
+//
+//			} else {
+//				Log.e("AutoLogin", "Failed to load user from restored database");
+//				Toast.makeText(context, "Auto-login failed - User not found in restored database", Toast.LENGTH_LONG).show();
+//			}
+//
+//		} catch (Exception e) {
+//			Log.e("AutoLogin", "Error during complete auto-login process: " + e.getMessage(), e);
+//			Toast.makeText(context, "Auto-login error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//		}
+//	}
+//
+	/**
+	 * Test method to simulate auto-login credential setting.
+	 * This can be used for testing the auto-login functionality.
+	 * 
+	 * @param context The application context
+	 * @param username The username to test with
+	 * @param password The password to test with
+	 */
+
+
 	/**
 	 * Forces a full synchronization after database restoration to ensure all user data
 	 * and permissions are properly loaded from the server.

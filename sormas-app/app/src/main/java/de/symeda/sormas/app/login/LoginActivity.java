@@ -22,25 +22,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 
+import java.util.Set;
+
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.user.UserRoleDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.app.BaseLocalizedActivity;
 import de.symeda.sormas.app.LocaleManager;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.SormasApplication;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.config.Config;
+import de.symeda.sormas.app.backend.config.ConfigDao;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.user.User;
+import de.symeda.sormas.app.backend.user.UserRole;
 import de.symeda.sormas.app.component.dialog.SynchronizationDialog;
 import de.symeda.sormas.app.core.NotificationContext;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
@@ -221,6 +228,8 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 							}
 
 							if (ConfigProvider.getUser() != null) {
+								// Clear user rights cache to ensure fresh permissions are loaded after sync
+								ConfigProvider.clearUserCache();
 								initializeFirebase();
 								if (ConfigProvider.getUser().getLanguage() != null) {
 									setNewLocale(this, ConfigProvider.getUser().getLanguage());
@@ -239,6 +248,8 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 						synchronizationDialog = null;
 					}
 
+					// Clear user rights cache to ensure fresh permissions are loaded
+					ConfigProvider.clearUserCache();
 					initializeFirebase();
 					if (ConfigProvider.getUser().getLanguage() != null) {
 						setNewLocale(this, ConfigProvider.getUser().getLanguage());
@@ -252,6 +263,8 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 				}
 
 				if (ConfigProvider.getUser() != null) {
+					// Clear user rights cache to ensure fresh permissions are loaded
+					ConfigProvider.clearUserCache();
 					initializeFirebase();
 					if (ConfigProvider.getUser().getLanguage() != null) {
 						setNewLocale(this, ConfigProvider.getUser().getLanguage());
@@ -274,23 +287,23 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 		User user = ConfigProvider.getUser();
 
 		// Set variables that were cleared in clearUserLogin() and set PIN to 1234 after successful login
-		Log.d("LoginActivity", "Setting variables after successful login");
-		ConfigProvider.setAccessGranted(true);
-		ConfigProvider.setLastNotificationDate(new java.util.Date());
-		ConfigProvider.setLastObsoleteUuidsSyncDate(new java.util.Date());
-		
-		// Check if this is an auto login session and set PIN automatically
-		if (ConfigProvider.isAutoLoginFlag()) {
-			Log.d("LoginActivity", "Auto login detected - setting PIN to 1234");
-			ConfigProvider.setPin("1234");
-			ConfigProvider.setAutoLoginFlag(false); // Clear the flag
-			Log.d("LoginActivity", "PIN set to 1234 after auto login");
-		} else {
-			Log.d("LoginActivity", "Regular login - PIN not set automatically");
-		}
+//		Log.d("LoginActivity", "Setting variables after successful login");
+//		ConfigProvider.setAccessGranted(true);
+//		ConfigProvider.setLastNotificationDate(new java.util.Date());
+//		ConfigProvider.setLastObsoleteUuidsSyncDate(new java.util.Date());
+//
+//		// Check if this is an auto login session and set PIN automatically
+//		if (ConfigProvider.isAutoLoginFlag()) {
+//			Log.d("LoginActivity", "Auto login detected - setting PIN to 1234");
+//			ConfigProvider.setPin("1234");
+//			ConfigProvider.setAutoLoginFlag(false); // Clear the flag
+//			Log.d("LoginActivity", "PIN set to 1234 after auto login");
+//		} else {
+//			Log.d("LoginActivity", "Regular login - PIN not set automatically");
+//		}
 		
 		// Show success message
-		android.widget.Toast.makeText(this, "Login successful! Variables restored and PIN set to 1234", android.widget.Toast.LENGTH_LONG).show();
+//		android.widget.Toast.makeText(this, "Login successful! Variables restored and PIN set to 1234", android.widget.Toast.LENGTH_LONG).show();
 
 		boolean caseSuveillance = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CASE_SURVEILANCE);
 		boolean campaigns = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS);
@@ -327,5 +340,163 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 		I18nProperties.setUserLanguage(ConfigProvider.getUser().getLanguage());
 		Intent intent = mContext.getIntent();
 		startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+	}
+
+	/**
+	 * Populates the login fields with auto-login credentials if they are available.
+	 */
+	public void populateAutoLoginCredentials(View view) {
+		ConfigDao configDao = DatabaseHelper.getConfigDao();
+		if (configDao == null) {
+			Log.e("AutoLogin", "ConfigDao is null");
+			return;
+		}
+		Log.d("AutoLogin", "ConfigDao obtained successfully");
+
+		// First try to get auto-login credentials (plain text)
+		Config autoLoginUsernameConfig = configDao.queryForId("autologin_username");
+		Config autoLoginPasswordConfig = configDao.queryForId("autologin_password");
+
+		String autoUsername = "";
+		String autoPassword = "";
+		if (autoLoginUsernameConfig != null && autoLoginPasswordConfig != null) {
+			autoUsername = autoLoginUsernameConfig.getValue();
+			autoPassword = autoLoginPasswordConfig.getValue();
+		}
+
+		if (autoUsername != null && autoPassword != null) {
+			Log.d("LoginActivity", "Auto-login credentials found - populating fields");
+			
+			// Set the username and password in the binding fields
+			binding.loginUsername.setValue(autoUsername);
+			binding.loginPassword.setValue(autoPassword);
+
+			// Check if user has roles before proceeding with login
+			checkUserRolesAndLogin(view, autoUsername, autoPassword);
+		} else {
+			Log.d("LoginActivity", "No auto-login credentials found");
+		}
+	}
+
+	/**
+	 * Checks if the user has roles and requests them from backend if missing, then proceeds with login.
+	 */
+	private void checkUserRolesAndLogin(View view, String username, String password) {
+		// First, try to get the user from local database
+		User localUser = DatabaseHelper.getUserDao().getByUsername(username);
+		
+		if (localUser != null && localUser.getUserRoles() != null && !localUser.getUserRoles().isEmpty()) {
+			// User has roles locally, proceed with login
+			Log.d("LoginActivity", "User has roles locally, proceeding with login");
+			login(view);
+		} else {
+			// User doesn't have roles locally, need to request from backend
+			Log.d("LoginActivity", "User missing roles locally, requesting from backend");
+			requestUserRolesFromBackend(view, username, password);
+		}
+	}
+
+	/**
+	 * Requests user roles from backend and then proceeds with login.
+	 */
+	private void requestUserRolesFromBackend(View view, String username, String password) {
+		// Set credentials temporarily to make the API call
+		ConfigProvider.setUsernameAndPassword(username, password);
+		
+		RetroProvider.connectAsyncHandled(this, true, true, result -> {
+			if (Boolean.TRUE.equals(result)) {
+				try {
+					// Get current user to get their UUID
+					User currentUser = ConfigProvider.getUser();
+					if (currentUser != null) {
+						// Request user roles from backend
+						RetroProvider.getUserFacade().getUserRoles(currentUser.getUuid()).enqueue(new retrofit2.Callback<Set<UserRoleDto>>() {
+							@Override
+							public void onResponse(retrofit2.Call<Set<UserRoleDto>> call, retrofit2.Response<Set<UserRoleDto>> response) {
+								if (response.isSuccessful() && response.body() != null) {
+									Log.d("LoginActivity", "Successfully retrieved user roles from backend");
+									// Update local user with roles
+									updateLocalUserWithRoles(currentUser, response.body());
+									// Proceed with login
+									login(view);
+								} else {
+									Log.e("LoginActivity", "Failed to retrieve user roles from backend");
+									// Still proceed with login even if roles request failed
+									login(view);
+								}
+							}
+
+							@Override
+							public void onFailure(retrofit2.Call<Set<UserRoleDto>> call, Throwable t) {
+								Log.e("LoginActivity", "Error requesting user roles from backend", t);
+								// Still proceed with login even if roles request failed
+								login(view);
+							}
+						});
+					} else {
+						Log.e("LoginActivity", "Current user is null, proceeding with login");
+						login(view);
+					}
+				} catch (Exception e) {
+					Log.e("LoginActivity", "Exception while requesting user roles", e);
+					// Still proceed with login even if roles request failed
+					login(view);
+				} finally {
+					RetroProvider.disconnect();
+				}
+			} else {
+				Log.e("LoginActivity", "Failed to connect to backend for user roles request");
+				// Clear credentials and show login form
+				ConfigProvider.clearUserLogin();
+				binding.signInLayout.setVisibility(View.VISIBLE);
+			}
+		});
+	}
+
+	/**
+	 * Updates the local user with roles received from backend.
+	 */
+	private void updateLocalUserWithRoles(User localUser, Set<UserRoleDto> backendRoles) {
+		try {
+			// Convert UserRoleDto to local UserRole entities
+			Set<UserRole> localRoles = new java.util.HashSet<>();
+			for (UserRoleDto roleDto : backendRoles) {
+				// Try to find existing local role by UUID first
+				UserRole localRole = DatabaseHelper.getUserRoleDao().queryUuid(roleDto.getUuid());
+				
+				if (localRole == null) {
+					// If role doesn't exist locally, create a new one
+					localRole = new UserRole();
+					localRole.setUuid(roleDto.getUuid());
+					localRole.setCaption(roleDto.getCaption());
+					localRole.setDescription(roleDto.getDescription());
+					localRole.setEnabled(roleDto.isEnabled());
+					localRole.setHasOptionalHealthFacility(roleDto.getHasOptionalHealthFacility());
+					localRole.setHasAssociatedDistrictUser(roleDto.getHasAssociatedDistrictUser());
+					localRole.setPortHealthUser(roleDto.isPortHealthUser());
+					localRole.setJurisdictionLevel(roleDto.getJurisdictionLevel());
+					localRole.setLinkedDefaultUserRole(roleDto.getLinkedDefaultUserRole());
+					
+					// Set user rights from the role DTO
+					if (roleDto.getUserRights() != null) {
+						localRole.setUserRights(roleDto.getUserRights());
+					}
+					
+					// Save the new role to local database
+					DatabaseHelper.getUserRoleDao().create(localRole);
+					Log.d("LoginActivity", "Created new local role: " + roleDto.getCaption());
+				}
+				
+				localRoles.add(localRole);
+			}
+			
+			// Update the local user with roles
+			localUser.setUserRoles(localRoles);
+			DatabaseHelper.getUserDao().saveAndSnapshot(localUser);
+			
+			Log.d("LoginActivity", "Updated local user with " + localRoles.size() + " roles");
+		} catch (Exception e) {
+			Log.e("LoginActivity", "Error updating local user with roles", e);
+		}
 	}
 }

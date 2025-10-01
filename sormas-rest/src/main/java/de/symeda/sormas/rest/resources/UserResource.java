@@ -17,6 +17,7 @@ package de.symeda.sormas.rest.resources;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -35,6 +36,7 @@ import de.symeda.sormas.api.user.UserCriteria;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceWithTaskNumbersDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.user.UserRoleDto;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 /**
@@ -111,6 +113,13 @@ public class UserResource {
 	@Path("/generatePassword")
 	public String generatePassword() {
 		return FacadeProvider.getUserFacade().generatePassword();
+	}
+
+	@GET
+	@Path("/roles/{uuid}")
+	public Set<UserRoleDto> getUserRoles(@PathParam("uuid") String uuid) {
+		UserDto user = FacadeProvider.getUserFacade().getByUuid(uuid);
+		return FacadeProvider.getUserFacade().getUserRoles(user);
 	}
 
 }
