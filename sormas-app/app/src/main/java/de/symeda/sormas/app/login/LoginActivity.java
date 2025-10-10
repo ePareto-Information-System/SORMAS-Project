@@ -99,6 +99,20 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 		} else {
 			binding.signInLayout.setVisibility(View.VISIBLE);
 		}
+
+		// Check if auto login should be triggered after restore
+		if (ConfigProvider.isAutoLoginFlag()) {
+			Log.d("LoginActivity", "Auto login flag detected - triggering automatic login");
+			binding.btnAutoLogin.setVisibility(View.GONE);
+			// Trigger auto login automatically
+			populateAutoLoginCredentials(null);
+			// Clear the flag after triggering
+			ConfigProvider.setAutoLoginFlag(false);
+		} else {
+			// Show auto login button only if auto login credentials are available
+			boolean hasAutoLoginCredentials = checkAutoLoginCredentialsAvailable();
+			binding.btnAutoLogin.setVisibility(hasAutoLoginCredentials ? View.VISIBLE : View.GONE);
+		}
 	}
 
 	@Override
@@ -375,6 +389,31 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 			checkUserRolesAndLogin(view, autoUsername, autoPassword);
 		} else {
 			Log.d("LoginActivity", "No auto-login credentials found");
+		}
+	}
+
+	/**
+	 * Checks if auto login credentials are available in the database.
+	 * 
+	 * @return true if auto login credentials are available, false otherwise
+	 */
+	private boolean checkAutoLoginCredentialsAvailable() {
+		try {
+			ConfigDao configDao = DatabaseHelper.getConfigDao();
+			if (configDao == null) {
+				return false;
+			}
+			
+			Config autoLoginUsernameConfig = configDao.queryForId("autologin_username");
+			Config autoLoginPasswordConfig = configDao.queryForId("autologin_password");
+			
+			return autoLoginUsernameConfig != null && autoLoginUsernameConfig.getValue() != null && 
+				   !autoLoginUsernameConfig.getValue().isEmpty() &&
+				   autoLoginPasswordConfig != null && autoLoginPasswordConfig.getValue() != null &&
+				   !autoLoginPasswordConfig.getValue().isEmpty();
+		} catch (Exception e) {
+			Log.e("LoginActivity", "Error checking auto login credentials availability", e);
+			return false;
 		}
 	}
 

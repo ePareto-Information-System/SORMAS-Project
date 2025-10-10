@@ -156,8 +156,14 @@ public class SettingsActivity extends BaseLandingActivity {
 
 			if (fileUri != null) {
 				// Restore the database from the selected file URI
-				DatabaseHelper.restoreDatabaseFromUri(this, fileUri);
-
+				boolean restoreSuccess = DatabaseHelper.restoreDatabaseFromUri(this, fileUri);
+				
+				if (restoreSuccess) {
+					// Navigate to login screen after successful restore
+					Intent loginIntent = new Intent(this, LoginActivity.class);
+					loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(loginIntent);
+				}
 			} else {
 				Toast.makeText(this, "Failed to get file", Toast.LENGTH_SHORT).show();
 			}

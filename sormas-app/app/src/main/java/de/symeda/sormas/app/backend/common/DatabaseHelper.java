@@ -4719,6 +4719,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET symptomsOngoing = 'NO' WHERE symptomsOngoing = 'UNKNOWN'");
 				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET hospitalizationYesNo = 'NO' WHERE hospitalizationYesNo = 'UNKNOWN'");
 				break;
+			case 406:
+
 
 			default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
@@ -4830,20 +4832,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				}
 			}
 
-			// Log or display the restore location
-			Log.d("DatabaseRestore", "Restore successful from: " + fileName);
-			Toast.makeText(context, "Database restored from: " + fileName, Toast.LENGTH_LONG).show();
-			ConfigProvider.clearUserLogin();
-			ConfigProvider.clearPin();
+		// Log or display the restore location
+		Log.d("DatabaseRestore", "Restore successful from: " + fileName);
+		Toast.makeText(context, "Database restored from: " + fileName, Toast.LENGTH_LONG).show();
+		ConfigProvider.clearUserLogin();
+		ConfigProvider.clearPin();
 
-			// Force database upgrade before auto-login
-			Log.d("DatabaseRestore", "Triggering database upgrade after restore");
-			forceDatabaseUpgrade(context);
+		// Force database upgrade before auto-login
+		Log.d("DatabaseRestore", "Triggering database upgrade after restore");
+		forceDatabaseUpgrade(context);
 
-			// After successful database restore and upgrade
-//			performAutoLoginAfterRestore(context);
+		// Set auto login flag to trigger automatic login after restore
+		Log.d("DatabaseRestore", "Setting auto login flag to trigger automatic login");
+		ConfigProvider.setAutoLoginFlag(true);
 
-			return true; // Restore successful
+		return true; // Restore successful
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false; // Restore failed
