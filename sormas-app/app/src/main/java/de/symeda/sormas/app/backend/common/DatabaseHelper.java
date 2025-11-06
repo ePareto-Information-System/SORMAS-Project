@@ -251,7 +251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 406;
+	public static final int DATABASE_VERSION = 408;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4718,6 +4718,171 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET labTestConducted = 'NO' WHERE labTestConducted = 'UNKNOWN'");
 				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET symptomsOngoing = 'NO' WHERE symptomsOngoing = 'UNKNOWN'");
 				getDao(Hospitalization.class).executeRaw("UPDATE hospitalizations SET hospitalizationYesNo = 'NO' WHERE hospitalizationYesNo = 'UNKNOWN'");
+			case 406:
+				currentVersion = 406;
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET fever = NULL WHERE fever = 'UNKNOWN' OR fever = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET vomiting = NULL WHERE vomiting = 'UNKNOWN' OR vomiting = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET diarrhea = NULL WHERE diarrhea = 'UNKNOWN' OR diarrhea = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET bloodInStool = NULL WHERE bloodInStool = 'UNKNOWN' OR bloodInStool = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET nausea = NULL WHERE nausea = 'UNKNOWN' OR nausea = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET abdominalPain = NULL WHERE abdominalPain = 'UNKNOWN' OR abdominalPain = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET headache = NULL WHERE headache = 'UNKNOWN' OR headache = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET musclePain = NULL WHERE musclePain = 'UNKNOWN' OR musclePain = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET fatigueWeakness = NULL WHERE fatigueWeakness = 'UNKNOWN' OR fatigueWeakness = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET unexplainedBleeding = NULL WHERE unexplainedBleeding = 'UNKNOWN' OR unexplainedBleeding = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET gumsBleeding = NULL WHERE gumsBleeding = 'UNKNOWN' OR gumsBleeding = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET injectionSiteBleeding = NULL WHERE injectionSiteBleeding = 'UNKNOWN' OR injectionSiteBleeding = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET noseBleeding = NULL WHERE noseBleeding = 'UNKNOWN' OR noseBleeding = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET bloodyBlackStool = NULL WHERE bloodyBlackStool = 'UNKNOWN' OR bloodyBlackStool = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET redBloodVomit = NULL WHERE redBloodVomit = 'UNKNOWN' OR redBloodVomit = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET digestedBloodVomit = NULL WHERE digestedBloodVomit = 'UNKNOWN' OR digestedBloodVomit = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET coughingBlood = NULL WHERE coughingBlood = 'UNKNOWN' OR coughingBlood = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET bleedingVagina = NULL WHERE bleedingVagina = 'UNKNOWN' OR bleedingVagina = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET skinBruising = NULL WHERE skinBruising = 'UNKNOWN' OR skinBruising = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET bloodUrine = NULL WHERE bloodUrine = 'UNKNOWN' OR bloodUrine = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET otherHemorrhagicSymptoms = NULL WHERE otherHemorrhagicSymptoms = 'UNKNOWN' OR otherHemorrhagicSymptoms = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET skinRash = NULL WHERE skinRash = 'UNKNOWN' OR skinRash = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET generalizedRash = NULL WHERE generalizedRash = 'UNKNOWN' OR generalizedRash = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET neckStiffness = NULL WHERE neckStiffness = 'UNKNOWN' OR neckStiffness = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET soreThroat = NULL WHERE soreThroat = 'UNKNOWN' OR soreThroat = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET cough = NULL WHERE cough = 'UNKNOWN' OR cough = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET coughWithSputum = NULL WHERE coughWithSputum = 'UNKNOWN' OR coughWithSputum = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET coughWithHeamoptysis = NULL WHERE coughWithHeamoptysis = 'UNKNOWN' OR coughWithHeamoptysis = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET runnyNose = NULL WHERE runnyNose = 'UNKNOWN' OR runnyNose = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET difficultyBreathing = NULL WHERE difficultyBreathing = 'UNKNOWN' OR difficultyBreathing = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET chestPain = NULL WHERE chestPain = 'UNKNOWN' OR chestPain = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET conjunctivitis = NULL WHERE conjunctivitis = 'UNKNOWN' OR conjunctivitis = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET eyePainLightSensitive = NULL WHERE eyePainLightSensitive = 'UNKNOWN' OR eyePainLightSensitive = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET kopliksSpots = NULL WHERE kopliksSpots = 'UNKNOWN' OR kopliksSpots = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET throbocytopenia = NULL WHERE throbocytopenia = 'UNKNOWN' OR throbocytopenia = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET otitisMedia = NULL WHERE otitisMedia = 'UNKNOWN' OR otitisMedia = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET hearingloss = NULL WHERE hearingloss = 'UNKNOWN' OR hearingloss = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET dehydration = NULL WHERE dehydration = 'UNKNOWN' OR dehydration = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET anorexiaAppetiteLoss = NULL WHERE anorexiaAppetiteLoss = 'UNKNOWN' OR anorexiaAppetiteLoss = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET refusalFeedorDrink = NULL WHERE refusalFeedorDrink = 'UNKNOWN' OR refusalFeedorDrink = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET jointPain = NULL WHERE jointPain = 'UNKNOWN' OR jointPain = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET hiccups = NULL WHERE hiccups = 'UNKNOWN' OR hiccups = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET otherNonHemorrhagicSymptoms = NULL WHERE otherNonHemorrhagicSymptoms = 'UNKNOWN' OR otherNonHemorrhagicSymptoms = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET backache = NULL WHERE backache = 'UNKNOWN' OR backache = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET eyesBleeding = NULL WHERE eyesBleeding = 'UNKNOWN' OR eyesBleeding = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET jaundice = NULL WHERE jaundice = 'UNKNOWN' OR jaundice = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET darkUrine = NULL WHERE darkUrine = 'UNKNOWN' OR darkUrine = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET stomachBleeding = NULL WHERE stomachBleeding = 'UNKNOWN' OR stomachBleeding = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET rapidBreathing = NULL WHERE rapidBreathing = 'UNKNOWN' OR rapidBreathing = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET swollenGlands = NULL WHERE swollenGlands = 'UNKNOWN' OR swollenGlands = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lesions = NULL WHERE lesions = 'UNKNOWN' OR lesions = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lesionsSameState = NULL WHERE lesionsSameState = 'UNKNOWN' OR lesionsSameState = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lesionsSameSize = NULL WHERE lesionsSameSize = 'UNKNOWN' OR lesionsSameSize = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lesionsDeepProfound = NULL WHERE lesionsDeepProfound = 'UNKNOWN' OR lesionsDeepProfound = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lesionsThatItch = NULL WHERE lesionsThatItch = 'UNKNOWN' OR lesionsThatItch = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lesionsResembleImg1 = NULL WHERE lesionsResembleImg1 = 'UNKNOWN'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lesionsResembleImg2 = NULL WHERE lesionsResembleImg2 = 'UNKNOWN'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lesionsResembleImg3 = NULL WHERE lesionsResembleImg3 = 'UNKNOWN'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lesionsResembleImg4 = NULL WHERE lesionsResembleImg4 = 'UNKNOWN'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lymphadenopathy = NULL WHERE lymphadenopathy = 'UNKNOWN' OR lymphadenopathy = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lymphadenopathyInguinal = NULL WHERE lymphadenopathyInguinal = 'UNKNOWN' OR lymphadenopathyInguinal = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lymphadenopathyAxillary = NULL WHERE lymphadenopathyAxillary = 'UNKNOWN' OR lymphadenopathyAxillary = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lymphadenopathyCervical = NULL WHERE lymphadenopathyCervical = 'UNKNOWN' OR lymphadenopathyCervical = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET chillsSweats = NULL WHERE chillsSweats = 'UNKNOWN' OR chillsSweats = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET bedridden = NULL WHERE bedridden = 'UNKNOWN' OR bedridden = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET oralUlcers = NULL WHERE oralUlcers = 'UNKNOWN' OR oralUlcers = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET painfulLymphadenitis = NULL WHERE painfulLymphadenitis = 'UNKNOWN' OR painfulLymphadenitis = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET blackeningDeathOfTissue = NULL WHERE blackeningDeathOfTissue = 'UNKNOWN' OR blackeningDeathOfTissue = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET buboesGroinArmpitNeck = NULL WHERE buboesGroinArmpitNeck = 'UNKNOWN' OR buboesGroinArmpitNeck = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET bulgingFontanelle = NULL WHERE bulgingFontanelle = 'UNKNOWN' OR bulgingFontanelle = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pharyngealErythema = NULL WHERE pharyngealErythema = 'UNKNOWN' OR pharyngealErythema = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pharyngealExudate = NULL WHERE pharyngealExudate = 'UNKNOWN' OR pharyngealExudate = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET oedemaFaceNeck = NULL WHERE oedemaFaceNeck = 'UNKNOWN' OR oedemaFaceNeck = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET oedemaLowerExtremity = NULL WHERE oedemaLowerExtremity = 'UNKNOWN' OR oedemaLowerExtremity = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lossSkinTurgor = NULL WHERE lossSkinTurgor = 'UNKNOWN' OR lossSkinTurgor = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET palpableLiver = NULL WHERE palpableLiver = 'UNKNOWN' OR palpableLiver = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET palpableSpleen = NULL WHERE palpableSpleen = 'UNKNOWN' OR palpableSpleen = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET malaise = NULL WHERE malaise = 'UNKNOWN' OR malaise = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET sunkenEyesFontanelle = NULL WHERE sunkenEyesFontanelle = 'UNKNOWN' OR sunkenEyesFontanelle = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET sidePain = NULL WHERE sidePain = 'UNKNOWN' OR sidePain = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET fluidInLungCavity = NULL WHERE fluidInLungCavity = 'UNKNOWN' OR fluidInLungCavity = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET tremor = NULL WHERE tremor = 'UNKNOWN' OR tremor = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET bilateralCataracts = NULL WHERE bilateralCataracts = 'UNKNOWN' OR bilateralCataracts = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET unilateralCataracts = NULL WHERE unilateralCataracts = 'UNKNOWN' OR unilateralCataracts = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET congenitalGlaucoma = NULL WHERE congenitalGlaucoma = 'UNKNOWN' OR congenitalGlaucoma = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pigmentaryRetinopathy = NULL WHERE pigmentaryRetinopathy = 'UNKNOWN' OR pigmentaryRetinopathy = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET purpuricRash = NULL WHERE purpuricRash = 'UNKNOWN' OR purpuricRash = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET microcephaly = NULL WHERE microcephaly = 'UNKNOWN' OR microcephaly = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET developmentalDelay = NULL WHERE developmentalDelay = 'UNKNOWN' OR developmentalDelay = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET splenomegaly = NULL WHERE splenomegaly = 'UNKNOWN' OR splenomegaly = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET meningoencephalitis = NULL WHERE meningoencephalitis = 'UNKNOWN' OR meningoencephalitis = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET radiolucentBoneDisease = NULL WHERE radiolucentBoneDisease = 'UNKNOWN' OR radiolucentBoneDisease = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET congenitalHeartDisease = NULL WHERE congenitalHeartDisease = 'UNKNOWN' OR congenitalHeartDisease = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET hydrophobia = NULL WHERE hydrophobia = 'UNKNOWN' OR hydrophobia = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET opisthotonus = NULL WHERE opisthotonus = 'UNKNOWN' OR opisthotonus = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET anxietyStates = NULL WHERE anxietyStates = 'UNKNOWN' OR anxietyStates = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET delirium = NULL WHERE delirium = 'UNKNOWN' OR delirium = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET uproariousness = NULL WHERE uproariousness = 'UNKNOWN' OR uproariousness = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET paresthesiaAroundWound = NULL WHERE paresthesiaAroundWound = 'UNKNOWN' OR paresthesiaAroundWound = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET excessSalivation = NULL WHERE excessSalivation = 'UNKNOWN' OR excessSalivation = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET insomnia = NULL WHERE insomnia = 'UNKNOWN' OR insomnia = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET paralysis = NULL WHERE paralysis = 'UNKNOWN' OR paralysis = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET excitation = NULL WHERE excitation = 'UNKNOWN' OR excitation = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET dysphagia = NULL WHERE dysphagia = 'UNKNOWN' OR dysphagia = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET aerophobia = NULL WHERE aerophobia = 'UNKNOWN' OR aerophobia = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET hyperactivity = NULL WHERE hyperactivity = 'UNKNOWN' OR hyperactivity = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET paresis = NULL WHERE paresis = 'UNKNOWN' OR paresis = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET agitation = NULL WHERE agitation = 'UNKNOWN' OR agitation = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET ascendingFlaccidParalysis = NULL WHERE ascendingFlaccidParalysis = 'UNKNOWN' OR ascendingFlaccidParalysis = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET erraticBehaviour = NULL WHERE erraticBehaviour = 'UNKNOWN' OR erraticBehaviour = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET coma = NULL WHERE coma = 'UNKNOWN' OR coma = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET alteredConsciousness = NULL WHERE alteredConsciousness = 'UNKNOWN' OR alteredConsciousness = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET confusedDisoriented = NULL WHERE confusedDisoriented = 'UNKNOWN' OR confusedDisoriented = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET hemorrhagicSyndrome = NULL WHERE hemorrhagicSyndrome = 'UNKNOWN' OR hemorrhagicSyndrome = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET hyperglycemia = NULL WHERE hyperglycemia = 'UNKNOWN' OR hyperglycemia = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET hypoglycemia = NULL WHERE hypoglycemia = 'UNKNOWN' OR hypoglycemia = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET meningealSigns = NULL WHERE meningealSigns = 'UNKNOWN' OR meningealSigns = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET seizures = NULL WHERE seizures = 'UNKNOWN' OR seizures = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET sepsis = NULL WHERE sepsis = 'UNKNOWN' OR sepsis = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET shock = NULL WHERE shock = 'UNKNOWN' OR shock = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET fluidInLungCavityAuscultation = NULL WHERE fluidInLungCavityAuscultation = 'UNKNOWN' OR fluidInLungCavityAuscultation = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET fluidInLungCavityXray = NULL WHERE fluidInLungCavityXray = 'UNKNOWN' OR fluidInLungCavityXray = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET abnormalLungXrayFindings = NULL WHERE abnormalLungXrayFindings = 'UNKNOWN' OR abnormalLungXrayFindings = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET conjunctivalInjection = NULL WHERE conjunctivalInjection = 'UNKNOWN' OR conjunctivalInjection = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET acuteRespiratoryDistressSyndrome = NULL WHERE acuteRespiratoryDistressSyndrome = 'UNKNOWN' OR acuteRespiratoryDistressSyndrome = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET pneumoniaClinicalOrRadiologic = NULL WHERE pneumoniaClinicalOrRadiologic = 'UNKNOWN' OR pneumoniaClinicalOrRadiologic = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET otherComplications = NULL WHERE otherComplications = 'UNKNOWN' OR otherComplications = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET convulsion = NULL WHERE convulsion = 'UNKNOWN' OR convulsion = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lossOfTaste = NULL WHERE lossOfTaste = 'UNKNOWN' OR lossOfTaste = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET lossOfSmell = NULL WHERE lossOfSmell = 'UNKNOWN' OR lossOfSmell = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET wheezing = NULL WHERE wheezing = 'UNKNOWN' OR wheezing = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET skinUlcers = NULL WHERE skinUlcers = 'UNKNOWN' OR skinUlcers = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET inabilityToWalk = NULL WHERE inabilityToWalk = 'UNKNOWN' OR inabilityToWalk = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET inDrawingOfChestWall = NULL WHERE inDrawingOfChestWall = 'UNKNOWN' OR inDrawingOfChestWall = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET respiratoryDiseaseVentilation = NULL WHERE respiratoryDiseaseVentilation = 'UNKNOWN' OR respiratoryDiseaseVentilation = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET generalSignsOfDisease = NULL WHERE generalSignsOfDisease = 'UNKNOWN' OR generalSignsOfDisease = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET shivering = NULL WHERE shivering = 'UNKNOWN' OR shivering = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET fastHeartRate = NULL WHERE fastHeartRate = 'UNKNOWN' OR fastHeartRate = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET oxygenSaturationLower94 = NULL WHERE oxygenSaturationLower94 = 'UNKNOWN'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET feverishFeeling = NULL WHERE feverishFeeling = 'UNKNOWN' OR feverishFeeling = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET weakness = NULL WHERE weakness = 'UNKNOWN' OR weakness = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET fatigue = NULL WHERE fatigue = 'UNKNOWN' OR fatigue = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET coughWithoutSputum = NULL WHERE coughWithoutSputum = 'UNKNOWN' OR coughWithoutSputum = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET breathlessness = NULL WHERE breathlessness = 'UNKNOWN' OR breathlessness = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET chestPressure = NULL WHERE chestPressure = 'UNKNOWN' OR chestPressure = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET blueLips = NULL WHERE blueLips = 'UNKNOWN' OR blueLips = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET bloodCirculationProblems = NULL WHERE bloodCirculationProblems = 'UNKNOWN' OR bloodCirculationProblems = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET palpitations = NULL WHERE palpitations = 'UNKNOWN' OR palpitations = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET dizzinessStandingUp = NULL WHERE dizzinessStandingUp = 'UNKNOWN' OR dizzinessStandingUp = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET highOrLowBloodPressure = NULL WHERE highOrLowBloodPressure = 'UNKNOWN' OR highOrLowBloodPressure = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET urinaryRetention = NULL WHERE urinaryRetention = 'UNKNOWN' OR urinaryRetention = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET generalBodilyPains = NULL WHERE generalBodilyPains = 'UNKNOWN' OR generalBodilyPains = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET rashes = NULL WHERE rashes = 'UNKNOWN' OR rashes = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET papularRash = NULL WHERE papularRash = 'UNKNOWN' OR papularRash = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET macularRash = NULL WHERE macularRash = 'UNKNOWN' OR macularRash = '2'");
+				getDao(Symptoms.class).executeRaw("UPDATE symptoms SET vesicularRash = NULL WHERE vesicularRash = 'UNKNOWN' OR vesicularRash = '2'");
+			case 407:
+				getDao(EpiData.class).executeRaw("UPDATE epiData SET activityAsCaseDetailsKnown = NULL WHERE activityAsCaseDetailsKnown = 'UNKNOWN'");
+				getDao(EpiData.class).executeRaw("UPDATE epiData SET exposureDetailsKnown = NULL WHERE exposureDetailsKnown = 'UNKNOWN'");
+				getDao(EpiData.class).executeRaw("UPDATE epiData SET largeOutbreaksArea = NULL WHERE largeOutbreaksArea = 'UNKNOWN'");
+				getDao(EpiData.class).executeRaw("UPDATE epiData SET contactWithSourceCaseKnown = NULL WHERE contactWithSourceCaseKnown = 'UNKNOWN'");
+				getDao(EpiData.class).executeRaw("UPDATE epiData SET highTransmissionRiskArea = NULL WHERE highTransmissionRiskArea = 'UNKNOWN'");
+				getDao(EpiData.class).executeRaw("UPDATE epiData SET areaInfectedAnimals = NULL WHERE areaInfectedAnimals = 'UNKNOWN'");
 				break;
 
 			default:
@@ -4830,20 +4995,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				}
 			}
 
-			// Log or display the restore location
-			Log.d("DatabaseRestore", "Restore successful from: " + fileName);
-			Toast.makeText(context, "Database restored from: " + fileName, Toast.LENGTH_LONG).show();
-			ConfigProvider.clearUserLogin();
-			ConfigProvider.clearPin();
+		// Log or display the restore location
+		Log.d("DatabaseRestore", "Restore successful from: " + fileName);
+		Toast.makeText(context, "Database restored from: " + fileName, Toast.LENGTH_LONG).show();
+		ConfigProvider.clearUserLogin();
+		ConfigProvider.clearPin();
 
-			// Force database upgrade before auto-login
-			Log.d("DatabaseRestore", "Triggering database upgrade after restore");
-			forceDatabaseUpgrade(context);
+		// Force database upgrade before auto-login
+		Log.d("DatabaseRestore", "Triggering database upgrade after restore");
+		forceDatabaseUpgrade(context);
 
-			// After successful database restore and upgrade
-//			performAutoLoginAfterRestore(context);
+		// Set auto login flag to trigger automatic login after restore
+		Log.d("DatabaseRestore", "Setting auto login flag to trigger automatic login");
+		ConfigProvider.setAutoLoginFlag(true);
 
-			return true; // Restore successful
+		return true; // Restore successful
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false; // Restore failed

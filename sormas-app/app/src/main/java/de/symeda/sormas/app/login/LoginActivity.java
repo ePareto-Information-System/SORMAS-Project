@@ -96,8 +96,27 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 
 		if (ConfigProvider.getUser() != null) {
 			binding.signInLayout.setVisibility(View.GONE);
+			binding.autoLoginProgressLayout.setVisibility(View.GONE);
 		} else {
 			binding.signInLayout.setVisibility(View.VISIBLE);
+			binding.autoLoginProgressLayout.setVisibility(View.GONE);
+		}
+
+		// Check if auto login should be triggered after restore
+		if (ConfigProvider.isAutoLoginFlag()) {
+			Log.d("LoginActivity", "Auto login flag detected - triggering automatic login");
+			// Show progress indicator and hide sign-in form
+			binding.autoLoginProgressLayout.setVisibility(View.VISIBLE);
+			binding.signInLayout.setVisibility(View.GONE);
+			binding.btnAutoLogin.setVisibility(View.GONE);
+			// Trigger auto login automatically
+			populateAutoLoginCredentials(null);
+			// Clear the flag after triggering
+			ConfigProvider.setAutoLoginFlag(false);
+		} else {
+			// Show auto login button only if auto login credentials are available
+			boolean hasAutoLoginCredentials = checkAutoLoginCredentialsAvailable();
+			binding.btnAutoLogin.setVisibility(hasAutoLoginCredentials ? View.VISIBLE : View.GONE);
 		}
 	}
 
@@ -166,6 +185,9 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 		//NotificationHelper.hideNotification(binding);
 		binding.loginUsername.disableErrorState();
 		binding.loginPassword.disableErrorState();
+		
+		// Hide auto-login progress indicator when user manually logs in
+		binding.autoLoginProgressLayout.setVisibility(View.GONE);
 
 		String userName = binding.loginUsername.getValue().trim();
 		String password = binding.loginPassword.getValue();
@@ -236,6 +258,7 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 								}
 								openLandingActivity();
 							} else {
+								binding.autoLoginProgressLayout.setVisibility(View.GONE);
 								binding.signInLayout.setVisibility(View.VISIBLE);
 							}
 						});
@@ -271,6 +294,7 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 					}
 					openLandingActivity();
 				} else {
+					binding.autoLoginProgressLayout.setVisibility(View.GONE);
 					binding.signInLayout.setVisibility(View.VISIBLE);
 				}
 			}
@@ -379,6 +403,31 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 	}
 
 	/**
+	 * Checks if auto login credentials are available in the database.
+	 * 
+	 * @return true if auto login credentials are available, false otherwise
+	 */
+	private boolean checkAutoLoginCredentialsAvailable() {
+		try {
+			ConfigDao configDao = DatabaseHelper.getConfigDao();
+			if (configDao == null) {
+				return false;
+			}
+			
+			Config autoLoginUsernameConfig = configDao.queryForId("autologin_username");
+			Config autoLoginPasswordConfig = configDao.queryForId("autologin_password");
+			
+			return autoLoginUsernameConfig != null && autoLoginUsernameConfig.getValue() != null && 
+				   !autoLoginUsernameConfig.getValue().isEmpty() &&
+				   autoLoginPasswordConfig != null && autoLoginPasswordConfig.getValue() != null &&
+				   !autoLoginPasswordConfig.getValue().isEmpty();
+		} catch (Exception e) {
+			Log.e("LoginActivity", "Error checking auto login credentials availability", e);
+			return false;
+		}
+	}
+
+	/**
 	 * Checks if the user has roles and requests them from backend if missing, then proceeds with login.
 	 */
 	private void checkUserRolesAndLogin(View view, String username, String password) {
@@ -448,6 +497,7 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 				Log.e("LoginActivity", "Failed to connect to backend for user roles request");
 				// Clear credentials and show login form
 				ConfigProvider.clearUserLogin();
+				binding.autoLoginProgressLayout.setVisibility(View.GONE);
 				binding.signInLayout.setVisibility(View.VISIBLE);
 			}
 		});
