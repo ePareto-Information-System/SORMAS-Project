@@ -108,6 +108,36 @@
 
                 </LinearLayout>
 
+                <!-- Auto Login Progress -->
+                
+                <LinearLayout
+                    android:id="@+id/autoLoginProgressLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="32dp"
+                    android:visibility="gone">
+
+                    <ProgressBar
+                        android:id="@+id/autoLoginProgressBar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="16dp"
+                        android:indeterminate="true" />
+
+                    <TextView
+                        android:id="@+id/autoLoginProgressText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_autologin_in_progress"
+                        android:textSize="16sp"
+                        android:textColor="@color/lightBlue"
+                        android:textAlignment="center"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
                 <!-- Sign In -->
 
                 <LinearLayout

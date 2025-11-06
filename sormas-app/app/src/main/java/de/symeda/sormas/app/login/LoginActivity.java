@@ -96,13 +96,18 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 
 		if (ConfigProvider.getUser() != null) {
 			binding.signInLayout.setVisibility(View.GONE);
+			binding.autoLoginProgressLayout.setVisibility(View.GONE);
 		} else {
 			binding.signInLayout.setVisibility(View.VISIBLE);
+			binding.autoLoginProgressLayout.setVisibility(View.GONE);
 		}
 
 		// Check if auto login should be triggered after restore
 		if (ConfigProvider.isAutoLoginFlag()) {
 			Log.d("LoginActivity", "Auto login flag detected - triggering automatic login");
+			// Show progress indicator and hide sign-in form
+			binding.autoLoginProgressLayout.setVisibility(View.VISIBLE);
+			binding.signInLayout.setVisibility(View.GONE);
 			binding.btnAutoLogin.setVisibility(View.GONE);
 			// Trigger auto login automatically
 			populateAutoLoginCredentials(null);
@@ -180,6 +185,9 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 		//NotificationHelper.hideNotification(binding);
 		binding.loginUsername.disableErrorState();
 		binding.loginPassword.disableErrorState();
+		
+		// Hide auto-login progress indicator when user manually logs in
+		binding.autoLoginProgressLayout.setVisibility(View.GONE);
 
 		String userName = binding.loginUsername.getValue().trim();
 		String password = binding.loginPassword.getValue();
@@ -250,6 +258,7 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 								}
 								openLandingActivity();
 							} else {
+								binding.autoLoginProgressLayout.setVisibility(View.GONE);
 								binding.signInLayout.setVisibility(View.VISIBLE);
 							}
 						});
@@ -285,6 +294,7 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 					}
 					openLandingActivity();
 				} else {
+					binding.autoLoginProgressLayout.setVisibility(View.GONE);
 					binding.signInLayout.setVisibility(View.VISIBLE);
 				}
 			}
@@ -487,6 +497,7 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 				Log.e("LoginActivity", "Failed to connect to backend for user roles request");
 				// Clear credentials and show login form
 				ConfigProvider.clearUserLogin();
+				binding.autoLoginProgressLayout.setVisibility(View.GONE);
 				binding.signInLayout.setVisibility(View.VISIBLE);
 			}
 		});

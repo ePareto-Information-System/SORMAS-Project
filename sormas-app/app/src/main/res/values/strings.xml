@@ -73,6 +73,7 @@
     <string name="action_loadMore">Load more</string>
     <string name="action_login">Sign in</string>
     <string name="action_autologin">Auto Login</string>
+    <string name="info_autologin_in_progress">Auto login in progress. Please wait...</string>
     <string name="action_change_password">Change Password</string>
     <string name="action_login_default_user">Sign in as demo user</string>
     <string name="action_logout">Logout</string>
