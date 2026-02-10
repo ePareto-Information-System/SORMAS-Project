@@ -14948,6 +14948,16 @@ UPDATE epiData SET highTransmissionRiskArea = NULL WHERE highTransmissionRiskAre
 UPDATE epiData SET areaInfectedAnimals = NULL WHERE areaInfectedAnimals = 'UNKNOWN';
 
 INSERT INTO schema_version (version_number, comment) VALUES (654, 'Updated symptoms to fix unknown values');
+
+ALTER TABLE ebsAlert ALTER COLUMN detailsResponseActivities TYPE varchar(4096);
+ALTER TABLE ebsAlert ALTER COLUMN detailsGiven TYPE varchar(4096);
+ALTER TABLE ebsAlert ALTER COLUMN detailsAlertUsed TYPE varchar(4096);
+
+ALTER TABLE ebsAlert_history ALTER COLUMN detailsResponseActivities TYPE varchar(4096);
+ALTER TABLE ebsAlert_history ALTER COLUMN detailsGiven TYPE varchar(4096);
+ALTER TABLE ebsAlert_history ALTER COLUMN detailsAlertUsed TYPE varchar(4096);
+
+INSERT INTO schema_version (version_number, comment) VALUES (655, 'Increase ebsAlert text field lengths to 4096');
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '0';
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '1';
 -- UPDATE symptoms SET papularRash = 'NO' WHERE papularRash = '0';
