@@ -184,7 +184,7 @@ public interface PersonSideComponentsElement {
 										isEditAllowed)),
 						TRAVEL_ENTRIES_LOC);
 			}
-			if (personDataView == null || !personDataView.name().equals("AHF")) {
+			if (personDataView == null || !personDataView.name().equals("UNSPECIFIED_VHF")) {
 				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)
 						&& currentUser != null
 						&& currentUser.hasUserRight(UserRight.IMMUNIZATION_VIEW)) {

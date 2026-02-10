@@ -369,7 +369,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 		List<Disease> diseases = Disease.diseaseMap.get(caseDisease);
 
-		if(caseDisease == Disease.AHF){
+		if(caseDisease == Disease.UNSPECIFIED_VHF){
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
 		}
@@ -914,7 +914,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				Arrays.asList(Disease.MEASLES),
 				true);
 
-		if(caseDisease == Disease.AHF){
+		if(caseDisease == Disease.UNSPECIFIED_VHF){
 			testTypeField.setVisible(false);
 			testTypeField.setRequired(false);
 			testResultField.setVisible(false);

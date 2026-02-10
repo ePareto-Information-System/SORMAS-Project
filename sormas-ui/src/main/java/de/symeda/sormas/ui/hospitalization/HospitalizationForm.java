@@ -551,7 +551,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			dateFirstSeen.setCaption("Date of admission to hospital, if applicable:");
 		}
 
-		if(caze.getDisease() == Disease.AHF){
+		if(caze.getDisease() == Disease.UNSPECIFIED_VHF){
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);

@@ -293,7 +293,7 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 		Disease.YELLOW_FEVER,
 		Disease.CSM,
 		Disease.RABIES,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.DENGUE,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,

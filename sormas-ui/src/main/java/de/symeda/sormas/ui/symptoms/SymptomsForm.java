@@ -1124,7 +1124,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		}
 
-		if (disease == Disease.AHF || disease == Disease.DENGUE) {
+		if (disease == Disease.UNSPECIFIED_VHF || disease == Disease.DENGUE) {
 
 
             clinicalMeasurementsHeadingLabel.setVisible(false);
@@ -1326,7 +1326,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				Arrays.asList(SymptomState.YES),
 				disease);
 		}
-		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.NEW_INFLUENZA, Disease.CORONAVIRUS));
+		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.UNSPECIFIED_VHF, Disease.CSM, Disease.NEW_INFLUENZA, Disease.CORONAVIRUS));
 
 		FieldHelper
 			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS_ALL_OVER_BODY), lesionsFieldIds, Arrays.asList(Boolean.TRUE), disease);
@@ -1781,7 +1781,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		Disease.CSM,
 		Disease.CORONAVIRUS,
 		Disease.CHOLERA,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
         Disease.MONKEYPOX
 	));
 

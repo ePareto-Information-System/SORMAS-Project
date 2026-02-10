@@ -14958,6 +14958,22 @@ ALTER TABLE ebsAlert_history ALTER COLUMN detailsGiven TYPE varchar(4096);
 ALTER TABLE ebsAlert_history ALTER COLUMN detailsAlertUsed TYPE varchar(4096);
 
 INSERT INTO schema_version (version_number, comment) VALUES (655, 'Increase ebsAlert text field lengths to 4096');
+
+UPDATE hospitalization SET hospitalizationreason = NULL WHERE hospitalizationreason = 'UNKNOWN';
+UPDATE hospitalization SET healthfacilityrecordnumber = NULL WHERE healthfacilityrecordnumber = 'UNKNOWN';
+UPDATE hospitalization SET seenatahealthfacility = NULL WHERE seenatahealthfacility = 'UNKNOWN';
+INSERT INTO schema_version (version_number, comment) VALUES (656, 'Set unknown values to unknown at hospitalization');
+
+UPDATE hospitalization SET description = NULL WHERE TRIM(description) = 'UNKNOWN';
+UPDATE hospitalization SET otherhospitalizationreason = NULL WHERE TRIM(otherhospitalizationreason) = 'UNKNOWN';
+INSERT INTO schema_version (version_number, comment) VALUES (657, 'Set unknown values to null at hospitalization for description and otherhospitalizationreason');
+
+UPDATE previoushospitalization SET isolated = NULL WHERE TRIM(isolated) = 'UNKNOWN';
+UPDATE previoushospitalization SET healthfacilitydetails = NULL WHERE TRIM(healthfacilitydetails) = 'UNKNOWN';
+UPDATE previoushospitalization SET hospitalizationreason = NULL WHERE TRIM(hospitalizationreason) = 'UNKNOWN';
+UPDATE previoushospitalization SET intensivecareunit = NULL WHERE TRIM(intensivecareunit) = 'UNKNOWN';
+UPDATE previoushospitalization SET admittedtohealthfacility = NULL WHERE TRIM(admittedtohealthfacility) = 'UNKNOWN';
+INSERT INTO schema_version (version_number, comment) VALUES (658, 'Set unknown values to null in previoushospitalization table');
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '0';
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '1';
 -- UPDATE symptoms SET papularRash = 'NO' WHERE papularRash = '0';

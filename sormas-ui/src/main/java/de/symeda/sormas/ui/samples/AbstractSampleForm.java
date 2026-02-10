@@ -606,7 +606,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				case AFP:
 					handleAFP();
 					break;
-				case AHF:
+				case UNSPECIFIED_VHF:
 					handleAHF();
 					break;
 				case YELLOW_FEVER:
@@ -881,7 +881,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         getContent().getComponent(PATHOGEN_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests);
         getContent().getComponent(ADDITIONAL_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests && canUseAdditionalTests);
 
-        handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF, Disease.MONKEYPOX);
+        handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.UNSPECIFIED_VHF, Disease.MONKEYPOX);
 
         if (getValue() != null && canOnlyReadRequests) {
             CssLayout requestedPathogenTestsLayout = new CssLayout();

@@ -89,12 +89,12 @@ public enum Disease
 	POST_IMMUNIZATION_ADVERSE_EVENTS_MILD(true, false, false, false, false,0, true, false, false),
 	POST_IMMUNIZATION_ADVERSE_EVENTS_SEVERE(true, false, false, false, false,0, true, false, false),
 	FHA(true, false, false, false, false,0, true, false, false),
-	AHF(true, true, true, true, false,21, true, false, false),
+	AHF(true, false, false, true, false,0, false, false, false),
 	OTHER(true, false, true, true, false,21, false, false, false),
 	ZIKA(true, false, true, false, false,6, true, false, false),
 	MARBURG(true, false, true, false, false,0, true, false, false),
 	UNDEFINED(true, false, true, true, false,0, false, false, false),
-	UNSPECIFIED_VHF(true, false, true, true, false,0, false, false, false),
+	UNSPECIFIED_VHF(true, true, true, true, false,21, true, false, false),
 	SARI(true, false, true, true, false,17, true, false, false),
 	FOODBORNE_ILLNESS(true, true, true, true, false,17, true, false, false),
 	IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS(true, true, true, false, false,14, true, false, false);
@@ -181,7 +181,7 @@ public enum Disease
 	}
 
 	public boolean isDiseaseGroup() {
-		return this == AHF;
+		return this == UNSPECIFIED_VHF;
 	}
 
 	public boolean isVariantAllowed() {
@@ -234,12 +234,12 @@ public enum Disease
 		diseaseMap.put(CSM, CSM_ONLY);
 		diseaseMap.put(NEW_INFLUENZA, NEW_ONLY);
 		diseaseMap.put(YELLOW_FEVER, YF);
-		diseaseMap.put(AHF, AHF_DISEASES);
+		diseaseMap.put(UNSPECIFIED_VHF, AHF_DISEASES);
 		diseaseMap.put(MONKEYPOX, MPOX);
 	}
 
 	public static List<Disease> hideFollowUp = Arrays.asList(
-			YELLOW_FEVER, AHF, CSM, AFP, NEW_INFLUENZA, CHOLERA, MEASLES, FOODBORNE_ILLNESS, GUINEA_WORM, MONKEYPOX, NEONATAL_TETANUS, CORONAVIRUS
+			YELLOW_FEVER, UNSPECIFIED_VHF, CSM, AFP, NEW_INFLUENZA, CHOLERA, MEASLES, FOODBORNE_ILLNESS, GUINEA_WORM, MONKEYPOX, NEONATAL_TETANUS, CORONAVIRUS
 	);
 
 	public static String toString(Disease value, String details) {

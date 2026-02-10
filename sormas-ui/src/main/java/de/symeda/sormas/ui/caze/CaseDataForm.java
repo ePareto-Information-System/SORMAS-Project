@@ -1751,7 +1751,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 case CSM:
                     setVaccinationHelperVisibility();
                     break;
-                case AHF:
+                case UNSPECIFIED_VHF:
                     setVisible(true, CaseDataDto.NOTIFIED_BY_LIST);
                     addField(CaseDataDto.MOBILE_TEAM_NO);
                     addField(CaseDataDto.INFORMATION_GIVEN_BY);

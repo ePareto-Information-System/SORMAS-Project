@@ -432,7 +432,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		contactDate = addField(EpiDataDto.CONTACT_DATE, DateField.class);
 		specifyIllnessKnown = addField(EpiDataDto.SPECIFY_ILLNESS, TextField.class);
 
-		//AHF
+		//UNSPECIFIED_VHF
 		patientTravelDuringIllness = addField(EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, NullableOptionGroup.class);
 		comm1 = addField(EpiDataDto.COMM1, TextField.class);
 		comm2 = addField(EpiDataDto.COMM2, TextField.class);
@@ -611,7 +611,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			case FOODBORNE_ILLNESS:
 				handleFoodborneIllness();
 				break;
-			case AHF:
+			case UNSPECIFIED_VHF:
 				handleAHF();
 				break;
 		}
@@ -806,7 +806,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			Disease.CSM,
 			Disease.FOODBORNE_ILLNESS,
 			Disease.AFP,
-			Disease.AHF,
+			Disease.UNSPECIFIED_VHF,
 			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
 			Disease.NEW_INFLUENZA,
 			Disease.YELLOW_FEVER,

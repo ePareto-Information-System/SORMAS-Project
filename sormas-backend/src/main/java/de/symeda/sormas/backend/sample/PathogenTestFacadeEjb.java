@@ -297,7 +297,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		if (pathogenTest.getSample() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validSample));
 		}
-		if (pathogenTest.getTestType() == null && (pathogenTest.getTestedDisease() != Disease.AHF || pathogenTest.getTestedDisease() != Disease.EVD || pathogenTest.getTestedDisease() != Disease.MARBURG || pathogenTest.getTestedDisease() != Disease.LASSA || pathogenTest.getTestedDisease() != Disease.DENGUE || pathogenTest.getTestedDisease() != Disease.CHIKUNGUNYA || pathogenTest.getTestedDisease() != Disease.ZIKA || pathogenTest.getTestedDisease() != Disease.YELLOW_FEVER)) {
+		if (pathogenTest.getTestType() == null && (pathogenTest.getTestedDisease() != Disease.UNSPECIFIED_VHF || pathogenTest.getTestedDisease() != Disease.EVD || pathogenTest.getTestedDisease() != Disease.MARBURG || pathogenTest.getTestedDisease() != Disease.LASSA || pathogenTest.getTestedDisease() != Disease.DENGUE || pathogenTest.getTestedDisease() != Disease.CHIKUNGUNYA || pathogenTest.getTestedDisease() != Disease.ZIKA || pathogenTest.getTestedDisease() != Disease.YELLOW_FEVER)) {
 			throw new ValidationRuntimeException(
 				I18nProperties.getValidationError(
 					Validations.required,
@@ -314,7 +314,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 				I18nProperties
 					.getValidationError(Validations.required, I18nProperties.getPrefixCaption(PathogenTestDto.I18N_PREFIX, PathogenTestDto.LAB)));
 		}
-		if ((pathogenTest.getTestResult() == null) && ((pathogenTest.getTestedDisease() != Disease.AHF) || (pathogenTest.getTestedDisease() != Disease.EVD) || (pathogenTest.getTestedDisease() != Disease.MARBURG) || (pathogenTest.getTestedDisease() != Disease.LASSA) || (pathogenTest.getTestedDisease() != Disease.DENGUE) || (pathogenTest.getTestedDisease() != Disease.CHIKUNGUNYA) || (pathogenTest.getTestedDisease() != Disease.ZIKA) || (pathogenTest.getTestedDisease() != Disease.YELLOW_FEVER))) {
+		if ((pathogenTest.getTestResult() == null) && ((pathogenTest.getTestedDisease() != Disease.UNSPECIFIED_VHF) || (pathogenTest.getTestedDisease() != Disease.EVD) || (pathogenTest.getTestedDisease() != Disease.MARBURG) || (pathogenTest.getTestedDisease() != Disease.LASSA) || (pathogenTest.getTestedDisease() != Disease.DENGUE) || (pathogenTest.getTestedDisease() != Disease.CHIKUNGUNYA) || (pathogenTest.getTestedDisease() != Disease.ZIKA) || (pathogenTest.getTestedDisease() != Disease.YELLOW_FEVER))) {
 			throw new ValidationRuntimeException(
 				I18nProperties.getValidationError(
 					Validations.required,

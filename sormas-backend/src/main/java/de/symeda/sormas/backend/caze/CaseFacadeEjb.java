@@ -2467,7 +2467,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		// Send an email to all responsible supervisors when the disease of an
 		// AHF case has changed
-		if (existingCase != null && existingCase.getDisease() == Disease.AHF && existingCase.getDisease() != newCase.getDisease()) {
+		if (existingCase != null && existingCase.getDisease() == Disease.UNSPECIFIED_VHF && existingCase.getDisease() != newCase.getDisease()) {
 
 			try {
 				String message = String.format(

@@ -14,7 +14,7 @@ public class CaseDataFormConfiguration {
 
     public void handleVisibility() {
             switch (disease) {
-                case AHF:
+                case UNSPECIFIED_VHF:
                     handleAHF();
                     break;
                 case YELLOW_FEVER:

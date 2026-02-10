@@ -19,11 +19,11 @@ public class HospitalizationFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.PHYSICIAN_NAME, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.ADMISSION_DATE, new HashSet<>(Arrays.asList(Disease.AHF)));
-        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.DISCHARGE_DATE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF)));
-        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.LEFT_AGAINST_ADVICE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.NEW_INFLUENZA)));
-        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.NOTIFY_DISTRICT_DATE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
-        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.YELLOW_FEVER, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.ADMISSION_DATE, new HashSet<>(Arrays.asList(Disease.UNSPECIFIED_VHF)));
+        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.DISCHARGE_DATE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.UNSPECIFIED_VHF)));
+        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.LEFT_AGAINST_ADVICE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.UNSPECIFIED_VHF, Disease.NEW_INFLUENZA)));
+        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.NOTIFY_DISTRICT_DATE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.UNSPECIFIED_VHF, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.UNSPECIFIED_VHF, Disease.YELLOW_FEVER, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.HOSPITALIZATION_REASON, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.OTHER_HOSPITALIZATION_REASON, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.INTENSIVE_CARE_UNIT, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM)));
@@ -44,7 +44,7 @@ public class HospitalizationFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.LAB_TEST_CONDUCTED, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.TYPE_OF_SAMPLE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.AGENT_IDENTIFIED, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.HOSPITALIZATION_YES_NO, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.YELLOW_FEVER, Disease.NEW_INFLUENZA, Disease.NEONATAL_TETANUS, Disease.MONKEYPOX, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.CHOLERA, Disease.MEASLES, Disease.CORONAVIRUS, Disease.GUINEA_WORM)));
+        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.HOSPITALIZATION_YES_NO, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.UNSPECIFIED_VHF, Disease.YELLOW_FEVER, Disease.NEW_INFLUENZA, Disease.NEONATAL_TETANUS, Disease.MONKEYPOX, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.CHOLERA, Disease.MEASLES, Disease.CORONAVIRUS, Disease.GUINEA_WORM)));
 
     }
 

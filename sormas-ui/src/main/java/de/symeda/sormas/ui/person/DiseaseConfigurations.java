@@ -33,7 +33,7 @@ public abstract class DiseaseConfigurations extends AbstractEditForm<PersonDto> 
             form.occupationTitleHeadingLabel.setVisible(false);
         });
 
-        CONFIGURATIONS.put(Disease.AHF, form -> {
+        CONFIGURATIONS.put(Disease.UNSPECIFIED_VHF, form -> {
             Label healthStaffDetailsLabel = new Label(I18nProperties.getString(Strings.healthStaffDetailsLabel));
             healthStaffDetailsLabel.addStyleName(H3);
             form.getContentPublic().addComponent(healthStaffDetailsLabel, PersonEditForm.HEALTH_STAFF_DETAILS_LOC);

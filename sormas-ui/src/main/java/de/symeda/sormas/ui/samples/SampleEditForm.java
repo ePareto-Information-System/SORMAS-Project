@@ -182,7 +182,7 @@ public class SampleEditForm extends AbstractSampleForm {
 				case CHOLERA:
 					SELECTED_LAYOUT = loc(LABORATORY_SAMPLE_HEADING_LOC)  + CHOLERA_HTML_LAYOUT;
 					break;
-				case AHF:
+				case UNSPECIFIED_VHF:
 					SELECTED_LAYOUT = loc(LABORATORY_SAMPLE_HEADING_LOC)  + AHF_LAYOUT;
 					break;
 				default:

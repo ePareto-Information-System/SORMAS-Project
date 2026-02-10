@@ -1016,7 +1016,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		ComboBox presentConditionField = getField(PersonDto.PRESENT_CONDITION);
 		if (this.disease != null || FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease() != null) {
 			Disease disease = this.disease != null ? this.disease : FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease();
-			if (disease == Disease.AHF || disease == Disease.DENGUE) {
+			if (disease == Disease.UNSPECIFIED_VHF || disease == Disease.DENGUE) {
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 			} else if (disease == Disease.AFP) {

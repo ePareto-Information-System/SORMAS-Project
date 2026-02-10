@@ -65,7 +65,7 @@ public class SormasUI extends UI implements HasUserProvider, HasViewModelProvide
 	private final static  String[][] caseBasedDiseases = {
 			{Disease.YELLOW_FEVER.getName(), "data", "person", "hospitalization", "symptoms", "epidata", "samples"},
 			{Disease.AFP.getName(), "data", "person", "hospitalization", "symptoms", "epidata", "60-Days", "AFP-Immunization", "samples"},
-			{Disease.AHF.getName(), "data", "person", "hospitalization", "symptoms", "epidata", "samples"},
+			{Disease.UNSPECIFIED_VHF.getName(), "data", "person", "hospitalization", "symptoms", "epidata", "samples"},
 			{Disease.CSM.getName(), "data", "person", "hospitalization", "symptoms", "epidata", "contacts", "samples"},
 			{Disease.MEASLES.getName(), "data", "person", "hospitalization", "symptoms", "epidata", "samples"},
 			{Disease.CHOLERA.getName(), "data", "person", "hospitalization", "symptoms", "epidata", "riskFactor", "samples"},

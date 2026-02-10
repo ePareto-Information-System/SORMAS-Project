@@ -552,7 +552,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
             Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
 
-            caseTransmissionClassification.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.AHF && disease != Disease.MEASLES);
+            caseTransmissionClassification.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.UNSPECIFIED_VHF && disease != Disease.MEASLES);
             updateDiseaseVariant(disease);
             if (investigated.getValue() == null) {
                 investigated.setVisible(true);
@@ -607,7 +607,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
                         break;
                     case NEW_INFLUENZA:
                     case AFP:
-                    case AHF:
+                    case UNSPECIFIED_VHF:
                         personCreateForm.hidePresentCondition();
                         break;
                     case YELLOW_FEVER:

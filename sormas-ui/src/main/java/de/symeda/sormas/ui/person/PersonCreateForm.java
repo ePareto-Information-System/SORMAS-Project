@@ -613,7 +613,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		PresentCondition currentValue = (PresentCondition) presentConditionField.getValue();
 		List<PresentCondition> validValues;
 
-		if (disease == Disease.AHF) {
+		if (disease == Disease.UNSPECIFIED_VHF) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
 			hideSelectedFields();
 		} else if (disease == Disease.CSM) {

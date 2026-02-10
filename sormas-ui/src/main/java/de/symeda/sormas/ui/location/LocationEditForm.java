@@ -1036,7 +1036,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			case YELLOW_FEVER:
 				setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK, LocationDto.CITY);
 				break;
-			case AHF:
+			case UNSPECIFIED_VHF:
 				setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE);
 				break;
 			case CSM:

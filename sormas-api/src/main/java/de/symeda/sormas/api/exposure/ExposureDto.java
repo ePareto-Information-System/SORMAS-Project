@@ -154,7 +154,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
 		Disease.CORONAVIRUS,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.DENGUE,
 		Disease.UNDEFINED,
 		Disease.OTHER })
@@ -165,7 +165,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
 		Disease.CORONAVIRUS,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.DENGUE,
 		Disease.UNDEFINED,
 		Disease.OTHER })
@@ -198,7 +198,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.PLAGUE,
 		Disease.ANTHRAX,
 		Disease.POLIO,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.DENGUE,
 		Disease.UNDEFINED,
 		Disease.OTHER })
