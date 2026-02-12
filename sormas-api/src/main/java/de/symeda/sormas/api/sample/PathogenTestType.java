@@ -50,7 +50,10 @@ public enum PathogenTestType {
 		Disease.CORONAVIRUS }, hide = true)
 	MICROSCOPY,
 	NEUTRALIZING_ANTIBODIES,
+	@Diseases(value = {
+			Disease.MONKEYPOX }, hide = true)
 	PCR_RT_PCR,
+	RT_PCR,
 	@Diseases(value = {
 		Disease.CORONAVIRUS }, hide = true)
 	GRAM_STAIN,

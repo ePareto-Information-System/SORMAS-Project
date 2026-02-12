@@ -684,6 +684,19 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				finalClassificationField.setVisible(false);
 				virusDetectionGenotypeField.setVisible(false);
 			}
+
+			if (disease == Disease.MONKEYPOX) {
+				List<PathogenTestType> testTypes = Arrays.stream(PathogenTestType.values())
+						.filter(t -> t != PathogenTestType.PCR_RT_PCR)
+						.collect(Collectors.toList());
+				FieldHelper.updateItems(testTypeField, testTypes, FieldVisibilityCheckers.withDisease(disease), PathogenTestType.class);
+			} else {
+				FieldHelper.updateItems(
+						testTypeField,
+						Arrays.asList(PathogenTestType.values()),
+						FieldVisibilityCheckers.withDisease(disease),
+						PathogenTestType.class);
+			}
 		
 		});
 
@@ -971,12 +984,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		}
 
-		if (caseDisease == Disease.MONKEYPOX) {
-			LocalDate localDate = LocalDate.now();
-			Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-			sampleTestDateField.setValue(date);
-			sampleTestDateField.setReadOnly(true);
-		}
 
 	}
 
