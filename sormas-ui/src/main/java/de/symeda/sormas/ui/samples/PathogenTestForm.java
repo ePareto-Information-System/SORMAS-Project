@@ -382,6 +382,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.NEW_ONLY);
 			diseaseField.setEnabled(false);
+			sampleTestDateField.setRequired(true);
 		}
 		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 			for (Disease disease1 : Disease.values()) {
