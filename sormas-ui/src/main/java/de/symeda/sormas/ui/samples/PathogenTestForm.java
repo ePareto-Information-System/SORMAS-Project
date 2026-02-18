@@ -592,48 +592,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 			} 	
-			/*else if(disease == Disease.NEW_INFLUENZA){
-					List<PathogenTestType> iliPathogenTests = PathogenTestType.getILITestTypes();
-					Arrays.stream(PathogenTestType.values())
-							.filter(pathogenTestType -> !iliPathogenTests.contains(pathogenTestType))
-							.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
-
-				testResultField.addValueChangeListener(e -> {
-					PathogenTestResultType testResult = (PathogenTestResultType) e.getProperty().getValue();
-					if(testResult == PathogenTestResultType.POSITIVE){
-						testResultVariant.setVisible(true);
-					}else {
-						testResultVariant.setVisible(false);
-						testResultVariant.clear();
-					}
-				});
-
-				FieldHelper.setVisibleWhen(testResultVariant, Arrays.asList(variantOther), Arrays.asList(PathogenTestResultVariant.OTHER), true);
-				testResultField.removeItem(PathogenTestResultType.PENDING);
-
-				secondTestedDisease.setVisible(true);
-				secondTestedDisease.setValue(Disease.CORONAVIRUS);
-				secondTestedDisease.setEnabled(false);
-
-				setVisible(true, thirdPathogenTested, testResultForThirdPathogen);
-				thirdPathogenTested.setValue("HRSV");
-				thirdPathogenTested.setEnabled(false);
-
-
-				TestResultForSecondDisease.setVisible(true);
-				removeTestResultTypes(TestResultForSecondDisease, PathogenTestResultType.PENDING, PathogenTestResultType.NOT_DONE);
-				removeTestResultTypes(testResultForThirdPathogen, PathogenTestResultType.PENDING, PathogenTestResultType.NOT_DONE);
-
-				testResultForThirdPathogen.addValueChangeListener(e -> {
-					PathogenTestResultType testResultThird = (PathogenTestResultType) e.getProperty().getValue();
-					if(testResultThird == PathogenTestResultType.POSITIVE){
-						positiveSubtypes.setVisible(true);
-					}else {
-						positiveSubtypes.setVisible(false);
-						positiveSubtypes.clear();
-					}
-				});
-			}*/
+			
 			else {
 				testTypeField.addItems(PathogenTestType.values());
 			}
