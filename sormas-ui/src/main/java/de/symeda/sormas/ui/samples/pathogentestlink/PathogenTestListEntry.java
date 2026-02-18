@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.samples.pathogentestlink;
 
+import de.symeda.sormas.api.Disease;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.icons.VaadinIcons;
@@ -113,9 +114,40 @@ public class PathogenTestListEntry extends SideComponentField {
 			CssStyles.style(labelResult, CssStyles.LABEL_WARNING);
 		}
 		addComponentToField(labelResult);
+		addILISupplementaryResults();
+
 	}
 
 	public PathogenTestDto getPathogenTest() {
 		return pathogenTest;
 	}
+
+	private void addILISupplementaryResults() {
+
+		if (pathogenTest.getTestedDisease() != Disease.NEW_INFLUENZA)
+			return;
+
+		if (pathogenTest.getSecondTestedDisease() != null
+				&& pathogenTest.getTestResultForSecondDisease() != null) {
+
+			Label second = new Label(
+					DiseaseHelper.toString(pathogenTest.getSecondTestedDisease(), null) + ": "
+							+ pathogenTest.getTestResultForSecondDisease().toString()
+			);
+			CssStyles.style(second, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
+			addComponentToField(second);
+		}
+
+		if (pathogenTest.getThirdPathogenTested() != null
+				&& pathogenTest.getTestResultForThirdPathogen() != null) {
+
+			Label third = new Label(
+					pathogenTest.getThirdPathogenTested() + ": "
+							+ pathogenTest.getTestResultForThirdPathogen().toString()
+			);
+			CssStyles.style(third, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
+			addComponentToField(third);
+		}
+	}
+
 }
