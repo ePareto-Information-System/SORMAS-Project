@@ -592,7 +592,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 			} 	
-			
+
 			else {
 				testTypeField.addItems(PathogenTestType.values());
 			}
