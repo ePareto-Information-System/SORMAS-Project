@@ -201,6 +201,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox secondTestedDisease;
 	private ComboBox TestResultForSecondDisease;
 	private TextField thirdPathogenTested;
+	private TextField variantOther;
 	private ComboBox testResultForThirdPathogen;
 	private ComboBox positiveSubtypes;
 	OptionGroup tickTestField;
@@ -369,40 +370,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 		List<Disease> diseases = Disease.diseaseMap.get(caseDisease);
 
-		if(caseDisease == Disease.UNSPECIFIED_VHF){
-			diseaseField.removeAllItems();
-			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
-		}
-		else if (caseDisease == Disease.CSM) {
-			diseaseField.removeAllItems();
-			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
-			diseaseField.setEnabled(false);
-		}
-		else if (caseDisease == Disease.NEW_INFLUENZA) {
-			diseaseField.removeAllItems();
-			FieldHelper.updateEnumData(diseaseField, Disease.NEW_ONLY);
-			diseaseField.setEnabled(false);
-			sampleTestDateField.setRequired(true);
-		}
-		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
-			for (Disease disease1 : Disease.values()) {
-				if (disease1.getName().equals(sample.getSuspectedDisease().getName())) {
-					diseaseField.removeAllItems();
-					FieldHelper.updateEnumData(diseaseField, Collections.singleton(disease1));
-					break;
-				}
-			}
-		}
-		else if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.CORONAVIRUS, Disease.GUINEA_WORM).contains(caseDisease)) {
+		if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.CORONAVIRUS, Disease.GUINEA_WORM).contains(caseDisease)) {
 
-		} else if (diseases != null) {
-			diseaseField.removeAllItems();
-			FieldHelper.updateEnumData(diseaseField, diseases);
-            diseaseField.setEnabled(caseDisease != Disease.CSM && caseDisease != Disease.NEW_INFLUENZA && caseDisease != Disease.YELLOW_FEVER);
-		} else {
-			diseaseField.setEnabled(true);
 		}
-
 
 		ComboBox diseaseVariantField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT, ComboBox.class);
 		diseaseVariantField.setNullSelectionAllowed(true);
@@ -419,7 +389,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		
 		testResultVariant = addField(PathogenTestDto.TEST_RESULT_VARIANT, ComboBox.class);
 		testResultVariant.setVisible(false);
-		TextField variantOther = addField(PathogenTestDto.VARIANT_OTHER_SPECIFY, TextField.class);
+		variantOther = addField(PathogenTestDto.VARIANT_OTHER_SPECIFY, TextField.class);
 		secondTestedDisease = addField(PathogenTestDto.SECOND_TESTED_DISEASE, ComboBox.class);
 		TestResultForSecondDisease = addField(PathogenTestDto.TEST_RESULT_FOR_SECOND_DISEASE, ComboBox.class);
 		secondTestedDisease.setVisible(false);
@@ -622,7 +592,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 			} 	
-			else if(disease == Disease.NEW_INFLUENZA){
+			/*else if(disease == Disease.NEW_INFLUENZA){
 					List<PathogenTestType> iliPathogenTests = PathogenTestType.getILITestTypes();
 					Arrays.stream(PathogenTestType.values())
 							.filter(pathogenTestType -> !iliPathogenTests.contains(pathogenTestType))
@@ -663,7 +633,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						positiveSubtypes.clear();
 					}
 				});
-			}
+			}*/
 			else {
 				testTypeField.addItems(PathogenTestType.values());
 			}
@@ -778,8 +748,38 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		dateLabResultsSentClinician.setVisible(false);
 		dateDistrictReceivedLabResults.setVisible(false);
 
+		// Step 1: Determine which diseases to show
+		Collection<Disease> allowedDiseases;
 
-		if (caseDisease == Disease.CSM) {
+		if (caseDisease == Disease.UNSPECIFIED_VHF) {
+			allowedDiseases = Disease.AHF_DISEASES;
+		}
+		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+			allowedDiseases = null;
+			for (Disease disease1 : Disease.values()) {
+				if (disease1.getName().equals(sample.getSuspectedDisease().getName())) {
+					allowedDiseases = Collections.singleton(disease1);
+					break;
+				}
+			}
+		}
+		else if (diseases != null) {
+			allowedDiseases = diseases;
+		}
+		else {
+			allowedDiseases = Arrays.asList(Disease.values());
+		}
+
+		// Step 2: Populate the field
+		if (allowedDiseases != null) {
+			diseaseField.removeAllItems();
+			FieldHelper.updateEnumData(diseaseField, allowedDiseases);
+		}
+
+		// Step 3: Determine enabled state in one place
+		diseaseField.setEnabled(!LOCKED_DISEASES.contains(caseDisease));
+
+		if(caseDisease == Disease.CSM) {
 			districtLaboratory = new Label(I18nProperties.getString(Strings.headingDistrictLaboratory));
 			CssStyles.style(districtLaboratory, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
 			getContent().addComponent(districtLaboratory, DISTRICT_LABORATORY_HEADLINE_LOC);
@@ -987,6 +987,56 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 	}
 
+	private void applyNewInfluenzaUI() {
+
+		sampleTestDateField.setRequired(true);
+
+		List<PathogenTestType> iliPathogenTests = PathogenTestType.getILITestTypes();
+		Arrays.stream(PathogenTestType.values())
+				.filter(pathogenTestType -> !iliPathogenTests.contains(pathogenTestType))
+				.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+
+		testResultField.addValueChangeListener(e -> {
+			PathogenTestResultType testResult = (PathogenTestResultType) e.getProperty().getValue();
+			if(testResult == PathogenTestResultType.POSITIVE){
+				testResultVariant.setVisible(true);
+			} else {
+				testResultVariant.setVisible(false);
+				testResultVariant.clear();
+			}
+		});
+
+		FieldHelper.setVisibleWhen(testResultVariant, Arrays.asList(variantOther), Arrays.asList(PathogenTestResultVariant.OTHER), true);
+		testResultField.removeItem(PathogenTestResultType.PENDING);
+
+		secondTestedDisease.setVisible(true);
+		secondTestedDisease.setEnabled(false);
+
+		thirdPathogenTested.setVisible(true);
+		thirdPathogenTested.setEnabled(false);
+		testResultForThirdPathogen.setVisible(true);
+
+		TestResultForSecondDisease.setVisible(true);
+
+		removeTestResultTypes(TestResultForSecondDisease, PathogenTestResultType.PENDING, PathogenTestResultType.NOT_DONE);
+		removeTestResultTypes(testResultForThirdPathogen, PathogenTestResultType.PENDING, PathogenTestResultType.NOT_DONE);
+
+		testResultForThirdPathogen.addValueChangeListener(e -> {
+			PathogenTestResultType testResultThird = (PathogenTestResultType) e.getProperty().getValue();
+			if(testResultThird == PathogenTestResultType.POSITIVE){
+				positiveSubtypes.setVisible(true);
+			} else {
+				positiveSubtypes.setVisible(false);
+				positiveSubtypes.clear();
+			}
+		});
+	}
+
+	private static final Set<Disease> LOCKED_DISEASES = EnumSet.of(
+			Disease.CSM,
+			Disease.NEW_INFLUENZA,
+			Disease.YELLOW_FEVER
+	);
 
 	// Method to hide all components initially
 	private void hideAllComponents() {
@@ -1075,6 +1125,18 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		pcrTestSpecification.setValue(newFieldValue.getPcrTestSpecification());
 		testTypeTextField.setValue(newFieldValue.getTestTypeText());
 		typingIdField.setValue(newFieldValue.getTypingId());
+
+		if (caseDisease == Disease.NEW_INFLUENZA) {
+			applyNewInfluenzaUI();
+
+			if (secondTestedDisease.getValue() == null) {
+				secondTestedDisease.setValue(Disease.CORONAVIRUS);
+			}
+
+			if (thirdPathogenTested.getValue() == null) {
+				thirdPathogenTested.setValue("HRSV");
+			}
+		}
 	}
 
 	public void setValue(PathogenTestDto newFieldValue, Disease disease) throws ReadOnlyException, Converter.ConversionException {
