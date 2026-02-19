@@ -478,7 +478,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.epiDataYearOfVaccination.setSelectionOnOpen(year - 35);
 		contentBinding.epiDataYearOfVaccinationCovid.setSelectionOnOpen(year - 35);
 
-		if (caseDisease == Disease.AHF){
+		if (caseDisease == Disease.UNSPECIFIED_VHF){
 			handleAHF();
 		}
 

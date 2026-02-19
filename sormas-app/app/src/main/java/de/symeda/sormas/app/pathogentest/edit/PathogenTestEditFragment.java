@@ -313,7 +313,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				handleIDSR();
 				break;
-			case AHF:
+			case UNSPECIFIED_VHF:
 				handleAHF();
 				break;
 			case NEW_INFLUENZA:

@@ -38,7 +38,7 @@ public class DiseaseMenuCaptionHandler {
                  updateMenuCaption(menuItems, personInfoIndex, R.string.caption_demographic_details, context);
                  break;
             case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
-            case AHF:
+            case UNSPECIFIED_VHF:
                 updateMenuCaption(menuItems, personInfoIndex, R.string.caption_case_person, context);
                 break;
         }

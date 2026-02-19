@@ -367,7 +367,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		}
 
 		switch (disease) {
-		case AHF:
+		case UNSPECIFIED_VHF:
 			handleAHF();
 			break;
 		case NEW_INFLUENZA:

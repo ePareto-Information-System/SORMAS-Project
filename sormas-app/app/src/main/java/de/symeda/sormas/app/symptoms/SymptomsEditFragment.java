@@ -284,7 +284,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		}
 		//TODO: CHANGE FROM IF TO SWITCH AND REMOVE REDUNDANCY CODE
 
-		if (Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.MONKEYPOX, Disease.MEASLES, Disease.CHOLERA).contains(disease)){
+		if (Arrays.asList(Disease.YELLOW_FEVER, Disease.UNSPECIFIED_VHF, Disease.MONKEYPOX, Disease.MEASLES, Disease.CHOLERA).contains(disease)){
 
 			HashSet<CaseOutcome> outcomesToRemove = new HashSet<>(Arrays.asList(
 					CaseOutcome.NO_OUTCOME,
@@ -318,7 +318,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		}
 
-		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF){
+		if (disease == Disease.YELLOW_FEVER || disease == Disease.UNSPECIFIED_VHF){
 			contentBinding.symptomsDateOfOnset.setCaption("Date Of Onset For The Fever");
 		}
 

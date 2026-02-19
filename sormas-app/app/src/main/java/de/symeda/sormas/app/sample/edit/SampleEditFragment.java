@@ -500,7 +500,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				handleIDSR();
 				break;
-			case AHF:
+			case UNSPECIFIED_VHF:
 				handleAHF();
 				break;
 			case NEW_INFLUENZA:
