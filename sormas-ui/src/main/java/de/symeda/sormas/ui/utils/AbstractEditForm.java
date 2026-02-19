@@ -237,6 +237,8 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		if (diseaseField != null && diseaseField.getValue() == null && setServerDiseaseAsDefault) {
 			setDefaultDiseaseValue();
 		}
+
+		getFieldGroup().discard();
 	}
 
 	@Override
