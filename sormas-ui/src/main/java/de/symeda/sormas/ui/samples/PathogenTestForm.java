@@ -942,7 +942,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			});
 
 		}
-
+		if (caseDisease == Disease.NEW_INFLUENZA) {
+			applyNewInfluenzaUI();
+		}
 
 	}
 
@@ -956,13 +958,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 
 		testResultField.addValueChangeListener(e -> {
-			PathogenTestResultType testResult = (PathogenTestResultType) e.getProperty().getValue();
-			if(testResult == PathogenTestResultType.POSITIVE){
-				testResultVariant.setVisible(true);
-			} else {
-				testResultVariant.setVisible(false);
-				testResultVariant.clear();
-			}
+			PathogenTestResultType testResult =
+					(PathogenTestResultType) e.getProperty().getValue();
+
+			updateVariantVisibility(testResult);
 		});
 
 		FieldHelper.setVisibleWhen(testResultVariant, Arrays.asList(variantOther), Arrays.asList(PathogenTestResultVariant.OTHER), true);
@@ -970,26 +969,41 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		secondTestedDisease.setVisible(true);
 		secondTestedDisease.setEnabled(false);
-
 		thirdPathogenTested.setVisible(true);
 		thirdPathogenTested.setEnabled(false);
 		testResultForThirdPathogen.setVisible(true);
-
 		TestResultForSecondDisease.setVisible(true);
 
 		removeTestResultTypes(TestResultForSecondDisease, PathogenTestResultType.PENDING, PathogenTestResultType.NOT_DONE);
 		removeTestResultTypes(testResultForThirdPathogen, PathogenTestResultType.PENDING, PathogenTestResultType.NOT_DONE);
 
 		testResultForThirdPathogen.addValueChangeListener(e -> {
-			PathogenTestResultType testResultThird = (PathogenTestResultType) e.getProperty().getValue();
-			if(testResultThird == PathogenTestResultType.POSITIVE){
-				positiveSubtypes.setVisible(true);
-			} else {
-				positiveSubtypes.setVisible(false);
-				positiveSubtypes.clear();
-			}
+			PathogenTestResultType testResultThird =
+					(PathogenTestResultType) e.getProperty().getValue();
+
+			updateThirdPathogenVisibility(testResultThird);
 		});
+
 	}
+
+	private void updateVariantVisibility(PathogenTestResultType testResult) {
+		if (testResult == PathogenTestResultType.POSITIVE) {
+			testResultVariant.setVisible(true);
+		} else {
+			testResultVariant.setVisible(false);
+			testResultVariant.clear();
+		}
+	}
+
+	private void updateThirdPathogenVisibility(PathogenTestResultType result) {
+		if (result == PathogenTestResultType.POSITIVE) {
+			positiveSubtypes.setVisible(true);
+		} else {
+			positiveSubtypes.setVisible(false);
+			positiveSubtypes.clear();
+		}
+	}
+
 
 	private static final Set<Disease> LOCKED_DISEASES = EnumSet.of(
 			Disease.CSM,
@@ -1086,7 +1100,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		typingIdField.setValue(newFieldValue.getTypingId());
 
 		if (caseDisease == Disease.NEW_INFLUENZA) {
-			applyNewInfluenzaUI();
 
 			if (secondTestedDisease.getValue() == null) {
 				secondTestedDisease.setValue(Disease.CORONAVIRUS);
@@ -1096,6 +1109,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				thirdPathogenTested.setValue("HRSV");
 			}
 		}
+		updateVariantVisibility((PathogenTestResultType) testResultField.getValue());
+		updateThirdPathogenVisibility((PathogenTestResultType) testResultForThirdPathogen.getValue());
 	}
 
 	public void setValue(PathogenTestDto newFieldValue, Disease disease) throws ReadOnlyException, Converter.ConversionException {
