@@ -614,7 +614,15 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				virusDetectionGenotypeField.setVisible(false);
 			}
 
-			if (disease == Disease.MONKEYPOX) {
+			if (disease == Disease.NEW_INFLUENZA) {
+
+				FieldHelper.updateItems(
+						testTypeField,
+						PathogenTestType.getILITestTypes(),
+						FieldVisibilityCheckers.withDisease(disease),
+						PathogenTestType.class);
+
+			} else if (disease == Disease.MONKEYPOX) {
 				List<PathogenTestType> testTypes = Arrays.stream(PathogenTestType.values())
 						.filter(t -> t != PathogenTestType.PCR_RT_PCR)
 						.collect(Collectors.toList());
@@ -951,11 +959,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private void applyNewInfluenzaUI() {
 
 		sampleTestDateField.setRequired(true);
-
-		List<PathogenTestType> iliPathogenTests = PathogenTestType.getILITestTypes();
-		Arrays.stream(PathogenTestType.values())
-				.filter(pathogenTestType -> !iliPathogenTests.contains(pathogenTestType))
-				.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 
 		testResultField.addValueChangeListener(e -> {
 			PathogenTestResultType testResult =
