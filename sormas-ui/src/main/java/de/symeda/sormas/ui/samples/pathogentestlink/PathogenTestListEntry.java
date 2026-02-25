@@ -130,23 +130,48 @@ public class PathogenTestListEntry extends SideComponentField {
 		if (pathogenTest.getSecondTestedDisease() != null
 				&& pathogenTest.getTestResultForSecondDisease() != null) {
 
-			Label second = new Label(
+			// Disease name (normal)
+			Label secondName = new Label(
 					DiseaseHelper.toString(pathogenTest.getSecondTestedDisease(), null) + ": "
-							+ pathogenTest.getTestResultForSecondDisease().toString()
 			);
-			CssStyles.style(second, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
-			addComponentToField(second);
+			addComponentToField(secondName);
+
+			Label secondResult = new Label(
+					pathogenTest.getTestResultForSecondDisease().toString()
+			);
+			if (pathogenTest.getTestResultForSecondDisease() == PathogenTestResultType.POSITIVE) {
+				CssStyles.style(secondResult, CssStyles.LABEL_CRITICAL, CssStyles.LABEL_UPPERCASE);
+			} else {
+				CssStyles.style(secondResult, CssStyles.LABEL_WARNING, CssStyles.LABEL_UPPERCASE);
+			}
+			addComponentToField(secondResult);
 		}
 
 		if (pathogenTest.getThirdPathogenTested() != null
 				&& pathogenTest.getTestResultForThirdPathogen() != null) {
 
-			Label third = new Label(
+			Label thirdName = new Label(
 					pathogenTest.getThirdPathogenTested() + ": "
-							+ pathogenTest.getTestResultForThirdPathogen().toString()
 			);
-			CssStyles.style(third, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
-			addComponentToField(third);
+			addComponentToField(thirdName);
+
+			Label thirdResult = new Label(
+					pathogenTest.getTestResultForThirdPathogen().toString()
+			);
+			if (pathogenTest.getTestResultForThirdPathogen() == PathogenTestResultType.POSITIVE) {
+				CssStyles.style(thirdResult, CssStyles.LABEL_CRITICAL, CssStyles.LABEL_UPPERCASE);
+			} else {
+				CssStyles.style(thirdResult, CssStyles.LABEL_WARNING, CssStyles.LABEL_UPPERCASE);
+			}
+			addComponentToField(thirdResult);
+
+			if (pathogenTest.getPositiveSubtypes() != null) {
+				Label subType = new Label(
+						"Subtype: " + pathogenTest.getPositiveSubtypes().toString()
+				);
+				addComponentToField(subType);
+				CssStyles.style(subType, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
+			}
 		}
 	}
 
