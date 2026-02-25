@@ -385,7 +385,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		otherNotesAndObservations = addField(PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS, TextArea.class);
 		otherNotesAndObservations.setRows(4);
-		otherNotesAndObservations.setVisible(false);
+		otherNotesAndObservations.setVisible(true);
 		
 		testResultVariant = addField(PathogenTestDto.TEST_RESULT_VARIANT, ComboBox.class);
 		testResultVariant.setVisible(false);
