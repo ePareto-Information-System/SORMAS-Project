@@ -954,6 +954,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			applyNewInfluenzaUI();
 		}
 
+		if (caseDisease == Disease.MONKEYPOX){
+			sampleTestDateField.setRequired(true);
+		}
+
 	}
 
 	private void applyNewInfluenzaUI() {
@@ -990,6 +994,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	}
 
 	private void updateVariantVisibility(PathogenTestResultType testResult) {
+		if (caseDisease != Disease.NEW_INFLUENZA) return;
 		if (testResult == PathogenTestResultType.POSITIVE) {
 			testResultVariant.setVisible(true);
 		} else {
@@ -999,6 +1004,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	}
 
 	private void updateThirdPathogenVisibility(PathogenTestResultType result) {
+		if (caseDisease != Disease.NEW_INFLUENZA) return;
 		if (result == PathogenTestResultType.POSITIVE) {
 			positiveSubtypes.setVisible(true);
 		} else {
@@ -1111,9 +1117,11 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			if (thirdPathogenTested.getValue() == null) {
 				thirdPathogenTested.setValue("HRSV");
 			}
+
+			updateVariantVisibility((PathogenTestResultType) testResultField.getValue());
+			updateThirdPathogenVisibility((PathogenTestResultType) testResultForThirdPathogen.getValue());
 		}
-		updateVariantVisibility((PathogenTestResultType) testResultField.getValue());
-		updateThirdPathogenVisibility((PathogenTestResultType) testResultForThirdPathogen.getValue());
+
 	}
 
 	public void setValue(PathogenTestDto newFieldValue, Disease disease) throws ReadOnlyException, Converter.ConversionException {
