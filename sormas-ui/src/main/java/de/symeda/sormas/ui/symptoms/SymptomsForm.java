@@ -1273,9 +1273,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		onsetSymptom.addValueChangeListener(f -> {
-			if (f.getProperty().getValue() != null) {
-				setRequired(true, ONSET_DATE);
-			} else if (!DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+			if (f.getProperty().getValue() == null && !DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
 				setRequired(false, ONSET_DATE);
 			}
 		});
