@@ -1279,7 +1279,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		});
 
 		if(disease == Disease.MEASLES) {
-			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
+			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
 			outcome.setRequired(true);
 		} else if(disease == Disease.CHOLERA) {
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
