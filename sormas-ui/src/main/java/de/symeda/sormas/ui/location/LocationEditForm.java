@@ -308,9 +308,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		cityField = addField(LocationDto.CITY, TextField.class);
 		postalCodeField = addField(LocationDto.POSTAL_CODE, TextField.class);
 
-		residentialAddress = addField(LocationDto.RESIDENTIAL_ADDRESS, TextField.class);
-		residentialAddress.setVisible(false);
-
 		areaType = addField(LocationDto.AREA_TYPE, ComboBox.class);
 		areaType.removeItem(AreaType.UNKNOWN);
 		areaType.setVisible(true);
@@ -1087,8 +1084,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.LOCALITY);
 			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK, LocationDto.COMMUNITY, LocationDto.DISTRICT, LocationDto.REGION, LocationDto.CITY);
 			additionalInformationField.setCaption("Address (Location)");
-			residentialAddress.setVisible(true);
+//			residentialAddress.setVisible(true);
 			areaType.setVisible(true);
+			setRequired(true, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+
 	}
 
 	//handleNnt
