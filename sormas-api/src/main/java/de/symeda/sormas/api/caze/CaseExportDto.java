@@ -109,6 +109,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	private String country;
 	private long id;
 	private long personId;
+	private long personAddressId;
 	private long epiDataId;
 	private long hospitalizationId;
 	private long sixtyDayId;
@@ -134,7 +135,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	@SensitiveData
 	private String otherSalutation;
 	private Sex sex;
-	private YesNoUnknown pregnant;
+	private YesNo pregnant;
 	private String approximateAge;
 	private String ageGroup;
 	private BirthDateDto birthdate;
@@ -180,10 +181,10 @@ public class CaseExportDto extends AbstractUuidDto {
 	private String sequelaeDetails;
 	private YesNoUnknown bloodOrganOrTissueDonated;
 	private String associatedWithOutbreak;
-	private YesNoUnknown admittedToHealthFacility;
+	private YesNo admittedToHealthFacility;
 	private Date admissionDate;
 	private Date dischargeDate;
-	private YesNoUnknown leftAgainstAdvice;
+	private YesNo leftAgainstAdvice;
 	@SensitiveData
 	private String initialDetectionPlace;
 	private PresentCondition presentCondition;
@@ -237,7 +238,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	private String travelHistory;
 	private boolean traveled;
 	private boolean burialAttended;
-	private YesNoUnknown contactWithSourceCaseKnown;
+	private YesNo contactWithSourceCaseKnown;
 	private SymptomsDto symptoms;
 	//	private Date onsetDate;
 //	private String symptoms;
@@ -291,7 +292,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	private boolean quarantineOfficialOrderSent;
 	private Date quarantineOfficialOrderSentDate;
 
-	private YesNoUnknown postpartum;
+	private YesNo postpartum;
 	private Trimester trimester;
 
 	private FollowUpStatus followUpStatus;
@@ -351,10 +352,10 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	//@formatter:off
 	@SuppressWarnings("unchecked")
-	public CaseExportDto(long id, long personId, Double personAddressLatitude, Double personAddressLongitude, Float personAddressLatLonAcc, long epiDataId, long symptomsId,
-						 long hospitalizationId, long sixtyDayId, long healthConditionsId, String uuid, String epidNumber,
+	public CaseExportDto(long id, long personId, long personAddressId, Double personAddressLatitude, Double personAddressLongitude, Float personAddressLatLonAcc, long epiDataId, long symptomsId,
+						 long hospitalizationId, long healthConditionsId, String uuid, String epidNumber,
 						 Disease disease, DiseaseVariant diseaseVariant, String diseaseDetails, String diseaseVariantDetails,
-						 String personUuid, String firstName, String lastName, String otherName, Salutation salutation, String otherSalutation, Sex sex, YesNoUnknown pregnant,
+						 String personUuid, String firstName, String lastName, Salutation salutation, String otherSalutation, Sex sex, YesNo pregnant,
 						 Integer approximateAge, ApproximateAgeType approximateAgeType, Integer birthdateDD, Integer birthdateMM,
 						 Integer birthdateYYYY, Date reportDate, String region, String district, String community,
 						 FacilityType facilityType, String healthFacility, String healthFacilityUuid, String healthFacilityDetails, String pointOfEntry,
@@ -375,14 +376,14 @@ public class CaseExportDto extends AbstractUuidDto {
 						 boolean quarantineOrderedVerbally, boolean quarantineOrderedOfficialDocument, Date quarantineOrderedVerballyDate,
 						 Date quarantineOrderedOfficialDocumentDate, boolean quarantineExtended, boolean quarantineReduced,
 						 boolean quarantineOfficialOrderSent, Date quarantineOfficialOrderSentDate,
-						 YesNoUnknown admittedToHealthFacility, Date admissionDate, Date dischargeDate, YesNoUnknown leftAgainstAdvice, PresentCondition presentCondition,
+						 YesNo admittedToHealthFacility, Date admissionDate, Date dischargeDate, YesNo leftAgainstAdvice, PresentCondition presentCondition,
 						 Date deathDate, Date burialDate, BurialConductor burialConductor, String burialPlaceDescription,
 						 String addressRegion, String addressDistrict, String addressCommunity, String city, String street, String houseNumber, String additionalInformation, String postalCode,
 						 String facility, String facilityUuid, String facilityDetails,
 						 String phone, String phoneOwner, String emailAddress, String otherContactDetails, EducationType educationType, String educationDetails,
-						 OccupationType occupationType, String occupationDetails, ArmedForcesRelationType ArmedForcesRelationType, YesNoUnknown contactWithSourceCaseKnown,
+						 OccupationType occupationType, String occupationDetails, ArmedForcesRelationType ArmedForcesRelationType, YesNo contactWithSourceCaseKnown,
 						 //Date onsetDate,
-						 VaccinationStatus vaccinationStatus, YesNoUnknown postpartum, Trimester trimester,
+						 VaccinationStatus vaccinationStatus, YesNo postpartum, Trimester trimester,
 						 long eventCount, Long prescriptionCount, Long treatmentCount, Long clinicalVisitCount,
 						 String externalID, String externalToken, String internalToken,
 						 String birthName, String birthCountryIsoCode, String birthCountryName, String citizenshipIsoCode, String citizenshipCountryName,
@@ -391,23 +392,20 @@ public class CaseExportDto extends AbstractUuidDto {
 						 String responsibleRegion, String responsibleDistrict, String responsibleCommunity,
 						 // clinician
 						 String clinicianName, String clinicianPhone, String clinicianEmail,
-						 // reporting officer
-						 String reportingOfficerTitle, String functionOfReportingOfficer, String reportingOfficerContactPhone, String reportingOfficerEmail,
 						 // users
 						 Long reportingUserId, Long followUpStatusChangeUserId,
 						 Date previousQuarantineTo, String quarantineChangeComment,
-						 String associatedWithOutbreak, boolean isInJurisdiction,
-						 Date dateOfInvestigation, Date dateOfOutcome
+						 String associatedWithOutbreak, boolean isInJurisdiction
 	) {
 		//@formatter:on
 		super(uuid);
 		this.id = id;
 		this.personId = personId;
+		this.personAddressId = personAddressId;
 		this.addressGpsCoordinates = LocationHelper.buildGpsCoordinatesCaption(personAddressLatitude, personAddressLongitude, personAddressLatLonAcc);
 		this.epiDataId = epiDataId;
 		this.symptomsId = symptomsId;
 		this.hospitalizationId = hospitalizationId;
-		this.sixtyDayId = sixtyDayId;
 		this.healthConditionsId = healthConditionsId;
 		this.uuid = uuid;
 		this.epidNumber = epidNumber;
@@ -419,7 +417,6 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.personUuid = personUuid;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.otherName = otherName;
 		this.salutation = salutation;
 		this.otherSalutation = otherSalutation;
 		this.sex = sex;
@@ -530,11 +527,6 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.clinicianPhone = clinicianPhone;
 		this.clinicianEmail = clinicianEmail;
 
-		this.reportingOfficerTitle = reportingOfficerTitle;
-		this.functionOfReportingOfficer = functionOfReportingOfficer;
-		this.reportingOfficerContactPhone = reportingOfficerContactPhone;
-		this.reportingOfficerEmail = reportingOfficerEmail;
-
 		this.reportingUserId = reportingUserId;
 		this.followUpStatusChangeUserId = followUpStatusChangeUserId;
 
@@ -543,9 +535,6 @@ public class CaseExportDto extends AbstractUuidDto {
 
 		this.associatedWithOutbreak = associatedWithOutbreak;
 		this.isInJurisdiction = isInJurisdiction;
-
-		this.dateOfInvestigation = dateOfInvestigation;
-		this.dateOfOutcome = dateOfOutcome;
 	}
 
 	public CaseReferenceDto toReference() {
@@ -577,6 +566,10 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	public long getPersonId() {
 		return personId;
+	}
+
+	public long getPersonAddressId() {
+		return personAddressId;
 	}
 
 	public long getEpiDataId() {
@@ -775,7 +768,7 @@ public class CaseExportDto extends AbstractUuidDto {
 			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.PREGNANT)
 	@ExportGroup(ExportGroupType.SENSITIVE)
-	public YesNoUnknown getPregnant() {
+	public YesNo getPregnant() {
 		return pregnant;
 	}
 
@@ -795,7 +788,7 @@ public class CaseExportDto extends AbstractUuidDto {
 			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.POSTPARTUM)
 	@ExportGroup(ExportGroupType.SENSITIVE)
-	public YesNoUnknown getPostpartum() {
+	public YesNo getPostpartum() {
 		return postpartum;
 	}
 
@@ -1372,7 +1365,7 @@ public class CaseExportDto extends AbstractUuidDto {
 			CaseDataDto.HOSPITALIZATION,
 			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
-	public YesNoUnknown getAdmittedToHealthFacility() {
+	public YesNo getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
 	}
 
@@ -1415,11 +1408,11 @@ public class CaseExportDto extends AbstractUuidDto {
 			CaseDataDto.HOSPITALIZATION,
 			HospitalizationDto.LEFT_AGAINST_ADVICE })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
-	public YesNoUnknown getLeftAgainstAdvice() {
+	public YesNo getLeftAgainstAdvice() {
 		return leftAgainstAdvice;
 	}
 
-	public void setLeftAgainstAdvice(YesNoUnknown leftAgainstAdvice) {
+	public void setLeftAgainstAdvice(YesNo leftAgainstAdvice) {
 		this.leftAgainstAdvice = leftAgainstAdvice;
 	}
 
@@ -1770,11 +1763,11 @@ public class CaseExportDto extends AbstractUuidDto {
 			CaseDataDto.EPI_DATA,
 			EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN })
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
-	public YesNoUnknown getContactWithSourceCaseKnown() {
+	public YesNo getContactWithSourceCaseKnown() {
 		return contactWithSourceCaseKnown;
 	}
 
-	public void setContactWithSourceCaseKnown(YesNoUnknown contactWithSourceCaseKnown) {
+	public void setContactWithSourceCaseKnown(YesNo contactWithSourceCaseKnown) {
 		this.contactWithSourceCaseKnown = contactWithSourceCaseKnown;
 	}
 
@@ -2446,6 +2439,10 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.personId = personId;
 	}
 
+	public void setPersonAddressId(long personAddressId) {
+		this.personAddressId = personAddressId;
+	}
+
 	public void setEpiDataId(long epiDataId) {
 		this.epiDataId = epiDataId;
 	}
@@ -2772,7 +2769,7 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.sex = sex;
 	}
 
-	public void setPregnant(YesNoUnknown pregnant) {
+	public void setPregnant(YesNo pregnant) {
 		this.pregnant = pregnant;
 	}
 
@@ -2780,7 +2777,7 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.trimester = trimester;
 	}
 
-	public void setPostpartum(YesNoUnknown postpartum) {
+	public void setPostpartum(YesNo postpartum) {
 		this.postpartum = postpartum;
 	}
 
@@ -2820,7 +2817,7 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.pointOfEntry = pointOfEntry;
 	}
 
-	public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
+	public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
 		this.admittedToHealthFacility = admittedToHealthFacility;
 	}
 

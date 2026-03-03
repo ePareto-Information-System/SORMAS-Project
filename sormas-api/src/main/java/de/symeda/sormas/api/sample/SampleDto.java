@@ -942,6 +942,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 		}
 		sampleDto.setAssociatedCase(caseRef);
+		sampleDto.setSamplePurpose(SamplePurpose.EXTERNAL);
 		return sampleDto;
 	}
 

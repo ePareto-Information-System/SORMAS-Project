@@ -335,6 +335,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		hasSampleBeenCollected = addField(SampleDto.HAS_SAMPLE_BEEN_COLLECTED, NullableOptionGroup.class);
 		sampleDateTimeField = addField(SampleDto.SAMPLE_DATE_TIME, DateTimeField.class);
 		sampleDateTimeField.setInvalidCommitted(false);
+		sampleDateTimeField.setRequired(true);
 		suspectedDisease = addField(SampleDto.SUSPECTED_DISEASE);
 		dateLabReceivedSpecimen = addField(SampleDto.DATE_LAB_RECEIVED_SPECIMEN);
 		hasSampleBeenCollected.setVisible(false);
@@ -478,6 +479,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                         true);
                 FieldHelper.setRequiredWhen(
                         getFieldGroup(),
+                        shippedField,
+                        Arrays.asList(SampleDto.SHIPMENT_DATE),
+                        Arrays.asList(true));
+                FieldHelper.setRequiredWhen(
+                        getFieldGroup(),
                         SampleDto.SAMPLE_PURPOSE,
                         Arrays.asList(SampleDto.LAB),
                         Arrays.asList(SamplePurpose.EXTERNAL, null));
@@ -506,6 +512,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                         Arrays.asList(true),
                         Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
                         true);
+                FieldHelper.setRequiredWhen(
+                        getFieldGroup(),
+                        shippedField,
+                        Arrays.asList(SampleDto.SHIPMENT_DATE),
+                        Arrays.asList(true));
                 FieldHelper.setRequiredWhen(
                         getFieldGroup(),
                         SampleDto.SAMPLE_PURPOSE,
@@ -567,6 +578,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     Arrays.asList(true),
                     Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
                     true);
+            FieldHelper.setRequiredWhen(
+                    getFieldGroup(),
+                    receivedField,
+                    Arrays.asList(SampleDto.RECEIVED_DATE),
+                    Arrays.asList(true));
             FieldHelper.setVisibleWhen(laboratorySampleContainerReceived, Arrays.asList(laboratorySampleContainerOther), Arrays.asList(SampleContainerUsed.OTHER), true);
         }
 		else if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
@@ -579,9 +595,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
             FieldHelper.setEnabledWhen(
                     getFieldGroup(),
                     receivedField,
-					Arrays.asList(true),
+				Arrays.asList(true),
                     Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
                     true);
+            FieldHelper.setRequiredWhen(
+                    getFieldGroup(),
+                    receivedField,
+                    Arrays.asList(SampleDto.RECEIVED_DATE),
+                    Arrays.asList(true));
         } else {
             FieldHelper.setVisibleWhen(
                     getFieldGroup(),
@@ -595,6 +616,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     Arrays.asList(true),
                     Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
                     true);
+            FieldHelper.setRequiredWhen(
+                    getFieldGroup(),
+                    receivedField,
+                    Arrays.asList(SampleDto.RECEIVED_DATE),
+                    Arrays.asList(true));
         }
 
 		hidePropertiesVisibility();
@@ -1034,7 +1060,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
         addSampleDispatchFields();
 
-        setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+        setRequired(false, SampleDto.SAMPLE_MATERIAL);
 
         hideCommonProperties();
         sampleMaterialComboBox.setVisible(false);
@@ -1045,6 +1071,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         ipSampleSent = addField(SampleDto.IPSAMPLESENT, ComboBox.class);
 
         sampleReceived.addValueChangeListener((ValueChangeListener) valueChangeEvent -> FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition), Arrays.asList(Boolean.TRUE), true));
+        FieldHelper.setRequiredWhen(
+                sampleReceived,
+                Arrays.asList(sampleReceivedDate),
+                Arrays.asList(Boolean.TRUE),
+                false,
+                null);
 
         if(sampleReceived.getValue().equals(Boolean.TRUE)){
             FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition), Arrays.asList(Boolean.TRUE), true);
@@ -1129,7 +1161,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 
     private void handleFBI() {
-        setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+        setRequired(false, SampleDto.SAMPLE_MATERIAL);
     }
 
 	public void handleCholera() {
@@ -1170,7 +1202,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
         suspectedDisease.setRequired(true);
-		sampleDateTimeField.setRequired(true);
 
     }
 
@@ -1194,7 +1225,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     addField(SampleDto.SAMPLE_DISPATCH_MODE, outcome);
 
-		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+		setRequired(false, SampleDto.SAMPLE_MATERIAL);
 		   sampleMaterialComboBox.setVisible(false);
 		   sampleMaterialComboBox.setRequired(false);
 	}
