@@ -304,6 +304,7 @@ public interface Captions {
 	String caseCloneCaseWithNewDisease = "caseCloneCaseWithNewDisease";
 	String caseConfirmCase = "caseConfirmCase";
 	String caseNoCase = "caseNoCase";
+	String caseSuspect = "caseSuspect";
 	String caseContacts = "caseContacts";
 	String caseSamples = "caseSamples";
 	String caseCreateCase = "caseCreateCase";

@@ -152,11 +152,11 @@ public class PathogenTestController {
 		final EventParticipantReferenceDto associatedEventParticipant = sample.getAssociatedEventParticipant();
 
 		pathogenTests.forEach(p -> {
-			if (p.getTestDateTime() == null && p.getTestedDisease() == Disease.MONKEYPOX) {
+			/*if (p.getTestDateTime() == null && p.getTestedDisease() == Disease.MONKEYPOX) {
 				LocalDate localDate = LocalDate.now();
 				Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 				p.setTestDateTime(date);
-			}
+			}*/
 			p.setSample(sampleRef);
 			facade.savePathogenTest(p);
 		});
@@ -208,7 +208,11 @@ public class PathogenTestController {
 				}
 			});
 		} else if (negativeWithSameDisease.isPresent()) {
-			showChangeAssociatedSampleResultDialog(negativeWithSameDisease.get(), null);
+			showChangeAssociatedSampleResultDialog(negativeWithSameDisease.get(), accepted -> {
+				if (accepted) {
+					showNoCaseDialog(caze);
+				}
+			});
 		}
 
 		testsByDisease.keySet().stream().filter(disease -> disease != caze.getDisease()).forEach((disease) -> {
@@ -909,7 +913,7 @@ public class PathogenTestController {
 		Runnable callback = () -> {
 			if (equalDisease
 					&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
-					
+
 					&& !suppressSampleResultUpdatePopup) {
 				showChangeAssociatedSampleResultDialog(dto, null);
 			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) ) {
@@ -1259,12 +1263,12 @@ public class PathogenTestController {
 			return;
 		}
 
-		if (caze.getCaseClassification() == CaseClassification.NO_CASE || caze.getCaseClassification() == CaseClassification.CONFIRMED) {
+		if (caze.getCaseClassification() == CaseClassification.SUSPECT) {
 			return;
 		}
 
 		VaadinUiUtil.showConfirmationPopup(
-			I18nProperties.getCaption(Captions.caseNoCase),
+			I18nProperties.getCaption(Captions.caseSuspect),
 			new Label(I18nProperties.getString(Strings.messageNoCaseAfterPathogenTests)),
 			I18nProperties.getString(Strings.yes),
 			I18nProperties.getString(Strings.no),
@@ -1272,7 +1276,7 @@ public class PathogenTestController {
 			confirmed -> {
 				if (confirmed) {
 					CaseDataDto caseDataByUuid = FacadeProvider.getCaseFacade().getCaseDataByUuid(caze.getUuid());
-					caseDataByUuid.setCaseClassification(CaseClassification.NO_CASE);
+					caseDataByUuid.setCaseClassification(CaseClassification.SUSPECT);
 					FacadeProvider.getCaseFacade().saveCase(caseDataByUuid);
 				}
 			});
