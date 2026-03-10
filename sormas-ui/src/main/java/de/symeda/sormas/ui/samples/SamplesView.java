@@ -63,6 +63,7 @@ public class SamplesView extends AbstractView {
 	private final SampleGridComponent sampleListComponent;
 	private ViewConfiguration viewConfiguration;
 	private Button btnEnterBulkEditMode;
+	private boolean applyingCriteria = false;
 
 	public SamplesView() {
 		super(VIEW_NAME);
@@ -184,5 +185,13 @@ public class SamplesView extends AbstractView {
 
 	public ViewConfiguration getViewConfiguration() {
 		return viewConfiguration;
+	}
+
+	public boolean isApplyingCriteria() {
+		return applyingCriteria;
+	}
+
+	public void setApplyingCriteria(boolean applyingCriteria) {
+		this.applyingCriteria = applyingCriteria;
 	}
 }

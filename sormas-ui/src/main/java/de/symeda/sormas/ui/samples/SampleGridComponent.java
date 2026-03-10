@@ -118,11 +118,13 @@ public class SampleGridComponent extends VerticalLayout {
 
 		filterForm = new SampleGridFilterForm();
 		filterForm.addValueChangeListener(e -> {
-						
+			if (samplesView.isApplyingCriteria()) {
+				return;
+			}
+
 			if (!DataHelper.isNullOrEmpty(criteria.getCaseCodeIdLike()) || !samplesView.navigateTo(criteria, false)) {
-//				filterForm.updateResetButtonState();
 				grid.reload();
-				
+
 				if (!DataHelper.isNullOrEmpty(criteria.getCaseCodeIdLike()) && grid.getItemCount() == 1) {
 					String sampleUuid = grid.getFirstItem().getUuid();
 					ControllerProvider.getSampleController().navigateToData(sampleUuid);
@@ -194,6 +196,9 @@ public class SampleGridComponent extends VerticalLayout {
 				}
 
 				relevanceStatusFilter.addValueChangeListener(e -> {
+					if (samplesView.isApplyingCriteria()) {
+						return;
+					}
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
 					samplesView.navigateTo(criteria);
 				});
@@ -247,6 +252,9 @@ public class SampleGridComponent extends VerticalLayout {
 				sampleTypeFilter.setItemCaption(SampleAssociationType.PERSON, I18nProperties.getEnumCaption(SampleAssociationType.PERSON));
 			}
 			sampleTypeFilter.addValueChangeListener(e -> {
+				if (samplesView.isApplyingCriteria()) {
+					return;
+				}
 				criteria.sampleAssociationType(((SampleAssociationType) e.getProperty().getValue()));
 				samplesView.navigateTo(criteria);
 			});
@@ -261,11 +269,15 @@ public class SampleGridComponent extends VerticalLayout {
 
 	public void reload(ViewChangeEvent event) {
 		String params = event.getParameters().trim();
+
 		if (params.startsWith("?")) {
 			params = params.substring(1);
 			criteria.fromUrlParams(params);
 			criteria.setCaseCodeIdLike(null);
+		} else if (DataHelper.isNullOrEmpty(params)) {
+			criteria.setCaseCodeIdLike(null);
 		}
+
 		updateFilterComponents();
 		grid.reload();
 	}
