@@ -100,7 +100,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
     @SensitiveData
     private String otherSalutation;
     private Sex sex;
-    private YesNoUnknown pregnant;
+    private YesNo pregnant;
     private String approximateAge;
     private String ageGroup;
     private BirthDateDto birthdate;
@@ -144,10 +144,10 @@ public class CaseExportDetailedSampleDto implements Serializable {
     private String sequelaeDetails;
     private YesNoUnknown bloodOrganOrTissueDonated;
     private String associatedWithOutbreak;
-    private YesNoUnknown admittedToHealthFacility;
+    private YesNo admittedToHealthFacility;
     private Date admissionDate;
     private Date dischargeDate;
-    private YesNoUnknown leftAgainstAdvice;
+    private YesNo leftAgainstAdvice;
     @SensitiveData
     private String initialDetectionPlace;
     private PresentCondition presentCondition;
@@ -201,7 +201,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
     private String travelHistory;
     private boolean traveled;
     private boolean burialAttended;
-    private YesNoUnknown contactWithSourceCaseKnown;
+    private YesNo contactWithSourceCaseKnown;
     private SymptomsDto symptoms;
     //	private Date onsetDate;
 //	private String symptoms;
@@ -250,7 +250,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
     private boolean quarantineOfficialOrderSent;
     private Date quarantineOfficialOrderSentDate;
 
-    private YesNoUnknown postpartum;
+    private YesNo postpartum;
     private Trimester trimester;
 
     private FollowUpStatus followUpStatus;
@@ -2920,7 +2920,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
     public CaseExportDetailedSampleDto(long id, long personId, Double personAddressLatitude, Double personAddressLongitude, Float personAddressLatLonAcc, long epiDataId, long symptomsId,
                                        long hospitalizationId, long healthConditionsId, String uuid, String epidNumber,
                                        Disease disease, DiseaseVariant diseaseVariant, String diseaseDetails, String diseaseVariantDetails,
-                                       String personUuid, String firstName, String lastName, Salutation salutation, String otherSalutation, Sex sex, YesNoUnknown pregnant,
+                                       String personUuid, String firstName, String lastName, Salutation salutation, String otherSalutation, Sex sex, YesNo pregnant,
                                        Integer approximateAge, ApproximateAgeType approximateAgeType, Integer birthdateDD, Integer birthdateMM,
                                        Integer birthdateYYYY, Date reportDate, String region, String district, String community,
                                        FacilityType facilityType, String healthFacility, String healthFacilityUuid, String healthFacilityDetails, String pointOfEntry,
@@ -2941,14 +2941,14 @@ public class CaseExportDetailedSampleDto implements Serializable {
                                        boolean quarantineOrderedVerbally, boolean quarantineOrderedOfficialDocument, Date quarantineOrderedVerballyDate,
                                        Date quarantineOrderedOfficialDocumentDate, boolean quarantineExtended, boolean quarantineReduced,
                                        boolean quarantineOfficialOrderSent, Date quarantineOfficialOrderSentDate,
-                                       YesNoUnknown admittedToHealthFacility, Date admissionDate, Date dischargeDate, YesNoUnknown leftAgainstAdvice, PresentCondition presentCondition,
+                                       YesNo admittedToHealthFacility, Date admissionDate, Date dischargeDate, YesNo leftAgainstAdvice, PresentCondition presentCondition,
                                        Date deathDate, Date burialDate, BurialConductor burialConductor, String burialPlaceDescription,
                                        String addressRegion, String addressDistrict, String addressCommunity, String city, String street, String houseNumber, String additionalInformation, String postalCode,
                                        String facility, String facilityUuid, String facilityDetails,
                                        String phone, String phoneOwner, String emailAddress, String otherContactDetails, EducationType educationType, String educationDetails,
-                                       OccupationType occupationType, String occupationDetails, ArmedForcesRelationType ArmedForcesRelationType, YesNoUnknown contactWithSourceCaseKnown,
+                                       OccupationType occupationType, String occupationDetails, ArmedForcesRelationType ArmedForcesRelationType, YesNo contactWithSourceCaseKnown,
                                        //Date onsetDate,
-                                       VaccinationStatus vaccinationStatus, YesNoUnknown postpartum, Trimester trimester,
+                                       VaccinationStatus vaccinationStatus, YesNo postpartum, Trimester trimester,
                                        long eventCount, Long prescriptionCount, Long treatmentCount, Long clinicalVisitCount,
                                        String externalID, String externalToken, String internalToken,
                                        String birthName, String birthCountryIsoCode, String birthCountryName, String citizenshipIsoCode, String citizenshipCountryName,
@@ -3326,7 +3326,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
             CaseExportType.CASE_MANAGEMENT })
     @ExportProperty(CaseDataDto.PREGNANT)
     @ExportGroup(ExportGroupType.SENSITIVE)
-    public YesNoUnknown getPregnant() {
+    public YesNo getPregnant() {
         return pregnant;
     }
 
@@ -3346,7 +3346,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
             CaseExportType.CASE_MANAGEMENT })
     @ExportProperty(CaseDataDto.POSTPARTUM)
     @ExportGroup(ExportGroupType.SENSITIVE)
-    public YesNoUnknown getPostpartum() {
+    public YesNo getPostpartum() {
         return postpartum;
     }
 
@@ -3923,7 +3923,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
             CaseDataDto.HOSPITALIZATION,
             HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY })
     @ExportGroup(ExportGroupType.HOSPITALIZATION)
-    public YesNoUnknown getAdmittedToHealthFacility() {
+    public YesNo getAdmittedToHealthFacility() {
         return admittedToHealthFacility;
     }
 
@@ -3966,11 +3966,11 @@ public class CaseExportDetailedSampleDto implements Serializable {
             CaseDataDto.HOSPITALIZATION,
             HospitalizationDto.LEFT_AGAINST_ADVICE })
     @ExportGroup(ExportGroupType.HOSPITALIZATION)
-    public YesNoUnknown getLeftAgainstAdvice() {
+    public YesNo getLeftAgainstAdvice() {
         return leftAgainstAdvice;
     }
 
-    public void setLeftAgainstAdvice(YesNoUnknown leftAgainstAdvice) {
+    public void setLeftAgainstAdvice(YesNo leftAgainstAdvice) {
         this.leftAgainstAdvice = leftAgainstAdvice;
     }
 
@@ -4321,11 +4321,11 @@ public class CaseExportDetailedSampleDto implements Serializable {
             CaseDataDto.EPI_DATA,
             EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN })
     @ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
-    public YesNoUnknown getContactWithSourceCaseKnown() {
+    public YesNo getContactWithSourceCaseKnown() {
         return contactWithSourceCaseKnown;
     }
 
-    public void setContactWithSourceCaseKnown(YesNoUnknown contactWithSourceCaseKnown) {
+    public void setContactWithSourceCaseKnown(YesNo contactWithSourceCaseKnown) {
         this.contactWithSourceCaseKnown = contactWithSourceCaseKnown;
     }
 
@@ -28602,7 +28602,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         this.sex = sex;
     }
 
-    public void setPregnant(YesNoUnknown pregnant) {
+    public void setPregnant(YesNo pregnant) {
         this.pregnant = pregnant;
     }
 
@@ -28610,7 +28610,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         this.trimester = trimester;
     }
 
-    public void setPostpartum(YesNoUnknown postpartum) {
+    public void setPostpartum(YesNo postpartum) {
         this.postpartum = postpartum;
     }
 
@@ -28650,7 +28650,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         this.pointOfEntry = pointOfEntry;
     }
 
-    public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
+    public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
         this.admittedToHealthFacility = admittedToHealthFacility;
     }
 

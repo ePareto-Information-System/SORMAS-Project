@@ -190,14 +190,14 @@ public interface PersonSideComponentsElement {
 						&& currentUser.hasUserRight(UserRight.IMMUNIZATION_VIEW)) {
 					if (!FacadeProvider.getFeatureConfigurationFacade()
 							.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
-						layout.addComponent(
-								new SideComponentLayout(
-										new ImmunizationListComponent(
-												() -> new ImmunizationListCriteria.Builder(person).build(),
-												entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
-												showUnsavedChangesPopup,
-												isEditAllowed)),
-								IMMUNIZATION_LOC);
+//						layout.addComponent(
+//								new SideComponentLayout(
+//										new ImmunizationListComponent(
+//												() -> new ImmunizationListCriteria.Builder(person).build(),
+//												entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
+//												showUnsavedChangesPopup,
+//												isEditAllowed)),
+//								IMMUNIZATION_LOC);
 					} else {
 						layout.addComponent(
 								new SideComponentLayout(

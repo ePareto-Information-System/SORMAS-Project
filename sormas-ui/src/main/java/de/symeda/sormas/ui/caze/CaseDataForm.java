@@ -1170,6 +1170,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         FieldHelper
                 .setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
 
+        vaccinationStatus.addValueChangeListener(e -> {
+            boolean isVaccinated = VaccinationStatus.VACCINATED.equals(e.getProperty().getValue());
+            vaccinatedByCardOrHistory.setRequired(isVaccinated);
+            cardDateField.setRequired(isVaccinated);
+        });
+
         FieldHelper.setEnabledWhen(
                 vaccinatedByCardOrHistory,
                 Arrays.asList(CardOrHistory.CARD),

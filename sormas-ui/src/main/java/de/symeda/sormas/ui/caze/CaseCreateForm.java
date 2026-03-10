@@ -185,6 +185,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 
         reportDate = addField(CaseDataDto.REPORT_DATE, DateField.class);
         ComboBox diseaseField = addDiseaseField(CaseDataDto.DISEASE, false, true);
+        diseaseField.removeItem(Disease.DENGUE);
         diseaseVariantField = addField(CaseDataDto.DISEASE_VARIANT, ComboBox.class);
         diseaseVariantDetailsField = addField(CaseDataDto.DISEASE_VARIANT_DETAILS, TextField.class);
         diseaseVariantDetailsField.setVisible(false);
