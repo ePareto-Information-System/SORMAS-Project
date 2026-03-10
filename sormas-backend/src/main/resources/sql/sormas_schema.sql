@@ -14974,6 +14974,10 @@ UPDATE previoushospitalization SET hospitalizationreason = NULL WHERE TRIM(hospi
 UPDATE previoushospitalization SET intensivecareunit = NULL WHERE TRIM(intensivecareunit) = 'UNKNOWN';
 UPDATE previoushospitalization SET admittedtohealthfacility = NULL WHERE TRIM(admittedtohealthfacility) = 'UNKNOWN';
 INSERT INTO schema_version (version_number, comment) VALUES (658, 'Set unknown values to null in previoushospitalization table');
+
+UPDATE diseaseconfiguration SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE cases SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+INSERT INTO schema_version (version_number, comment) VALUES (659, 'Set disease name to UNSPECIFIED_VHF');
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '0';
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '1';
 -- UPDATE symptoms SET papularRash = 'NO' WHERE papularRash = '0';
