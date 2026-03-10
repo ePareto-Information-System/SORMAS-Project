@@ -89,7 +89,7 @@ public enum Disease
 	POST_IMMUNIZATION_ADVERSE_EVENTS_MILD(true, false, false, false, false,0, true, false, false),
 	POST_IMMUNIZATION_ADVERSE_EVENTS_SEVERE(true, false, false, false, false,0, true, false, false),
 	FHA(true, false, false, false, false,0, true, false, false),
-	AHF(true, false, false, true, false,0, false, false, false),
+//	AHF(true, false, false, true, false,0, false, false, false),
 	OTHER(true, false, true, true, false,21, false, false, false),
 	ZIKA(true, false, true, false, false,6, true, false, false),
 	MARBURG(true, false, true, false, false,0, true, false, false),
