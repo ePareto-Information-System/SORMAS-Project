@@ -14975,9 +14975,112 @@ UPDATE previoushospitalization SET intensivecareunit = NULL WHERE TRIM(intensive
 UPDATE previoushospitalization SET admittedtohealthfacility = NULL WHERE TRIM(admittedtohealthfacility) = 'UNKNOWN';
 INSERT INTO schema_version (version_number, comment) VALUES (658, 'Set unknown values to null in previoushospitalization table');
 
-UPDATE diseaseconfiguration SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+-- ============================================================
+-- Migration: Consolidate AHF -> UNSPECIFIED_VHF
+-- Goal:
+--   - Keep UNSPECIFIED_VHF as the database disease key
+--   - Move any AHF data to UNSPECIFIED_VHF
+--   - Keep only one diseaseconfiguration row for UNSPECIFIED_VHF
+--   - Safely handle environments where AHF does not exist
+-- ============================================================
+
+BEGIN;
+
+DO $$
+DECLARE canonical_unspecified_vhf_id BIGINT;
+BEGIN
+
+    -- If AHF exists but UNSPECIFIED_VHF does not, create UNSPECIFIED_VHF from one AHF row
+    IF EXISTS (
+        SELECT 1
+        FROM diseaseconfiguration
+        WHERE disease = 'AHF'
+    )
+    AND NOT EXISTS (
+        SELECT 1
+        FROM diseaseconfiguration
+        WHERE disease = 'UNSPECIFIED_VHF'
+    ) THEN
+        INSERT INTO diseaseconfiguration (
+            id,
+            uuid,
+            changedate,
+            creationdate,
+            disease,
+            active,
+            primarydisease,
+            followupenabled,
+            followupduration,
+            casesurveillanceenabled,
+            outbreakonset,
+            casefollowupduration,
+            eventparticipantfollowupduration,
+            extendedclassification,
+            extendedclassificationmulti,
+            change_user_id,
+            agegroups,
+            archived,
+            centrally_managed,
+            aggregatereportingenabled
+        )
+SELECT
+    nextval('entity_seq'),
+    upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)),
+    now(),
+    now(),
+    'UNSPECIFIED_VHF',
+    active,
+    primarydisease,
+    followupenabled,
+    followupduration,
+    casesurveillanceenabled,
+    outbreakonset,
+    casefollowupduration,
+    eventparticipantfollowupduration,
+    extendedclassification,
+    extendedclassificationmulti,
+    change_user_id,
+    agegroups,
+    archived,
+    centrally_managed,
+    aggregatereportingenabled
+FROM diseaseconfiguration
+WHERE disease = 'AHF'
+ORDER BY creationdate NULLS FIRST, id
+    LIMIT 1;
+END IF;
+
+    -- Pick the canonical UNSPECIFIED_VHF row to keep
+SELECT id INTO canonical_unspecified_vhf_id FROM diseaseconfiguration WHERE disease = 'UNSPECIFIED_VHF' ORDER BY creationdate NULLS FIRST, id LIMIT 1;
+
+-- Move facility references from AHF and duplicate UNSPECIFIED_VHF rows
+IF canonical_unspecified_vhf_id IS NOT NULL THEN
+UPDATE facility_diseaseconfiguration
+SET diseaseconfiguration_id = canonical_unspecified_vhf_id
+WHERE diseaseconfiguration_id IN (
+    SELECT id
+    FROM diseaseconfiguration
+    WHERE disease IN ('AHF', 'UNSPECIFIED_VHF')
+      AND id <> canonical_unspecified_vhf_id
+);
+END IF;
+
 UPDATE cases SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
-INSERT INTO schema_version (version_number, comment) VALUES (659, 'Set disease name to UNSPECIFIED_VHF');
+
+-- Remove all AHF diseaseconfiguration rows
+DELETE FROM diseaseconfiguration WHERE disease = 'AHF';
+
+-- Remove duplicate UNSPECIFIED_VHF diseaseconfiguration rows, keeping only the canonical row
+IF canonical_unspecified_vhf_id IS NOT NULL THEN
+DELETE FROM diseaseconfiguration
+WHERE disease = 'UNSPECIFIED_VHF'
+  AND id <> canonical_unspecified_vhf_id;
+END IF;
+END $$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (659, 'Consolidate AHF into UNSPECIFIED_VHF');
+
+COMMIT;
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '0';
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '1';
 -- UPDATE symptoms SET papularRash = 'NO' WHERE papularRash = '0';
