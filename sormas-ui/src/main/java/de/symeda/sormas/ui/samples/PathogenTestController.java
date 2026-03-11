@@ -95,12 +95,26 @@ public class PathogenTestController {
 
 	public void create(SampleReferenceDto sampleRef, int caseSampleCount) {
 		SampleDto sampleDto = FacadeProvider.getSampleFacade().getSampleByUuid(sampleRef.getUuid());
-		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sampleDto.getAssociatedCase().getUuid());
-		caseDisease = caseDataDto.getDisease();
+		if (sampleDto.getAssociatedCase() != null) {
+			CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sampleDto.getAssociatedCase().getUuid());
+			caseDisease = caseDataDto.getDisease();
+
+		} else if (sampleDto.getAssociatedContact() != null) {
+			ContactDto contactDto = FacadeProvider.getContactFacade().getContactByUuid(sampleDto.getAssociatedContact().getUuid());
+			caseDisease = contactDto.getDisease();
+
+		} else if (sampleDto.getAssociatedEventParticipant() != null) {
+			EventParticipantDto eventParticipantDto = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(sampleDto.getAssociatedEventParticipant().getUuid());
+			EventDto eventDto = FacadeProvider.getEventFacade().getEventByUuid(eventParticipantDto.getEvent().getUuid(), false);
+			caseDisease = eventDto.getDisease();
+		}
 
 		if (caseDisease == Disease.MONKEYPOX) {
 			if (!Boolean.TRUE.equals(sampleDto.isReceived()) || sampleDto.getReceivedDate() == null) {
-				Notification.show("Please Confirm sample is \"Received\" and indicate \"Date Sample Received at Lab\".", Notification.Type.ERROR_MESSAGE);
+				Notification.show(
+						"Please Confirm sample is \"Received\" and indicate \"Date Sample Received at Lab\".",
+						Notification.Type.ERROR_MESSAGE
+				);
 				return;
 			}
 		}

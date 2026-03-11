@@ -31,6 +31,7 @@ import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.i18n.Descriptions;
@@ -299,8 +300,20 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			return;
 		}
 
-		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
-		caseDisease = caseDataDto.getDisease();
+		if (sample.getAssociatedCase() != null) {
+			CaseDataDto caseDataDto = FacadeProvider.getCaseFacade()
+					.getCaseDataByUuid(sample.getAssociatedCase().getUuid());
+			caseDisease = caseDataDto.getDisease();
+
+		} else if (sample.getAssociatedContact() != null) {
+			ContactDto contactDto = FacadeProvider.getContactFacade().getContactByUuid(sample.getAssociatedContact().getUuid());
+			caseDisease = contactDto.getDisease();
+
+		} else if (sample.getAssociatedEventParticipant() != null) {
+			EventParticipantDto eventParticipantDto = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(sample.getAssociatedEventParticipant().getUuid());
+			EventDto eventDto = FacadeProvider.getEventFacade().getEventByUuid(eventParticipantDto.getEvent().getUuid(), false);
+			caseDisease = eventDto.getDisease();
+		}
 
 		pathogenTestHeadingLabel = new Label();
 		pathogenTestHeadingLabel.addStyleName(H3);
