@@ -444,11 +444,11 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 	}
 
 	public boolean getInJurisdiction() {
-		return contactJurisdictionFlagsDto.getInJurisdiction();
+		return contactJurisdictionFlagsDto != null && Boolean.TRUE.equals(contactJurisdictionFlagsDto.getInJurisdiction());
 	}
 
 	public boolean getCaseInJurisdiction() {
-		return contactJurisdictionFlagsDto.getCaseInJurisdiction();
+		return contactJurisdictionFlagsDto != null && Boolean.TRUE.equals(contactJurisdictionFlagsDto.getCaseInJurisdiction());
 	}
 
 	public Integer getMissedVisitsCount() {

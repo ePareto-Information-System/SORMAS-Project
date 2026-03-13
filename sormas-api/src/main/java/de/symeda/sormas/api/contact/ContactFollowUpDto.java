@@ -24,15 +24,14 @@ public class ContactFollowUpDto extends FollowUpDto {
 	private Boolean isInJurisdiction;
 	private SymptomJournalStatus symptomJournalStatus;
 
-	//@formatter:off
-	public ContactFollowUpDto(String uuid, Date changeDate, String personFirstName, String personLastName,
+	///@formatter:off
+	public ContactFollowUpDto(String uuid, Date changeDate, String personFirstName, String personLastName, String personOtherName,
 							  String contactOfficerUuid, String contactOfficerFirstName, String contactOfficerLastName,
 							  Date lastContactDate, Date reportDate, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, Disease disease,
 							  boolean isInJurisdiction) {
-	//formatter:on
-
+//@formatter:on
 		super(uuid, personFirstName, personLastName, reportDate, followUpUntil, disease);
-		this.contactOfficer = new UserReferenceDto(contactOfficerUuid, contactOfficerFirstName, contactOfficerLastName);
+		this.contactOfficer = contactOfficerUuid != null ? new UserReferenceDto(contactOfficerUuid, contactOfficerFirstName, contactOfficerLastName) : null;
 		this.lastContactDate = lastContactDate;
 		this.symptomJournalStatus = symptomJournalStatus;
 		this.isInJurisdiction = isInJurisdiction;
