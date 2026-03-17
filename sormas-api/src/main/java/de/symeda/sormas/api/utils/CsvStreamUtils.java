@@ -166,7 +166,7 @@ public class CsvStreamUtils {
 				writer.flush();
 				startIndex += stepSize;
 			}
-			while (!(exportRows.size() < stepSize));
+			while (!exportRows.isEmpty());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
