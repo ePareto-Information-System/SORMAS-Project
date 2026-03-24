@@ -719,12 +719,14 @@ public class SampleController {
 				sample.setPathogenTestResult(newResult);
 				FacadeProvider.getSampleFacade().saveSample(sample);
 				popupWindow.close();
-				if (pathogenTest.getTestedDisease() == Disease.MEASLES && isTheFirst) {
+				if (pathogenTest.getTestedDisease() == Disease.MEASLES && isTheFirst
+						&& PathogenTestResultType.NEGATIVE.equals(newResult)) {
 					showTakeNewTestForRubellaWindow(editComponent, sample, callback);
-				}
-				SormasUI.refreshView();
-				if (callback != null) {
-					callback.accept(true);
+				} else {
+					SormasUI.refreshView();
+					if (callback != null) {
+						callback.accept(true);
+					}
 				}
 			}
 		});
@@ -735,7 +737,8 @@ public class SampleController {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				popupWindow.close();
-				if (pathogenTest.getTestedDisease() == Disease.MEASLES && isTheFirst) {
+				if (pathogenTest.getTestedDisease() == Disease.MEASLES && isTheFirst
+						&& PathogenTestResultType.NEGATIVE.equals(newResult)) {
 					SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(sampleUuid);
 					showTakeNewTestForRubellaWindow(editComponent, sample, callback);
 				}
