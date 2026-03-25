@@ -141,8 +141,9 @@ public class SampleDataView extends AbstractSampleView {
 		if( UserProvider.getCurrent() != null){
 			if (!UserProvider.getCurrent().isLabAttendant()) {
 				SampleReferenceDto sampleReferenceDto = getSampleRef();
+				boolean canCreateTestResult = Boolean.TRUE.equals(sampleDto.isReceived()) && sampleDto.getReceivedDate() != null;
 				PathogenTestListComponent pathogenTestListComponent =
-						new PathogenTestListComponent(sampleReferenceDto, this::showUnsavedChangesPopup, isEditAllowed());
+						new PathogenTestListComponent(sampleReferenceDto, this::showUnsavedChangesPopup, isEditAllowed(), canCreateTestResult);
 				layout.addSidePanelComponent(new SideComponentLayout(pathogenTestListComponent), PATHOGEN_TESTS_LOC);
 
 				if (UserProvider.getCurrent() != null

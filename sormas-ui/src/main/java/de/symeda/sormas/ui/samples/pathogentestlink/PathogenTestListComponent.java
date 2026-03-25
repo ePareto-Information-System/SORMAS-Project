@@ -20,7 +20,10 @@ package de.symeda.sormas.ui.samples.pathogentestlink;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -29,6 +32,7 @@ import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponent;
 
 @SuppressWarnings("serial")
@@ -58,15 +62,21 @@ public class PathogenTestListComponent extends SideComponent {
 //		pathogenTestList.reload();
 //	}
 
-	public PathogenTestListComponent(SampleReferenceDto sampleRef, Consumer<Runnable> actionCallback, boolean isEditAllowed) {
+	public PathogenTestListComponent(
+			SampleReferenceDto sampleRef,
+			Consumer<Runnable> actionCallback,
+			boolean isEditAllowed,
+			boolean canCreateTestResult) {
 
 		super(I18nProperties.getString(Strings.headingTests), actionCallback);
 
-		if (isEditAllowed) {
-			addCreateButton(
-				I18nProperties.getCaption(Captions.pathogenTestNewTest),
-				() -> ControllerProvider.getPathogenTestController().create(sampleRef, 0),
-				UserRight.PATHOGEN_TEST_CREATE);
+		if (isEditAllowed && UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE)) {
+			Button createButton = ButtonHelper.createButton(I18nProperties.getCaption(Captions.pathogenTestNewTest));
+			createButton.setEnabled(canCreateTestResult);
+			createButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+			createButton.setIcon(VaadinIcons.PLUS_CIRCLE);
+			createButton.addClickListener(e -> actionCallback.accept(() -> ControllerProvider.getPathogenTestController().create(sampleRef, 0)));
+			addCreateButton(createButton);
 		}
 
 		PathogenTestList pathogenTestList = new PathogenTestList(sampleRef, actionCallback, isEditAllowed);
