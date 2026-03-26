@@ -14990,95 +14990,73 @@ DO $$
 DECLARE canonical_unspecified_vhf_id BIGINT;
 BEGIN
 
-    -- If AHF exists but UNSPECIFIED_VHF does not, create UNSPECIFIED_VHF from one AHF row
-    IF EXISTS (
-        SELECT 1
-        FROM diseaseconfiguration
-        WHERE disease = 'AHF'
-    )
-    AND NOT EXISTS (
-        SELECT 1
-        FROM diseaseconfiguration
-        WHERE disease = 'UNSPECIFIED_VHF'
-    ) THEN
+    IF EXISTS (SELECT 1 FROM diseaseconfiguration WHERE disease = 'AHF')
+    AND NOT EXISTS (SELECT 1 FROM diseaseconfiguration WHERE disease = 'UNSPECIFIED_VHF') THEN
         INSERT INTO diseaseconfiguration (
-            id,
-            uuid,
-            changedate,
-            creationdate,
-            disease,
-            active,
-            primarydisease,
-            followupenabled,
-            followupduration,
-            casesurveillanceenabled,
-            outbreakonset,
-            casefollowupduration,
-            eventparticipantfollowupduration,
-            extendedclassification,
-            extendedclassificationmulti,
-            change_user_id,
-            agegroups,
-            archived,
-            centrally_managed,
-            aggregatereportingenabled
+            id, uuid, changedate, creationdate, disease,
+            active, primarydisease, followupenabled, followupduration,
+            casesurveillanceenabled, outbreakonset, casefollowupduration,
+            eventparticipantfollowupduration, extendedclassification,
+            extendedclassificationmulti, change_user_id, agegroups,
+            archived, centrally_managed, aggregatereportingenabled
         )
 SELECT
     nextval('entity_seq'),
-    upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)),
-    now(),
-    now(),
-    'UNSPECIFIED_VHF',
-    active,
-    primarydisease,
-    followupenabled,
-    followupduration,
-    casesurveillanceenabled,
-    outbreakonset,
-    casefollowupduration,
-    eventparticipantfollowupduration,
-    extendedclassification,
-    extendedclassificationmulti,
-    change_user_id,
-    agegroups,
-    archived,
-    centrally_managed,
-    aggregatereportingenabled
+    upper(substring(CAST(CAST(md5(CAST(random() AS text) ||
+                                  CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)),
+    now(), now(), 'UNSPECIFIED_VHF',
+    active, primarydisease, followupenabled, followupduration,
+    casesurveillanceenabled, outbreakonset, casefollowupduration,
+    eventparticipantfollowupduration, extendedclassification,
+    extendedclassificationmulti, change_user_id, agegroups,
+    archived, centrally_managed, aggregatereportingenabled
 FROM diseaseconfiguration
 WHERE disease = 'AHF'
 ORDER BY creationdate NULLS FIRST, id
     LIMIT 1;
 END IF;
 
-    -- Pick the canonical UNSPECIFIED_VHF row to keep
-SELECT id INTO canonical_unspecified_vhf_id FROM diseaseconfiguration WHERE disease = 'UNSPECIFIED_VHF' ORDER BY creationdate NULLS FIRST, id LIMIT 1;
+SELECT id INTO canonical_unspecified_vhf_id
+FROM diseaseconfiguration
+WHERE disease = 'UNSPECIFIED_VHF'
+ORDER BY creationdate NULLS FIRST, id
+    LIMIT 1;
 
--- Move facility references from AHF and duplicate UNSPECIFIED_VHF rows
 IF canonical_unspecified_vhf_id IS NOT NULL THEN
 UPDATE facility_diseaseconfiguration
 SET diseaseconfiguration_id = canonical_unspecified_vhf_id
 WHERE diseaseconfiguration_id IN (
-    SELECT id
-    FROM diseaseconfiguration
+    SELECT id FROM diseaseconfiguration
     WHERE disease IN ('AHF', 'UNSPECIFIED_VHF')
       AND id <> canonical_unspecified_vhf_id
 );
 END IF;
 
-UPDATE cases SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE cases           SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE contact         SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE events          SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE samples         SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE immunization    SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE travelentry     SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE aggregatereport SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE outbreak        SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE pathogentest    SET testeddisease = 'UNSPECIFIED_VHF' WHERE testeddisease = 'AHF';
+UPDATE forms           SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE forms_history   SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
+UPDATE cases_history   SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
 
--- Remove all AHF diseaseconfiguration rows
 DELETE FROM diseaseconfiguration WHERE disease = 'AHF';
 
--- Remove duplicate UNSPECIFIED_VHF diseaseconfiguration rows, keeping only the canonical row
 IF canonical_unspecified_vhf_id IS NOT NULL THEN
 DELETE FROM diseaseconfiguration
 WHERE disease = 'UNSPECIFIED_VHF'
   AND id <> canonical_unspecified_vhf_id;
 END IF;
+
 END $$ LANGUAGE plpgsql;
 
-INSERT INTO schema_version (version_number, comment) VALUES (659, 'Consolidate AHF into UNSPECIFIED_VHF');
+INSERT INTO schema_version (version_number, comment)
+VALUES (659, 'Consolidate AHF into UNSPECIFIED_VHF');
 
 COMMIT;
 -- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '0';
