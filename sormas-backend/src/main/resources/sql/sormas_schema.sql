@@ -14987,81 +14987,42 @@ INSERT INTO schema_version (version_number, comment) VALUES (658, 'Set unknown v
 BEGIN;
 
 DO $$
-DECLARE canonical_unspecified_vhf_id BIGINT;
+DECLARE
+ahf_id BIGINT;
+    unspecified_vhf_id BIGINT;
 BEGIN
-
-    IF EXISTS (SELECT 1 FROM diseaseconfiguration WHERE disease = 'AHF')
-    AND NOT EXISTS (SELECT 1 FROM diseaseconfiguration WHERE disease = 'UNSPECIFIED_VHF') THEN
-        INSERT INTO diseaseconfiguration (
-            id, uuid, changedate, creationdate, disease,
-            active, primarydisease, followupenabled, followupduration,
-            casesurveillanceenabled, outbreakonset, casefollowupduration,
-            eventparticipantfollowupduration, extendedclassification,
-            extendedclassificationmulti, change_user_id, agegroups,
-            archived, centrally_managed, aggregatereportingenabled
-        )
-SELECT
-    nextval('entity_seq'),
-    upper(substring(CAST(CAST(md5(CAST(random() AS text) ||
-                                  CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)),
-    now(), now(), 'UNSPECIFIED_VHF',
-    active, primarydisease, followupenabled, followupduration,
-    casesurveillanceenabled, outbreakonset, casefollowupduration,
-    eventparticipantfollowupduration, extendedclassification,
-    extendedclassificationmulti, change_user_id, agegroups,
-    archived, centrally_managed, aggregatereportingenabled
+SELECT id INTO ahf_id
 FROM diseaseconfiguration
 WHERE disease = 'AHF'
 ORDER BY creationdate NULLS FIRST, id
     LIMIT 1;
-END IF;
 
-SELECT id INTO canonical_unspecified_vhf_id
+SELECT id INTO unspecified_vhf_id
 FROM diseaseconfiguration
 WHERE disease = 'UNSPECIFIED_VHF'
 ORDER BY creationdate NULLS FIRST, id
     LIMIT 1;
 
-IF canonical_unspecified_vhf_id IS NOT NULL THEN
+IF ahf_id IS NOT NULL AND unspecified_vhf_id IS NOT NULL THEN
 UPDATE facility_diseaseconfiguration
-SET diseaseconfiguration_id = canonical_unspecified_vhf_id
-WHERE diseaseconfiguration_id IN (
-    SELECT id FROM diseaseconfiguration
-    WHERE disease IN ('AHF', 'UNSPECIFIED_VHF')
-      AND id <> canonical_unspecified_vhf_id
-);
-END IF;
+SET diseaseconfiguration_id = unspecified_vhf_id
+WHERE diseaseconfiguration_id = ahf_id;
 
-UPDATE cases           SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE contact         SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE events          SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE samples         SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE immunization    SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE travelentry     SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE aggregatereport SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE outbreak        SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE pathogentest    SET testeddisease = 'UNSPECIFIED_VHF' WHERE testeddisease = 'AHF';
-UPDATE forms           SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE forms_history   SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-UPDATE cases_history   SET disease       = 'UNSPECIFIED_VHF' WHERE disease       = 'AHF';
-
-DELETE FROM diseaseconfiguration WHERE disease = 'AHF';
-
-IF canonical_unspecified_vhf_id IS NOT NULL THEN
 DELETE FROM diseaseconfiguration
-WHERE disease = 'UNSPECIFIED_VHF'
-  AND id <> canonical_unspecified_vhf_id;
+WHERE id = ahf_id;
+
+ELSIF ahf_id IS NOT NULL AND unspecified_vhf_id IS NULL THEN
+UPDATE diseaseconfiguration
+SET disease = 'UNSPECIFIED_VHF'
+WHERE id = ahf_id;
 END IF;
 
 END $$ LANGUAGE plpgsql;
 
-INSERT INTO schema_version (version_number, comment)
-VALUES (659, 'Consolidate AHF into UNSPECIFIED_VHF');
+UPDATE forms         SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE forms_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE cases_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+
+INSERT INTO schema_version (version_number, comment) VALUES (659, 'Consolidate AHF into UNSPECIFIED_VHF in confirmed remaining tables');
 
 COMMIT;
--- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '0';
--- UPDATE symptoms SET macularRash = 'NO' WHERE macularRash = '1';
--- UPDATE symptoms SET papularRash = 'NO' WHERE papularRash = '0';
--- UPDATE symptoms SET papularRash = 'NO' WHERE papularRash = '1';
--- UPDATE symptoms SET generalizedRash = 'NO' WHERE generalizedRash = '1';
--- UPDATE symptoms SET generalizedRash = 'YES' WHERE generalizedRash = '0';
