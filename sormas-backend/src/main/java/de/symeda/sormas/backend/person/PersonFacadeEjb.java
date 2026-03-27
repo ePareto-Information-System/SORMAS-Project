@@ -751,6 +751,25 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		/*if (source.getApproximateAge() == null || source.getApproximateAgeType() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.approximateAgeAndType));
 		}*/
+
+		boolean hasBirthYear = source.getBirthdateYYYY() != null;
+		boolean hasBirthMonth = source.getBirthdateMM() != null;
+		boolean hasBirthDay = source.getBirthdateDD() != null;
+
+		boolean hasAnyBirthDatePart = hasBirthYear || hasBirthMonth || hasBirthDay;
+		boolean hasCompleteBirthDate = hasBirthYear && hasBirthMonth && hasBirthDay;
+
+		boolean hasApproximateAge = source.getApproximateAge() != null;
+		boolean hasApproximateAgeType = source.getApproximateAgeType() != null;
+
+		if (hasAnyBirthDatePart && !hasCompleteBirthDate) {
+			throw new ValidationRuntimeException("Date of Birth is incomplete.");
+		}
+
+		if (!hasCompleteBirthDate && !(hasApproximateAge && hasApproximateAgeType)) {
+			throw new ValidationRuntimeException(
+					I18nProperties.getValidationError(Validations.approximateAgeAndType));
+		}
 		if (source.getPersonContactDetails()
 			.stream()
 			.filter(cd -> cd.isPrimaryContact() && cd.getPersonContactDetailType() == PersonContactDetailType.PHONE)
