@@ -1030,7 +1030,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         ComboBox afpFinalClassification = addField(SampleDto.AFP_FINAL_CLASSIFICATION, ComboBox.class);
 		FieldHelper.updateEnumData(afpFinalClassification, FinalClassification.AFP_CLASSIFICATION);
 
-        setRequired(false, SampleDto.SAMPLE_PURPOSE);
+        setRequired(false, SampleDto.SAMPLE_PURPOSE, SampleDto.SAMPLE_DATE_TIME);
         hideCommonProperties();
 
     }

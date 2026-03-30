@@ -108,18 +108,15 @@ public class PathogenTestListEntry extends SideComponentField {
 
 		Label labelResult = new Label(DataHelper.toStringNullable(pathogenTest.getTestResult()));
 		CssStyles.style(labelResult, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
-		Label labelVariantResult = new Label("Variant: " + DataHelper.toStringNullable(pathogenTest.getTestResultVariant()));
+
 
 		if (pathogenTest.getTestResult() == PathogenTestResultType.POSITIVE) {
 			CssStyles.style(labelResult, CssStyles.LABEL_CRITICAL);
-			if (pathogenTest.getTestResultVariant() != null){
-				CssStyles.style(labelVariantResult, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
-			}
+
 		} else {
 			CssStyles.style(labelResult, CssStyles.LABEL_WARNING);
 		}
 		addComponentToField(labelResult);
-		addComponentToField(labelVariantResult);
 		addILISupplementaryResults();
 
 	}
@@ -178,6 +175,12 @@ public class PathogenTestListEntry extends SideComponentField {
 				addComponentToField(subType);
 				CssStyles.style(subType, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
 			}
+		}
+		if (pathogenTest.getTestResultVariant() != null){
+			Label labelVariantResult = new Label("Variant: " + DataHelper.toStringNullable(pathogenTest.getTestResultVariant()));
+
+			CssStyles.style(labelVariantResult, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
+			addComponentToField(labelVariantResult);
 		}
 	}
 
