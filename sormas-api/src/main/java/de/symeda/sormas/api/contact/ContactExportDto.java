@@ -53,6 +53,7 @@ import de.symeda.sormas.api.utils.HideForCountriesExcept;
 import de.symeda.sormas.api.utils.Order;
 import de.symeda.sormas.api.utils.PersonalData;
 import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.PostalCodePseudonymizer;
@@ -97,6 +98,8 @@ public class ContactExportDto extends AbstractUuidDto {
 	private String firstName;
 	@PersonalData
 	private String lastName;
+	@PersonalData
+	private String otherName;
 	@SensitiveData
 	private Salutation salutation;
 	@SensitiveData
@@ -178,7 +181,7 @@ public class ContactExportDto extends AbstractUuidDto {
 	private boolean traveled;
 	private String travelHistory;
 	private boolean burialAttended;
-	private YesNoUnknown contactWithSourceCaseKnown;
+	private YesNo contactWithSourceCaseKnown;
 
 	private boolean quarantineOrderedVerbally;
 	private boolean quarantineOrderedOfficialDocument;
@@ -238,8 +241,8 @@ public class ContactExportDto extends AbstractUuidDto {
 
 	//@formatter:off
 	public ContactExportDto(long id, long personId, String uuid, String sourceCaseUuid, CaseClassification caseClassification, Disease disease, String diseaseDetails,
-							ContactClassification contactClassification, Boolean multiDayContact, Date firstContactDate, Date lastContactDate, Date creationDate,
-							String personUuid, String firstName, String lastName,
+							ContactClassification contactClassification, boolean multiDayContact, Date firstContactDate, Date lastContactDate, Date creationDate,
+							String personUuid, String firstName, String lastName, String otherName,
 							Salutation salutation, String otherSalutation, Sex sex,
 							Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY,
 							Integer approximateAge, ApproximateAgeType approximateAgeType, Date reportDate, ContactIdentificationSource contactIdentificationSource,
@@ -254,7 +257,7 @@ public class ContactExportDto extends AbstractUuidDto {
 							String facility, String facilityUuid, String facilityDetails,
 							String phone, String phoneOwner, String emailAddress, String otherContactDetails, OccupationType occupationType, String occupationDetails, ArmedForcesRelationType armedForcesRelationType,
 							String region, String district, String community,
-							long epiDataId, YesNoUnknown contactWithSourceCaseKnown, YesNoUnknown returningTraveler,
+							long epiDataId, YesNo contactWithSourceCaseKnown, YesNoUnknown returningTraveler,
 							VaccinationStatus vaccinationStatus, String externalID, String externalToken, String internalToken,
 							String birthName, String birthCountryIsoCode, String birthCountryName, String citizenshipIsoCode, String citizenshipCountryName,
 							String reportingDistrict,
@@ -280,6 +283,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		this.personUuid = personUuid;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.otherName = otherName;
 		this.salutation = salutation;
 		this.otherSalutation = otherSalutation;
 		this.sex = sex;
@@ -483,6 +487,15 @@ public class ContactExportDto extends AbstractUuidDto {
 	@Order(14)
 	@ExportProperty({
 		CaseDataDto.PERSON,
+		PersonDto.OTHER_NAME })
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public String getOtherName() {
+		return otherName;
+	}
+
+	@Order(15)
+	@ExportProperty({
+		CaseDataDto.PERSON,
 		PersonDto.SALUTATION })
 	@ExportGroup(ExportGroupType.PERSON)
 	@HideForCountriesExcept
@@ -490,7 +503,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		return salutation;
 	}
 
-	@Order(15)
+	@Order(16)
 	@ExportProperty({
 		CaseDataDto.PERSON,
 		PersonDto.OTHER_SALUTATION })
@@ -500,7 +513,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		return otherSalutation;
 	}
 
-	@Order(16)
+	@Order(17)
 	@ExportProperty({
 		CaseDataDto.PERSON,
 		PersonDto.SEX })
@@ -509,14 +522,14 @@ public class ContactExportDto extends AbstractUuidDto {
 		return sex;
 	}
 
-	@Order(17)
+	@Order(18)
 	@ExportProperty(BIRTH_DATE)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public BirthDateDto getBirthdate() {
 		return birthdate;
 	}
 
-	@Order(18)
+	@Order(19)
 	@ExportProperty({
 		CaseDataDto.PERSON,
 		PersonDto.APPROXIMATE_AGE })
@@ -525,147 +538,147 @@ public class ContactExportDto extends AbstractUuidDto {
 		return approximateAge;
 	}
 
-	@Order(19)
+	@Order(20)
 	@ExportProperty(ContactDto.REPORT_DATE_TIME)
 	@ExportGroup(ExportGroupType.CORE)
 	public Date getReportDate() {
 		return reportDate;
 	}
 
-	@Order(20)
+	@Order(21)
 	@ExportProperty(ContactDto.REGION)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getRegion() {
 		return region;
 	}
 
-	@Order(21)
+	@Order(22)
 	@ExportProperty(ContactDto.DISTRICT)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getDistrict() {
 		return district;
 	}
 
-	@Order(22)
+	@Order(23)
 	@ExportProperty(ContactDto.COMMUNITY)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getCommunity() {
 		return community;
 	}
 
-	@Order(23)
+	@Order(24)
 	@ExportProperty(ContactDto.CONTACT_IDENTIFICATION_SOURCE)
 	@ExportGroup(ExportGroupType.CORE)
 	public ContactIdentificationSource getContactIdentificationSource() {
 		return contactIdentificationSource;
 	}
 
-	@Order(24)
+	@Order(25)
 	@ExportProperty(ContactDto.CONTACT_IDENTIFICATION_SOURCE_DETAILS)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getContactIdentificationSourceDetails() {
 		return contactIdentificationSourceDetails;
 	}
 
-	@Order(25)
+	@Order(26)
 	@ExportProperty(ContactDto.TRACING_APP)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public TracingApp getTracingApp() {
 		return tracingApp;
 	}
 
-	@Order(26)
+	@Order(27)
 	@ExportProperty(ContactDto.TRACING_APP_DETAILS)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getTracingAppDetails() {
 		return tracingAppDetails;
 	}
 
-	@Order(27)
+	@Order(28)
 	@ExportProperty(ContactDto.CONTACT_PROXIMITY)
 	@ExportGroup(ExportGroupType.CORE)
 	public ContactProximity getContactProximity() {
 		return contactProximity;
 	}
 
-	@Order(28)
+	@Order(29)
 	@ExportProperty(ContactDto.CONTACT_STATUS)
 	@ExportGroup(ExportGroupType.CORE)
 	public ContactStatus getContactStatus() {
 		return contactStatus;
 	}
 
-	@Order(29)
+	@Order(30)
 	@ExportProperty(COMPLETENESS)
 	@ExportGroup(ExportGroupType.CORE)
 	public Float getCompleteness() {
 		return completeness;
 	}
 
-	@Order(30)
+	@Order(31)
 	@ExportProperty(ContactDto.FOLLOW_UP_STATUS)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public FollowUpStatus getFollowUpStatus() {
 		return followUpStatus;
 	}
 
-	@Order(31)
+	@Order(32)
 	@ExportProperty(ContactDto.FOLLOW_UP_UNTIL)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public Date getFollowUpUntil() {
 		return followUpUntil;
 	}
 
-	@Order(32)
+	@Order(33)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public QuarantineType getQuarantine() {
 		return quarantine;
 	}
 
-	@Order(33)
+	@Order(34)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getQuarantineTypeDetails() {
 		return quarantineTypeDetails;
 	}
 
-	@Order(34)
+	@Order(35)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getQuarantineFrom() {
 		return quarantineFrom;
 	}
 
-	@Order(35)
+	@Order(36)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getQuarantineTo() {
 		return quarantineTo;
 	}
 
-	@Order(36)
+	@Order(37)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getPreviousQuarantineTo() {
 		return previousQuarantineTo;
 	}
 
-	@Order(36)
+	@Order(37)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getQuarantineChangeComment() {
 		return quarantineChangeComment;
 	}
 
-	@Order(37)
+	@Order(38)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getQuarantineHelpNeeded() {
 		return quarantineHelpNeeded;
 	}
 
-	@Order(38)
+	@Order(39)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
@@ -675,7 +688,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		return quarantineOrderedVerbally;
 	}
 
-	@Order(39)
+	@Order(40)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
@@ -685,7 +698,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		return quarantineOrderedOfficialDocument;
 	}
 
-	@Order(40)
+	@Order(41)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
@@ -695,7 +708,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		return quarantineOrderedVerballyDate;
 	}
 
-	@Order(41)
+	@Order(42)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
@@ -705,7 +718,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		return quarantineOrderedOfficialDocumentDate;
 	}
 
-	@Order(42)
+	@Order(43)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
@@ -715,7 +728,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		return quarantineOfficialOrderSent;
 	}
 
-	@Order(43)
+	@Order(44)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
@@ -725,42 +738,42 @@ public class ContactExportDto extends AbstractUuidDto {
 		return quarantineOfficialOrderSentDate;
 	}
 
-	@Order(44)
+	@Order(45)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public boolean isQuarantineExtended() {
 		return quarantineExtended;
 	}
 
-	@Order(45)
+	@Order(46)
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public boolean isQuarantineReduced() {
 		return quarantineReduced;
 	}
 
-	@Order(46)
+	@Order(47)
 	@ExportProperty(value = ContactDto.PROHIBITION_TO_WORK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public YesNoUnknown getProhibitionToWork() {
 		return prohibitionToWork;
 	}
 
-	@Order(47)
+	@Order(48)
 	@ExportProperty(value = ContactDto.PROHIBITION_TO_WORK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getProhibitionToWorkFrom() {
 		return prohibitionToWorkFrom;
 	}
 
-	@Order(48)
+	@Order(49)
 	@ExportProperty(value = ContactDto.PROHIBITION_TO_WORK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getProhibitionToWorkUntil() {
 		return prohibitionToWorkUntil;
 	}
 
-	@Order(49)
+	@Order(50)
 	@ExportProperty({
 		CaseDataDto.PERSON,
 		PersonDto.PRESENT_CONDITION })
@@ -769,7 +782,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		return presentCondition;
 	}
 
-	@Order(50)
+	@Order(51)
 	@ExportProperty({
 		CaseDataDto.PERSON,
 		PersonDto.DEATH_DATE })
@@ -1007,7 +1020,7 @@ public class ContactExportDto extends AbstractUuidDto {
 		CaseDataDto.EPI_DATA,
 		EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN })
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
-	public YesNoUnknown getContactWithSourceCaseKnown() {
+	public YesNo getContactWithSourceCaseKnown() {
 		return contactWithSourceCaseKnown;
 	}
 

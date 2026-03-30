@@ -793,14 +793,16 @@ public class ContactFacadeEjb
 				ContactJoins visitContactJoins = new ContactJoins(visitsCqRoot);
 
 				visitsCq.where(
-					CriteriaBuilderHelper
-						.and(cb, contact.get(AbstractDomainObject.ID).in(exportContactIds), cb.isNotEmpty(visitsCqRoot.get(Contact.VISITS))));
+					CriteriaBuilderHelper.and(
+						cb,
+						visitsCqRoot.get(AbstractDomainObject.ID).in(exportContactIds),
+						cb.isNotEmpty(visitsCqRoot.get(Contact.VISITS))));
 				visitsCq.multiselect(
 					visitsCqRoot.get(AbstractDomainObject.ID),
 					visitContactJoins.getVisits().get(Visit.VISIT_DATE_TIME),
 					visitContactJoins.getVisits().get(Visit.VISIT_STATUS),
 					visitContactJoins.getVisitSymptoms(),
-					jurisdictionSelector(new ContactQueryContext(cb, cq, visitsCqRoot)));
+					jurisdictionSelector(new ContactQueryContext(cb, visitsCq, visitsCqRoot)));
 
 				visitSummaries = em.createQuery(visitsCq).getResultList();
 			}
@@ -1044,14 +1046,16 @@ public class ContactFacadeEjb
 			ContactJoins joins = new ContactJoins(visitsCqRoot);
 
 			visitsCq.where(
-				CriteriaBuilderHelper
-					.and(cb, contactRoot.get(AbstractDomainObject.UUID).in(visitSummaryUuids), cb.isNotEmpty(visitsCqRoot.get(Contact.VISITS))));
+				CriteriaBuilderHelper.and(
+					cb,
+					visitsCqRoot.get(AbstractDomainObject.UUID).in(visitSummaryUuids),
+					cb.isNotEmpty(visitsCqRoot.get(Contact.VISITS))));
 			visitsCq.multiselect(
 				visitsCqRoot.get(AbstractDomainObject.ID),
 				joins.getVisits().get(Visit.VISIT_DATE_TIME),
 				joins.getVisits().get(Visit.VISIT_STATUS),
 				joins.getVisitSymptoms(),
-				jurisdictionSelector(new ContactQueryContext(cb, cq, visitsCqRoot)));
+				jurisdictionSelector(new ContactQueryContext(cb, visitsCq, visitsCqRoot)));
 			visitsCq.orderBy(cb.asc(joins.getVisits().get(Visit.VISIT_DATE_TIME)));
 
 			List<VisitSummaryExportDetails> visitSummaryDetails = em.createQuery(visitsCq).getResultList();
@@ -1224,7 +1228,7 @@ public class ContactFacadeEjb
 			visitsCq.where(
 				CriteriaBuilderHelper.and(
 					cb,
-					contact.get(AbstractDomainObject.UUID).in(contactUuids),
+					visitsCqRoot.get(AbstractDomainObject.UUID).in(contactUuids),
 					cb.isNotEmpty(visitsCqRoot.get(Contact.VISITS)),
 					cb.between(visitsJoin.get(Visit.VISIT_DATE_TIME), start, end)));
 			visitsCq.multiselect(
