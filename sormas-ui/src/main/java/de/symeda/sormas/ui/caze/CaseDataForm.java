@@ -1811,6 +1811,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 lastVaccinationDate.setVisible(false);
 
                 setVaccinatedByCardOrHistoryVisibility();
+                //if vaccinated by card or history is card, then number of doses is required
+                FieldHelper.setRequiredWhen(getFieldGroup(), vaccinationStatus, Arrays.asList(CaseDataDto.NUMBER_OF_DOSES), Arrays.asList(VaccinationStatus.VACCINATED));
+
                 getFieldGroup().getField(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE).setRequired(true);
 
                 healthConditionsField.setVisible(false);

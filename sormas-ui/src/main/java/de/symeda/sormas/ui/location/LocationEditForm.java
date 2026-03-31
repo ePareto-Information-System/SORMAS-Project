@@ -1086,7 +1086,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			additionalInformationField.setCaption("Address (Location)");
 //			residentialAddress.setVisible(true);
 			areaType.setVisible(true);
-			setRequired(true, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+			setRequired(true, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.CITY);
 
 	}
 

@@ -1281,6 +1281,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		if(disease == Disease.MEASLES) {
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
 			outcome.setRequired(true);
+			setRequired(true, LESIONS_ONSET_DATE);
 		} else if(disease == Disease.CHOLERA) {
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
 		}else if (disease == Disease.GUINEA_WORM) {
