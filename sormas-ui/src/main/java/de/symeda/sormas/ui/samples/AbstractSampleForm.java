@@ -289,7 +289,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	protected static final String AHF_LAYOUT =
 			fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
-					fluidRowLocs(SampleDto.HAS_SAMPLE_BEEN_COLLECTED) +
+					fluidRowLocs(SampleDto.HAS_SAMPLE_BEEN_COLLECTED, SampleDto.SAMPLE_DATE_TIME) +
 					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 					fluidRowLocs(SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_MATERIAL_TEXT) +
 					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID) +
@@ -1037,7 +1037,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     private void handleAHF() {
         hideCommonProperties();
-		sampleDateTimeField.setVisible(false);
 
         List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
         FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
