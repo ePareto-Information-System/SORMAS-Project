@@ -270,7 +270,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
 			locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
 			fluidRowLocs(SampleDto.RECEIVED_DATE,SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION) +
-			fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
+			fluidRowLocs(SampleDto.NO_TEST_POSSIBLE_REASON, SampleDto.PATHOGEN_TEST_RESULT);
 			
 	protected static final String CHOLERA_HTML_LAYOUT =
 					fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
@@ -623,7 +623,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     Arrays.asList(true));
         }
 
-		hidePropertiesVisibility();
+		if(disease != Disease.MEASLES) {
+			hidePropertiesVisibility();
+		}
 
 			switch (disease) {
 				case CSM:
