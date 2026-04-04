@@ -77,16 +77,19 @@
             <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                 android:id="@+id/location_region"
                 style="@style/ControlSingleColumnStyle"
+                app:required="true"
                 app:value="@={data.region}" />
 
             <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                 android:id="@+id/location_district"
                 style="@style/ControlSingleColumnStyle"
+                app:required="true"
                 app:value="@={data.district}" />
 
             <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                 android:id="@+id/location_community"
                 style="@style/ControlSingleColumnStyle"
+                app:required="true"
                 app:value="@={data.community}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -139,6 +142,7 @@
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/location_city"
                 style="@style/ControlSingleColumnStyle"
+                app:required="true"
                 app:value="@={data.city}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
