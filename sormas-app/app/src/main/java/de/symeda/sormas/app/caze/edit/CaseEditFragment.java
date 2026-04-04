@@ -25,8 +25,6 @@ import android.webkit.WebView;
 
 import androidx.fragment.app.FragmentActivity;
 
-import java.util.Date;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -799,15 +797,25 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				break;
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				contentBinding.caseDataVaccinationDate.setCaption("Date of last vaccination");
-				contentBinding.caseDataVaccinationDate.setVisibility(VISIBLE);
 				contentBinding.caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
-				contentBinding.caseDataNumberOfDoses.setVisibility(VISIBLE);
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(f -> applyIdsrVaccinationVisibility(contentBinding));
+				contentBinding.caseDataVaccinationType.addValueChangedListener(f -> applyIdsrVaccinationVisibility(contentBinding));
+				applyIdsrVaccinationVisibility(contentBinding);
 				break;
 			default:
 		}
 
 		if (record.getDisease() != null) {
 			super.hideFieldsForDisease(record.getDisease(), contentBinding.mainContent, FormType.CASE_EDIT);
+		}
+
+		// Re-apply vaccination visibility after disease field hiding (may affect control visibility).
+		if (record.getDisease() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+			applyIdsrVaccinationVisibility(contentBinding);
+		} else if (record.getDisease() == Disease.YELLOW_FEVER) {
+			applyYellowFeverVaccinationVisibility();
+		} else if (record.getDisease() == Disease.CSM) {
+			applyCSMVaccinationVisibility();
 		}
 	}
 
@@ -1030,6 +1038,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			case MEASLES:
 				handleMeasles();
 				getContentBinding().caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
+				getContentBinding().caseDataVaccinationType.addValueChangedListener(field -> handleMeasles());
 				break;
 			case NEONATAL_TETANUS:
 				handleNNT();
@@ -1037,14 +1046,19 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			case CORONAVIRUS:
 				handleCoronavirus();
 				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCoronavirus());
+				contentBinding.caseDataVaccinationType.addValueChangedListener(field -> handleCoronavirus());
 				break;
 			case CHOLERA:
 				handleCholera();
 				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCholera());
+				contentBinding.caseDataVaccinationType.addValueChangedListener(field -> handleCholera());
+				break;
 			default:
 				break;
 		}
 
+		registerGenericVaccinationRequiredListenersIfNeeded(contentBinding);
+		updateVaccinationRequiredFlags(contentBinding);
 	}
 
 	private void updateDiseaseVariantsField(FragmentCaseEditLayoutBinding contentBinding) {
@@ -1139,34 +1153,113 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		getContentBinding().caseDataVaccinationStatus.setEnumItems(vaccinationList);
 	}
 
+	private static final Set<Disease> DISEASES_WITH_EXPLICIT_VACCINATION_HANDLERS = EnumSet.of(
+			Disease.MEASLES,
+			Disease.CORONAVIRUS,
+			Disease.CHOLERA,
+			Disease.YELLOW_FEVER,
+			Disease.CSM,
+			Disease.NEONATAL_TETANUS,
+			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS);
+
+	private void clearVaccinationRequiredFlags(FragmentCaseEditLayoutBinding b) {
+		b.caseDataVaccinationType.setRequired(false);
+		b.caseDataNumberOfDoses.setRequired(false);
+		b.caseDataVaccinationDate.setRequired(false);
+		b.caseDataSecondVaccinationDate.setRequired(false);
+		b.caseDataLastVaccinationDate.setRequired(false);
+		b.caseDataVaccineType.setRequired(false);
+	}
+
+	private void updateVaccinationRequiredFlags(FragmentCaseEditLayoutBinding b) {
+		clearVaccinationRequiredFlags(b);
+		if (b.caseDataVaccinationStatus.getVisibility() != VISIBLE) {
+			return;
+		}
+		if (b.caseDataVaccinationStatus.getValue() != VaccinationStatus.VACCINATED) {
+			return;
+		}
+		if (b.caseDataVaccinationType.getVisibility() == VISIBLE) {
+			b.caseDataVaccinationType.setRequired(true);
+		}
+		if (b.caseDataNumberOfDoses.getVisibility() == VISIBLE) {
+			b.caseDataNumberOfDoses.setRequired(true);
+		}
+		if (b.caseDataVaccineType.getVisibility() == VISIBLE) {
+			b.caseDataVaccineType.setRequired(true);
+		}
+		if (b.caseDataVaccinationDate.getVisibility() == VISIBLE && b.caseDataVaccinationDate.isEnabled()) {
+			b.caseDataVaccinationDate.setRequired(true);
+		}
+		if (b.caseDataSecondVaccinationDate.getVisibility() == VISIBLE && b.caseDataSecondVaccinationDate.isEnabled()) {
+			b.caseDataSecondVaccinationDate.setRequired(true);
+		}
+		if (b.caseDataLastVaccinationDate.getVisibility() == VISIBLE && b.caseDataLastVaccinationDate.isEnabled()) {
+			b.caseDataLastVaccinationDate.setRequired(true);
+		}
+	}
+
+	private void registerGenericVaccinationRequiredListenersIfNeeded(FragmentCaseEditLayoutBinding contentBinding) {
+		if (DISEASES_WITH_EXPLICIT_VACCINATION_HANDLERS.contains(record.getDisease())) {
+			return;
+		}
+		if (contentBinding.caseDataVaccinationStatus.getVisibility() != VISIBLE) {
+			return;
+		}
+		contentBinding.caseDataVaccinationStatus.addValueChangedListener(f -> updateVaccinationRequiredFlags(contentBinding));
+		contentBinding.caseDataVaccinationType.addValueChangedListener(f -> updateVaccinationRequiredFlags(contentBinding));
+	}
+
+	private void applyIdsrVaccinationVisibility(FragmentCaseEditLayoutBinding b) {
+		if (b.caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			b.caseDataVaccinationType.setVisibility(VISIBLE);
+			b.caseDataVaccinationDate.setVisibility(VISIBLE);
+			b.caseDataNumberOfDoses.setVisibility(VISIBLE);
+		} else {
+			b.caseDataVaccinationType.setVisibility(GONE);
+			b.caseDataVaccinationDate.setVisibility(GONE);
+			b.caseDataNumberOfDoses.setVisibility(GONE);
+		}
+		updateVaccinationRequiredFlags(b);
+	}
+
+	private void applyYellowFeverVaccinationVisibility() {
+		FragmentCaseEditLayoutBinding b = getContentBinding();
+		if (b.caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			b.caseDataNumberOfDoses.setVisibility(VISIBLE);
+			b.caseDataVaccinationType.setVisibility(VISIBLE);
+			CardOrHistory t = (CardOrHistory) b.caseDataVaccinationType.getValue();
+			if (t == CardOrHistory.CARD) {
+				b.caseDataVaccinationDate.setVisibility(VISIBLE);
+				b.caseDataLastVaccinationDate.setVisibility(VISIBLE);
+			} else if (t == CardOrHistory.HISTORY) {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(VISIBLE);
+			} else {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(GONE);
+			}
+		} else {
+			b.caseDataNumberOfDoses.setVisibility(GONE);
+			b.caseDataVaccinationType.setVisibility(GONE);
+			b.caseDataVaccinationDate.setVisibility(GONE);
+			b.caseDataLastVaccinationDate.setVisibility(GONE);
+		}
+		updateVaccinationRequiredFlags(b);
+	}
+
 	private void handleYellowFever() {
 
 		getFilteredVaccinationList();
 		getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+		getContentBinding().caseDataLastVaccinationDate.setVisibility(GONE);
+		getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+		getContentBinding().caseDataVaccinationType.setVisibility(GONE);
 		getContentBinding().caseDataVaccinationStatus.setRequired(true);
 
-		getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
-			if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED){
-				getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
-				getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
-			}
-			else{
-				getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
-				getContentBinding().caseDataVaccinationType.setVisibility(GONE);
-			}
-		});
-
-		getContentBinding().caseDataVaccinationType.addValueChangedListener( field -> {
-			if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD){
-				getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
-				getContentBinding().caseDataLastVaccinationDate.setVisibility(VISIBLE);
-			}
-			else{
-				getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
-				getContentBinding().caseDataLastVaccinationDate.setVisibility(GONE);
-			}
-		});
-
+		getContentBinding().caseDataVaccinationStatus.addValueChangedListener(field -> applyYellowFeverVaccinationVisibility());
+		getContentBinding().caseDataVaccinationType.addValueChangedListener(field -> applyYellowFeverVaccinationVisibility());
+		applyYellowFeverVaccinationVisibility();
 	}
 
 	private void handleMpox(){
@@ -1176,44 +1269,68 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		getContentBinding().caseDataReportingOfficerContactPhone.setCaption("Contact Number");
 	}
 
-	private void handleCSM(){
-		getFilteredVaccinationList();
-		getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
-			if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED){
-				getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
-				getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
-				getContentBinding().caseDataVaccineType.setVisibility(VISIBLE);
-				getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+	private void applyCSMVaccinationVisibility() {
+		FragmentCaseEditLayoutBinding b = getContentBinding();
+		if (b.caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			b.caseDataNumberOfDoses.setVisibility(VISIBLE);
+			b.caseDataVaccinationType.setVisibility(VISIBLE);
+			b.caseDataVaccineType.setVisibility(VISIBLE);
+			CardOrHistory t = (CardOrHistory) b.caseDataVaccinationType.getValue();
+			if (t == CardOrHistory.CARD) {
+				b.caseDataVaccinationDate.setVisibility(VISIBLE);
+				b.caseDataVaccinationDate.setEnabled(true);
+				b.caseDataLastVaccinationDate.setVisibility(GONE);
+			} else if (t == CardOrHistory.HISTORY) {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(VISIBLE);
+				b.caseDataLastVaccinationDate.setEnabled(true);
+			} else {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(GONE);
 			}
-			else{
-				getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
-				getContentBinding().caseDataVaccinationType.setVisibility(GONE);
-				getContentBinding().caseDataVaccineType.setVisibility(GONE);
-				getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
-			}
-		});
+		} else {
+			b.caseDataNumberOfDoses.setVisibility(GONE);
+			b.caseDataVaccinationType.setVisibility(GONE);
+			b.caseDataVaccineType.setVisibility(GONE);
+			b.caseDataVaccinationDate.setVisibility(GONE);
+			b.caseDataLastVaccinationDate.setVisibility(GONE);
+		}
+		updateVaccinationRequiredFlags(b);
+	}
 
-		getContentBinding().caseDataVaccinationType.addValueChangedListener( field -> {
-			getContentBinding().caseDataVaccinationDate.setEnabled(getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD);
-		});
+	private void handleCSM() {
+		getFilteredVaccinationList();
+		getContentBinding().caseDataLastVaccinationDate.setVisibility(GONE);
+		getContentBinding().caseDataVaccinationStatus.addValueChangedListener(field -> applyCSMVaccinationVisibility());
+		getContentBinding().caseDataVaccinationType.addValueChangedListener(field -> applyCSMVaccinationVisibility());
+		applyCSMVaccinationVisibility();
 	}
 
 	private void handleMeasles() {
-		if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
-			getContentBinding().caseDataVaccinationRoutine.setVisibility(VISIBLE);
-			getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
-			getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+		FragmentCaseEditLayoutBinding b = getContentBinding();
+		if (b.caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			b.caseDataVaccinationRoutine.setVisibility(VISIBLE);
+			b.caseDataNumberOfDoses.setVisibility(VISIBLE);
+			b.caseDataVaccinationType.setVisibility(VISIBLE);
+			CardOrHistory t = (CardOrHistory) b.caseDataVaccinationType.getValue();
+			if (t == CardOrHistory.CARD) {
+				b.caseDataVaccinationDate.setVisibility(VISIBLE);
+				b.caseDataLastVaccinationDate.setVisibility(GONE);
+			} else if (t == CardOrHistory.HISTORY) {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(VISIBLE);
+			} else {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(GONE);
+			}
 		} else {
-			getContentBinding().caseDataVaccinationRoutine.setVisibility(GONE);
-			getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
-			getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+			b.caseDataVaccinationRoutine.setVisibility(GONE);
+			b.caseDataNumberOfDoses.setVisibility(GONE);
+			b.caseDataVaccinationType.setVisibility(GONE);
+			b.caseDataVaccinationDate.setVisibility(GONE);
+			b.caseDataLastVaccinationDate.setVisibility(GONE);
 		}
-
-		if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD) {
-			getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
-		} else {
-			getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
-		}
+		updateVaccinationRequiredFlags(b);
 	}
 
 	private void handleNNT() {
@@ -1249,40 +1366,59 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	}
 
 	private void handleCoronavirus() {
-		if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
-			getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
-			getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
-			getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
-			getContentBinding().caseDataSecondVaccinationDate.setVisibility(VISIBLE);
+		FragmentCaseEditLayoutBinding b = getContentBinding();
+		if (b.caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			b.caseDataVaccinationType.setVisibility(VISIBLE);
+			b.caseDataNumberOfDoses.setVisibility(VISIBLE);
+			CardOrHistory t = (CardOrHistory) b.caseDataVaccinationType.getValue();
+			if (t == CardOrHistory.CARD) {
+				b.caseDataVaccinationDate.setVisibility(VISIBLE);
+				b.caseDataSecondVaccinationDate.setVisibility(VISIBLE);
+				b.caseDataVaccinationDate.setEnabled(true);
+				b.caseDataSecondVaccinationDate.setEnabled(true);
+				b.caseDataLastVaccinationDate.setVisibility(GONE);
+			} else if (t == CardOrHistory.HISTORY) {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataSecondVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(VISIBLE);
+				b.caseDataLastVaccinationDate.setEnabled(true);
+			} else {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataSecondVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(GONE);
+			}
 		} else {
-			getContentBinding().caseDataVaccinationType.setVisibility(GONE);
-			getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
-			getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
-			getContentBinding().caseDataSecondVaccinationDate.setVisibility(GONE);
+			b.caseDataVaccinationType.setVisibility(GONE);
+			b.caseDataNumberOfDoses.setVisibility(GONE);
+			b.caseDataVaccinationDate.setVisibility(GONE);
+			b.caseDataSecondVaccinationDate.setVisibility(GONE);
+			b.caseDataLastVaccinationDate.setVisibility(GONE);
 		}
-
-		if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD) {
-			getContentBinding().caseDataVaccinationDate.setEnabled(true);
-			getContentBinding().caseDataSecondVaccinationDate.setEnabled(true);
-		} else {
-			getContentBinding().caseDataVaccinationDate.setEnabled(false);
-			getContentBinding().caseDataSecondVaccinationDate.setEnabled(false);
-		}
+		updateVaccinationRequiredFlags(b);
 	}
 
 	private void handleCholera() {
-		if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
-			getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+		FragmentCaseEditLayoutBinding b = getContentBinding();
+		if (b.caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			b.caseDataVaccinationType.setVisibility(VISIBLE);
+			b.caseDataNumberOfDoses.setVisibility(VISIBLE);
+			CardOrHistory t = (CardOrHistory) b.caseDataVaccinationType.getValue();
+			if (t == CardOrHistory.CARD) {
+				b.caseDataVaccinationDate.setVisibility(VISIBLE);
+				b.caseDataLastVaccinationDate.setVisibility(GONE);
+			} else if (t == CardOrHistory.HISTORY) {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(VISIBLE);
+			} else {
+				b.caseDataVaccinationDate.setVisibility(GONE);
+				b.caseDataLastVaccinationDate.setVisibility(GONE);
+			}
 		} else {
-			getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+			b.caseDataVaccinationType.setVisibility(GONE);
+			b.caseDataNumberOfDoses.setVisibility(GONE);
+			b.caseDataVaccinationDate.setVisibility(GONE);
+			b.caseDataLastVaccinationDate.setVisibility(GONE);
 		}
-
-		if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD) {
-			getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
-			getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
-		} else {
-			getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
-			getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
-		}
+		updateVaccinationRequiredFlags(b);
 	}
 }

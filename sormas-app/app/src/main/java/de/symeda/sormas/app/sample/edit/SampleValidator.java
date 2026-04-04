@@ -27,7 +27,6 @@ public class SampleValidator {
 
 	static void initializeSampleValidation(final FragmentSampleEditLayoutBinding contentBinding) {
 		ResultCallback<Boolean> sampleDateCallback = () -> {
-			// Must not be after date of shipment
 			if (DateHelper.isDateAfter(contentBinding.sampleSampleDateTime.getValue(), contentBinding.sampleShipmentDate.getValue())) {
 				contentBinding.sampleSampleDateTime.enableErrorState(
 					I18nProperties.getValidationError(
@@ -36,18 +35,54 @@ public class SampleValidator {
 						contentBinding.sampleShipmentDate.getCaption()));
 				return true;
 			}
+			if (DateHelper.isDateAfter(contentBinding.sampleSampleDateTime.getValue(), contentBinding.sampleReceivedDateTime.getValue())) {
+				contentBinding.sampleSampleDateTime.enableErrorState(
+					I18nProperties.getValidationError(
+						Validations.beforeDate,
+						contentBinding.sampleSampleDateTime.getCaption(),
+						contentBinding.sampleReceivedDateTime.getCaption()));
+				return true;
+			}
 
 			return false;
 		};
 
 		ResultCallback<Boolean> shipmentDateCallback = () -> {
-			// Must not be before sample date
 			if (DateHelper.isDateBefore(contentBinding.sampleShipmentDate.getValue(), contentBinding.sampleSampleDateTime.getValue())) {
 				contentBinding.sampleShipmentDate.enableErrorState(
-					I18nProperties.getValidationError(
-						Validations.afterDate,
-						contentBinding.sampleShipmentDate.getCaption(),
-						contentBinding.sampleSampleDateTime.getCaption()));
+						I18nProperties.getValidationError(
+								Validations.afterDate,
+								contentBinding.sampleShipmentDate.getCaption(),
+								contentBinding.sampleSampleDateTime.getCaption()));
+				return true;
+			}
+			if (DateHelper.isDateAfter(contentBinding.sampleShipmentDate.getValue(), contentBinding.sampleReceivedDateTime.getValue())) {
+				contentBinding.sampleShipmentDate.enableErrorState(
+						I18nProperties.getValidationError(
+								Validations.beforeDate,
+								contentBinding.sampleShipmentDate.getCaption(),
+								contentBinding.sampleReceivedDateTime.getCaption()));
+				return true;
+			}
+
+			return false;
+		};
+
+		ResultCallback<Boolean> receivedDateCallback = () -> {
+			if (DateHelper.isDateBefore(contentBinding.sampleReceivedDateTime.getValue(), contentBinding.sampleSampleDateTime.getValue())) {
+				contentBinding.sampleReceivedDateTime.enableErrorState(
+						I18nProperties.getValidationError(
+								Validations.afterDate,
+								contentBinding.sampleReceivedDateTime.getCaption(),
+								contentBinding.sampleSampleDateTime.getCaption()));
+				return true;
+			}
+			if (DateHelper.isDateBefore(contentBinding.sampleReceivedDateTime.getValue(), contentBinding.sampleShipmentDate.getValue())) {
+				contentBinding.sampleReceivedDateTime.enableErrorState(
+						I18nProperties.getValidationError(
+								Validations.afterDate,
+								contentBinding.sampleReceivedDateTime.getCaption(),
+								contentBinding.sampleShipmentDate.getCaption()));
 				return true;
 			}
 
@@ -67,6 +102,7 @@ public class SampleValidator {
 		contentBinding.sampleFieldSampleID.setValidationCallback(fieldSampleIdCallback);
 		contentBinding.sampleSampleDateTime.setValidationCallback(sampleDateCallback);
 		contentBinding.sampleShipmentDate.setValidationCallback(shipmentDateCallback);
+		contentBinding.sampleReceivedDateTime.setValidationCallback(receivedDateCallback);
 	}
 
 	static boolean queryByFieldSampleId(String uuid, String fieldSampleId){

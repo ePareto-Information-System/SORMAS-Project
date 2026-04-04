@@ -472,17 +472,25 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <de.symeda.sormas.app.component.controls.ControlTextImageField
+                        <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                             android:id="@+id/sample_received"
-                            app:receivedStatus="@{data}"
+                            app:useBoolean="true"
+                            app:value="@={data.received}"
                             style="@style/ControlFirstOfTwoColumnsStyle" />
 
-                        <de.symeda.sormas.app.component.controls.ControlTextReadField
-                            android:id="@+id/sample_labSampleID"
-                            app:value="@{data.labSampleID}"
+                        <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                            android:id="@+id/sample_receivedDateTime"
+                            app:value="@={data.receivedDate}"
+                            app:dependencyParentField="@{sampleReceived}"
+                            app:dependencyParentValue="@{true}"
                             style="@style/ControlSecondOfTwoColumnsStyle" />
 
                     </LinearLayout>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/sample_labSampleID"
+                        app:value="@{data.labSampleID}"
+                        style="@style/ControlSingleColumnStyle" />
 
                     <ImageView style="@style/FullHorizontalDividerStyle"/>
 

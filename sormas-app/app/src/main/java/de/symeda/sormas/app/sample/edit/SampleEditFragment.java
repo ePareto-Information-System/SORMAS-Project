@@ -279,6 +279,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		// Initialize ControlDateFields and ControlDateTimeFields
 		contentBinding.sampleSampleDateTime.initializeDateTimeField(getFragmentManager());
 		contentBinding.sampleShipmentDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleReceivedDateTime.initializeDateTimeField(getFragmentManager());
 		contentBinding.sampleSelectedResultIGMDate.initializeDateField(getFragmentManager());
 		contentBinding.sampleSelectedResultPcrDate.initializeDateField(getFragmentManager());
 		contentBinding.sampleSelectedResultPrntDate.initializeDateField(getFragmentManager());
@@ -371,10 +372,13 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				contentBinding.sampleShipped.setValue(null);
 				contentBinding.sampleShipmentDate.setValue(null);
 				contentBinding.sampleShipmentDetails.setValue(null);
+				contentBinding.sampleReceived.setValue(false);
+				contentBinding.sampleReceivedDateTime.setValue(null);
 				contentBinding.externalSampleFieldsLayout.setVisibility(GONE);
 				contentBinding.samplePathogenTestingRequested.setVisibility(GONE);
 				contentBinding.sampleAdditionalTestingRequested.setVisibility(GONE);
 			}
+			updateExternalSampleShipmentReceivedRequired(contentBinding);
 		});
 
 		contentBinding.sampleSuspectedDisease.initializeSpinner(suspectedList);
@@ -401,6 +405,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			contentBinding.sampleShipmentDetails.setEnabled(false);
 			contentBinding.samplePurpose.setEnabled(false);
 			contentBinding.sampleReceived.setEnabled(false);
+			contentBinding.sampleReceivedDateTime.setEnabled(false);
 			contentBinding.sampleLabSampleID.setEnabled(false);
 			contentBinding.sampleSpecimenCondition.setEnabled(false);
 			contentBinding.samplePathogenTestingRequested.setVisibility(GONE);
@@ -521,6 +526,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			default:
 		}
 
+		updateExternalSampleShipmentReceivedRequired(contentBinding);
+		contentBinding.sampleShipped.addValueChangedListener(f -> updateExternalSampleShipmentReceivedRequired(contentBinding));
+		contentBinding.sampleReceived.addValueChangedListener(f -> updateExternalSampleShipmentReceivedRequired(contentBinding));
 
 		frequencyOfChangingFiltersList = DataUtils.getEnumItems(FilterChangingFrequency.class, true);
 		contentBinding.sampleFrequencyOfChangingFilters.initializeSpinner(frequencyOfChangingFiltersList);
@@ -651,17 +659,30 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(idsrSampleMaterialList));
 	}
 
+	private void updateExternalSampleShipmentReceivedRequired(FragmentSampleEditLayoutBinding b) {
+		if (b.externalSampleFieldsLayout.getVisibility() != VISIBLE) {
+			b.sampleShipmentDate.setRequired(false);
+			b.sampleReceivedDateTime.setRequired(false);
+			return;
+		}
+		b.sampleShipmentDate.setRequired(Boolean.TRUE.equals(b.sampleShipped.getValue()));
+		b.sampleReceivedDateTime.setRequired(Boolean.TRUE.equals(b.sampleReceived.getValue()));
+	}
+
 	private void handleAHF() {
 		if (getContentBinding().sampleHasSampleBeenCollected.getValue() == null) {
 			getContentBinding().sampleSampleDateTime.setVisibility(View.GONE);
+			getContentBinding().sampleSampleDateTime.setRequired(false);
 		} else {
 			int visibility = (getContentBinding().sampleHasSampleBeenCollected.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
 			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
+			getContentBinding().sampleSampleDateTime.setRequired(visibility == View.VISIBLE);
 		}
 
 		getContentBinding().sampleHasSampleBeenCollected.addValueChangedListener(field -> {
 			int visibility = (field.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
 			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
+			getContentBinding().sampleSampleDateTime.setRequired(visibility == View.VISIBLE);
 		});
 
 		List<SampleMaterial> ahfSampleMaterialList = Arrays.asList(
@@ -682,14 +703,17 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		if (getContentBinding().sampleCsfSampleCollected.getValue() == null) {
 			getContentBinding().sampleSampleDateTime.setVisibility(View.GONE);
+			getContentBinding().sampleSampleDateTime.setRequired(false);
 		} else {
 			int visibility = (getContentBinding().sampleCsfSampleCollected.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
 			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
+			getContentBinding().sampleSampleDateTime.setRequired(visibility == View.VISIBLE);
 		}
 
 		getContentBinding().sampleCsfSampleCollected.addValueChangedListener(field -> {
 			int visibility = (field.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
 			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
+			getContentBinding().sampleSampleDateTime.setRequired(visibility == View.VISIBLE);
 		});
 
 	}

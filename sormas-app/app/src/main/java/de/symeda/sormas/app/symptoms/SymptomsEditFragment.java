@@ -294,12 +294,15 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 					CaseOutcome.RECOVERED
 			));
 
-			if (disease != Disease.MEASLES) {
-				outcomesToRemove.add(CaseOutcome.UNKNOWN);
-			}
+			outcomesToRemove.add(CaseOutcome.UNKNOWN);
 
 			outcomeList.removeIf(item -> outcomesToRemove.contains(item.getValue()));
 
+		}
+
+		if (disease == Disease.MEASLES) {
+			updateMeaslesOnsetOfRashRequired(contentBinding);
+			contentBinding.symptomsGeneralizedRash.addValueChangedListener(f -> updateMeaslesOnsetOfRashRequired(contentBinding));
 		}
 
 		if (disease == Disease.MONKEYPOX) {
@@ -388,6 +391,11 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 							.collect(Collectors.toList())
 			);
 		}
+	}
+
+	private void updateMeaslesOnsetOfRashRequired(FragmentSymptomsEditLayoutBinding contentBinding) {
+		boolean required = SymptomState.YES.equals(contentBinding.symptomsGeneralizedRash.getValue());
+		contentBinding.symptomsDateOfOnsetRash.setRequired(required);
 	}
 
 	private void initSymptomFields(FragmentSymptomsEditLayoutBinding contentBinding) {
