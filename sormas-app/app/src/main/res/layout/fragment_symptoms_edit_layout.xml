@@ -1445,6 +1445,7 @@
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/symptoms_lesionsOnsetDate"
                     app:value="@={data.lesionsOnsetDate}"
+                    app:required="true"
                     style="@style/ControlSingleColumnStyle" />
 
 
