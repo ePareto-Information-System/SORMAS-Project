@@ -34,7 +34,7 @@ public enum Disease
 	CHOLERA(true, true, true, true, false,5, true, false, false),
 	CONGENITAL_RUBELLA(false, true, true, true, false,21, true, false, false),
 	CSM(true, true, true, false, false,10, true, false, false),
-	DENGUE(true, true, true, false, false,14, true, false, false),
+	DENGUE(true, false, true, false, false,14, true, false, false),
 	EVD(true, false, true, true,false, 21, true, false, false),
 	GUINEA_WORM(true, true, true, false, false,0, true, false, false),
 	LASSA(true, false, true, true, false,21, true, false, false),
