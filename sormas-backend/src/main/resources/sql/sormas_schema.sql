@@ -15025,4 +15025,75 @@ UPDATE cases_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
 
 INSERT INTO schema_version (version_number, comment) VALUES (659, 'Consolidate AHF into UNSPECIFIED_VHF in confirmed remaining tables');
 
+DO $$
+DECLARE
+    sormas_rest_user_role_id bigint;
+BEGIN
+    SELECT id INTO sormas_rest_user_role_id
+    FROM userroles
+    WHERE linkeddefaultuserrole = 'REST_USER'
+       OR caption = 'Sormas Rest User'
+    LIMIT 1;
+
+    IF sormas_rest_user_role_id IS NULL THEN
+        INSERT INTO userroles (
+            id,
+            uuid,
+            creationdate,
+            changedate,
+            caption,
+            enabled,
+            hasoptionalhealthfacility,
+            hasassociateddistrictuser,
+            porthealthuser,
+            jurisdictionlevel,
+            linkeddefaultuserrole
+        )
+        VALUES (
+            nextval('entity_seq'),
+            generate_base32_uuid(),
+            now(),
+            now(),
+            'Sormas Rest User',
+            true,
+            false,
+            false,
+            false,
+            'NATION',
+            'REST_USER'
+        )
+        RETURNING id INTO sormas_rest_user_role_id;
+    ELSE
+        UPDATE userroles
+        SET caption = 'Sormas Rest User',
+            changedate = now(),
+            enabled = true,
+            hasoptionalhealthfacility = false,
+            hasassociateddistrictuser = false,
+            porthealthuser = false,
+            jurisdictionlevel = 'NATION',
+            linkeddefaultuserrole = 'REST_USER'
+        WHERE id = sormas_rest_user_role_id;
+    END IF;
+
+    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+    SELECT sormas_rest_user_role_id, rights.userright_name, tstzrange(now(), null)
+    FROM unnest(ARRAY[
+        'SORMAS_REST',
+        'CASE_VIEW',
+        'CASE_CREATE',
+        'CASE_EDIT',
+        'PERSON_VIEW',
+        'PERSON_EDIT'
+    ]) AS rights(userright_name)
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM userroles_userrights
+        WHERE userrole_id = sormas_rest_user_role_id
+          AND userroles_userrights.userright = rights.userright_name
+    );
+END $$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (660, 'Add Sormas Rest User role for case entry API');
+
 COMMIT;

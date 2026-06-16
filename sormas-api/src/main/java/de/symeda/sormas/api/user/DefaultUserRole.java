@@ -319,6 +319,9 @@ public enum DefaultUserRole {
 	REST_EXTERNAL_VISITS_USER(false, false, false, false, JurisdictionLevel.NATION, 	new HashSet<>(
 			Arrays.asList()), new HashSet<>(
 			Arrays.asList())),
+	REST_USER(false, false, false, false, JurisdictionLevel.NATION, new HashSet<>(
+			Arrays.asList()), new HashSet<>(
+			Arrays.asList())),
 	SORMAS_TO_SORMAS_CLIENT(false, false, false, false, JurisdictionLevel.NATION, new HashSet<>(
 			Arrays.asList()),new HashSet<>(
 			Arrays.asList())),
@@ -1815,6 +1818,16 @@ public enum DefaultUserRole {
 					SORMAS_REST,
 					EXTERNAL_VISITS));
 			break;
+		case REST_USER:
+			userRights.addAll(
+				Arrays.asList(
+					CASE_VIEW,
+					CASE_CREATE,
+					CASE_EDIT,
+					PERSON_VIEW,
+					PERSON_EDIT,
+					SORMAS_REST));
+			break;
 		case SORMAS_TO_SORMAS_CLIENT:
 			userRights.addAll(
 				Arrays.asList(
@@ -2029,12 +2042,6 @@ public enum DefaultUserRole {
 					DASHBOARD_DISEASE_DETAILS_ACCESS));
 			break;
 			
-//		case REST_USER:
-//			userRights.addAll(
-//					Arrays.asList(
-//							DASHBOARD_SURVEILLANCE_ACCESS
-//					));
-//			break;
 		default:
 			throw new IllegalArgumentException(this.toString());
 		}
