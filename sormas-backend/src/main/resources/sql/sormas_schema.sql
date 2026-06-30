@@ -15084,7 +15084,8 @@ BEGIN
         'CASE_CREATE',
         'CASE_EDIT',
         'PERSON_VIEW',
-        'PERSON_EDIT'
+        'PERSON_EDIT',
+        'INFRASTRUCTURE_VIEW'
     ]) AS rights(userright_name)
     WHERE NOT EXISTS (
         SELECT 1
@@ -15095,5 +15096,29 @@ BEGIN
 END $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (660, 'Add Sormas Rest User role for case entry API');
+
+DO $$
+DECLARE
+    sormas_rest_user_role_id bigint;
+BEGIN
+    SELECT id INTO sormas_rest_user_role_id
+    FROM userroles
+    WHERE linkeddefaultuserrole = 'REST_USER'
+       OR caption = 'Sormas Rest User'
+    LIMIT 1;
+
+    IF sormas_rest_user_role_id IS NOT NULL THEN
+        INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+        SELECT sormas_rest_user_role_id, 'INFRASTRUCTURE_VIEW', tstzrange(now(), null)
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM userroles_userrights
+            WHERE userrole_id = sormas_rest_user_role_id
+              AND userright = 'INFRASTRUCTURE_VIEW'
+        );
+    END IF;
+END $$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (661, 'Allow Sormas Rest User to read infrastructure data');
 
 COMMIT;

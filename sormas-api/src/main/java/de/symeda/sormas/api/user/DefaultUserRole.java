@@ -1826,6 +1826,7 @@ public enum DefaultUserRole {
 					CASE_EDIT,
 					PERSON_VIEW,
 					PERSON_EDIT,
+					INFRASTRUCTURE_VIEW,
 					SORMAS_REST));
 			break;
 		case SORMAS_TO_SORMAS_CLIENT:
