@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.sample.PathogenTestResultVariant;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -241,6 +243,22 @@ public enum Disease
 	public static List<Disease> hideFollowUp = Arrays.asList(
 			YELLOW_FEVER, UNSPECIFIED_VHF, CSM, AFP, NEW_INFLUENZA, CHOLERA, MEASLES, FOODBORNE_ILLNESS, GUINEA_WORM, MONKEYPOX, NEONATAL_TETANUS, CORONAVIRUS
 	);
+
+	/**
+	 * Accept the disease key used by older mobile installations without restoring it as a
+	 * persistable enum value. Jackson uses this method for REST request deserialization;
+	 * responses continue to contain {@link #UNSPECIFIED_VHF}.
+	 */
+	@JsonCreator
+	public static Disease fromJson(String value) {
+		if (value == null) {
+			return null;
+		}
+		if ("AHF".equals(value)) {
+			return UNSPECIFIED_VHF;
+		}
+		return Disease.valueOf(value);
+	}
 
 	public static String toString(Disease value, String details) {
 		if (value == null) {

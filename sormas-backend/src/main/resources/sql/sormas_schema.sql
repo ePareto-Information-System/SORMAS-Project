@@ -14984,8 +14984,6 @@ INSERT INTO schema_version (version_number, comment) VALUES (658, 'Set unknown v
 --   - Safely handle environments where AHF does not exist
 -- ============================================================
 
-BEGIN;
-
 DO $$
 DECLARE
 ahf_id BIGINT;
@@ -15004,38 +15002,50 @@ ORDER BY creationdate NULLS FIRST, id
     LIMIT 1;
 
 IF ahf_id IS NOT NULL AND unspecified_vhf_id IS NOT NULL THEN
+DELETE FROM facility_diseaseconfiguration ahf_link
+WHERE ahf_link.diseaseconfiguration_id = ahf_id
+  AND EXISTS (
+    SELECT 1
+    FROM facility_diseaseconfiguration unspecified_vhf_link
+    WHERE unspecified_vhf_link.facility_id = ahf_link.facility_id
+      AND unspecified_vhf_link.diseaseconfiguration_id = unspecified_vhf_id
+);
+
 UPDATE facility_diseaseconfiguration
+SET diseaseconfiguration_id = unspecified_vhf_id
+WHERE diseaseconfiguration_id = ahf_id;
+
+UPDATE facility_diseaseconfiguration_history
 SET diseaseconfiguration_id = unspecified_vhf_id
 WHERE diseaseconfiguration_id = ahf_id;
 
 DELETE FROM diseaseconfiguration
 WHERE id = ahf_id;
-
 ELSIF ahf_id IS NOT NULL AND unspecified_vhf_id IS NULL THEN
 UPDATE diseaseconfiguration
 SET disease = 'UNSPECIFIED_VHF'
 WHERE id = ahf_id;
 END IF;
-
 END $$ LANGUAGE plpgsql;
 
 UPDATE forms         SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
 UPDATE forms_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
 UPDATE cases_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE diseaseconfiguration_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
 
 INSERT INTO schema_version (version_number, comment) VALUES (659, 'Consolidate AHF into UNSPECIFIED_VHF in confirmed remaining tables');
 
 DO $$
 DECLARE
-    sormas_rest_user_role_id bigint;
+sormas_rest_user_role_id bigint;
 BEGIN
-    SELECT id INTO sormas_rest_user_role_id
-    FROM userroles
-    WHERE linkeddefaultuserrole = 'REST_USER'
-       OR caption = 'Sormas Rest User'
+SELECT id INTO sormas_rest_user_role_id
+FROM userroles
+WHERE linkeddefaultuserrole = 'REST_USER'
+   OR caption = 'Sormas Rest User'
     LIMIT 1;
 
-    IF sormas_rest_user_role_id IS NULL THEN
+IF sormas_rest_user_role_id IS NULL THEN
         INSERT INTO userroles (
             id,
             uuid,
@@ -15063,62 +15073,159 @@ BEGIN
             'REST_USER'
         )
         RETURNING id INTO sormas_rest_user_role_id;
-    ELSE
-        UPDATE userroles
-        SET caption = 'Sormas Rest User',
-            changedate = now(),
-            enabled = true,
-            hasoptionalhealthfacility = false,
-            hasassociateddistrictuser = false,
-            porthealthuser = false,
-            jurisdictionlevel = 'NATION',
-            linkeddefaultuserrole = 'REST_USER'
-        WHERE id = sormas_rest_user_role_id;
-    END IF;
+ELSE
+UPDATE userroles
+SET caption = 'Sormas Rest User',
+    changedate = now(),
+    enabled = true,
+    hasoptionalhealthfacility = false,
+    hasassociateddistrictuser = false,
+    porthealthuser = false,
+    jurisdictionlevel = 'NATION',
+    linkeddefaultuserrole = 'REST_USER'
+WHERE id = sormas_rest_user_role_id;
+END IF;
 
-    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-    SELECT sormas_rest_user_role_id, rights.userright_name, tstzrange(now(), null)
-    FROM unnest(ARRAY[
-        'SORMAS_REST',
-        'CASE_VIEW',
-        'CASE_CREATE',
-        'CASE_EDIT',
-        'PERSON_VIEW',
-        'PERSON_EDIT',
-        'INFRASTRUCTURE_VIEW'
-    ]) AS rights(userright_name)
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM userroles_userrights
-        WHERE userrole_id = sormas_rest_user_role_id
-          AND userroles_userrights.userright = rights.userright_name
-    );
+INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT sormas_rest_user_role_id, rights.userright_name, tstzrange(now(), null)
+FROM unnest(ARRAY[
+                'SORMAS_REST',
+            'CASE_VIEW',
+            'CASE_CREATE',
+            'CASE_EDIT',
+            'PERSON_VIEW',
+            'PERSON_EDIT',
+            'INFRASTRUCTURE_VIEW'
+                ]) AS rights(userright_name)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM userroles_userrights
+    WHERE userrole_id = sormas_rest_user_role_id
+      AND userroles_userrights.userright = rights.userright_name
+);
 END $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (660, 'Add Sormas Rest User role for case entry API');
 
 DO $$
 DECLARE
-    sormas_rest_user_role_id bigint;
+sormas_rest_user_role_id bigint;
 BEGIN
-    SELECT id INTO sormas_rest_user_role_id
-    FROM userroles
-    WHERE linkeddefaultuserrole = 'REST_USER'
-       OR caption = 'Sormas Rest User'
+SELECT id INTO sormas_rest_user_role_id
+FROM userroles
+WHERE linkeddefaultuserrole = 'REST_USER'
+   OR caption = 'Sormas Rest User'
     LIMIT 1;
 
-    IF sormas_rest_user_role_id IS NOT NULL THEN
+IF sormas_rest_user_role_id IS NOT NULL THEN
         INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-        SELECT sormas_rest_user_role_id, 'INFRASTRUCTURE_VIEW', tstzrange(now(), null)
-        WHERE NOT EXISTS (
+SELECT sormas_rest_user_role_id, 'INFRASTRUCTURE_VIEW', tstzrange(now(), null)
+    WHERE NOT EXISTS (
             SELECT 1
             FROM userroles_userrights
             WHERE userrole_id = sormas_rest_user_role_id
               AND userright = 'INFRASTRUCTURE_VIEW'
         );
-    END IF;
+END IF;
 END $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (661, 'Allow Sormas Rest User to read infrastructure data');
 
-COMMIT;
+-- Forward repair for installations that already applied schema version 659 and
+-- complete consolidation for all disease columns that can contain the legacy key.
+DO $$
+DECLARE
+unspecified_vhf_id BIGINT;
+    ahf_id BIGINT;
+BEGIN
+SELECT id INTO unspecified_vhf_id
+FROM diseaseconfiguration
+WHERE disease = 'UNSPECIFIED_VHF'
+ORDER BY creationdate NULLS FIRST, id
+    LIMIT 1;
+
+IF unspecified_vhf_id IS NULL THEN
+SELECT id INTO unspecified_vhf_id
+FROM diseaseconfiguration
+WHERE disease = 'AHF'
+ORDER BY creationdate NULLS FIRST, id
+    LIMIT 1;
+
+IF unspecified_vhf_id IS NOT NULL THEN
+UPDATE diseaseconfiguration
+SET disease = 'UNSPECIFIED_VHF'
+WHERE id = unspecified_vhf_id;
+END IF;
+END IF;
+
+    IF unspecified_vhf_id IS NOT NULL THEN
+        FOR ahf_id IN
+SELECT id
+FROM diseaseconfiguration
+WHERE disease = 'AHF'
+  AND id <> unspecified_vhf_id
+    LOOP
+DELETE FROM facility_diseaseconfiguration ahf_link
+WHERE ahf_link.diseaseconfiguration_id = ahf_id
+  AND EXISTS (
+    SELECT 1
+    FROM facility_diseaseconfiguration unspecified_vhf_link
+    WHERE unspecified_vhf_link.facility_id = ahf_link.facility_id
+      AND unspecified_vhf_link.diseaseconfiguration_id = unspecified_vhf_id
+);
+
+UPDATE facility_diseaseconfiguration
+SET diseaseconfiguration_id = unspecified_vhf_id
+WHERE diseaseconfiguration_id = ahf_id;
+
+UPDATE facility_diseaseconfiguration_history
+SET diseaseconfiguration_id = unspecified_vhf_id
+WHERE diseaseconfiguration_id = ahf_id;
+
+DELETE FROM diseaseconfiguration
+WHERE id = ahf_id;
+END LOOP;
+END IF;
+END $$ LANGUAGE plpgsql;
+
+UPDATE aggregatereport SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE aggregatereport_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE cases SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE cases_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE clinicalvisit SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE clinicalvisit_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE contact SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE contact_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE customizableenumvalue SET diseases = replace(diseases, 'AHF', 'UNSPECIFIED_VHF') WHERE diseases LIKE '%AHF%';
+UPDATE customizableenumvalue_history SET diseases = replace(diseases, 'AHF', 'UNSPECIFIED_VHF') WHERE diseases LIKE '%AHF%';
+UPDATE diseaseconfiguration_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE epidata SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE events SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE events_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE externalmessage SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE externalmessage_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE featureconfiguration SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE featureconfiguration_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE forms SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE forms_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE immunization SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE immunization_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE outbreak SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE outbreak_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE pathogentest SET testeddisease = 'UNSPECIFIED_VHF' WHERE testeddisease = 'AHF';
+UPDATE pathogentest SET secondtesteddisease = 'UNSPECIFIED_VHF' WHERE secondtesteddisease = 'AHF';
+UPDATE pathogentest_history SET testeddisease = 'UNSPECIFIED_VHF' WHERE testeddisease = 'AHF';
+UPDATE person SET causeofdeathdisease = 'UNSPECIFIED_VHF' WHERE causeofdeathdisease = 'AHF';
+UPDATE person_history SET causeofdeathdisease = 'UNSPECIFIED_VHF' WHERE causeofdeathdisease = 'AHF';
+UPDATE samples SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE samples SET suspecteddisease = 'UNSPECIFIED_VHF' WHERE suspecteddisease = 'AHF';
+UPDATE travelentry SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE travelentry_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE users SET limiteddisease = 'UNSPECIFIED_VHF' WHERE limiteddisease = 'AHF';
+UPDATE users_history SET limiteddisease = 'UNSPECIFIED_VHF' WHERE limiteddisease = 'AHF';
+UPDATE visit SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE visit_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE weeklyreportentry SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+UPDATE weeklyreportentry_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
+
+INSERT INTO schema_version (version_number, comment) VALUES (662, 'Complete AHF consolidation and repair duplicate facility disease links');
