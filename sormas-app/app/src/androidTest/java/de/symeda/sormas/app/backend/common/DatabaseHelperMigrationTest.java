@@ -51,6 +51,8 @@ public class DatabaseHelperMigrationTest {
 			assertEquals(1, countRows(db, "facility_diseaseConfiguration", "facility_id = 10 AND diseaseConfiguration_id = 2"));
 			assertEquals(1, countRows(db, "facility_diseaseConfiguration", "facility_id = 20 AND diseaseConfiguration_id = 2"));
 			assertEquals(0, countRows(db, "customizableEnumValue", "diseases LIKE '%AHF%'"));
+			// the migration must force a re-pull of disease configurations
+			assertEquals(0, countRows(db, "diseaseConfiguration", "changeDate <> 0"));
 			assertEquals(1, countRows(db, "customizableEnumValue", "diseases = 'EVD,UNSPECIFIED_VHF'"));
 		} finally {
 			db.close();
@@ -58,9 +60,9 @@ public class DatabaseHelperMigrationTest {
 	}
 
 	private void createSchemaWithLegacyValues(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE diseaseConfiguration (id INTEGER PRIMARY KEY, disease TEXT)");
+		db.execSQL("CREATE TABLE diseaseConfiguration (id INTEGER PRIMARY KEY, disease TEXT, changeDate INTEGER)");
 		db.execSQL("CREATE TABLE facility_diseaseConfiguration (facility_id INTEGER, diseaseConfiguration_id INTEGER)");
-		db.execSQL("INSERT INTO diseaseConfiguration (id, disease) VALUES (1, 'AHF'), (2, 'UNSPECIFIED_VHF')");
+		db.execSQL("INSERT INTO diseaseConfiguration (id, disease, changeDate) VALUES (1, 'AHF', 111), (2, 'UNSPECIFIED_VHF', 222)");
 		db.execSQL("INSERT INTO facility_diseaseConfiguration (facility_id, diseaseConfiguration_id) VALUES (10, 1), (10, 2), (20, 1)");
 
 		for (String[] diseaseColumn : DISEASE_COLUMNS) {

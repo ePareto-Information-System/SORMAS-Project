@@ -4944,6 +4944,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		db.execSQL("UPDATE samples SET suspectedDisease = 'UNSPECIFIED_VHF' WHERE suspectedDisease = 'AHF'");
 		db.execSQL("UPDATE users SET limitedDisease = 'UNSPECIFIED_VHF' WHERE limitedDisease = 'AHF'");
 		db.execSQL("UPDATE customizableEnumValue SET diseases = replace(diseases, 'AHF', 'UNSPECIFIED_VHF') WHERE diseases LIKE '%AHF%'");
+
+		// A device that only ever held the legacy configuration keeps its old uuid after
+		// the rename above, while the server has a different uuid for UNSPECIFIED_VHF.
+		// Forcing a re-pull lets the next sync converge instead of leaving two rows.
+		db.execSQL("UPDATE diseaseConfiguration SET changeDate = 0");
 	}
 
 	private void fillJurisdictionLevels() throws SQLException {

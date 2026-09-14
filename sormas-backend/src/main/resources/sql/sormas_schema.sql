@@ -15229,3 +15229,87 @@ UPDATE weeklyreportentry SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
 UPDATE weeklyreportentry_history SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF';
 
 INSERT INTO schema_version (version_number, comment) VALUES (662, 'Complete AHF consolidation and repair duplicate facility disease links');
+-- ============================================================
+-- Migration 663: verification tripwire for the AHF -> UNSPECIFIED_VHF work.
+--
+-- READ-ONLY BY DESIGN. This migration deliberately updates nothing.
+-- What this does instead: assert that 662 actually cleared every column that
+-- genuinely stores a Disease enum. If 662 is ever edited or its base/history
+-- statement pairs reordered, the deploy fails here with the offending column
+-- named, instead of booting a server that throws enum errors on first read.
+-- ============================================================
+
+DO $$
+DECLARE
+    col record;
+    remaining bigint;
+    total bigint := 0;
+BEGIN
+    FOR col IN
+        SELECT tbl, colname
+        FROM (VALUES
+            ('aggregatereport', 'disease'),
+            ('aggregatereport_history', 'disease'),
+            ('cases', 'disease'),
+            ('cases_history', 'disease'),
+            ('clinicalvisit', 'disease'),
+            ('clinicalvisit_history', 'disease'),
+            ('contact', 'disease'),
+            ('contact_history', 'disease'),
+            ('customizableenumvalue', 'diseases'),
+            ('customizableenumvalue_history', 'diseases'),
+            ('diseaseconfiguration_history', 'disease'),
+            ('epidata', 'disease'),
+            ('events', 'disease'),
+            ('events_history', 'disease'),
+            ('externalmessage', 'disease'),
+            ('externalmessage_history', 'disease'),
+            ('featureconfiguration', 'disease'),
+            ('featureconfiguration_history', 'disease'),
+            ('forms', 'disease'),
+            ('forms_history', 'disease'),
+            ('immunization', 'disease'),
+            ('immunization_history', 'disease'),
+            ('outbreak', 'disease'),
+            ('outbreak_history', 'disease'),
+            ('pathogentest', 'secondtesteddisease'),
+            ('pathogentest', 'testeddisease'),
+            ('pathogentest_history', 'testeddisease'),
+            ('person', 'causeofdeathdisease'),
+            ('person_history', 'causeofdeathdisease'),
+            ('samples', 'disease'),
+            ('samples', 'suspecteddisease'),
+            ('travelentry', 'disease'),
+            ('travelentry_history', 'disease'),
+            ('users', 'limiteddisease'),
+            ('users_history', 'limiteddisease'),
+            ('visit', 'disease'),
+            ('visit_history', 'disease'),
+            ('weeklyreportentry', 'disease'),
+            ('weeklyreportentry_history', 'disease')
+        ) AS enum_cols(tbl, colname)
+        JOIN information_schema.columns c
+          ON c.table_schema = 'public'
+         AND c.table_name = enum_cols.tbl
+         AND c.column_name = enum_cols.colname
+    LOOP
+        EXECUTE format('SELECT count(*) FROM %I WHERE %I LIKE %L',
+                       col.tbl, col.colname, '%AHF%')
+          INTO remaining;
+        IF remaining > 0 THEN
+            RAISE WARNING 'Legacy disease key still present in %.% (% rows)',
+                col.tbl, col.colname, remaining;
+            total := total + remaining;
+        END IF;
+    END LOOP;
+
+    IF total > 0 THEN
+        RAISE EXCEPTION 'AHF consolidation incomplete: % rows still hold the legacy key', total;
+    END IF;
+
+    IF EXISTS (SELECT 1 FROM diseaseconfiguration WHERE disease = 'AHF') THEN
+        RAISE EXCEPTION 'A diseaseconfiguration row still has disease = AHF';
+    END IF;
+END $$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (663, 'Verify AHF consolidation left no legacy disease keys');
