@@ -271,8 +271,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		FieldHelper.setBirthDateOrApproximateAgeRequired(
 			birthDateOrApproximateAgeRequired && personFieldsEditable,
 			getField(PersonDto.BIRTH_DATE_YYYY),
-			getField(PersonDto.BIRTH_DATE_MM),
-			getField(PersonDto.BIRTH_DATE_DD),
 			getField(PersonDto.APPROXIMATE_AGE),
 			getField(PersonDto.APPROXIMATE_AGE_TYPE));
 	}

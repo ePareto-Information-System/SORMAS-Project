@@ -756,17 +756,15 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		boolean hasBirthMonth = source.getBirthdateMM() != null;
 		boolean hasBirthDay = source.getBirthdateDD() != null;
 
-		boolean hasAnyBirthDatePart = hasBirthYear || hasBirthMonth || hasBirthDay;
-		boolean hasCompleteBirthDate = hasBirthYear && hasBirthMonth && hasBirthDay;
-
 		boolean hasApproximateAge = source.getApproximateAge() != null;
 		boolean hasApproximateAgeType = source.getApproximateAgeType() != null;
 
-		if (hasAnyBirthDatePart && !hasCompleteBirthDate) {
-			throw new ValidationRuntimeException("Date of Birth is incomplete.");
+		// An estimated date of birth (year only) is sufficient, but month/day without a year is meaningless
+		if (!hasBirthYear && (hasBirthMonth || hasBirthDay)) {
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.birthDateIncomplete));
 		}
 
-		if (!hasCompleteBirthDate && !(hasApproximateAge && hasApproximateAgeType)) {
+		if (!hasBirthYear && !(hasApproximateAge && hasApproximateAgeType)) {
 			throw new ValidationRuntimeException(
 					I18nProperties.getValidationError(Validations.approximateAgeAndType));
 		}

@@ -387,9 +387,8 @@ public final class FieldHelper {
 	/**
 	 * Makes sure that either the date of birth or the approximate age of a person is specified, without requiring both:
 	 * As long as neither of them has a value, both the birth year and the approximate age are marked as required. As soon as
-	 * one of them is filled, the other one is no longer required. Because partial birth dates are rejected on save, month and
-	 * day become required once a birth year has been selected, and the age unit becomes required once an approximate age has
-	 * been entered. Fields that are not visible are never marked as required.
+	 * one of them is filled, the other one is no longer required. An estimated date of birth (year only) is sufficient. The age
+	 * unit becomes required once an approximate age has been entered. Fields that are not visible are never marked as required.
 	 *
 	 * @param enabled
 	 *            false removes all requirements handled by this method (e.g. when the person fields are not editable)
@@ -397,8 +396,6 @@ public final class FieldHelper {
 	public static void setBirthDateOrApproximateAgeRequired(
 		boolean enabled,
 		Field<?> birthDateYear,
-		Field<?> birthDateMonth,
-		Field<?> birthDateDay,
 		Field<?> approximateAge,
 		Field<?> approximateAgeType) {
 
@@ -414,13 +411,6 @@ public final class FieldHelper {
 
 		approximateAgeType.setRequired(enabled && hasApproximateAge && approximateAge.isVisible() && approximateAgeType.isVisible());
 		approximateAgeType.setRequiredError(I18nProperties.getValidationError(Validations.required, approximateAgeType.getCaption()));
-
-		boolean birthDatePartsRequired = enabled && hasBirthYear && birthDateYear.isVisible();
-		String birthDateIncompleteError = I18nProperties.getValidationError(Validations.birthDateIncomplete);
-		birthDateMonth.setRequired(birthDatePartsRequired && birthDateMonth.isVisible());
-		birthDateMonth.setRequiredError(birthDateIncompleteError);
-		birthDateDay.setRequired(birthDatePartsRequired && birthDateDay.isVisible());
-		birthDateDay.setRequiredError(birthDateIncompleteError);
 	}
 
 	private static boolean isEmptyValue(Object value) {
