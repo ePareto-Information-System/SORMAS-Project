@@ -950,6 +950,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 		final SampleDto sampleDto = getSampleDto(userRef);
 		sampleDto.setAssociatedEventParticipant(eventParticipantRef);
+		sampleDto.setSamplePurpose(SamplePurpose.EXTERNAL);
 		return sampleDto;
 	}
 
@@ -957,6 +958,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 		final SampleDto sampleDto = getSampleDto(userRef);
 		sampleDto.setAssociatedContact(contactRef);
+		sampleDto.setSamplePurpose(SamplePurpose.EXTERNAL);
 		return sampleDto;
 	}
 
