@@ -46,6 +46,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
@@ -381,6 +382,49 @@ public final class FieldHelper {
 
 	public static void setRequiredWhenNotNull(FieldGroup fieldGroup, Object sourcePropertyId, String targetPropertyId) {
 		setRequiredWhen(fieldGroup, fieldGroup.getField(sourcePropertyId), Arrays.asList(targetPropertyId), Arrays.asList((Object) null), true, null);
+	}
+
+	/**
+	 * Makes sure that either the date of birth or the approximate age of a person is specified, without requiring both:
+	 * As long as neither of them has a value, both the birth year and the approximate age are marked as required. As soon as
+	 * one of them is filled, the other one is no longer required. Because partial birth dates are rejected on save, month and
+	 * day become required once a birth year has been selected, and the age unit becomes required once an approximate age has
+	 * been entered. Fields that are not visible are never marked as required.
+	 *
+	 * @param enabled
+	 *            false removes all requirements handled by this method (e.g. when the person fields are not editable)
+	 */
+	public static void setBirthDateOrApproximateAgeRequired(
+		boolean enabled,
+		Field<?> birthDateYear,
+		Field<?> birthDateMonth,
+		Field<?> birthDateDay,
+		Field<?> approximateAge,
+		Field<?> approximateAgeType) {
+
+		boolean hasBirthYear = !isEmptyValue(birthDateYear.getValue());
+		boolean hasApproximateAge = !isEmptyValue(approximateAge.getValue());
+
+		boolean eitherRequired = enabled && !hasBirthYear && !hasApproximateAge;
+		String eitherRequiredError = I18nProperties.getValidationError(Validations.birthDateOrApproximateAgeRequired);
+		birthDateYear.setRequired(eitherRequired && birthDateYear.isVisible());
+		birthDateYear.setRequiredError(eitherRequiredError);
+		approximateAge.setRequired(eitherRequired && approximateAge.isVisible());
+		approximateAge.setRequiredError(eitherRequiredError);
+
+		approximateAgeType.setRequired(enabled && hasApproximateAge && approximateAge.isVisible() && approximateAgeType.isVisible());
+		approximateAgeType.setRequiredError(I18nProperties.getValidationError(Validations.required, approximateAgeType.getCaption()));
+
+		boolean birthDatePartsRequired = enabled && hasBirthYear && birthDateYear.isVisible();
+		String birthDateIncompleteError = I18nProperties.getValidationError(Validations.birthDateIncomplete);
+		birthDateMonth.setRequired(birthDatePartsRequired && birthDateMonth.isVisible());
+		birthDateMonth.setRequiredError(birthDateIncompleteError);
+		birthDateDay.setRequired(birthDatePartsRequired && birthDateDay.isVisible());
+		birthDateDay.setRequiredError(birthDateIncompleteError);
+	}
+
+	private static boolean isEmptyValue(Object value) {
+		return value == null || (value instanceof String && ((String) value).trim().isEmpty());
 	}
 
 	@SuppressWarnings("rawtypes")

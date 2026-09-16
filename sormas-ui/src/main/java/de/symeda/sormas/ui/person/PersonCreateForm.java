@@ -76,6 +76,15 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 	private PersonDto person;
 
+	/**
+	 * Whether either the date of birth or the approximate age has to be specified (see {@link #makePersonDataRequired()}).
+	 */
+	private boolean birthDateOrApproximateAgeRequired = false;
+	/**
+	 * False when the person fields are disabled, e.g. because an existing person has been selected.
+	 */
+	private boolean personFieldsEditable = true;
+
 	private final boolean showHomeAddressForm;
 	private final boolean showPresentCondition;
 	private final boolean showSymptomsOnsetDate;
@@ -253,6 +262,19 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			updateApproximateAge();
 			updateReadyOnlyApproximateAge();
 		});
+
+		addFieldListeners(PersonDto.BIRTH_DATE_YYYY, e -> updateBirthDateOrApproximateAgeRequirement());
+		addFieldListeners(PersonDto.APPROXIMATE_AGE, e -> updateBirthDateOrApproximateAgeRequirement());
+	}
+
+	private void updateBirthDateOrApproximateAgeRequirement() {
+		FieldHelper.setBirthDateOrApproximateAgeRequired(
+			birthDateOrApproximateAgeRequired && personFieldsEditable,
+			getField(PersonDto.BIRTH_DATE_YYYY),
+			getField(PersonDto.BIRTH_DATE_MM),
+			getField(PersonDto.BIRTH_DATE_DD),
+			getField(PersonDto.APPROXIMATE_AGE),
+			getField(PersonDto.APPROXIMATE_AGE_TYPE));
 	}
 
 	private void setItemCaptionsForMonths(AbstractSelect months) {
@@ -461,6 +483,8 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			homeAddressForm.setEnabled(enabled || alwaysEnableAddressFields);
 		}
 		setRequired(enabled, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
+		personFieldsEditable = enabled;
+		updateBirthDateOrApproximateAgeRequirement();
 	}
 
 	public void setPersonalDetailsReadOnlyIfNotEmpty(boolean readOnly) {
@@ -506,6 +530,8 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		searchPersonButton.setEnabled(false);
 
 		setRequired(false, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.SEX);
+		personFieldsEditable = false;
+		updateBirthDateOrApproximateAgeRequirement();
 	}
 
 	public LocationEditForm getHomeAddressForm() {
@@ -587,8 +613,15 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	public void showFields(){
 		setVisible(true, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
 	}
+	/**
+	 * Makes first name, last name and sex required and additionally requires either the date of birth or the approximate age
+	 * (not both). Has to be called after the approximate age fields have been made visible (see {@link #showFields()}).
+	 */
 	public void makePersonDataRequired(){
 		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
+
+		birthDateOrApproximateAgeRequired = true;
+		updateBirthDateOrApproximateAgeRequirement();
 	}
 	public void showPresentCondition(){
 		setVisible(true, PersonDto.PRESENT_CONDITION);

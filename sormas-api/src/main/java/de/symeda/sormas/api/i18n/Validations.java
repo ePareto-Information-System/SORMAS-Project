@@ -15,8 +15,10 @@ public interface Validations {
 	String afterDateWithDate = "afterDateWithDate";
 	String beforeDate = "beforeDate";
 	String beforeDateSoft = "beforeDateSoft";
+	String birthDateIncomplete = "birthDateIncomplete";
 	String birthDateInFuture = "birthDateInFuture";
 	String birthDateInvalid = "birthDateInvalid";
+	String birthDateOrApproximateAgeRequired = "birthDateOrApproximateAgeRequired";
 	String campaignDashboardChartIdDoesNotExist = "campaignDashboardChartIdDoesNotExist";
 	String campaignDashboardChartPercentage = "campaignDashboardChartPercentage";
 	String campaignDashboardChartValueNull = "campaignDashboardChartValueNull";

@@ -885,6 +885,23 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.EDUCATION_TYPE, PersonDto.OCCUPATION_DETAILS, PersonDto.MARRIAGE_STATUS);
 		}
 
+		if (personContext == PersonContext.CASE) {
+			// Either the date of birth or the approximate age is mandatory for case persons; registered after all
+			// disease specific visibility changes so that hidden fields are never marked as required
+			addFieldListeners(PersonDto.BIRTH_DATE_YYYY, e -> updateBirthDateOrApproximateAgeRequirement());
+			addFieldListeners(PersonDto.APPROXIMATE_AGE, e -> updateBirthDateOrApproximateAgeRequirement());
+			updateBirthDateOrApproximateAgeRequirement();
+		}
+	}
+
+	private void updateBirthDateOrApproximateAgeRequirement() {
+		FieldHelper.setBirthDateOrApproximateAgeRequired(
+				personContext == PersonContext.CASE,
+				getField(PersonDto.BIRTH_DATE_YYYY),
+				getField(PersonDto.BIRTH_DATE_MM),
+				getField(PersonDto.BIRTH_DATE_DD),
+				getField(PersonDto.APPROXIMATE_AGE),
+				getField(PersonDto.APPROXIMATE_AGE_TYPE));
 	}
 
 	public void hideFieldsForSelectedDisease(Disease disease) {
@@ -908,6 +925,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	public void setValue(PersonDto newFieldValue) {
 		super.setValue(newFieldValue);
 		initializePresentConditionField();
+		updateBirthDateOrApproximateAgeRequirement();
 
 		// HACK: Binding to the fields will call field listeners that may clear/modify the values of other fields.
 		// this hopefully resets everything to its correct value
