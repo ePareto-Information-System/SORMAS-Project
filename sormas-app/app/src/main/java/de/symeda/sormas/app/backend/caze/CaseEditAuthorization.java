@@ -1,5 +1,6 @@
 package de.symeda.sormas.app.backend.caze;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.util.JurisdictionHelper;
@@ -7,6 +8,10 @@ import de.symeda.sormas.app.util.JurisdictionHelper;
 public class CaseEditAuthorization {
 
 	public static Boolean isCaseEditAllowed(Case caze) {
+
+		if (caze.getDisease() == Disease.DENGUE) {
+			return false;
+		}
 
 		if (caze.getSormasToSormasOriginInfo() != null) {
 			return caze.getSormasToSormasOriginInfo().isOwnershipHandedOver();

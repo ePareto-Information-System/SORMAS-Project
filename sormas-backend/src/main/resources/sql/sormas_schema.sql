@@ -15313,3 +15313,11 @@ BEGIN
 END $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (663, 'Verify AHF consolidation left no legacy disease keys');
+
+-- ============================================================
+-- Migration 664: Make DENGUE primary so it appears in Case Directory
+-- disease filter / view lists, while create remains UI-blocked.
+-- ============================================================
+UPDATE diseaseconfiguration SET primarydisease = true WHERE disease = 'DENGUE';
+
+INSERT INTO schema_version (version_number, comment) VALUES (664, 'Make DENGUE a primary disease for case directory filter/view');

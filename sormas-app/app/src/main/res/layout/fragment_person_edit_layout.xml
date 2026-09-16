@@ -110,10 +110,10 @@
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_otherSalutation"
+                style="@style/ControlSingleColumnStyle"
                 app:dependencyParentField="@{personSalutation}"
                 app:dependencyParentValue="@{Salutation.OTHER}"
-                app:value="@={data.otherSalutation}"
-                style="@style/ControlSingleColumnStyle" />
+                app:value="@={data.otherSalutation}" />
 
             <TextView
                 android:id="@+id/person_birthdateLabel"

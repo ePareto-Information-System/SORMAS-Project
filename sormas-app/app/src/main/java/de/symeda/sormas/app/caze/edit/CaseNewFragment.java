@@ -123,8 +123,9 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		record = getActivityRootData();
 
 		List<Disease> diseases = DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true);
+		diseases.remove(Disease.DENGUE);
 		diseaseList = DataUtils.toItems(diseases);
-		if (record.getDisease() != null && !diseases.contains(record.getDisease())) {
+		if (record.getDisease() != null && !diseases.contains(record.getDisease()) && record.getDisease() != Disease.DENGUE) {
 			diseaseList.add(DataUtils.toItem(record.getDisease()));
 		}
 		List<DiseaseVariant> diseaseVariants =

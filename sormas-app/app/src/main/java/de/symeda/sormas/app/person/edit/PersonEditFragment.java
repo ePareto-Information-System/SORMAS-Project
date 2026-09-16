@@ -693,7 +693,6 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 			contentBinding.personApproximateAge.setVisibility(View.GONE);
 			contentBinding.personApproximateAgeReferenceDate.setVisibility(View.GONE);
 		}*/
-
 	}
 
 	@Override

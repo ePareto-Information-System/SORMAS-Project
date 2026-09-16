@@ -72,7 +72,8 @@ public class CasePersonView extends AbstractCaseView implements PersonSideCompon
 
 	@Override
 	protected boolean isEditAllowed() {
-		return FacadeProvider.getPersonFacade().isEditAllowed(person.getUuid());
+		return FacadeProvider.getPersonFacade().isEditAllowed(person.getUuid())
+			&& FacadeProvider.getCaseFacade().isEditAllowed(getCaseRef().getUuid());
 	}
 
 	public Disease getDiseaseFromCaseData() {

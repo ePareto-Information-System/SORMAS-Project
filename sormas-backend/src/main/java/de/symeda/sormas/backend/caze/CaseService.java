@@ -1721,6 +1721,10 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 	public EditPermissionType isAddContactAllowed(Case caze) {
 		// we allow CaseContactViewEdit independently of ownership or similar
 
+		if (caze.getDisease() == Disease.DENGUE) {
+			return EditPermissionType.REFUSED;
+		}
+
 		if (!inJurisdictionOrOwned(caze)) {
 			return EditPermissionType.REFUSED;
 		}
@@ -1734,6 +1738,10 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 
 	@Override
 	public EditPermissionType getEditPermissionType(Case caze) {
+
+		if (caze.getDisease() == Disease.DENGUE) {
+			return EditPermissionType.REFUSED;
+		}
 
 		if (caze.getSormasToSormasOriginInfo() != null && !caze.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
 			return EditPermissionType.REFUSED;
@@ -1756,6 +1764,10 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 
 	
 	public boolean isCaseEditAllowed(Case caze) {
+
+		if (caze.getDisease() == Disease.DENGUE) {
+			return false;
+		}
 
 		if (caze.getSormasToSormasOriginInfo() != null && !caze.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
 			return false;

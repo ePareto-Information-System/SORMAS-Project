@@ -239,7 +239,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		initSymptomFields(contentBinding);
 		initOnsetSymptomField(contentBinding);
-		contentBinding.symptomsOnsetDate.setRequired(true);
+		updateVisitOnsetDateRequired(contentBinding);
 
 		//Symptoms selected for Mpox
 		List<SymptomsList> allowedMaterials = Arrays.asList(
@@ -317,7 +317,9 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			);
 
 			contentBinding.symptomsTypeOfRash.initializeSpinner(DataUtils.toItems(rashSymptomsList));
-			contentBinding.symptomsOnsetDate.setEnabled(true);
+			if (symptomsContext != SymptomsContext.VISIT) {
+				contentBinding.symptomsOnsetDate.setEnabled(true);
+			}
 
 		}
 
@@ -448,6 +450,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 						onsetDateField.setEnabled(isAnySymptomSetToYes());
 					}
 					onsetSymptomField.setEnabled(onsetSymptomField.getAdapter().getCount() > 1); // first is "empty item"
+					updateVisitOnsetDateRequired(contentBinding);
 				}
 			});
 
@@ -475,6 +478,14 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		}
 
 		return anySymptomSetToYes;
+	}
+
+	private void updateVisitOnsetDateRequired(FragmentSymptomsEditLayoutBinding contentBinding) {
+		if (symptomsContext == SymptomsContext.VISIT) {
+			contentBinding.symptomsOnsetDate.setRequired(isAnySymptomSetToYes());
+		} else {
+			contentBinding.symptomsOnsetDate.setRequired(true);
+		}
 	}
 
 	@Override

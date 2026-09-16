@@ -406,7 +406,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         foodHistoryHeadingLabel.setVisible(false);
 
         DateField onsetDateField = addField(ONSET_DATE, DateField.class);
-		if (DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+		if (symptomsContext != SymptomsContext.VISIT && DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
 			onsetDateField.setRequired(true);
 		}
 		ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
@@ -1273,7 +1273,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		onsetSymptom.addValueChangeListener(f -> {
-			if (f.getProperty().getValue() == null && !DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+			if (f.getProperty().getValue() == null
+				&& !(symptomsContext != SymptomsContext.VISIT && DISEASES_REQUIRING_ONSET_DATE.contains(disease))) {
 				setRequired(false, ONSET_DATE);
 			}
 		});
@@ -1436,12 +1437,19 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	}
 
 	public void setOnsetDateFieldValidation(boolean onsetDateFieldValidation) {
-		// For diseases requiring onset date, always maintain required status
-		if (DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+		if (symptomsContext == SymptomsContext.VISIT) {
+			updateOnsetDateRequiredForVisit(onsetDateFieldValidation);
+		} else if (DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+			// For case forms requiring onset date, always maintain required status
 			setRequired(true, ONSET_DATE);
 		} else {
 			setRequired(onsetDateFieldValidation, ONSET_DATE);
 		}
+	}
+
+	private void updateOnsetDateRequiredForVisit(boolean cooperative) {
+		boolean anySymptomYes = isAnySymptomSetToYes(getFieldGroup(), unconditionalSymptomFieldIds, Arrays.asList(SymptomState.YES));
+		setRequired(cooperative && anySymptomYes, ONSET_DATE);
 	}
 
 	@Override
@@ -1498,6 +1506,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			unconditionalSymptomFieldIds,
 			Arrays.asList(SymptomState.YES),
 			visitStatus);
+		boolean cooperative = visitStatus != null && visitStatus.getNullableValue() == VisitStatus.COOPERATIVE;
+		updateOnsetDateRequiredForVisit(cooperative);
 	}
 
 	@Override
@@ -1554,8 +1564,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			return;
 		}
 
-		// For diseases requiring onset date, always maintain required status for onset date field
-		if (targetPropertyId.equals(ONSET_DATE) && DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+		// For case forms requiring onset date, always maintain soft-required; visits follow symptom Yes + cooperative
+		if (targetPropertyId.equals(ONSET_DATE)
+			&& DISEASES_REQUIRING_ONSET_DATE.contains(disease)
+			&& symptomsContext != SymptomsContext.VISIT) {
 			FieldHelper.addSoftRequiredStyle(targetField);
 			return;
 		}
@@ -1578,17 +1590,23 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		for (Object sourcePropertyId : sourcePropertyIds) {
 			Field sourceField = fieldGroup.getField(sourcePropertyId);
 			sourceField.addValueChangeListener(event -> {
-				// For diseases requiring onset date, always maintain required status for onset date field
-				if (targetPropertyId.equals(ONSET_DATE) && DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+				if (targetPropertyId.equals(ONSET_DATE)
+					&& DISEASES_REQUIRING_ONSET_DATE.contains(disease)
+					&& symptomsContext != SymptomsContext.VISIT) {
 					FieldHelper.addSoftRequiredStyle(targetField);
 					return;
 				}
-				
+
 				if (visitStatusField != null) {
-					if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getValue() == VisitStatus.COOPERATIVE) {
+					boolean cooperative = visitStatusField.getNullableValue() == VisitStatus.COOPERATIVE;
+					boolean anyYes = isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues);
+					if (anyYes && cooperative) {
 						FieldHelper.addSoftRequiredStyle(targetField);
 					} else {
 						FieldHelper.removeSoftRequiredStyle(targetField);
+					}
+					if (targetPropertyId.equals(ONSET_DATE) && symptomsContext == SymptomsContext.VISIT) {
+						setRequired(cooperative && anyYes, ONSET_DATE);
 					}
 				} else {
 					if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues)) {
@@ -1602,18 +1620,24 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		if (visitStatusField != null) {
 			visitStatusField.addValueChangeListener((ValueChangeListener) event -> {
-				// For diseases requiring onset date, always maintain required status for onset date field
-				if (targetPropertyId.equals(ONSET_DATE) && DISEASES_REQUIRING_ONSET_DATE.contains(disease)) {
+				if (targetPropertyId.equals(ONSET_DATE)
+					&& DISEASES_REQUIRING_ONSET_DATE.contains(disease)
+					&& symptomsContext != SymptomsContext.VISIT) {
 					FieldHelper.addSoftRequiredStyle(targetField);
 					return;
 				}
-				
-                if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getValue() == VisitStatus.COOPERATIVE) {
-                    FieldHelper.addSoftRequiredStyle(targetField);
-                } else {
-                    FieldHelper.removeSoftRequiredStyle(targetField);
-                }
-            });
+
+				boolean cooperative = visitStatusField.getNullableValue() == VisitStatus.COOPERATIVE;
+				boolean anyYes = isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues);
+				if (anyYes && cooperative) {
+					FieldHelper.addSoftRequiredStyle(targetField);
+				} else {
+					FieldHelper.removeSoftRequiredStyle(targetField);
+				}
+				if (targetPropertyId.equals(ONSET_DATE) && symptomsContext == SymptomsContext.VISIT) {
+					setRequired(cooperative && anyYes, ONSET_DATE);
+				}
+			});
 		}
 	}
 
@@ -1654,7 +1678,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				} else {
 					onsetSymptom.removeItem(sourceField.getCaption());
 					boolean isOnsetDateFieldEnabled = isAnySymptomSetToYes(getFieldGroup(), allPropertyIds, Arrays.asList(SymptomState.YES));
-					onsetDateField.setEnabled(true);
+					onsetDateField.setEnabled(isOnsetDateFieldEnabled);
 					Date onsetDate = getValue().getOnsetDate();
 					if (onsetDate != null) {
 						onsetDateField.setValue(onsetDate);
@@ -1666,7 +1690,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			});
 		}
 		onsetSymptom.setEnabled(true); // will be updated by listener if needed
-		onsetDateField.setEnabled(true); // will be updated by listener if needed
+		boolean anySymptomYes = isAnySymptomSetToYes(getFieldGroup(), allPropertyIds, Arrays.asList(SymptomState.YES));
+		onsetDateField.setEnabled(anySymptomYes); // will be updated by listener if needed
 	}
 
 
