@@ -58,6 +58,7 @@ import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.location.Location;
 import org.apache.commons.collections.CollectionUtils;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.RequestContextHolder;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
@@ -1344,6 +1345,10 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 	}
 
 	public Boolean isSampleEditAllowed(Sample sample) {
+		if (isDengueSample(sample)) {
+			return false;
+		}
+
 		if (sample.getSormasToSormasOriginInfo() != null && !sample.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
 			return false;
 		}
@@ -1430,6 +1435,10 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 	}
 
 	public boolean isEditAllowed(Sample sample) {
+		if (isDengueSample(sample)) {
+			return false;
+		}
+
 		if (sample.getSormasToSormasOriginInfo() != null && !sample.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
 			return false;
 		}
@@ -1439,6 +1448,21 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 		}
 
 		return getJurisdictionFlags(sample).getInJurisdiction() && !sormasToSormasShareInfoService.isSamlpeOwnershipHandedOver(sample);
+	}
+
+	private boolean isDengueSample(Sample sample) {
+		Disease disease = null;
+		if (sample.getAssociatedCase() != null) {
+			disease = sample.getAssociatedCase().getDisease();
+		} else if (sample.getAssociatedContact() != null) {
+			disease = sample.getAssociatedContact().getDisease();
+		} else if (sample.getAssociatedEventParticipant() != null && sample.getAssociatedEventParticipant().getEvent() != null) {
+			disease = sample.getAssociatedEventParticipant().getEvent().getDisease();
+		}
+		if (disease == null) {
+			disease = sample.getDisease();
+		}
+		return disease == Disease.DENGUE;
 	}
 
 	private boolean sampleAssignedToActiveEntity(String sampleUuid) {

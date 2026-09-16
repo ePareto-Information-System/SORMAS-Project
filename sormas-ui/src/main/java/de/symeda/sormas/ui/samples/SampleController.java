@@ -120,14 +120,23 @@ public class SampleController {
 				disease = caseDataDto.getDisease();
 			}
 		}
+		if (disease == Disease.DENGUE || !FacadeProvider.getCaseFacade().isEditAllowed(caseRef.getUuid())) {
+			return;
+		}
 		createSample(SampleDto.build(UserProvider.getCurrent().getUserReference(), caseRef), disease, callback);
 	}
 
 	public void create(ContactReferenceDto contactRef, Disease disease, Runnable callback) {
+		if (disease == Disease.DENGUE) {
+			return;
+		}
 		createSample(SampleDto.build(UserProvider.getCurrent().getUserReference(), contactRef), disease, callback);
 	}
 
 	public void create(EventParticipantReferenceDto eventParticipantRef, Disease disease, Runnable callback) {
+		if (disease == Disease.DENGUE) {
+			return;
+		}
 		createSample(SampleDto.build(UserProvider.getCurrent().getUserReference(), eventParticipantRef), disease, callback);
 	}
 

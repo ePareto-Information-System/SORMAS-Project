@@ -32,6 +32,7 @@ import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.sample.Sample;
+import de.symeda.sormas.app.backend.sample.SampleEditAuthorization;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.core.async.AsyncTaskResult;
@@ -123,12 +124,17 @@ public class SampleEditActivity extends BaseEditActivity<Sample> {
 	@Override
 	public void saveData() {
 
+		final Sample sampleToSave = getStoredRootEntity();
+		if (!SampleEditAuthorization.isSampleEditAllowed(sampleToSave)) {
+			NotificationHelper.showNotification(this, WARNING, getString(R.string.message_edit_forbidden));
+			return;
+		}
+
 		if (saveTask != null) {
 			NotificationHelper.showNotification(this, WARNING, getString(R.string.message_already_saving));
 			return; // don't save multiple times
 		}
 
-		final Sample sampleToSave = getStoredRootEntity();
 		SampleEditFragment fragment = (SampleEditFragment) getActiveFragment();
 
 		try {

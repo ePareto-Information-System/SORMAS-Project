@@ -411,6 +411,11 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 		if (activeSection == CaseSection.CONTACTS) {
 			ContactNewActivity.startActivity(getContext(), getRootUuid());
 		} else if (activeSection == CaseSection.SAMPLES) {
+			Case caze = getStoredRootEntity();
+			if (caze != null && !CaseEditAuthorization.isCaseEditAllowed(caze)) {
+				NotificationHelper.showNotification(this, WARNING, getString(R.string.message_edit_forbidden));
+				return;
+			}
 			SampleNewActivity.startActivity(getContext(), getRootUuid());
 		} else if (activeSection == CaseSection.TASKS) {
 			TaskNewActivity.startActivityFromCase(getContext(), getRootUuid());

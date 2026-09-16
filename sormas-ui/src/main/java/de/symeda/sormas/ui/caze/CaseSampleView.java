@@ -5,6 +5,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 import de.symeda.sormas.api.EntityRelevanceStatus;
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -119,7 +120,10 @@ public class CaseSampleView extends AbstractCaseView {
                     ButtonHelper.createButton(Captions.all, e -> processStatusChange(null), ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
             statusAll.setCaptionAsHtml(true);
 
-            buttonFilterLayout.addComponent(newButton);
+            if (FacadeProvider.getCaseFacade().isEditAllowed(getCaseRef().getUuid())
+                && UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_CREATE)) {
+                buttonFilterLayout.addComponent(newButton);
+            }
             buttonFilterLayout.addComponent(statusAll);
 
             statusButtons.put(statusAll, I18nProperties.getCaption(Captions.all));
