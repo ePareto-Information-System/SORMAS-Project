@@ -1506,7 +1506,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			unconditionalSymptomFieldIds,
 			Arrays.asList(SymptomState.YES),
 			visitStatus);
-		boolean cooperative = visitStatus != null && visitStatus.getNullableValue() == VisitStatus.COOPERATIVE;
+		boolean cooperative = visitStatus != null && FieldHelper.getNullableSourceFieldValue(visitStatus) == VisitStatus.COOPERATIVE;
 		updateOnsetDateRequiredForVisit(cooperative);
 	}
 
@@ -1573,7 +1573,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		if (visitStatusField != null) {
-			if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getNullableValue() == VisitStatus.COOPERATIVE) {
+			if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues)
+				&& FieldHelper.getNullableSourceFieldValue(visitStatusField) == VisitStatus.COOPERATIVE) {
 				FieldHelper.addSoftRequiredStyle(targetField);
 			} else {
 				FieldHelper.removeSoftRequiredStyle(targetField);
@@ -1598,7 +1599,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				}
 
 				if (visitStatusField != null) {
-					boolean cooperative = visitStatusField.getNullableValue() == VisitStatus.COOPERATIVE;
+					boolean cooperative = FieldHelper.getNullableSourceFieldValue(visitStatusField) == VisitStatus.COOPERATIVE;
 					boolean anyYes = isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues);
 					if (anyYes && cooperative) {
 						FieldHelper.addSoftRequiredStyle(targetField);
@@ -1627,7 +1628,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					return;
 				}
 
-				boolean cooperative = visitStatusField.getNullableValue() == VisitStatus.COOPERATIVE;
+				boolean cooperative = FieldHelper.getNullableSourceFieldValue(visitStatusField) == VisitStatus.COOPERATIVE;
 				boolean anyYes = isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues);
 				if (anyYes && cooperative) {
 					FieldHelper.addSoftRequiredStyle(targetField);
