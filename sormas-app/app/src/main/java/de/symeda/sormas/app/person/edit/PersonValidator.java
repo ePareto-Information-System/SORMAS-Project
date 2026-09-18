@@ -15,6 +15,8 @@
 
 package de.symeda.sormas.app.person.edit;
 
+import static android.view.View.VISIBLE;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -23,8 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
 import de.symeda.sormas.app.component.controls.ControlSpinnerField;
+import de.symeda.sormas.app.component.controls.ControlTextEditField;
 import de.symeda.sormas.app.databinding.FragmentPersonEditLayoutBinding;
 import de.symeda.sormas.app.util.ResultCallback;
 
@@ -129,6 +134,77 @@ public final class PersonValidator {
 				contentBinding.personBurialDate.disableErrorState();
 			}
 		});
+	}
+
+	/**
+	 * Either a complete date of birth (year, month and day) or the approximate age is mandatory (not both).
+	 * Age unit becomes required once an approximate age is entered without a birth year. Hidden fields are never required.
+	 */
+	public static void initializeBirthDateOrApproximateAgeRequired(
+		ControlSpinnerField birthdateYYYY,
+		ControlSpinnerField birthdateMM,
+		ControlSpinnerField birthdateDD,
+		ControlTextEditField approximateAge,
+		ControlSpinnerField approximateAgeType) {
+
+		Runnable updateRequirement =
+			() -> updateBirthDateOrApproximateAgeRequired(birthdateYYYY, birthdateMM, birthdateDD, approximateAge, approximateAgeType);
+
+		birthdateYYYY.addValueChangedListener(field -> updateRequirement.run());
+		birthdateMM.addValueChangedListener(field -> updateRequirement.run());
+		birthdateDD.addValueChangedListener(field -> updateRequirement.run());
+		approximateAge.addValueChangedListener(field -> {
+			String ageValue = field.getValue() != null ? field.getValue().toString() : null;
+			boolean hasBirthYear = birthdateYYYY.getValue() != null;
+			if (DataHelper.isNullOrEmpty(ageValue) || hasBirthYear) {
+				if (DataHelper.isNullOrEmpty(ageValue) && !hasBirthYear) {
+					approximateAgeType.setRequired(false);
+					approximateAgeType.setValue(null);
+				}
+			} else if (approximateAgeType.getValue() == null) {
+				approximateAgeType.setValue(ApproximateAgeType.YEARS);
+			}
+			updateRequirement.run();
+		});
+
+		updateRequirement.run();
+	}
+
+	public static void updateBirthDateOrApproximateAgeRequired(
+		ControlSpinnerField birthdateYYYY,
+		ControlSpinnerField birthdateMM,
+		ControlSpinnerField birthdateDD,
+		ControlTextEditField approximateAge,
+		ControlSpinnerField approximateAgeType) {
+
+		boolean hasBirthYear = birthdateYYYY.getValue() != null;
+		boolean hasBirthMonth = birthdateMM.getValue() != null;
+		boolean hasBirthDay = birthdateDD.getValue() != null;
+		boolean hasCompleteBirthDate = hasBirthYear && hasBirthMonth && hasBirthDay;
+
+		String ageValue = approximateAge.getValue() != null ? approximateAge.getValue().toString() : null;
+		// Age only counts as the alternative path when no birth year is set (otherwise age is derived from DOB)
+		boolean hasApproximateAge = !hasBirthYear && !DataHelper.isNullOrEmpty(ageValue);
+
+		boolean birthYearVisible = isFieldVisible(birthdateYYYY);
+		boolean birthMonthVisible = isFieldVisible(birthdateMM);
+		boolean birthDayVisible = isFieldVisible(birthdateDD);
+		boolean ageVisible = isFieldVisible(approximateAge);
+		boolean ageTypeVisible = isFieldVisible(approximateAgeType);
+
+		boolean eitherRequired = !hasCompleteBirthDate && !hasApproximateAge;
+		birthdateYYYY.setRequired(eitherRequired && birthYearVisible);
+		approximateAge.setRequired(eitherRequired && ageVisible);
+
+		boolean birthDatePartsRequired = (eitherRequired || hasBirthYear) && !hasCompleteBirthDate && birthYearVisible;
+		birthdateMM.setRequired(birthDatePartsRequired && birthMonthVisible);
+		birthdateDD.setRequired(birthDatePartsRequired && birthDayVisible);
+
+		approximateAgeType.setRequired(hasApproximateAge && ageVisible && ageTypeVisible);
+	}
+
+	private static boolean isFieldVisible(ControlPropertyEditField<?> field) {
+		return field != null && field.getVisibility() == VISIBLE;
 	}
 
 	public static void initializeBirthDateValidation(

@@ -266,22 +266,32 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 		contentBinding.personPresentCondition.initializeSpinner(items);
 		contentBinding.personPresentCondition.addValueChangedListener(field -> setBurialFieldVisibilities(contentBinding));
-		contentBinding.personApproximateAge.addValueChangedListener(field -> {
-			if (DataHelper.isNullOrEmpty((String) field.getValue())) {
-				contentBinding.personApproximateAgeType.setRequired(false);
-				contentBinding.personApproximateAgeType.setValue(null);
-			} else {
+
+		if (rootData instanceof Case) {
+			PersonValidator.initializeBirthDateOrApproximateAgeRequired(
+				contentBinding.personBirthdateYYYY,
+				contentBinding.personBirthdateMM,
+				contentBinding.personBirthdateDD,
+				contentBinding.personApproximateAge,
+				contentBinding.personApproximateAgeType);
+		} else {
+			contentBinding.personApproximateAge.addValueChangedListener(field -> {
+				if (DataHelper.isNullOrEmpty((String) field.getValue())) {
+					contentBinding.personApproximateAgeType.setRequired(false);
+					contentBinding.personApproximateAgeType.setValue(null);
+				} else {
+					contentBinding.personApproximateAgeType.setRequired(true);
+					if (contentBinding.personApproximateAgeType.getValue() == null) {
+						contentBinding.personApproximateAgeType.setValue(ApproximateAgeType.YEARS);
+					}
+				}
+			});
+
+			if (!DataHelper.isNullOrEmpty(contentBinding.personApproximateAge.getValue())) {
 				contentBinding.personApproximateAgeType.setRequired(true);
 				if (contentBinding.personApproximateAgeType.getValue() == null) {
 					contentBinding.personApproximateAgeType.setValue(ApproximateAgeType.YEARS);
 				}
-			}
-		});
-
-		if (!DataHelper.isNullOrEmpty(contentBinding.personApproximateAge.getValue())) {
-			contentBinding.personApproximateAgeType.setRequired(true);
-			if (contentBinding.personApproximateAgeType.getValue() == null) {
-				contentBinding.personApproximateAgeType.setValue(ApproximateAgeType.YEARS);
 			}
 		}
 
@@ -641,6 +651,14 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 
 		if (disease != null) {
 			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.PERSON_EDIT);
+			if (rootData instanceof Case) {
+				PersonValidator.updateBirthDateOrApproximateAgeRequired(
+					contentBinding.personBirthdateYYYY,
+					contentBinding.personBirthdateMM,
+					contentBinding.personBirthdateDD,
+					contentBinding.personApproximateAge,
+					contentBinding.personApproximateAgeType);
+			}
 		}
 	}
 

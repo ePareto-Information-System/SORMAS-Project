@@ -106,6 +106,7 @@ import de.symeda.sormas.app.core.notification.NotificationHelper;
 import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.DialogClassificationRulesLayoutBinding;
 import de.symeda.sormas.app.databinding.FragmentCaseEditLayoutBinding;
+import de.symeda.sormas.app.person.edit.PersonValidator;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 //import de.symeda.sormas.app.util.InfrastructureHelper;
@@ -891,24 +892,12 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		});
 		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
 
-		contentBinding.personApproximateAge.addValueChangedListener(field -> {
-			if (DataHelper.isNullOrEmpty((String) field.getValue())) {
-				contentBinding.personApproximateAgeType.setRequired(false);
-				contentBinding.personApproximateAgeType.setValue(null);
-			} else {
-				contentBinding.personApproximateAgeType.setRequired(true);
-				if (contentBinding.personApproximateAgeType.getValue() == null) {
-					contentBinding.personApproximateAgeType.setValue(ApproximateAgeType.YEARS);
-				}
-			}
-		});
-
-		if (!DataHelper.isNullOrEmpty(contentBinding.personApproximateAge.getValue())) {
-			contentBinding.personApproximateAgeType.setRequired(true);
-			if (contentBinding.personApproximateAgeType.getValue() == null) {
-				contentBinding.personApproximateAgeType.setValue(ApproximateAgeType.YEARS);
-			}
-		}
+		PersonValidator.initializeBirthDateOrApproximateAgeRequired(
+			contentBinding.personBirthdateYYYY,
+			contentBinding.personBirthdateMM,
+			contentBinding.personBirthdateDD,
+			contentBinding.personApproximateAge,
+			contentBinding.personApproximateAgeType);
 
 		// Initialize ControlDateFields
 		contentBinding.caseDataReportDate.initializeDateField(getFragmentManager());

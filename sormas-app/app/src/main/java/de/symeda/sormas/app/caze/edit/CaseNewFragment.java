@@ -165,6 +165,12 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		PersonValidator
 			.initializeBirthDateValidation(contentBinding.personBirthdateYYYY, contentBinding.personBirthdateMM, contentBinding.personBirthdateDD);
+		PersonValidator.initializeBirthDateOrApproximateAgeRequired(
+			contentBinding.personBirthdateYYYY,
+			contentBinding.personBirthdateMM,
+			contentBinding.personBirthdateDD,
+			contentBinding.personApproximateAge,
+			contentBinding.personApproximateAgeType);
 
 		contentBinding.caseDataPlagueType.initializeSpinner(plagueTypeList);
 		contentBinding.caseDataDengueFeverType.initializeSpinner(dengueFeverTypeList);
@@ -313,6 +319,12 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 				contentBinding.caseDataPointOfEntry.setVisibility(currentCaseOrigin == CaseOrigin.POINT_OF_ENTRY ? VISIBLE : GONE);
 				InfrastructureDaoHelper
 						.initializePointOfEntryDetailsFieldVisibility(contentBinding.caseDataPointOfEntry, contentBinding.caseDataPointOfEntryDetails);
+				PersonValidator.updateBirthDateOrApproximateAgeRequired(
+					contentBinding.personBirthdateYYYY,
+					contentBinding.personBirthdateMM,
+					contentBinding.personBirthdateDD,
+					contentBinding.personApproximateAge,
+					contentBinding.personApproximateAgeType);
 			}
 		});
 
@@ -489,6 +501,13 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 //			contentBinding.caseDataCaseOrigin.setVisibility(GONE);
 //			contentBinding.caseDataPointOfEntry.setVisibility(GONE);
 		}
+
+		PersonValidator.updateBirthDateOrApproximateAgeRequired(
+			contentBinding.personBirthdateYYYY,
+			contentBinding.personBirthdateMM,
+			contentBinding.personBirthdateDD,
+			contentBinding.personApproximateAge,
+			contentBinding.personApproximateAgeType);
 	}
 
 	private void updateDiseaseVariantsField(FragmentCaseNewLayoutBinding contentBinding) {
