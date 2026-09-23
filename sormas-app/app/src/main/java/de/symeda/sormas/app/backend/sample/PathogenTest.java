@@ -45,6 +45,7 @@ import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestResultVariant;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.Subtype;
 import de.symeda.sormas.api.utils.Antibiogram;
 import de.symeda.sormas.api.utils.Gram;
 import de.symeda.sormas.api.utils.LabType;
@@ -87,6 +88,12 @@ public class PathogenTest extends PseudonymizableAdo {
 	private Disease secondTestedDisease;
 	@Enumerated(EnumType.STRING)
 	private PathogenTestResultType testResultForSecondDisease;
+	@Column
+	private String thirdPathogenTested;
+	@Enumerated(EnumType.STRING)
+	private PathogenTestResultType testResultForThirdPathogen;
+	@Enumerated(EnumType.STRING)
+	private Subtype positiveSubtypes;
 
 	@Column(name = "testedDiseaseVariant")
 	private String testedDiseaseVariantString;
@@ -290,6 +297,30 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	public void setTestResultForSecondDisease(PathogenTestResultType testResultForSecondDisease) {
 		this.testResultForSecondDisease = testResultForSecondDisease;
+	}
+
+	public String getThirdPathogenTested() {
+		return thirdPathogenTested;
+	}
+
+	public void setThirdPathogenTested(String thirdPathogenTested) {
+		this.thirdPathogenTested = thirdPathogenTested;
+	}
+
+	public PathogenTestResultType getTestResultForThirdPathogen() {
+		return testResultForThirdPathogen;
+	}
+
+	public void setTestResultForThirdPathogen(PathogenTestResultType testResultForThirdPathogen) {
+		this.testResultForThirdPathogen = testResultForThirdPathogen;
+	}
+
+	public Subtype getPositiveSubtypes() {
+		return positiveSubtypes;
+	}
+
+	public void setPositiveSubtypes(Subtype positiveSubtypes) {
+		this.positiveSubtypes = positiveSubtypes;
 	}
 
 

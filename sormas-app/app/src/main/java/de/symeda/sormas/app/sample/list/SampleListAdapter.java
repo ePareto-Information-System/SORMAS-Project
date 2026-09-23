@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.sample.PathogenTest;
 import de.symeda.sormas.app.backend.sample.Sample;
 import de.symeda.sormas.app.core.adapter.databinding.BindingPagedListAdapter;
 import de.symeda.sormas.app.core.adapter.databinding.BindingViewHolder;
@@ -72,12 +74,32 @@ public class SampleListAdapter extends BindingPagedListAdapter<Sample, RowSample
 //    }
 
 	private String getSampleTestResultMessage(Context context, Sample record) {
+		StringBuilder resultMessage = new StringBuilder();
 		if (record.getPathogenTestResult() != null) {
-			return record.getPathogenTestResult().toString();
+			resultMessage.append(record.getPathogenTestResult());
 		} else if (record.getSpecimenCondition() == SpecimenCondition.NOT_ADEQUATE) {
-			return context.getResources().getString(R.string.value_inadequate_specimen_condition);
-		} else {
-			return "";
+			resultMessage.append(context.getString(R.string.value_inadequate_specimen_condition));
 		}
+
+		PathogenTest latestTest = DatabaseHelper.getSampleTestDao().queryMostRecentBySample(record);
+		if (latestTest != null && latestTest.getTestResultForSecondDisease() != null) {
+			appendResult(
+				resultMessage,
+				context.getString(R.string.caption_sample_covid_result, latestTest.getTestResultForSecondDisease()));
+		}
+		if (latestTest != null && latestTest.getTestResultForThirdPathogen() != null) {
+			appendResult(
+				resultMessage,
+				context.getString(R.string.caption_sample_hrsv_result, latestTest.getTestResultForThirdPathogen()));
+		}
+
+		return resultMessage.toString();
+	}
+
+	private void appendResult(StringBuilder resultMessage, String result) {
+		if (resultMessage.length() > 0) {
+			resultMessage.append('\n');
+		}
+		resultMessage.append(result);
 	}
 }

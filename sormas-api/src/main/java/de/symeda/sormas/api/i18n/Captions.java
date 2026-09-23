@@ -2563,6 +2563,8 @@ public interface Captions {
 	String Sample_pathogenTestCount = "Sample.pathogenTestCount";
 	String Sample_pathogenTestingRequested = "Sample.pathogenTestingRequested";
 	String Sample_pathogenTestResult = "Sample.pathogenTestResult";
+	String Sample_covidTestResult = "Sample.covidTestResult";
+	String Sample_hrsvTestResult = "Sample.hrsvTestResult";
 	String Sample_received = "Sample.received";
 	String Sample_receivedDate = "Sample.receivedDate";
 	String Sample_referredToUuid = "Sample.referredToUuid";
@@ -2771,6 +2773,8 @@ public interface Captions {
 	String SampleExport_caseOutcome = "SampleExport.caseOutcome";
 	String SampleExport_caseRegion = "SampleExport.caseRegion";
 	String SampleExport_caseReportDate = "SampleExport.caseReportDate";
+	String SampleExport_symptomsOnsetDate = "SampleExport.symptomsOnsetDate";
+	String SampleExport_dateOfOnset = "SampleExport.dateOfOnset";
 	String SampleExport_caseResponsibleCommunity = "SampleExport.caseResponsibleCommunity";
 	String SampleExport_caseResponsibleDistrict = "SampleExport.caseResponsibleDistrict";
 	String SampleExport_caseResponsibleRegion = "SampleExport.caseResponsibleRegion";

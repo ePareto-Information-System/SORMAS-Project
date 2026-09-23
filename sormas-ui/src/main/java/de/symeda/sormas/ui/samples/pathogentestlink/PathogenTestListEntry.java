@@ -211,6 +211,12 @@ public class PathogenTestListEntry extends SideComponentField {
 		if (pathogenTest.getTestedDisease() != Disease.NEW_INFLUENZA)
 			return;
 
+		if (pathogenTest.getTestResultVariant() != null) {
+			Label labelVariantResult = new Label("Variant: " + DataHelper.toStringNullable(pathogenTest.getTestResultVariant()));
+			CssStyles.style(labelVariantResult, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
+			addComponentToField(labelVariantResult);
+		}
+
 		if (pathogenTest.getSecondTestedDisease() != null
 				&& pathogenTest.getTestResultForSecondDisease() != null) {
 
@@ -255,12 +261,6 @@ public class PathogenTestListEntry extends SideComponentField {
 				addComponentToField(subType);
 				CssStyles.style(subType, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
 			}
-		}
-
-		if (pathogenTest.getTestResultVariant() != null) {
-			Label labelVariantResult = new Label("Variant: " + DataHelper.toStringNullable(pathogenTest.getTestResultVariant()));
-			CssStyles.style(labelVariantResult, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
-			addComponentToField(labelVariantResult);
 		}
 	}
 }

@@ -123,6 +123,7 @@ import de.symeda.sormas.backend.sample.PathogenTestFacadeEjb.PathogenTestFacadeE
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoService;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareInfoHelper;
+import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserService;
@@ -686,6 +687,8 @@ public class SampleFacadeEjb implements SampleFacade {
 			joins.getEventLocation().get(Location.HOUSE_NUMBER),
 			joins.getEventLocation().get(Location.ADDITIONAL_INFORMATION),
 			joins.getCaze().get(Case.REPORT_DATE),
+			joins.getCaseJoins().getSymptoms().get(Symptoms.ONSET_DATE),
+			joins.getCaseJoins().getSymptoms().get(Symptoms.DATE_OF_ONSET),
 			joins.getCaze().get(Case.CASE_CLASSIFICATION),
 			joins.getCaze().get(Case.OUTCOME),
 			joins.getCaseResponsibleRegion().get(Region.NAME),

@@ -65,6 +65,8 @@ public class PathogenTest extends DeletableAdo {
 	public static final String LAB_DETAILS = "labDetails";
 	public static final String LAB_USER = "labUser";
 	public static final String TEST_RESULT = "testResult";
+	public static final String TEST_RESULT_FOR_SECOND_DISEASE = "testResultForSecondDisease";
+	public static final String TEST_RESULT_FOR_THIRD_PATHOGEN = "testResultForThirdPathogen";
 	public static final String TEST_RESULT_TEXT = "testResultText";
 	public static final String TEST_RESULT_VERIFIED = "testResultVerified";
 	public static final String FOUR_FOLD_INCREASE_ANTIBODY_TITER = "fourFoldIncreaseAntibodyTiter";

@@ -911,8 +911,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		if(caseDisease == Disease.UNSPECIFIED_VHF){
 			testTypeField.setVisible(false);
 			testTypeField.setRequired(false);
-			testResultField.setVisible(false);
-			testResultField.setRequired(false);
 
 			tickTestField = addField(PathogenTestDto.SAMPLE_TESTS, OptionGroup.class);
 			CssStyles.style(tickTestField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);

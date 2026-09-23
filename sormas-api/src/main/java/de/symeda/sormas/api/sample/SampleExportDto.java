@@ -109,6 +109,8 @@ public class SampleExportDto extends AbstractUuidDto {
 	@Pseudonymizer(EmptyValuePseudonymizer.class)
 	private final SampleExportPersonAddress personAddress;
 	private Date caseReportDate;
+	private Date symptomsOnsetDate;
+	private Date dateOfOnset;
 	private CaseClassification caseClassification;
 	private CaseOutcome caseOutcome;
 	@EmbeddedPersonalData
@@ -150,7 +152,7 @@ public class SampleExportDto extends AbstractUuidDto {
 						   String caseAddressRegion, String caseAddressDistrict, String caseAddressCommunity, String caseAddressCity, String caseAddressStreet, String caseAddressHouseNumber, String caseAddressAdditionalInformation,
 						   String contactAddressRegion, String contactAddressDistrict, String contactAddressCommunity, String contactAddressCity, String contactAddressStreet, String contactAddressHouseNumber, String contactAddressAdditionalInformation,
 						   String eventAddressRegion, String eventAddressDistrict, String eventAddressCommunity, String eventAddressCity, String eventAddressStreet, String eventAddressHouseNumber, String eventAddressAdditionalInformation,
-						   Date caseReportDate, CaseClassification caseClassification, CaseOutcome caseOutcome, String caseRegion, String caseDistrict,
+						   Date caseReportDate, Date symptomsOnsetDate, Date dateOfOnset, CaseClassification caseClassification, CaseOutcome caseOutcome, String caseRegion, String caseDistrict,
 						   String caseCommunity, String caseHealthFacility, String caseFacilityDetails, String contactRegion, String contactDistrict, String contactCommunity,
 						   Date contactReportDate, Date lastContactDate, ContactClassification contactClassification, ContactStatus contactStatus, String labUuid, String caseHealthFacilityUuid,
 						   String caseResponsibleRegion, String caseResponsibleDistrict, String caseResponsibleCommunity,
@@ -260,6 +262,8 @@ public class SampleExportDto extends AbstractUuidDto {
 					eventAddressHouseNumber,
 					eventAddressAdditionalInformation);
 		this.caseReportDate = caseReportDate;
+		this.symptomsOnsetDate = symptomsOnsetDate;
+		this.dateOfOnset = dateOfOnset;
 		this.caseClassification = caseClassification;
 		this.caseOutcome = caseOutcome;
 		this.contactReportDate = contactReportDate;
@@ -612,6 +616,24 @@ public class SampleExportDto extends AbstractUuidDto {
 	}
 
 	@Order(52)
+	public Date getSymptomsOnsetDate() {
+		return symptomsOnsetDate;
+	}
+
+	public void setSymptomsOnsetDate(Date symptomsOnsetDate) {
+		this.symptomsOnsetDate = symptomsOnsetDate;
+	}
+
+	@Order(53)
+	public Date getDateOfOnset() {
+		return dateOfOnset;
+	}
+
+	public void setDateOfOnset(Date dateOfOnset) {
+		this.dateOfOnset = dateOfOnset;
+	}
+
+	@Order(54)
 	public CaseClassification getCaseClassification() {
 		return caseClassification;
 	}
@@ -620,7 +642,7 @@ public class SampleExportDto extends AbstractUuidDto {
 		this.caseClassification = caseClassification;
 	}
 
-	@Order(53)
+	@Order(55)
 	public CaseOutcome getCaseOutcome() {
 		return caseOutcome;
 	}
@@ -629,22 +651,22 @@ public class SampleExportDto extends AbstractUuidDto {
 		this.caseOutcome = caseOutcome;
 	}
 
-	@Order(54)
+	@Order(56)
 	public String getCaseRegion() {
 		return sampleAssociatedCase != null ? sampleAssociatedCase.getRegion() : null;
 	}
 
-	@Order(55)
+	@Order(57)
 	public String getCaseDistrict() {
 		return sampleAssociatedCase != null ? sampleAssociatedCase.getDistrict() : null;
 	}
 
-	@Order(56)
+	@Order(58)
 	public String getCaseCommunity() {
 		return sampleAssociatedCase != null ? sampleAssociatedCase.getCommunity() : null;
 	}
 
-	@Order(57)
+	@Order(59)
 	public String getCaseFacility() {
 		return sampleAssociatedCase != null ? sampleAssociatedCase.getFacility() : null;
 	}

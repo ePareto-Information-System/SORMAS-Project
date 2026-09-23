@@ -785,6 +785,8 @@
     <string name="value_sample_date_unknown">Sampling Date N/A</string>
     <string name="value_sample_material_unknown">Material N/A</string>
     <string name="value_sample_result_unknown">Test Result N/A</string>
+    <string name="caption_sample_covid_result">COVID-19 result: %1$s</string>
+    <string name="caption_sample_hrsv_result">HRSV result: %1$s</string>
     <string name="value_status_unknown">Status N/A</string>
     <string name="value_task_date_unknown">Task Date N/A</string>
     <string name="value_task_priority_unknown">Priority N/A</string>
