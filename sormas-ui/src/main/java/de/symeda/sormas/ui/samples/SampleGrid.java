@@ -51,6 +51,8 @@ import de.symeda.sormas.ui.utils.ViewConfiguration;
 public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 
 	private static final String PATHOGEN_TEST_RESULT = Captions.Sample_pathogenTestResult;
+	private static final String COVID_TEST_RESULT = Captions.Sample_covidTestResult;
+	private static final String HRSV_TEST_RESULT = Captions.Sample_hrsvTestResult;
 	private static final String DISEASE_SHORT = Captions.columnDiseaseShort;
 	private static final String LAST_PATHOGEN_TEST = Captions.columnLastPathogenTest;
 
@@ -88,6 +90,16 @@ public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 		});
 		pathogenTestResultColumn.setId(PATHOGEN_TEST_RESULT);
 		pathogenTestResultColumn.setSortProperty(SampleIndexDto.PATHOGEN_TEST_RESULT);
+
+		Column<SampleIndexDto, String> covidTestResultColumn =
+			addColumn(sample -> sample.getCovidTestResult() != null ? sample.getCovidTestResult().toString() : "");
+		covidTestResultColumn.setId(COVID_TEST_RESULT);
+		covidTestResultColumn.setSortable(false);
+
+		Column<SampleIndexDto, String> hrsvTestResultColumn =
+			addColumn(sample -> sample.getHrsvTestResult() != null ? sample.getHrsvTestResult().toString() : "");
+		hrsvTestResultColumn.setId(HRSV_TEST_RESULT);
+		hrsvTestResultColumn.setSortable(false);
 
 		Column<SampleIndexDto, String> lastPathogenTestColumn = addColumn(sample -> {
 			PathogenTestType type = sample.getTypeOfLastTest();
@@ -134,6 +146,8 @@ public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 			SampleIndexDto.SAMPLE_MATERIAL,
 //			SampleIndexDto.SAMPLE_PURPOSE,
 			PATHOGEN_TEST_RESULT,
+			COVID_TEST_RESULT,
+			HRSV_TEST_RESULT,
 			SampleIndexDto.ADDITIONAL_TESTING_STATUS,
 			LAST_PATHOGEN_TEST,
 			SampleIndexDto.PATHOGEN_TEST_COUNT,

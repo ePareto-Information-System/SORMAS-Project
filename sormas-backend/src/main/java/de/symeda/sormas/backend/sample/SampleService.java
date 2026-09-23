@@ -316,7 +316,9 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 
 			Path<Long> testType = testRoot.get(PathogenTest.TEST_TYPE);
 			Path<Date> cqValue = testRoot.get(PathogenTest.CQ_VALUE);
-			testCq.select(cb.array(testType, cqValue, sampleIdExpr));
+			Path<PathogenTestResultType> covidTestResult = testRoot.get(PathogenTest.TEST_RESULT_FOR_SECOND_DISEASE);
+			Path<PathogenTestResultType> hrsvTestResult = testRoot.get(PathogenTest.TEST_RESULT_FOR_THIRD_PATHOGEN);
+			testCq.select(cb.array(testType, cqValue, covidTestResult, hrsvTestResult, sampleIdExpr));
 
 			testCq.where(
 					cb.isFalse(testRoot.get(PathogenTest.DELETED)),
@@ -326,13 +328,15 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 			List<Object[]> testList = em.createQuery(testCq).getResultList();
 
 			Map<String, Object[]> tests = testList.stream()
-					.filter(distinctByKey(pathogenTest -> pathogenTest[2]))
-					.collect(Collectors.toMap(pathogenTest -> pathogenTest[2].toString(), Function.identity()));
+					.filter(distinctByKey(pathogenTest -> pathogenTest[4]))
+					.collect(Collectors.toMap(pathogenTest -> pathogenTest[4].toString(), Function.identity()));
 
 			for (SampleIndexDto indexDto : samples) {
 				Optional.ofNullable(tests.get(indexDto.getUuid())).ifPresent(test -> {
 					indexDto.setTypeOfLastTest((PathogenTestType) test[0]);
 					indexDto.setLastTestCqValue((Float) test[1]);
+					indexDto.setCovidTestResult((PathogenTestResultType) test[2]);
+					indexDto.setHrsvTestResult((PathogenTestResultType) test[3]);
 				});
 			}
 		}

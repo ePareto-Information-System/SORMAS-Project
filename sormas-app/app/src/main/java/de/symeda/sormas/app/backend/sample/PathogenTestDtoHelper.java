@@ -104,6 +104,9 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setSampleTestResultImmunoDate(source.getSampleTestResultImmunoDate());
 		target.setSecondTestedDisease(source.getSecondTestedDisease());
 		target.setTestResultForSecondDisease(source.getTestResultForSecondDisease());
+		target.setThirdPathogenTested(source.getThirdPathogenTested());
+		target.setTestResultForThirdPathogen(source.getTestResultForThirdPathogen());
+		target.setPositiveSubtypes(source.getPositiveSubtypes());
 		target.setLaboratoryType(source.getLaboratoryType());
 		target.setLaboratoryCytology(source.getLaboratoryCytology());
 		target.setLaboratoryCytologyPmn(source.getLaboratoryCytologyPmn());
@@ -161,6 +164,9 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setTypingId(source.getTypingId());
 		target.setSecondTestedDisease(source.getSecondTestedDisease());
 		target.setTestResultForSecondDisease(source.getTestResultForSecondDisease());
+		target.setThirdPathogenTested(source.getThirdPathogenTested());
+		target.setTestResultForThirdPathogen(source.getTestResultForThirdPathogen());
+		target.setPositiveSubtypes(source.getPositiveSubtypes());
 
 		if (source.getLab() != null) {
 			Facility lab = DatabaseHelper.getFacilityDao().queryForId(source.getLab().getId());

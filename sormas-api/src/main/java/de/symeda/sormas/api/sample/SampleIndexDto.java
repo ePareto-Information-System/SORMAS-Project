@@ -71,6 +71,8 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public static final String RECEIVED = "received";
 	public static final String REFERRED = "referred";
 	public static final String PATHOGEN_TEST_RESULT = "pathogenTestResult";
+	public static final String COVID_TEST_RESULT = "covidTestResult";
+	public static final String HRSV_TEST_RESULT = "hrsvTestResult";
 	public static final String ADDITIONAL_TESTING_STATUS = "additionalTestingStatus";
 	public static final String PATHOGEN_TEST_COUNT = "pathogenTestCount";
 	public static final String SAMPLE_DISPATCH_MODE = "sampleDispatchMode";
@@ -108,6 +110,8 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private SamplePurpose samplePurpose;
 	private SpecimenCondition specimenCondition;
 	private PathogenTestResultType pathogenTestResult;
+	private PathogenTestResultType covidTestResult;
+	private PathogenTestResultType hrsvTestResult;
 	private AdditionalTestingStatus additionalTestingStatus;
 	private SamplingReason samplingReason;
 	private String samplingReasonDetails;
@@ -478,6 +482,22 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public void setPathogenTestResult(PathogenTestResultType pathogenTestResult) {
 		this.pathogenTestResult = pathogenTestResult;
+	}
+
+	public PathogenTestResultType getCovidTestResult() {
+		return covidTestResult;
+	}
+
+	public void setCovidTestResult(PathogenTestResultType covidTestResult) {
+		this.covidTestResult = covidTestResult;
+	}
+
+	public PathogenTestResultType getHrsvTestResult() {
+		return hrsvTestResult;
+	}
+
+	public void setHrsvTestResult(PathogenTestResultType hrsvTestResult) {
+		this.hrsvTestResult = hrsvTestResult;
 	}
 
 	public PathogenTestType getSampleTests() {

@@ -251,7 +251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 409;
+	public static final int DATABASE_VERSION = 410;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4886,6 +4886,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 408:
 				currentVersion = 408;
 				migrateLegacyAhfDisease(db);
+			case 409:
+				currentVersion = 409;
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN thirdPathogenTested VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN testResultForThirdPathogen VARCHAR(255);");
+				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN positiveSubtypes VARCHAR(255);");
 				break;
 
 			default:
