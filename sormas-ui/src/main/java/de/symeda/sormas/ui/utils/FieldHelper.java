@@ -385,11 +385,10 @@ public final class FieldHelper {
 	}
 
 	/**
-	 * Makes sure that either a complete date of birth (year, month and day) or the approximate age is specified,
-	 * without requiring both. As long as neither path is complete, the birth date parts and the approximate age
-	 * are marked as required. Once a birth year is chosen, month and day stay required until the date is complete.
-	 * The age unit becomes required once an approximate age has been entered without a birth year. Fields that are
-	 * not visible are never marked as required.
+	 * Makes sure that either the date of birth or the approximate age of a person is specified, without requiring both:
+	 * As long as neither of them has a value, both the birth year and the approximate age are marked as required. As soon as
+	 * one of them is filled, the other one is no longer required. An estimated date of birth (year only) is sufficient. The age
+	 * unit becomes required once an approximate age has been entered. Fields that are not visible are never marked as required.
 	 *
 	 * @param enabled
 	 *            false removes all requirements handled by this method (e.g. when the person fields are not editable)
@@ -397,31 +396,18 @@ public final class FieldHelper {
 	public static void setBirthDateOrApproximateAgeRequired(
 		boolean enabled,
 		Field<?> birthDateYear,
-		Field<?> birthDateMonth,
-		Field<?> birthDateDay,
 		Field<?> approximateAge,
 		Field<?> approximateAgeType) {
 
 		boolean hasBirthYear = !isEmptyValue(birthDateYear.getValue());
-		boolean hasBirthMonth = !isEmptyValue(birthDateMonth.getValue());
-		boolean hasBirthDay = !isEmptyValue(birthDateDay.getValue());
-		boolean hasCompleteBirthDate = hasBirthYear && hasBirthMonth && hasBirthDay;
-		// Age only counts as the alternative path when no birth year is set (otherwise age is derived from DOB)
-		boolean hasApproximateAge = !hasBirthYear && !isEmptyValue(approximateAge.getValue());
+		boolean hasApproximateAge = !isEmptyValue(approximateAge.getValue());
 
-		boolean eitherRequired = enabled && !hasCompleteBirthDate && !hasApproximateAge;
+		boolean eitherRequired = enabled && !hasBirthYear && !hasApproximateAge;
 		String eitherRequiredError = I18nProperties.getValidationError(Validations.birthDateOrApproximateAgeRequired);
 		birthDateYear.setRequired(eitherRequired && birthDateYear.isVisible());
 		birthDateYear.setRequiredError(eitherRequiredError);
 		approximateAge.setRequired(eitherRequired && approximateAge.isVisible());
 		approximateAge.setRequiredError(eitherRequiredError);
-
-		boolean birthDatePartsRequired = enabled && (eitherRequired || hasBirthYear) && !hasCompleteBirthDate && birthDateYear.isVisible();
-		String birthDateIncompleteError = I18nProperties.getValidationError(Validations.birthDateIncomplete);
-		birthDateMonth.setRequired(birthDatePartsRequired && birthDateMonth.isVisible());
-		birthDateMonth.setRequiredError(birthDateIncompleteError);
-		birthDateDay.setRequired(birthDatePartsRequired && birthDateDay.isVisible());
-		birthDateDay.setRequiredError(birthDateIncompleteError);
 
 		approximateAgeType.setRequired(enabled && hasApproximateAge && approximateAge.isVisible() && approximateAgeType.isVisible());
 		approximateAgeType.setRequiredError(I18nProperties.getValidationError(Validations.required, approximateAgeType.getCaption()));

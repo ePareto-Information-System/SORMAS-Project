@@ -264,8 +264,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		});
 
 		addFieldListeners(PersonDto.BIRTH_DATE_YYYY, e -> updateBirthDateOrApproximateAgeRequirement());
-		addFieldListeners(PersonDto.BIRTH_DATE_MM, e -> updateBirthDateOrApproximateAgeRequirement());
-		addFieldListeners(PersonDto.BIRTH_DATE_DD, e -> updateBirthDateOrApproximateAgeRequirement());
 		addFieldListeners(PersonDto.APPROXIMATE_AGE, e -> updateBirthDateOrApproximateAgeRequirement());
 	}
 
@@ -273,8 +271,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		FieldHelper.setBirthDateOrApproximateAgeRequired(
 			birthDateOrApproximateAgeRequired && personFieldsEditable,
 			getField(PersonDto.BIRTH_DATE_YYYY),
-			getField(PersonDto.BIRTH_DATE_MM),
-			getField(PersonDto.BIRTH_DATE_DD),
 			getField(PersonDto.APPROXIMATE_AGE),
 			getField(PersonDto.APPROXIMATE_AGE_TYPE));
 	}

@@ -137,30 +137,22 @@ public final class PersonValidator {
 	}
 
 	/**
-	 * Either a complete date of birth (year, month and day) or the approximate age is mandatory (not both).
-	 * Age unit becomes required once an approximate age is entered without a birth year. Hidden fields are never required.
+	 * Either the birth year or the approximate age is mandatory (not both). Year-only DOB is enough.
+	 * Age unit becomes required once an approximate age is entered. Hidden fields are never required.
 	 */
 	public static void initializeBirthDateOrApproximateAgeRequired(
 		ControlSpinnerField birthdateYYYY,
-		ControlSpinnerField birthdateMM,
-		ControlSpinnerField birthdateDD,
 		ControlTextEditField approximateAge,
 		ControlSpinnerField approximateAgeType) {
 
-		Runnable updateRequirement =
-			() -> updateBirthDateOrApproximateAgeRequired(birthdateYYYY, birthdateMM, birthdateDD, approximateAge, approximateAgeType);
+		Runnable updateRequirement = () -> updateBirthDateOrApproximateAgeRequired(birthdateYYYY, approximateAge, approximateAgeType);
 
 		birthdateYYYY.addValueChangedListener(field -> updateRequirement.run());
-		birthdateMM.addValueChangedListener(field -> updateRequirement.run());
-		birthdateDD.addValueChangedListener(field -> updateRequirement.run());
 		approximateAge.addValueChangedListener(field -> {
 			String ageValue = field.getValue() != null ? field.getValue().toString() : null;
-			boolean hasBirthYear = birthdateYYYY.getValue() != null;
-			if (DataHelper.isNullOrEmpty(ageValue) || hasBirthYear) {
-				if (DataHelper.isNullOrEmpty(ageValue) && !hasBirthYear) {
-					approximateAgeType.setRequired(false);
-					approximateAgeType.setValue(null);
-				}
+			if (DataHelper.isNullOrEmpty(ageValue)) {
+				approximateAgeType.setRequired(false);
+				approximateAgeType.setValue(null);
 			} else if (approximateAgeType.getValue() == null) {
 				approximateAgeType.setValue(ApproximateAgeType.YEARS);
 			}
@@ -172,34 +164,20 @@ public final class PersonValidator {
 
 	public static void updateBirthDateOrApproximateAgeRequired(
 		ControlSpinnerField birthdateYYYY,
-		ControlSpinnerField birthdateMM,
-		ControlSpinnerField birthdateDD,
 		ControlTextEditField approximateAge,
 		ControlSpinnerField approximateAgeType) {
 
 		boolean hasBirthYear = birthdateYYYY.getValue() != null;
-		boolean hasBirthMonth = birthdateMM.getValue() != null;
-		boolean hasBirthDay = birthdateDD.getValue() != null;
-		boolean hasCompleteBirthDate = hasBirthYear && hasBirthMonth && hasBirthDay;
-
 		String ageValue = approximateAge.getValue() != null ? approximateAge.getValue().toString() : null;
-		// Age only counts as the alternative path when no birth year is set (otherwise age is derived from DOB)
-		boolean hasApproximateAge = !hasBirthYear && !DataHelper.isNullOrEmpty(ageValue);
+		boolean hasApproximateAge = !DataHelper.isNullOrEmpty(ageValue);
 
 		boolean birthYearVisible = isFieldVisible(birthdateYYYY);
-		boolean birthMonthVisible = isFieldVisible(birthdateMM);
-		boolean birthDayVisible = isFieldVisible(birthdateDD);
 		boolean ageVisible = isFieldVisible(approximateAge);
 		boolean ageTypeVisible = isFieldVisible(approximateAgeType);
 
-		boolean eitherRequired = !hasCompleteBirthDate && !hasApproximateAge;
+		boolean eitherRequired = !hasBirthYear && !hasApproximateAge;
 		birthdateYYYY.setRequired(eitherRequired && birthYearVisible);
 		approximateAge.setRequired(eitherRequired && ageVisible);
-
-		boolean birthDatePartsRequired = (eitherRequired || hasBirthYear) && !hasCompleteBirthDate && birthYearVisible;
-		birthdateMM.setRequired(birthDatePartsRequired && birthMonthVisible);
-		birthdateDD.setRequired(birthDatePartsRequired && birthDayVisible);
-
 		approximateAgeType.setRequired(hasApproximateAge && ageVisible && ageTypeVisible);
 	}
 

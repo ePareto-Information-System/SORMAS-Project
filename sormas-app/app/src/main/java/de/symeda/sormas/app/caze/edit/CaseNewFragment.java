@@ -167,8 +167,6 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			.initializeBirthDateValidation(contentBinding.personBirthdateYYYY, contentBinding.personBirthdateMM, contentBinding.personBirthdateDD);
 		PersonValidator.initializeBirthDateOrApproximateAgeRequired(
 			contentBinding.personBirthdateYYYY,
-			contentBinding.personBirthdateMM,
-			contentBinding.personBirthdateDD,
 			contentBinding.personApproximateAge,
 			contentBinding.personApproximateAgeType);
 
@@ -321,8 +319,6 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 						.initializePointOfEntryDetailsFieldVisibility(contentBinding.caseDataPointOfEntry, contentBinding.caseDataPointOfEntryDetails);
 				PersonValidator.updateBirthDateOrApproximateAgeRequired(
 					contentBinding.personBirthdateYYYY,
-					contentBinding.personBirthdateMM,
-					contentBinding.personBirthdateDD,
 					contentBinding.personApproximateAge,
 					contentBinding.personApproximateAgeType);
 			}
@@ -504,8 +500,6 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		PersonValidator.updateBirthDateOrApproximateAgeRequired(
 			contentBinding.personBirthdateYYYY,
-			contentBinding.personBirthdateMM,
-			contentBinding.personBirthdateDD,
 			contentBinding.personApproximateAge,
 			contentBinding.personApproximateAgeType);
 	}

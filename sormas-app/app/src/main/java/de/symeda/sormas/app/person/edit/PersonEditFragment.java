@@ -270,8 +270,6 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		if (rootData instanceof Case) {
 			PersonValidator.initializeBirthDateOrApproximateAgeRequired(
 				contentBinding.personBirthdateYYYY,
-				contentBinding.personBirthdateMM,
-				contentBinding.personBirthdateDD,
 				contentBinding.personApproximateAge,
 				contentBinding.personApproximateAgeType);
 		} else {
@@ -654,8 +652,6 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 			if (rootData instanceof Case) {
 				PersonValidator.updateBirthDateOrApproximateAgeRequired(
 					contentBinding.personBirthdateYYYY,
-					contentBinding.personBirthdateMM,
-					contentBinding.personBirthdateDD,
 					contentBinding.personApproximateAge,
 					contentBinding.personApproximateAgeType);
 			}

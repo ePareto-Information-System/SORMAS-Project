@@ -894,8 +894,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 		PersonValidator.initializeBirthDateOrApproximateAgeRequired(
 			contentBinding.personBirthdateYYYY,
-			contentBinding.personBirthdateMM,
-			contentBinding.personBirthdateDD,
 			contentBinding.personApproximateAge,
 			contentBinding.personApproximateAgeType);
 

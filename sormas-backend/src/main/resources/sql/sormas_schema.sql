@@ -15321,3 +15321,36 @@ INSERT INTO schema_version (version_number, comment) VALUES (663, 'Verify AHF co
 UPDATE diseaseconfiguration SET primarydisease = true WHERE disease = 'DENGUE';
 
 INSERT INTO schema_version (version_number, comment) VALUES (664, 'Make DENGUE a primary disease for case directory filter/view');
+
+-- ============================================================
+-- Migration 665: Enable contact follow-up for Ghana disease list
+-- (ILI, IDSR, NNT, AHF, Cholera, Measles, Yellow Fever, CSM,
+-- Monkeypox, COVID-19, AFP, Guinea Worm, Food-borne Illness).
+-- Duration 7 only where previously unset/0 (Guinea Worm, NNT).
+-- ============================================================
+UPDATE diseaseconfiguration
+SET followupenabled = true
+WHERE disease IN (
+	'NEW_INFLUENZA',
+	'IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS',
+	'NEONATAL_TETANUS',
+	'UNSPECIFIED_VHF',
+	'CHOLERA',
+	'MEASLES',
+	'YELLOW_FEVER',
+	'CSM',
+	'MONKEYPOX',
+	'CORONAVIRUS',
+	'AFP',
+	'GUINEA_WORM',
+	'FOODBORNE_ILLNESS'
+);
+
+UPDATE diseaseconfiguration
+SET followupduration = 7,
+	casefollowupduration = COALESCE(NULLIF(casefollowupduration, 0), 7),
+	eventparticipantfollowupduration = COALESCE(NULLIF(eventparticipantfollowupduration, 0), 7)
+WHERE disease IN ('GUINEA_WORM', 'NEONATAL_TETANUS')
+	AND (followupduration IS NULL OR followupduration = 0);
+
+INSERT INTO schema_version (version_number, comment) VALUES (665, 'Enable follow-up for Ghana contact-tracing disease list');

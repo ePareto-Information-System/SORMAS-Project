@@ -32,22 +32,22 @@ public enum Disease
 	implements
 	StatisticsGroupingKey {
 
-	AFP(true, true, true, false, false,60, true, false, false),
-	CHOLERA(true, true, true, true, false,5, true, false, false),
+	AFP(true, true, true, false, true,60, true, false, false),
+	CHOLERA(true, true, true, true, true,5, true, false, false),
 	CONGENITAL_RUBELLA(false, true, true, true, false,21, true, false, false),
-	CSM(true, true, true, false, false,10, true, false, false),
+	CSM(true, true, true, false, true,10, true, false, false),
 	DENGUE(true, true, true, false, false,14, true, false, false),
 	EVD(true, false, true, true,false, 21, true, false, false),
-	GUINEA_WORM(true, true, true, false, false,0, true, false, false),
+	GUINEA_WORM(true, true, true, false, true,7, true, false, false),
 	LASSA(true, false, true, true, false,21, true, false, false),
-	MEASLES(true, true, true, false, false,21, true, true, false),
-	MONKEYPOX(true, true, true, true, false,21, true, false, false),
-	NEW_INFLUENZA(true, true, true, true, false,17, true, false, false),
+	MEASLES(true, true, true, false, true,21, true, true, false),
+	MONKEYPOX(true, true, true, true, true,21, true, false, false),
+	NEW_INFLUENZA(true, true, true, true, true,17, true, false, false),
 	PLAGUE(false, false, false, false, false,7, false, false, false),
 	POLIO(true, false, true, false, false,0, true, false, false),
 	//AHF(true, true, true, true, 21, true, false, false),
 	WEST_NILE_FEVER(true, false, true, false, false,0, true, false, false),
-	YELLOW_FEVER(true, true, true, false, false,6, true, false, false),
+	YELLOW_FEVER(true, true, true, false, true,6, true, false, false),
 	RABIES(false, false, false, false, false,6, false, false, false),
 	ANTHRAX(false, false, false, false, false,0, false, false, false),
 	CORONAVIRUS(true, true, true, true, true,14, true, true, true),
@@ -69,7 +69,7 @@ public enum Disease
 	LYMPHATIC_FILARIASIS(true, false, false, false, false,0, true, false, false),
 	BURULI_ULCER(true, false, false, false, false,0, true, false, false),
 	PERTUSSIS(true, false, false, false, false,0, true, false, false),
-	NEONATAL_TETANUS(true, true, true, false, false,0, true, true, true),
+	NEONATAL_TETANUS(true, true, true, false, true,7, true, true, true),
 	ONCHOCERCIASIS(true, false, false, false, false,0, true, false, false),
 	DIPHTERIA(true, false, false, false, false,0, true, false, false),
 	TRACHOMA(true, false, false, false, false,0, true, false, false),
@@ -96,10 +96,10 @@ public enum Disease
 	ZIKA(true, false, true, false, false,6, true, false, false),
 	MARBURG(true, false, true, false, false,0, true, false, false),
 	UNDEFINED(true, false, true, true, false,0, false, false, false),
-	UNSPECIFIED_VHF(true, true, true, true, false,21, true, false, false),
+	UNSPECIFIED_VHF(true, true, true, true, true,21, true, false, false),
 	SARI(true, false, true, true, false,17, true, false, false),
-	FOODBORNE_ILLNESS(true, true, true, true, false,17, true, false, false),
-	IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS(true, true, true, false, false,14, true, false, false);
+	FOODBORNE_ILLNESS(true, true, true, true, true,17, true, false, false),
+	IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS(true, true, true, false, true,14, true, false, false);
 
 
 	private final boolean defaultActive;
