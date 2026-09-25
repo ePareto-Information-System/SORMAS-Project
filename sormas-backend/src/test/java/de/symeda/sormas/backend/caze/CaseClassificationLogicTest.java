@@ -138,6 +138,11 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		creator.createPathogenTest(caze, Disease.EVD, PathogenTestType.ISOLATION, PathogenTestResultType.POSITIVE);
 		caze = getCaseFacade().getCaseDataByUuid(caze.getUuid());
 		assertEquals(CaseClassification.CONFIRMED, caze.getCaseClassification());
+
+		caze = creator.createUnclassifiedCase(Disease.NEW_INFLUENZA);
+		creator.createPathogenTest(caze, Disease.NEW_INFLUENZA, PathogenTestType.PCR_RT_PCR, PathogenTestResultType.POSITIVE);
+		caze = getCaseFacade().getCaseDataByUuid(caze.getUuid());
+		assertEquals(CaseClassification.CONFIRMED, caze.getCaseClassification());
 	}
 
 	@Test

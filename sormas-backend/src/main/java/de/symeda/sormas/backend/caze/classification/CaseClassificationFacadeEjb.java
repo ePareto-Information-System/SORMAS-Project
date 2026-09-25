@@ -326,21 +326,19 @@ public class CaseClassificationFacadeEjb implements CaseClassificationFacade {
 				epiData(EpiDataDto.AREA_INFECTED_ANIMALS),
 				exposure(ExposureDto.HANDLING_SAMPLES, ExposureType.WORK)));
 		probable = allOf(suspect, caseData(CaseDataDto.OUTCOME, CaseOutcome.DECEASED));
-		confirmed = allOf(
-			suspect,
-			xOf(
-				1,
-				positiveTestResult(
-					Disease.NEW_INFLUENZA,
-					PathogenTestType.ISOLATION,
-					PathogenTestType.NEUTRALIZING_ANTIBODIES,
-					PathogenTestType.PCR_RT_PCR),
-				sampleTest(
-					PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER,
-					Arrays.asList(
-						new PathogenTestType[] {
-							PathogenTestType.IGG_SERUM_ANTIBODY }),
-					true)));
+		confirmed = xOf(
+			1,
+			positiveTestResult(
+				Disease.NEW_INFLUENZA,
+				PathogenTestType.ISOLATION,
+				PathogenTestType.NEUTRALIZING_ANTIBODIES,
+				PathogenTestType.PCR_RT_PCR),
+			sampleTest(
+				PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER,
+				Arrays.asList(
+					new PathogenTestType[] {
+						PathogenTestType.IGG_SERUM_ANTIBODY }),
+				true));
 		addCriteria(Disease.NEW_INFLUENZA, DateHelper.getDateZero(2020, 11, 6), suspect, probable, confirmed, extracted(Disease.NEW_INFLUENZA));
 
 		// Measles

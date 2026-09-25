@@ -83,6 +83,7 @@ import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleAssociationType;
 import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.sample.SampleExportDto;
 import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
@@ -90,6 +91,7 @@ import de.symeda.sormas.api.sample.SampleSimilarityCriteria;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.PosNeg;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.AbstractBeanTest;
@@ -130,6 +132,10 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			"",
 			false);
 		test.setCqValue(1.5F);
+		test.setSecondTestedDisease(Disease.CORONAVIRUS);
+		test.setTestResultForSecondDisease(PathogenTestResultType.POSITIVE);
+		test.setThirdPathogenTested("HRSV");
+		test.setTestResultForThirdPathogen(PathogenTestResultType.NEGATIVE);
 		getPathogenTestFacade().savePathogenTest(test);
 
 		List<SampleIndexDto> sampleIndexDtos = getSampleFacade().getIndexList(new SampleCriteria(), 0, 100, null);
@@ -141,6 +147,8 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 
 		assertEquals(PathogenTestType.CQ_VALUE_DETECTION, sampleIndexDtos.get(1).getTypeOfLastTest());
 		assertTrue(sampleIndexDtos.get(1).getLastTestCqValue().equals(1.5F));
+		assertEquals(PathogenTestResultType.POSITIVE, sampleIndexDtos.get(1).getCovidTestResult());
+		assertEquals(PathogenTestResultType.NEGATIVE, sampleIndexDtos.get(1).getHrsvTestResult());
 
 		// Referenced user has to find his samples
 		loginWith(user);
@@ -148,6 +156,93 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 		assertThat(
 			result.stream().map(e -> e.getUuid()).collect(Collectors.toList()),
 			containsInAnyOrder(sample.getUuid(), referredSample.getUuid()));
+	}
+
+	@Test
+	public void testSampleExportContainsBothOnsetDates() {
+		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
+		CaseDataDto caze = creator.createCase(user.toReference(), creator.createPerson().toReference(), rdcf);
+		Date symptomsOnsetDate = DateHelper.getDateZero(2026, 1, 10);
+		Date dateOfOnset = DateHelper.getDateZero(2026, 1, 11);
+		caze.getSymptoms().setOnsetDate(symptomsOnsetDate);
+		caze.getSymptoms().setDateOfOnset(dateOfOnset);
+		getCaseFacade().save(caze);
+		creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+
+		List<SampleExportDto> export = getSampleFacade().getExportList(new SampleCriteria(), Collections.emptySet(), 0, 100);
+
+		assertEquals(1, export.size());
+		assertEquals(symptomsOnsetDate, export.get(0).getSymptomsOnsetDate());
+		assertEquals(dateOfOnset, export.get(0).getDateOfOnset());
+	}
+
+	@Test
+	public void testIliFinalLaboratoryResultFollowsIndividualResults() {
+		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			creator.createPerson().toReference(),
+			Disease.NEW_INFLUENZA,
+			CaseClassification.NOT_CLASSIFIED,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+		SampleDto sample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+		PathogenTestDto test = creator.createPathogenTest(
+			sample.toReference(),
+			PathogenTestType.PCR_RT_PCR,
+			Disease.NEW_INFLUENZA,
+			new Date(),
+			rdcf.facility,
+			user.toReference(),
+			PathogenTestResultType.NEGATIVE,
+			"",
+			true);
+		test.setSecondTestedDisease(Disease.CORONAVIRUS);
+		test.setTestResultForSecondDisease(PathogenTestResultType.POSITIVE);
+		test.setThirdPathogenTested("HRSV");
+		test.setTestResultForThirdPathogen(PathogenTestResultType.PENDING);
+		getPathogenTestFacade().savePathogenTest(test);
+		assertEquals(PathogenTestResultType.POSITIVE, getSampleFacade().getSampleByUuid(sample.getUuid()).getPathogenTestResult());
+
+		test.setTestResultForSecondDisease(PathogenTestResultType.NEGATIVE);
+		test.setTestResultForThirdPathogen(PathogenTestResultType.NEGATIVE);
+		getPathogenTestFacade().savePathogenTest(test);
+		assertEquals(PathogenTestResultType.NEGATIVE, getSampleFacade().getSampleByUuid(sample.getUuid()).getPathogenTestResult());
+	}
+
+	@Test
+	public void testAhfFinalLaboratoryResultFollowsSpecificResults() {
+		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			creator.createPerson().toReference(),
+			Disease.UNSPECIFIED_VHF,
+			CaseClassification.NOT_CLASSIFIED,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+		SampleDto sample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+		PathogenTestDto test = creator.createPathogenTest(
+			sample.toReference(),
+			PathogenTestType.PCR,
+			Disease.EVD,
+			new Date(),
+			rdcf.facility,
+			user.toReference(),
+			PathogenTestResultType.PENDING,
+			"",
+			true);
+		test.setSampleTestResultPCR(PosNeg.POSITIVE);
+		getPathogenTestFacade().savePathogenTest(test);
+		assertEquals(PathogenTestResultType.POSITIVE, getSampleFacade().getSampleByUuid(sample.getUuid()).getPathogenTestResult());
+
+		test.setSampleTestResultPCR(PosNeg.NEGATIVE);
+		getPathogenTestFacade().savePathogenTest(test);
+		assertEquals(PathogenTestResultType.NEGATIVE, getSampleFacade().getSampleByUuid(sample.getUuid()).getPathogenTestResult());
 	}
 
 	@Test
