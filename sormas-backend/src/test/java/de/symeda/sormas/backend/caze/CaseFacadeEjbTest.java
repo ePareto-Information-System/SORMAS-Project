@@ -2671,6 +2671,27 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 	}
 
 	@Test
+	public void testInfluenzaLikeIllnessCompletenessExcludesContactAndOutcome() {
+		PersonDto person = creator.createPerson("ILI", "Case", Sex.FEMALE, 1990, 1, 1);
+		CaseDataDto caze = creator.createCase(
+			nationalUser.toReference(),
+			person.toReference(),
+			Disease.NEW_INFLUENZA,
+			CaseClassification.CONFIRMED,
+			InvestigationStatus.DONE,
+			new Date(),
+			rdcf);
+		caze.getSymptoms().setSymptomatic(true);
+		caze.getSymptoms().setOnsetDate(new Date());
+		getCaseFacade().save(caze);
+		creator.createSample(caze.toReference(), nationalUser.toReference(), rdcf.facility);
+
+		getCaseFacade().updateCompleteness(caze.getUuid());
+
+		assertEquals(1.0f, getCaseService().getByUuid(caze.getUuid()).getCompleteness(), 0.0001f);
+	}
+
+	@Test
 	public void testStringLengthValidations() {
 
 		CaseDataDto caze = creator.createCase(nationalUser.toReference(), creator.createPerson().toReference(), rdcf);

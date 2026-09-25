@@ -2530,6 +2530,7 @@ return filter;
 	private float calculateCompleteness(Case caze) {
 
 		float completeness = 0f;
+		boolean isInfluenzaLikeIllness = caze.getDisease() == Disease.NEW_INFLUENZA;
 
 		if (InvestigationStatus.DONE.equals(caze.getInvestigationStatus())) {
 			completeness += 0.2f;
@@ -2544,10 +2545,11 @@ return filter;
 		if (Boolean.TRUE.equals(caze.getSymptoms().getSymptomatic())) {
 			completeness += 0.15f;
 		}
-		if (contactService.exists((cb, root, cq) -> cb.and(contactService.createDefaultFilter(cb, root), cb.equal(root.get(Contact.CAZE), caze)))) {
+		if (!isInfluenzaLikeIllness
+			&& contactService.exists((cb, root, cq) -> cb.and(contactService.createDefaultFilter(cb, root), cb.equal(root.get(Contact.CAZE), caze)))) {
 			completeness += 0.10f;
 		}
-		if (!CaseOutcome.NO_OUTCOME.equals(caze.getOutcome())) {
+		if (!isInfluenzaLikeIllness && !CaseOutcome.NO_OUTCOME.equals(caze.getOutcome())) {
 			completeness += 0.05f;
 		}
 		if (caze.getPerson().getBirthdateYYYY() != null || caze.getPerson().getApproximateAge() != null) {
@@ -2560,7 +2562,7 @@ return filter;
 			completeness += 0.05f;
 		}
 
-		return completeness;
+		return isInfluenzaLikeIllness ? completeness / 0.85f : completeness;
 	}
 
 	private void selectIndexDtoFields(CaseQueryContext caseQueryContext) {
