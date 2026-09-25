@@ -32,6 +32,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.sample.PathogenTestResultHelper;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.ValidationException;
@@ -153,6 +154,13 @@ public class PathogenTestEditActivity extends BaseEditActivity<PathogenTest> {
 			@Override
 			public void doInBackground(TaskResultHolder resultHolder) throws DaoException {
 				DatabaseHelper.getSampleTestDao().saveAndSnapshot(pathogenTestToSave);
+				PathogenTestResultType finalResult = getAutomaticFinalResult(pathogenTestToSave);
+				if (Boolean.TRUE.equals(pathogenTestToSave.getTestResultVerified())
+					&& finalResult != null
+					&& finalResult != pathogenTestToSave.getSample().getPathogenTestResult()) {
+					pathogenTestToSave.getSample().setPathogenTestResult(finalResult);
+					DatabaseHelper.getSampleDao().saveAndSnapshot(pathogenTestToSave.getSample());
+				}
 			}
 
 			@Override
@@ -160,7 +168,8 @@ public class PathogenTestEditActivity extends BaseEditActivity<PathogenTest> {
 				super.onPostExecute(taskResult);
 
 				if (taskResult.getResultStatus().isSuccess()) {
-					if (Boolean.TRUE == pathogenTestToSave.getTestResultVerified()
+					if (getAutomaticFinalResult(pathogenTestToSave) == null
+						&& Boolean.TRUE == pathogenTestToSave.getTestResultVerified()
 						&& pathogenTestToSave.getTestedDisease() == associatedCase.getDisease()
 						&& pathogenTestToSave.getTestResult() != pathogenTestToSave.getSample().getPathogenTestResult()) {
 						final ConfirmationDialog confirmationDialog = new ConfirmationDialog(
@@ -199,6 +208,26 @@ public class PathogenTestEditActivity extends BaseEditActivity<PathogenTest> {
 				saveTask = null;
 			}
 		}.executeOnThreadPool();
+	}
+
+	private PathogenTestResultType getAutomaticFinalResult(PathogenTest pathogenTest) {
+		if (pathogenTest.getTestedDisease() == Disease.NEW_INFLUENZA) {
+			return PathogenTestResultHelper.resolveFinalResult(
+				pathogenTest.getTestResult(),
+				pathogenTest.getTestResultForSecondDisease(),
+				pathogenTest.getTestResultForThirdPathogen());
+		}
+		if (pathogenTest.getTestedDisease() == Disease.UNSPECIFIED_VHF
+			|| Disease.AHF_DISEASES.contains(pathogenTest.getTestedDisease())) {
+			PathogenTestResultType result = PathogenTestResultHelper.resolveFinalVhfResult(
+				pathogenTest.getSampleTestResultPCR(),
+				pathogenTest.getSampleTestResultAntigen(),
+				pathogenTest.getSampleTestResultIGM(),
+				pathogenTest.getSampleTestResultIGG(),
+				pathogenTest.getSampleTestResultImmuno());
+			return result != null ? result : pathogenTest.getTestResult();
+		}
+		return null;
 	}
 
 	@Override

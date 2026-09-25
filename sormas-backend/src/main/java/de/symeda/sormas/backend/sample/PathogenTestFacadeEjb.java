@@ -15,6 +15,7 @@
 
 package de.symeda.sormas.backend.sample;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -244,12 +245,46 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 		PathogenTest pathogenTest = fillOrBuildEntity(dto, existingSampleTest, checkChangeDate);
 		pathogenTestService.ensurePersisted(pathogenTest);
+		updateFinalLaboratoryResult(pathogenTest);
 
 		onPathogenTestChanged(existingSampleTestDto, pathogenTest);
 
 		handleAssociatedEntityChanges(pathogenTest, syncShares);
 
 		return convertToDto(pathogenTest, Pseudonymizer.getDefault(userService::hasRight));
+	}
+
+	private void updateFinalLaboratoryResult(PathogenTest pathogenTest) {
+		if (!Boolean.TRUE.equals(pathogenTest.getTestResultVerified())) {
+			return;
+		}
+
+		PathogenTestResultType finalResult = null;
+		if (pathogenTest.getTestedDisease() == Disease.NEW_INFLUENZA) {
+			finalResult = PathogenTestResultHelper.resolveFinalResult(
+				pathogenTest.getTestResult(),
+				pathogenTest.getTestResultForSecondDisease(),
+				pathogenTest.getTestResultForThirdPathogen());
+		} else if (usesVhfSpecificTestResults(pathogenTest.getTestedDisease())) {
+			finalResult = PathogenTestResultHelper.resolveFinalVhfResult(
+				pathogenTest.getSampleTestResultPCR(),
+				pathogenTest.getSampleTestResultAntigen(),
+				pathogenTest.getSampleTestResultIGM(),
+				pathogenTest.getSampleTestResultIGG(),
+				pathogenTest.getSampleTestResultImmuno());
+			if (finalResult == null) {
+				finalResult = pathogenTest.getTestResult();
+			}
+		}
+
+		Sample sample = pathogenTest.getSample();
+		if (finalResult != null && finalResult != sample.getPathogenTestResult()) {
+			Date changeDate = pathogenTest.getTestDateTime() != null ? pathogenTest.getTestDateTime() : new Date();
+			sample.setPathogenTestResult(finalResult);
+			sample.setPathogenTestResultChangeDate(changeDate);
+			sample.setChangeDate(new Timestamp(System.currentTimeMillis()));
+			sampleService.ensurePersisted(sample);
+		}
 	}
 
 	private void handleAssociatedEntityChanges(PathogenTest pathogenTest, boolean syncShares) {
