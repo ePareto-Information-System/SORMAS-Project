@@ -950,6 +950,7 @@ public class PathogenTest extends DeletableAdo {
 		this.variantOtherSpecify = variantOtherSpecify;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public Disease getSecondTestedDisease() {
 		return secondTestedDisease;
 	}

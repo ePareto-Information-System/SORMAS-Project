@@ -15354,3 +15354,123 @@ WHERE disease IN ('GUINEA_WORM', 'NEONATAL_TETANUS')
 	AND (followupduration IS NULL OR followupduration = 0);
 
 INSERT INTO schema_version (version_number, comment) VALUES (665, 'Enable follow-up for Ghana contact-tracing disease list');
+
+-- ============================================================
+-- Migration 666: Convert ordinal Disease values on columns that were
+-- missing @Enumerated(EnumType.STRING) (Hibernate defaulted to ORDINAL).
+--
+-- Sample.suspectedDisease and PathogenTest.secondTestedDisease were stored
+-- as numeric ordinals in varchar columns. After AHF was removed from the
+-- Disease enum, reading ordinal 66 (IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS
+-- while AHF was still present) throws ArrayIndexOutOfBoundsException.
+--
+-- Mapping uses the Disease order WITH AHF at ordinal 58 (the order in effect
+-- while those ordinals were written). AHF is rewritten to UNSPECIFIED_VHF.
+-- Values that are already disease names are left unchanged.
+-- ============================================================
+DO $$
+DECLARE
+	col record;
+BEGIN
+	CREATE TEMP TABLE tmp_disease_ordinal_map (
+		ordinal_value text PRIMARY KEY,
+		disease_name text NOT NULL
+	) ON COMMIT DROP;
+
+	INSERT INTO tmp_disease_ordinal_map (ordinal_value, disease_name) VALUES
+		('0', 'AFP'),
+		('1', 'CHOLERA'),
+		('2', 'CONGENITAL_RUBELLA'),
+		('3', 'CSM'),
+		('4', 'DENGUE'),
+		('5', 'EVD'),
+		('6', 'GUINEA_WORM'),
+		('7', 'LASSA'),
+		('8', 'MEASLES'),
+		('9', 'MONKEYPOX'),
+		('10', 'NEW_INFLUENZA'),
+		('11', 'PLAGUE'),
+		('12', 'POLIO'),
+		('13', 'WEST_NILE_FEVER'),
+		('14', 'YELLOW_FEVER'),
+		('15', 'RABIES'),
+		('16', 'ANTHRAX'),
+		('17', 'CORONAVIRUS'),
+		('18', 'PNEUMONIA'),
+		('19', 'MALARIA'),
+		('20', 'TYPHOID_FEVER'),
+		('21', 'ACUTE_VIRAL_HEPATITIS'),
+		('22', 'NON_NEONATAL_TETANUS'),
+		('23', 'HIV'),
+		('24', 'SCHISTOSOMIASIS'),
+		('25', 'SOIL_TRANSMITTED_HELMINTHS'),
+		('26', 'TRYPANOSOMIASIS'),
+		('27', 'DIARRHEA_DEHYDRATION'),
+		('28', 'DIARRHEA_BLOOD'),
+		('29', 'SNAKE_BITE'),
+		('30', 'RUBELLA'),
+		('31', 'TUBERCULOSIS'),
+		('32', 'LEPROSY'),
+		('33', 'LYMPHATIC_FILARIASIS'),
+		('34', 'BURULI_ULCER'),
+		('35', 'PERTUSSIS'),
+		('36', 'NEONATAL_TETANUS'),
+		('37', 'ONCHOCERCIASIS'),
+		('38', 'DIPHTERIA'),
+		('39', 'TRACHOMA'),
+		('40', 'YAWS_ENDEMIC_SYPHILIS'),
+		('41', 'MATERNAL_DEATHS'),
+		('42', 'PERINATAL_DEATHS'),
+		('43', 'INFLUENZA_A'),
+		('44', 'INFLUENZA_B'),
+		('45', 'H_METAPNEUMOVIRUS'),
+		('46', 'RESPIRATORY_SYNCYTIAL_VIRUS'),
+		('47', 'PARAINFLUENZA_1_4'),
+		('48', 'ADENOVIRUS'),
+		('49', 'RHINOVIRUS'),
+		('50', 'ENTEROVIRUS'),
+		('51', 'M_PNEUMONIAE'),
+		('52', 'C_PNEUMONIAE'),
+		('53', 'ARI'),
+		('54', 'CHIKUNGUNYA'),
+		('55', 'POST_IMMUNIZATION_ADVERSE_EVENTS_MILD'),
+		('56', 'POST_IMMUNIZATION_ADVERSE_EVENTS_SEVERE'),
+		('57', 'FHA'),
+		('58', 'UNSPECIFIED_VHF'), -- was AHF
+		('59', 'OTHER'),
+		('60', 'ZIKA'),
+		('61', 'MARBURG'),
+		('62', 'UNDEFINED'),
+		('63', 'UNSPECIFIED_VHF'),
+		('64', 'SARI'),
+		('65', 'FOODBORNE_ILLNESS'),
+		('66', 'IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS');
+
+	FOR col IN
+		SELECT tbl, colname
+		FROM (VALUES
+			('samples', 'suspecteddisease'),
+			('samples_history', 'suspecteddisease'),
+			('pathogentest', 'secondtesteddisease'),
+			('pathogentest_history', 'secondtesteddisease')
+		) AS cols(tbl, colname)
+		JOIN information_schema.columns c
+		  ON c.table_schema = 'public'
+		 AND c.table_name = cols.tbl
+		 AND c.column_name = cols.colname
+	LOOP
+		EXECUTE format(
+			'UPDATE %I t SET %I = m.disease_name
+			 FROM tmp_disease_ordinal_map m
+			 WHERE t.%I = m.ordinal_value',
+			col.tbl, col.colname, col.colname);
+
+		-- Unmappable numeric leftovers (e.g. ordinals > 66) cannot be read by Hibernate
+		EXECUTE format(
+			'UPDATE %I SET %I = NULL
+			 WHERE %I ~ %L',
+			col.tbl, col.colname, col.colname, '^[0-9]+$');
+	END LOOP;
+END $$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (666, 'Convert ordinal suspected/second-tested disease values to enum names');

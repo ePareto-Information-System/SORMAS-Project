@@ -1660,6 +1660,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.pathogenTestCount = pathogenTestCount;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public Disease getSuspectedDisease() {
 		return suspectedDisease;
 	}
