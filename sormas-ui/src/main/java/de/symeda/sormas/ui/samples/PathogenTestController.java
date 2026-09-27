@@ -139,6 +139,20 @@ public class PathogenTestController {
 		savePathogenTests(Collections.singletonList(dto), dto.getSample(), suppressNavigateToCase);
 	}
 
+	private PathogenTestDto savePathogenTestFromWeb(PathogenTestDto dto) {
+		return facade.savePathogenTest(dto, !isIliCaseTest(dto));
+	}
+
+	private boolean isIliCaseTest(PathogenTestDto dto) {
+		if (dto.getTestedDisease() != Disease.NEW_INFLUENZA) {
+			return false;
+		}
+
+		SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid());
+		return sample.getAssociatedCase() != null
+			&& FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid()).getDisease() == Disease.NEW_INFLUENZA;
+	}
+
 	public void savePathogenTests(List<PathogenTestDto> pathogenTests, SampleReferenceDto sampleRef, boolean suppressNavigateToCase) {
 
 		final SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(sampleRef.getUuid());
@@ -154,7 +168,7 @@ public class PathogenTestController {
 				p.setTestDateTime(date);
 			}*/
 			p.setSample(sampleRef);
-			facade.savePathogenTest(p);
+			savePathogenTestFromWeb(p);
 		});
 
 		if (associatedContact != null) {
@@ -197,7 +211,14 @@ public class PathogenTestController {
 				.filter(t -> t.getTestResult() == PathogenTestResultType.NEGATIVE)
 				.findFirst();
 
-		if (positiveWithSameDisease.isPresent()) {
+		Optional<PathogenTestDto> iliTest = testsByDisease.getOrDefault(Disease.NEW_INFLUENZA, Collections.emptyList())
+			.stream()
+			.filter(test -> getIliFinalResult(test, caze) != null)
+			.findFirst();
+
+		if (iliTest.isPresent()) {
+			handleIliAssociatedCase(iliTest.get(), caze, suppressNavigateToCase);
+		} else if (positiveWithSameDisease.isPresent()) {
 			showChangeAssociatedSampleResultDialog(positiveWithSameDisease.get(), (accepted) -> {
 				if (accepted) {
 					checkForDiseaseVariantUpdate(positiveWithSameDisease.get(), caze, suppressNavigateToCase, this::showConfirmCaseDialog);
@@ -269,7 +290,7 @@ public class PathogenTestController {
 			BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
 			boolean suppressSampleResultUpdatePopup,
 			boolean suppressNavigateToCase) {
-		PathogenTestDto savedDto = facade.savePathogenTest(dto);
+		PathogenTestDto savedDto = savePathogenTestFromWeb(dto);
 //		facade.savePathogenTest(dto);
 		final SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid());
 		final CaseReferenceDto associatedCase = sample.getAssociatedCase();
@@ -308,6 +329,16 @@ public class PathogenTestController {
 		// b) Tested disease != case disease: Ask user to create a new case for the tested disease
 
 		CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid());
+		PathogenTestResultType iliFinalResult = getIliFinalResult(dto, caze);
+		if (iliFinalResult != null) {
+			Runnable iliCallback = () -> handleIliAssociatedCase(dto, caze, suppressNavigateToCase);
+			if (onSavedPathogenTest != null) {
+				onSavedPathogenTest.accept(dto, iliCallback);
+			} else {
+				iliCallback.run();
+			}
+			return;
+		}
 
 		final boolean equalDisease = dto.getTestedDisease() == caze.getDisease();
 
@@ -618,12 +649,58 @@ public class PathogenTestController {
 
 
 	private void showChangeAssociatedSampleResultDialog(PathogenTestDto dto, Consumer<Boolean> callback) {
-		if (dto.getTestResult() != FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid()).getPathogenTestResult()) {
+		showChangeAssociatedSampleResultDialog(dto, dto.getTestResult(), false, callback);
+	}
+
+	private void showChangeAssociatedSampleResultDialog(
+		PathogenTestDto dto,
+		PathogenTestResultType finalResult,
+		boolean forceDialog,
+		Consumer<Boolean> callback) {
+		if (forceDialog || finalResult != FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid()).getPathogenTestResult()) {
 			ControllerProvider.getSampleController()
-					.showChangePathogenTestResultWindow(null, dto.getSample().getUuid(), dto.getTestResult(), dto, callback);
+					.showChangePathogenTestResultWindow(null, dto.getSample().getUuid(), finalResult, dto, callback);
 		} else if (callback != null) {
 			callback.accept(true);
 		}
+	}
+
+	private PathogenTestResultType getIliFinalResult(PathogenTestDto dto, CaseDataDto caze) {
+		if (caze.getDisease() != Disease.NEW_INFLUENZA
+			|| dto.getTestedDisease() != Disease.NEW_INFLUENZA
+			|| !Boolean.TRUE.equals(dto.getTestResultVerified())) {
+			return null;
+		}
+
+		return PathogenTestResultHelper.resolveFinalIliResult(
+			dto.getTestResult(),
+			dto.getTestResultForSecondDisease(),
+			dto.getTestResultForThirdPathogen());
+	}
+
+	private void handleIliAssociatedCase(PathogenTestDto dto, CaseDataDto caze, boolean suppressNavigateToCase) {
+		PathogenTestResultType finalResult = getIliFinalResult(dto, caze);
+		showChangeAssociatedSampleResultDialog(dto, finalResult, true, accepted -> {
+			if (!accepted) {
+				return;
+			}
+			CaseClassification classification = getIliCaseClassification(finalResult);
+			if (classification == CaseClassification.CONFIRMED) {
+				checkForDiseaseVariantUpdate(dto, caze, suppressNavigateToCase, this::showConfirmCaseDialog);
+			} else if (classification == CaseClassification.SUSPECT) {
+				showNoCaseDialog(caze);
+			}
+		});
+	}
+
+	static CaseClassification getIliCaseClassification(PathogenTestResultType finalResult) {
+		if (finalResult == PathogenTestResultType.POSITIVE) {
+			return CaseClassification.CONFIRMED;
+		}
+		if (finalResult == PathogenTestResultType.NEGATIVE || finalResult == PathogenTestResultType.PENDING) {
+			return CaseClassification.SUSPECT;
+		}
+		return null;
 	}
 
 
@@ -805,7 +882,7 @@ public class PathogenTestController {
 			BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
 			boolean suppressSampleResultUpdatePopup,
 			BiConsumer<SavePathogenTest_NeededAction, CaseDataDto> onActionNeeded) {
-		PathogenTestDto savedDto = facade.savePathogenTest(dto);
+		PathogenTestDto savedDto = savePathogenTestFromWeb(dto);
 		final SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid());
 		final CaseReferenceDto associatedCase = sample.getAssociatedCase();
 		final ContactReferenceDto associatedContact = sample.getAssociatedContact();
@@ -903,6 +980,16 @@ public class PathogenTestController {
 		// b) Tested disease != case disease: Ask user to create a new case for the tested disease
 
 		CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid());
+		PathogenTestResultType iliFinalResult = getIliFinalResult(dto, caze);
+		if (iliFinalResult != null) {
+			Runnable iliCallback = () -> handleIliAssociatedCase(dto, caze, false);
+			if (onSavedPathogenTest != null) {
+				onSavedPathogenTest.accept(dto, iliCallback);
+			} else {
+				iliCallback.run();
+			}
+			return;
+		}
 
 		final boolean equalDisease = dto.getTestedDisease() == caze.getDisease();
 

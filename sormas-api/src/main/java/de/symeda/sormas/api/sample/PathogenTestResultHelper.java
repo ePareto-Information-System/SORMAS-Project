@@ -2,6 +2,9 @@ package de.symeda.sormas.api.sample;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.utils.PosNeg;
 
@@ -31,6 +34,26 @@ public final class PathogenTestResultHelper {
 			return PathogenTestResultType.NOT_DONE;
 		}
 		return null;
+	}
+
+	public static PathogenTestResultType resolveFinalIliResult(PathogenTestResultType... results) {
+		List<PathogenTestResultType> enteredResults = Arrays.stream(results).filter(Objects::nonNull).collect(Collectors.toList());
+		if (enteredResults.isEmpty()) {
+			return null;
+		}
+		if (enteredResults.contains(PathogenTestResultType.POSITIVE)) {
+			return PathogenTestResultType.POSITIVE;
+		}
+		if (enteredResults.contains(PathogenTestResultType.PENDING)) {
+			return resolveFinalResult(enteredResults);
+		}
+		if (enteredResults.stream().allMatch(result -> result == PathogenTestResultType.INDETERMINATE)) {
+			return PathogenTestResultType.PENDING;
+		}
+		if (enteredResults.contains(PathogenTestResultType.NEGATIVE)) {
+			return PathogenTestResultType.NEGATIVE;
+		}
+		return resolveFinalResult(enteredResults);
 	}
 
 	public static PathogenTestResultType resolveFinalVhfResult(PosNeg... results) {
