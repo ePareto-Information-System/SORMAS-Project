@@ -40,6 +40,8 @@ public interface PathogenTestFacade {
 
 	PathogenTestDto savePathogenTest(@Valid PathogenTestDto dto);
 
+	PathogenTestDto savePathogenTest(@Valid PathogenTestDto dto, boolean applyAutomaticResultHandling);
+
 	List<String> getAllActiveUuids();
 
 	List<PathogenTestDto> getByUuids(List<String> uuids);

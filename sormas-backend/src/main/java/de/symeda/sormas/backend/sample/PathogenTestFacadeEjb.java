@@ -232,10 +232,23 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 	@Override
 	public PathogenTestDto savePathogenTest(@Valid PathogenTestDto dto) {
-		return savePathogenTest(dto, true, true);
+		return savePathogenTest(dto, true);
+	}
+
+	@Override
+	public PathogenTestDto savePathogenTest(@Valid PathogenTestDto dto, boolean applyAutomaticResultHandling) {
+		return savePathogenTest(dto, true, true, applyAutomaticResultHandling);
 	}
 
 	public PathogenTestDto savePathogenTest(@Valid PathogenTestDto dto, boolean checkChangeDate, boolean syncShares) {
+		return savePathogenTest(dto, checkChangeDate, syncShares, true);
+	}
+
+	private PathogenTestDto savePathogenTest(
+		@Valid PathogenTestDto dto,
+		boolean checkChangeDate,
+		boolean syncShares,
+		boolean applyAutomaticResultHandling) {
 		PathogenTest existingSampleTest = pathogenTestService.getByUuid(dto.getUuid());
 		FacadeHelper.checkCreateAndEditRights(existingSampleTest, userService, UserRight.PATHOGEN_TEST_CREATE, UserRight.PATHOGEN_TEST_EDIT);
 
@@ -245,11 +258,13 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 		PathogenTest pathogenTest = fillOrBuildEntity(dto, existingSampleTest, checkChangeDate);
 		pathogenTestService.ensurePersisted(pathogenTest);
-		updateFinalLaboratoryResult(pathogenTest);
+		if (applyAutomaticResultHandling) {
+			updateFinalLaboratoryResult(pathogenTest);
+		}
 
 		onPathogenTestChanged(existingSampleTestDto, pathogenTest);
 
-		handleAssociatedEntityChanges(pathogenTest, syncShares);
+		handleAssociatedEntityChanges(pathogenTest, syncShares, applyAutomaticResultHandling);
 
 		return convertToDto(pathogenTest, Pseudonymizer.getDefault(userService::hasRight));
 	}
@@ -287,10 +302,10 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		}
 	}
 
-	private void handleAssociatedEntityChanges(PathogenTest pathogenTest, boolean syncShares) {
+	private void handleAssociatedEntityChanges(PathogenTest pathogenTest, boolean syncShares, boolean applyAutomaticResultHandling) {
 		// Update case classification if necessary
 		final Case associatedCase = pathogenTest.getSample().getAssociatedCase();
-		if (associatedCase != null && userService.hasRight(UserRight.CASE_EDIT)) {
+		if (associatedCase != null && userService.hasRight(UserRight.CASE_EDIT) && applyAutomaticResultHandling) {
 			caseFacade.onCaseChanged(caseFacade.toDto(associatedCase), associatedCase, syncShares);
 		}
 
@@ -318,7 +333,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		PathogenTest pathogenTest = pathogenTestService.getByUuid(pathogenTestUuid);
 		pathogenTestService.delete(pathogenTest, deletionDetails);
 
-		handleAssociatedEntityChanges(pathogenTest, true);
+		handleAssociatedEntityChanges(pathogenTest, true, true);
 	}
 
 	@Override
