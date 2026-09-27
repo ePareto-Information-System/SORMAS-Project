@@ -78,6 +78,7 @@ import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.AdditionalTestingStatus;
 import de.symeda.sormas.api.sample.PathogenTestDto;
+import de.symeda.sormas.api.sample.PathogenTestResultHelper;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleAssociationType;
@@ -211,6 +212,53 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 		test.setTestResultForThirdPathogen(PathogenTestResultType.NEGATIVE);
 		getPathogenTestFacade().savePathogenTest(test);
 		assertEquals(PathogenTestResultType.NEGATIVE, getSampleFacade().getSampleByUuid(sample.getUuid()).getPathogenTestResult());
+	}
+
+	@Test
+	public void testIliWebSaveCanDeferAutomaticResultHandling() {
+		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			creator.createPerson().toReference(),
+			Disease.NEW_INFLUENZA,
+			CaseClassification.NOT_CLASSIFIED,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+		SampleDto sample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+		PathogenTestDto test = creator.createPathogenTest(
+			sample.toReference(),
+			PathogenTestType.PCR_RT_PCR,
+			Disease.NEW_INFLUENZA,
+			new Date(),
+			rdcf.facility,
+			user.toReference(),
+			PathogenTestResultType.NEGATIVE,
+			"",
+			true);
+		test.setSecondTestedDisease(Disease.CORONAVIRUS);
+		test.setTestResultForSecondDisease(PathogenTestResultType.POSITIVE);
+
+		getPathogenTestFacade().savePathogenTest(test, false);
+
+		assertEquals(PathogenTestResultType.PENDING, getSampleFacade().getSampleByUuid(sample.getUuid()).getPathogenTestResult());
+		assertEquals(CaseClassification.NOT_CLASSIFIED, getCaseFacade().getCaseDataByUuid(caze.getUuid()).getCaseClassification());
+
+		sample.setPathogenTestResult(PathogenTestResultHelper.resolveFinalIliResult(
+			test.getTestResult(),
+			test.getTestResultForSecondDisease(),
+			test.getTestResultForThirdPathogen()));
+		getSampleFacade().saveSample(sample);
+
+		assertEquals(
+			PathogenTestResultType.POSITIVE,
+			getSampleFacade().getIndexList(new SampleCriteria(), 0, 100, null)
+				.stream()
+				.filter(index -> index.getUuid().equals(sample.getUuid()))
+				.findFirst()
+				.get()
+				.getPathogenTestResult());
 	}
 
 	@Test
