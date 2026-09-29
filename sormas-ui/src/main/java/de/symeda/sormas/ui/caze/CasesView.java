@@ -90,6 +90,7 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.importer.CaseImportLayout;
 import de.symeda.sormas.ui.caze.importer.LineListingImportLayout;
+import de.symeda.sormas.ui.caze.samplesexport.CaseSamplesDetailedExportsView;
 import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
 import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.customexport.ExportConfigurationsLayout;
@@ -460,19 +461,50 @@ public class CasesView extends AbstractView {
 
 				if (nationalUserRole != null) {
 
-					StreamResource exportStreamResource = CaseDownloadUtil.createCaseSamplesExportResource(
-							grid.getCriteria(),
-							this::getSelectedRows,
-							CaseExportType.CASE_SURVEILLANCE,
-							detailedExportConfiguration);
+					Button asyncSampleExportButton = ButtonHelper.createIconButton(
+						Captions.exportCaseSamplesDetailed,
+						VaadinIcons.FILE_TEXT,
+						e -> {
+							try {
+								FacadeProvider.getCaseSamplesDetailedExportFacade()
+									.startDetailedSampleExport(
+										grid.getCriteria(),
+										getSelectedRows(),
+										CaseExportType.CASE_SURVEILLANCE,
+										detailedExportConfiguration,
+										I18nProperties.getUserLanguage());
+								Notification notification = new Notification(
+									I18nProperties.getString(Strings.headingCaseSamplesDetailedExportStarted),
+									I18nProperties.getString(Strings.messageCaseSamplesDetailedExportStarted),
+									Notification.Type.TRAY_NOTIFICATION,
+									true);
+								notification.setDelayMsec(8000);
+								notification.show(Page.getCurrent());
+							} catch (Exception ex) {
+								Notification.show(
+									I18nProperties.getString(Strings.headingExportFailed),
+									ex.getMessage() != null
+										? ex.getMessage()
+										: I18nProperties.getString(Strings.messageExportFailed),
+									Notification.Type.ERROR_MESSAGE);
+							}
+							exportPopupButton.setPopupVisible(false);
+						},
+						ValoTheme.BUTTON_PRIMARY);
+					asyncSampleExportButton.setDescription(I18nProperties.getString(Strings.infoCaseSamplesDetailedExportAsync));
+					asyncSampleExportButton.setWidth(100, Unit.PERCENTAGE);
+					exportLayout.addComponent(asyncSampleExportButton);
 
-					addExportButton(
-							exportStreamResource,
-							exportPopupButton,
-							exportLayout,
-							VaadinIcons.FILE_TEXT,
-							Captions.exportCaseSamplesDetailed,
-							Strings.infoDetailedExport);
+					Button historyButton = ButtonHelper.createIconButton(
+						Captions.caseSamplesDetailedExportHistory,
+						VaadinIcons.LIST,
+						e -> {
+							UI.getCurrent().getNavigator().navigateTo(CaseSamplesDetailedExportsView.VIEW_NAME);
+							exportPopupButton.setPopupVisible(false);
+						},
+						ValoTheme.BUTTON_PRIMARY);
+					historyButton.setWidth(100, Unit.PERCENTAGE);
+					exportLayout.addComponent(historyButton);
 				}
 			}
 

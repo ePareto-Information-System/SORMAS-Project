@@ -137,6 +137,7 @@ import de.symeda.sormas.ui.caze.maternalhistory.MaternalHistoryView;
 import de.symeda.sormas.ui.caze.messaging.SmsComponent;
 import de.symeda.sormas.ui.caze.porthealthinfo.PortHealthInfoForm;
 import de.symeda.sormas.ui.caze.porthealthinfo.PortHealthInfoView;
+import de.symeda.sormas.ui.caze.samplesexport.CaseSamplesDetailedExportsView;
 import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseForm;
 import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseView;
 import de.symeda.sormas.ui.epidata.CaseEpiDataView;
@@ -172,6 +173,7 @@ public class CaseController {
 
 		UserProvider userProvider = UserProvider.getCurrent();
 		navigator.addView(CasesView.VIEW_NAME, CasesView.class);
+		navigator.addView(CaseSamplesDetailedExportsView.VIEW_NAME, CaseSamplesDetailedExportsView.class);
 		if (userProvider.hasUserRight(UserRight.CASE_MERGE)) {
 			navigator.addView(MergeCasesView.VIEW_NAME, MergeCasesView.class);
 		}

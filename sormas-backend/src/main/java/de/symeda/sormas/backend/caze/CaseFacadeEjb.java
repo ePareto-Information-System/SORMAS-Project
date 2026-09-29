@@ -1133,6 +1133,21 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			Map<Long, UserReference> caseUsers = getCaseUsersForDetailedExport(resultList, exportConfiguration);
 
+			// Pre-index visit summaries and event summaries by case ID to avoid O(n²) stream scans inside the loop.
+			Map<Long, List<VisitSummaryExportDetails>> visitsByCaseId = visitSummaries != null
+				? visitSummaries.stream().collect(Collectors.groupingBy(VisitSummaryExportDetails::getContactId))
+				: null;
+			Map<Long, EventSummaryDetails> latestEventByCaseId = null;
+			if (eventSummaries != null) {
+				latestEventByCaseId = new HashMap<>();
+				for (EventSummaryDetails e : eventSummaries) {
+					latestEventByCaseId.merge(
+						e.getCaseId(),
+						e,
+						(existing, incoming) -> incoming.getEventDate().compareTo(existing.getEventDate()) > 0 ? incoming : existing);
+				}
+			}
+
 			Pseudonymizer pseudonymizer = getPseudonymizerForDtoWithClinician(I18nProperties.getCaption(Captions.inaccessibleValue));
 
 			for (CaseExportDetailedSampleDto exportDto : resultList) {
@@ -1244,9 +1259,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 						}
 					});
 				}
-				if (visitSummaries != null) {
-					List<VisitSummaryExportDetails> visits =
-							visitSummaries.stream().filter(v -> v.getContactId() == exportDto.getId()).collect(Collectors.toList());
+				if (visitsByCaseId != null) {
+					List<VisitSummaryExportDetails> visits = visitsByCaseId.getOrDefault(exportDto.getId(), Collections.emptyList());
 
 					VisitSummaryExportDetails lastCooperativeVisit = visits.stream()
 							.filter(v -> v.getVisitStatus() == VisitStatus.COOPERATIVE)
@@ -1268,15 +1282,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 					}
 				}
 
-				if (eventSummaries != null && exportDto.getEventCount() != 0) {
-					eventSummaries.stream()
-							.filter(v -> v.getCaseId() == exportDto.getId())
-							.max(Comparator.comparing(EventSummaryDetails::getEventDate))
-							.ifPresent(eventSummary -> {
-								exportDto.setLatestEventId(eventSummary.getEventUuid());
-								exportDto.setLatestEventStatus(eventSummary.getEventStatus());
-								exportDto.setLatestEventTitle(eventSummary.getEventTitle());
-							});
+				if (latestEventByCaseId != null && exportDto.getEventCount() != 0) {
+					EventSummaryDetails eventSummary = latestEventByCaseId.get(exportDto.getId());
+					if (eventSummary != null) {
+						exportDto.setLatestEventId(eventSummary.getEventUuid());
+						exportDto.setLatestEventStatus(eventSummary.getEventStatus());
+						exportDto.setLatestEventTitle(eventSummary.getEventTitle());
+					}
 				}
 
 				if (!caseUsers.isEmpty()) {
@@ -1316,9 +1328,31 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 
 		if (allSamples != null) {
+			// Group samples by case ID for O(1) lookup instead of O(n) stream scan per row.
+			Map<Long, List<CaseSampleExportDto>> samplesByCaseId =
+				allSamples.stream().collect(Collectors.groupingBy(CaseSampleExportDto::getCaseId));
+
+			// Batch-load all pathogen tests for this page of samples in one query to eliminate N+1 DB hits.
+			List<String> allSampleUuids = allSamples.stream().map(CaseSampleExportDto::getUuid).collect(Collectors.toList());
+			Map<String, List<PathogenTest>> pathogenTestsBySampleUuid;
+			if (allSampleUuids.isEmpty()) {
+				pathogenTestsBySampleUuid = Collections.emptyMap();
+			} else {
+				CriteriaQuery<PathogenTest> ptCq = cb.createQuery(PathogenTest.class);
+				Root<PathogenTest> ptRoot = ptCq.from(PathogenTest.class);
+				Join<PathogenTest, Sample> ptSampleJoin = ptRoot.join(PathogenTest.SAMPLE, JoinType.INNER);
+				ptCq.select(ptRoot);
+				ptCq.where(ptSampleJoin.get(Sample.UUID).in(allSampleUuids));
+				pathogenTestsBySampleUuid = em.createQuery(ptCq)
+					.setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true)
+					.getResultList()
+					.stream()
+					.collect(Collectors.groupingBy(pt -> pt.getSample().getUuid()));
+			}
+
 			List<CaseExportDetailedSampleDto> newResult = new ArrayList<>();
 			for (CaseExportDetailedSampleDto exportDto : resultList) {
-				List<CaseSampleExportDto> caseSamples = allSamples.stream().filter(s -> s.getCaseId().equals(exportDto.getId())).collect(Collectors.toList());
+				List<CaseSampleExportDto> caseSamples = samplesByCaseId.getOrDefault(exportDto.getId(), Collections.emptyList());
 
 				if (caseSamples.isEmpty()) {
 					CaseExportDetailedSampleDto caseExportDetailedDto = new CaseExportDetailedSampleDto();
@@ -1450,12 +1484,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 					caseExportDetailedDto.setInJurisdiction(exportDto.getInJurisdiction());
 					newResult.add(caseExportDetailedDto);
 				} else {
-				for(CaseSampleExportDto embeddedDetailedSampleExportDto : caseSamples) {
-					Sample sampleFromExportDto = sampleService.getByUuid(embeddedDetailedSampleExportDto.getUuid());
-					if (sampleFromExportDto == null || sampleFromExportDto.getPathogenTests() == null) {
+				for (CaseSampleExportDto embeddedDetailedSampleExportDto : caseSamples) {
+					List<PathogenTest> pathogenTests =
+						pathogenTestsBySampleUuid.getOrDefault(embeddedDetailedSampleExportDto.getUuid(), Collections.emptyList());
+					if (pathogenTests.isEmpty()) {
 						continue;
 					}
-					List<PathogenTest> pathogenTests = sampleFromExportDto.getPathogenTests();
 
 					for (PathogenTest pathogenTest : pathogenTests) {
 						if (pathogenTest == null

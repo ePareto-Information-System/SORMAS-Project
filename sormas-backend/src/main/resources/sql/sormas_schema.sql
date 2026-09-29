@@ -15474,3 +15474,50 @@ BEGIN
 END $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (666, 'Convert ordinal suspected/second-tested disease values to enum names');
+
+-- Async detailed case/sample export audit trail
+CREATE TABLE casesamplesdetailedexport (
+	id bigint NOT NULL,
+	uuid character varying(36) NOT NULL UNIQUE,
+	changedate timestamp without time zone NOT NULL,
+	creationdate timestamp without time zone NOT NULL,
+	change_user_id bigint,
+	requestinguser_id bigint NOT NULL,
+	requesteddate timestamp without time zone NOT NULL,
+	result character varying(255) NOT NULL,
+	filtersummary text,
+	exportedrowcount integer,
+	filename character varying(512),
+	filepath character varying(1024),
+	tokenhash character varying(128),
+	expiresat timestamp without time zone,
+	emailsentdate timestamp without time zone,
+	failuremessage text,
+	downloadcount integer NOT NULL DEFAULT 0,
+	PRIMARY KEY (id),
+	CONSTRAINT fk_casesamplesdetailedexport_requestinguser FOREIGN KEY (requestinguser_id) REFERENCES users(id),
+	CONSTRAINT fk_casesamplesdetailedexport_changeuser FOREIGN KEY (change_user_id) REFERENCES users(id)
+);
+ALTER TABLE casesamplesdetailedexport OWNER TO sormas_user;
+CREATE INDEX idx_casesamplesdetailedexport_tokenhash ON casesamplesdetailedexport (tokenhash);
+CREATE INDEX idx_casesamplesdetailedexport_requesteddate ON casesamplesdetailedexport (requesteddate);
+
+CREATE TABLE casesamplesdetailedexportdownload (
+	id bigint NOT NULL,
+	uuid character varying(36) NOT NULL UNIQUE,
+	changedate timestamp without time zone NOT NULL,
+	creationdate timestamp without time zone NOT NULL,
+	change_user_id bigint,
+	export_id bigint NOT NULL,
+	downloadedat timestamp without time zone NOT NULL,
+	downloadinguser_id bigint,
+	clientaddress character varying(255),
+	PRIMARY KEY (id),
+	CONSTRAINT fk_casesamplesdetailedexportdownload_export FOREIGN KEY (export_id) REFERENCES casesamplesdetailedexport(id),
+	CONSTRAINT fk_casesamplesdetailedexportdownload_user FOREIGN KEY (downloadinguser_id) REFERENCES users(id),
+	CONSTRAINT fk_casesamplesdetailedexportdownload_changeuser FOREIGN KEY (change_user_id) REFERENCES users(id)
+);
+ALTER TABLE casesamplesdetailedexportdownload OWNER TO sormas_user;
+CREATE INDEX idx_casesamplesdetailedexportdownload_export ON casesamplesdetailedexportdownload (export_id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (667, 'Async detailed sample export audit and download log');
