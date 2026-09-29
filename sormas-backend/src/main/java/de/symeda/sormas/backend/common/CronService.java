@@ -37,6 +37,7 @@ import de.symeda.sormas.api.task.TaskType;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
+import de.symeda.sormas.backend.caze.samplesexport.CaseSamplesDetailedExportFacadeEjb.CaseSamplesDetailedExportFacadeEjbLocal;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb.ContactFacadeEjbLocal;
 import de.symeda.sormas.backend.deletionconfiguration.CoreEntityDeletionService;
@@ -90,6 +91,8 @@ public class CronService {
 	private CentralInfraSyncFacade centralInfraSyncFacade;
 	@EJB
 	private CoreEntityDeletionService coreEntityDeletionService;
+	@EJB
+	private CaseSamplesDetailedExportFacadeEjbLocal caseSamplesDetailedExportFacade;
 
 	@Schedule(hour = "*", minute = "*/" + TASK_UPDATE_INTERVAL, second = "0", persistent = false)
 	public void sendNewAndDueTaskMessages() {
@@ -153,6 +156,16 @@ public class CronService {
 		}
 
 		logger.info("Deleted {} export files", numberOfDeletedFiles);
+	}
+
+	@Schedule(hour = "*", minute = "*/15", second = "0", persistent = false)
+	public void cleanupStaleCaseSampleDetailedExports() {
+		caseSamplesDetailedExportFacade.cleanupStaleInProgressExports();
+	}
+
+	@Schedule(hour = "1", minute = "12", second = "0", persistent = false)
+	public void cleanupExpiredCaseSampleDetailedExports() {
+		caseSamplesDetailedExportFacade.cleanupExpiredExports();
 	}
 
 	@Schedule(hour = "1", minute = "15", second = "0", persistent = false)

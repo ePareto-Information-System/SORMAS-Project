@@ -1005,6 +1005,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	 */
 	private static void migrateAttributesOfPhysicalSample(SampleDto source, SampleDto target) {
 		target.setSampleDateTime(source.getSampleDateTime());
+
 		target.setSampleMaterial(source.getSampleMaterial());
 		target.setSampleMaterialText(source.getSampleMaterialText());
 		target.setSampleSource(source.getSampleSource());

@@ -968,6 +968,13 @@ public interface Strings {
 	String infoDatabaseExportTables = "infoDatabaseExportTables";
 	String infoDefineOutbreaks = "infoDefineOutbreaks";
 	String infoDetailedExport = "infoDetailedExport";
+	String infoCaseSamplesDetailedExportAsync = "infoCaseSamplesDetailedExportAsync";
+	String infoCaseSamplesDetailedExportHistory = "infoCaseSamplesDetailedExportHistory";
+	String infoCaseSamplesDetailedExportDownloads = "infoCaseSamplesDetailedExportDownloads";
+	String headingCaseSamplesDetailedExportStarted = "headingCaseSamplesDetailedExportStarted";
+	String headingCaseSamplesDetailedExportDownloads = "headingCaseSamplesDetailedExportDownloads";
+	String messageCaseSamplesDetailedExportStarted = "messageCaseSamplesDetailedExportStarted";
+	String messageCaseSamplesDetailedExportNoEmail = "messageCaseSamplesDetailedExportNoEmail";
 	String infoDeveloperOptions = "infoDeveloperOptions";
 	String infoDeveloperOptionsContactGeneration = "infoDeveloperOptionsContactGeneration";
 	String infoDeveloperOptionsSeedUsage = "infoDeveloperOptionsSeedUsage";

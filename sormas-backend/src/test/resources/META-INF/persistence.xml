@@ -9,6 +9,8 @@
         
 		<class>de.symeda.sormas.backend.action.Action</class>
 		<class>de.symeda.sormas.backend.caze.Case</class>
+		<class>de.symeda.sormas.backend.caze.samplesexport.CaseSamplesDetailedExport</class>
+		<class>de.symeda.sormas.backend.caze.samplesexport.CaseSamplesDetailedExportDownload</class>
 		<class>de.symeda.sormas.backend.common.AbstractDomainObject</class>
 		<class>de.symeda.sormas.backend.common.DeletableAdo</class>
 		<class>de.symeda.sormas.backend.common.CoreAdo</class>
