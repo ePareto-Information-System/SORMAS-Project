@@ -15526,3 +15526,12 @@ ALTER TABLE casesamplesdetailedexport ADD COLUMN IF NOT EXISTS progressrowcount 
 ALTER TABLE casesamplesdetailedexport ADD COLUMN IF NOT EXISTS totalcasecount bigint;
 
 INSERT INTO schema_version (version_number, comment) VALUES (668, 'Add progress tracking columns to casesamplesdetailedexport');
+
+ALTER TABLE casesamplesdetailedexport ADD COLUMN IF NOT EXISTS failurestacktrace text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (669, 'Add failure stack trace column to casesamplesdetailedexport');
+
+ALTER TABLE casesamplesdetailedexport ADD COLUMN IF NOT EXISTS ispartial boolean NOT NULL DEFAULT false;
+ALTER TABLE casesamplesdetailedexport ADD COLUMN IF NOT EXISTS lastprogressat timestamp without time zone;
+
+INSERT INTO schema_version (version_number, comment) VALUES (670, 'Add partial flag and last progress timestamp to casesamplesdetailedexport');

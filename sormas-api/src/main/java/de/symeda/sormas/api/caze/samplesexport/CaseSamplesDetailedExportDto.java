@@ -23,6 +23,8 @@ public class CaseSamplesDetailedExportDto extends EntityDto {
 	public static final String DOWNLOAD_COUNT = "downloadCount";
 	public static final String PROGRESS_ROW_COUNT = "progressRowCount";
 	public static final String TOTAL_CASE_COUNT = "totalCaseCount";
+	public static final String FAILURE_STACK_TRACE = "failureStackTrace";
+	public static final String IS_PARTIAL = "isPartial";
 
 	private UserReferenceDto requestingUser;
 	private Date requestedDate;
@@ -35,6 +37,8 @@ public class CaseSamplesDetailedExportDto extends EntityDto {
 	private Date expiresAt;
 	private Date emailSentDate;
 	private String failureMessage;
+	private String failureStackTrace;
+	private boolean isPartial;
 	private int downloadCount;
 
 	public UserReferenceDto getRequestingUser() {
@@ -123,6 +127,22 @@ public class CaseSamplesDetailedExportDto extends EntityDto {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
+	}
+
+	public String getFailureStackTrace() {
+		return failureStackTrace;
+	}
+
+	public void setFailureStackTrace(String failureStackTrace) {
+		this.failureStackTrace = failureStackTrace;
+	}
+
+	public boolean isPartial() {
+		return isPartial;
+	}
+
+	public void setPartial(boolean isPartial) {
+		this.isPartial = isPartial;
 	}
 
 	public int getDownloadCount() {

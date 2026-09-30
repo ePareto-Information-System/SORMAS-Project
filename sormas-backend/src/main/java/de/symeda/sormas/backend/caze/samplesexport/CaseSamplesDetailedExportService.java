@@ -9,6 +9,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import de.symeda.sormas.api.caze.samplesexport.CaseSamplesDetailedExportResult;
@@ -43,18 +44,95 @@ public class CaseSamplesDetailedExportService extends BaseAdoService<CaseSamples
 		if (export != null && export.getResult() == CaseSamplesDetailedExportResult.IN_PROGRESS) {
 			export.setProgressRowCount(processedRows);
 			export.setTotalCaseCount(totalCount > 0 ? totalCount : null);
+			export.setLastProgressAt(new Date());
 			ensurePersisted(export);
 		}
 	}
 
-	public List<CaseSamplesDetailedExport> getStaleInProgressExports(Date olderThan) {
+	/**
+	 * Saves SUCCESS state in its own transaction, re-reading the entity fresh to avoid
+	 * OptimisticLockException from intermediate progress updates.
+	 */
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void saveExportSuccess(
+		String exportUuid,
+		String fileName,
+		String filePath,
+		Integer exportedRowCount,
+		Date expiresAt,
+		Date emailSentDate) {
+
+		CaseSamplesDetailedExport export = getByUuid(exportUuid);
+		if (export == null) {
+			return;
+		}
+		export.setResult(CaseSamplesDetailedExportResult.SUCCESS);
+		export.setFileName(fileName);
+		export.setFilePath(filePath);
+		export.setExportedRowCount(exportedRowCount);
+		export.setExpiresAt(expiresAt);
+		export.setFailureMessage(null);
+		export.setFailureStackTrace(null);
+		export.setPartial(false);
+		export.setEmailSentDate(emailSentDate);
+		ensurePersisted(export);
+	}
+
+	/**
+	 * Saves FAILED state in its own transaction, re-reading the entity fresh to avoid
+	 * OptimisticLockException from intermediate progress updates. Preserves the file
+	 * path when a partial/complete file exists.
+	 */
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void saveExportFailed(
+		String exportUuid,
+		String failureMessage,
+		String failureStackTrace,
+		String fileName,
+		String filePath,
+		boolean isPartial,
+		Date expiresAt,
+		Date emailSentDate) {
+
+		CaseSamplesDetailedExport export = getByUuid(exportUuid);
+		if (export == null) {
+			return;
+		}
+		export.setResult(CaseSamplesDetailedExportResult.FAILED);
+		export.setFailureMessage(failureMessage);
+		export.setFailureStackTrace(failureStackTrace);
+		export.setFileName(fileName);
+		export.setFilePath(filePath);
+		export.setPartial(isPartial);
+		export.setExpiresAt(expiresAt);
+		export.setExportedRowCount(null);
+		export.setEmailSentDate(emailSentDate);
+		ensurePersisted(export);
+	}
+
+	/**
+	 * Returns IN_PROGRESS exports that are stale. An export is stale if:
+	 * - it never made progress and was requested more than {@code neverStartedThreshold} ago, or
+	 * - it made progress but the last progress update was more than {@code stalledThreshold} ago.
+	 */
+	public List<CaseSamplesDetailedExport> getStaleInProgressExports(Date neverStartedThreshold, Date stalledThreshold) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<CaseSamplesDetailedExport> cq = cb.createQuery(getElementClass());
 		Root<CaseSamplesDetailedExport> root = cq.from(getElementClass());
+
+		Predicate neverStarted = cb.and(
+			cb.isNull(root.get(CaseSamplesDetailedExport.PROGRESS_ROW_COUNT)),
+			cb.lessThan(root.get(CaseSamplesDetailedExport.REQUESTED_DATE), neverStartedThreshold));
+
+		Predicate stalledWithProgress = cb.and(
+			cb.isNotNull(root.get(CaseSamplesDetailedExport.LAST_PROGRESS_AT)),
+			cb.lessThan(root.get(CaseSamplesDetailedExport.LAST_PROGRESS_AT), stalledThreshold));
+
 		cq.where(
 			cb.and(
 				cb.equal(root.get(CaseSamplesDetailedExport.RESULT), CaseSamplesDetailedExportResult.IN_PROGRESS),
-				cb.lessThan(root.get(CaseSamplesDetailedExport.REQUESTED_DATE), olderThan)));
+				cb.or(neverStarted, stalledWithProgress)));
+
 		return em.createQuery(cq).getResultList();
 	}
 

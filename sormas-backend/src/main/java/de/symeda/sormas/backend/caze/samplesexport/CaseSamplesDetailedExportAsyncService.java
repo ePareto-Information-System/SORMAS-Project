@@ -25,6 +25,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,10 +98,11 @@ public class CaseSamplesDetailedExportAsyncService {
 		String recipientEmail = requestingUser != null ? requestingUser.getUserEmail() : null;
 
 		File exportFile = null;
+		String fileName = null;
 		try {
 			String instanceName = DataHelper.cleanStringForFileName(configFacade.getSormasInstanceName().toLowerCase());
 			String exportDate = DateHelper.formatDateForExport(new Date());
-			String fileName = String.join("_", instanceName, "cases_samples_detailed", exportDate, exportUuid.substring(0, 8) + ".csv");
+			fileName = String.join("_", instanceName, "cases_samples_detailed", exportDate, exportUuid.substring(0, 8) + ".csv");
 
 			File exportDir = new File(configFacade.getGeneratedFilesPath(), "case_sample_exports");
 			if (!exportDir.exists() && !exportDir.mkdirs()) {
@@ -158,38 +160,42 @@ public class CaseSamplesDetailedExportAsyncService {
 			}
 			LOGGER.info("Export {}: complete — {} rows written (100%)", exportUuid, rowCount.get());
 
+			// Send email first (sendSuccessEmail swallows MessagingException internally),
+			// then commit the final state in its own REQUIRES_NEW transaction.  Using a
+			// fresh DB read inside saveExportSuccess avoids the OptimisticLockException
+			// that would otherwise occur because updateProgress() bumped changeDate many
+			// times in separate REQUIRES_NEW sub-transactions.
 			Date expiresAt = DateHelper.addSeconds(new Date(), EXPORT_LINK_VALIDITY_HOURS * 3600);
-			export.setResult(CaseSamplesDetailedExportResult.SUCCESS);
-			export.setFileName(fileName);
-			export.setFilePath(exportFile.getAbsolutePath());
-			export.setExportedRowCount(rowCount.get());
-			export.setExpiresAt(expiresAt);
-			export.setFailureMessage(null);
-			exportService.ensurePersisted(export);
-
 			sendSuccessEmail(recipientEmail, rawToken, fileName, expiresAt);
-			export.setEmailSentDate(new Date());
-			exportService.ensurePersisted(export);
+			exportService.saveExportSuccess(exportUuid, fileName, exportFile.getAbsolutePath(), rowCount.get(), expiresAt, new Date());
 
 		} catch (Exception e) {
 			LOGGER.error("Failed to generate detailed sample export {}", exportUuid, e);
-			if (exportFile != null && exportFile.exists()) {
+
+			// Keep the file if it has content so it can still be downloaded as partial.
+			boolean hasContent = exportFile != null && exportFile.exists() && exportFile.length() > 0;
+			if (!hasContent && exportFile != null) {
 				try {
 					Files.deleteIfExists(exportFile.toPath());
 				} catch (Exception deleteEx) {
 					LOGGER.warn("Could not delete failed export file {}", exportFile.getAbsolutePath(), deleteEx);
 				}
 			}
-			export.setResult(CaseSamplesDetailedExportResult.FAILED);
-			export.setFailureMessage(StringUtils.abbreviate(e.getMessage(), 2000));
-			export.setFileName(null);
-			export.setFilePath(null);
-			export.setExportedRowCount(null);
-			export.setExpiresAt(null);
-			exportService.ensurePersisted(export);
+
+			String failureMessage = StringUtils.abbreviate(e.getMessage(), 2000);
+			String failureStackTrace = StringUtils.abbreviate(ExceptionUtils.getStackTrace(e), 50000);
+			Date expiresAt = hasContent ? DateHelper.addSeconds(new Date(), EXPORT_LINK_VALIDITY_HOURS * 3600) : null;
+
 			sendFailureEmail(recipientEmail, e.getMessage());
-			export.setEmailSentDate(new Date());
-			exportService.ensurePersisted(export);
+			exportService.saveExportFailed(
+				exportUuid,
+				failureMessage,
+				failureStackTrace,
+				hasContent ? fileName : null,
+				hasContent ? exportFile.getAbsolutePath() : null,
+				hasContent,
+				expiresAt,
+				new Date());
 		}
 	}
 

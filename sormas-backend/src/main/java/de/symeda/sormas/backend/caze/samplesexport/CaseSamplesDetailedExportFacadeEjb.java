@@ -186,13 +186,16 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 			return null;
 		}
 		CaseSamplesDetailedExport export = exportService.getByUuid(exportUuid);
-		if (export == null || export.getResult() != CaseSamplesDetailedExportResult.SUCCESS) {
+		if (export == null) {
 			return null;
 		}
-		if (export.getExpiresAt() == null || export.getExpiresAt().before(new Date())) {
-			return null;
-		}
-		if (StringUtils.isBlank(export.getFilePath()) || !new File(export.getFilePath()).isFile()) {
+		boolean fileAvailable = (export.getResult() == CaseSamplesDetailedExportResult.SUCCESS
+			|| export.getResult() == CaseSamplesDetailedExportResult.FAILED)
+			&& export.getExpiresAt() != null
+			&& export.getExpiresAt().after(new Date())
+			&& StringUtils.isNotBlank(export.getFilePath())
+			&& new File(export.getFilePath()).isFile();
+		if (!fileAvailable) {
 			return null;
 		}
 		CaseSamplesDetailedExportFileDto dto = new CaseSamplesDetailedExportFileDto();
@@ -206,7 +209,11 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 	@PermitAll
 	public void recordDownload(String exportUuid, String downloadingUserName, String clientAddress) {
 		CaseSamplesDetailedExport export = exportService.getByUuid(exportUuid);
-		if (export == null || export.getResult() != CaseSamplesDetailedExportResult.SUCCESS) {
+		if (export == null) {
+			return;
+		}
+		if (export.getResult() != CaseSamplesDetailedExportResult.SUCCESS
+			&& export.getResult() != CaseSamplesDetailedExportResult.FAILED) {
 			return;
 		}
 
@@ -229,8 +236,11 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 	@Override
 	@RightsAllowed(UserRight._SYSTEM)
 	public void cleanupStaleInProgressExports() {
-		Date staleThreshold = DateHelper.addSeconds(new Date(), -3 * 3600);
-		List<CaseSamplesDetailedExport> stale = exportService.getStaleInProgressExports(staleThreshold);
+		// Never-started exports: 3-hour threshold from requestedDate.
+		// Stalled exports that made progress: 30-minute threshold from lastProgressAt.
+		Date neverStartedThreshold = DateHelper.addSeconds(new Date(), -3 * 3600);
+		Date stalledThreshold = DateHelper.addSeconds(new Date(), -30 * 60);
+		List<CaseSamplesDetailedExport> stale = exportService.getStaleInProgressExports(neverStartedThreshold, stalledThreshold);
 		for (CaseSamplesDetailedExport export : stale) {
 			export.setResult(CaseSamplesDetailedExportResult.FAILED);
 			export.setFailureMessage("Export did not complete within the expected time. Please try again.");
@@ -318,6 +328,8 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 		dto.setExpiresAt(source.getExpiresAt());
 		dto.setEmailSentDate(source.getEmailSentDate());
 		dto.setFailureMessage(source.getFailureMessage());
+		dto.setFailureStackTrace(source.getFailureStackTrace());
+		dto.setPartial(source.isPartial());
 		dto.setDownloadCount(source.getDownloadCount());
 		return dto;
 	}

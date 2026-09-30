@@ -1764,6 +1764,8 @@ public interface Captions {
 	String caseSamplesDetailedExportNotLoggedIn = "caseSamplesDetailedExportNotLoggedIn";
 	String caseSamplesDetailedExportDownloadFile = "caseSamplesDetailedExportDownloadFile";
 	String caseSamplesDetailedExportProgress = "caseSamplesDetailedExportProgress";
+	String caseSamplesDetailedExportViewError = "caseSamplesDetailedExportViewError";
+	String caseSamplesDetailedExportErrorLog = "caseSamplesDetailedExportErrorLog";
 	String CaseSamplesDetailedExport_requestingUser = "CaseSamplesDetailedExport.requestingUser";
 	String CaseSamplesDetailedExport_requestedDate = "CaseSamplesDetailedExport.requestedDate";
 	String CaseSamplesDetailedExport_result = "CaseSamplesDetailedExport.result";

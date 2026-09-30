@@ -42,6 +42,9 @@ public class CaseSamplesDetailedExport extends AbstractDomainObject {
 	public static final String DOWNLOADS = "downloads";
 	public static final String PROGRESS_ROW_COUNT = "progressRowCount";
 	public static final String TOTAL_CASE_COUNT = "totalCaseCount";
+	public static final String FAILURE_STACK_TRACE = "failureStackTrace";
+	public static final String IS_PARTIAL = "isPartial";
+	public static final String LAST_PROGRESS_AT = "lastProgressAt";
 
 	private User requestingUser;
 	private Date requestedDate;
@@ -56,6 +59,9 @@ public class CaseSamplesDetailedExport extends AbstractDomainObject {
 	private Date expiresAt;
 	private Date emailSentDate;
 	private String failureMessage;
+	private String failureStackTrace;
+	private boolean isPartial;
+	private Date lastProgressAt;
 	private int downloadCount;
 	private List<CaseSamplesDetailedExportDownload> downloads = new ArrayList<>();
 
@@ -174,6 +180,33 @@ public class CaseSamplesDetailedExport extends AbstractDomainObject {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
+	}
+
+	@Column(columnDefinition = "text")
+	public String getFailureStackTrace() {
+		return failureStackTrace;
+	}
+
+	public void setFailureStackTrace(String failureStackTrace) {
+		this.failureStackTrace = failureStackTrace;
+	}
+
+	@Column(name = "ispartial", nullable = false)
+	public boolean isPartial() {
+		return isPartial;
+	}
+
+	public void setPartial(boolean isPartial) {
+		this.isPartial = isPartial;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getLastProgressAt() {
+		return lastProgressAt;
+	}
+
+	public void setLastProgressAt(Date lastProgressAt) {
+		this.lastProgressAt = lastProgressAt;
 	}
 
 	@Column(nullable = false)
