@@ -40,12 +40,16 @@ public class CaseSamplesDetailedExport extends AbstractDomainObject {
 	public static final String FAILURE_MESSAGE = "failureMessage";
 	public static final String DOWNLOAD_COUNT = "downloadCount";
 	public static final String DOWNLOADS = "downloads";
+	public static final String PROGRESS_ROW_COUNT = "progressRowCount";
+	public static final String TOTAL_CASE_COUNT = "totalCaseCount";
 
 	private User requestingUser;
 	private Date requestedDate;
 	private CaseSamplesDetailedExportResult result;
 	private String filterSummary;
 	private Integer exportedRowCount;
+	private Integer progressRowCount;
+	private Long totalCaseCount;
 	private String fileName;
 	private String filePath;
 	private String tokenHash;
@@ -100,6 +104,22 @@ public class CaseSamplesDetailedExport extends AbstractDomainObject {
 
 	public void setExportedRowCount(Integer exportedRowCount) {
 		this.exportedRowCount = exportedRowCount;
+	}
+
+	public Integer getProgressRowCount() {
+		return progressRowCount;
+	}
+
+	public void setProgressRowCount(Integer progressRowCount) {
+		this.progressRowCount = progressRowCount;
+	}
+
+	public Long getTotalCaseCount() {
+		return totalCaseCount;
+	}
+
+	public void setTotalCaseCount(Long totalCaseCount) {
+		this.totalCaseCount = totalCaseCount;
 	}
 
 	@Column(length = 512)

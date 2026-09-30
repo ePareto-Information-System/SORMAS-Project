@@ -1763,6 +1763,7 @@ public interface Captions {
 	String caseSamplesDetailedExportViewDownloads = "caseSamplesDetailedExportViewDownloads";
 	String caseSamplesDetailedExportNotLoggedIn = "caseSamplesDetailedExportNotLoggedIn";
 	String caseSamplesDetailedExportDownloadFile = "caseSamplesDetailedExportDownloadFile";
+	String caseSamplesDetailedExportProgress = "caseSamplesDetailedExportProgress";
 	String CaseSamplesDetailedExport_requestingUser = "CaseSamplesDetailedExport.requestingUser";
 	String CaseSamplesDetailedExport_requestedDate = "CaseSamplesDetailedExport.requestedDate";
 	String CaseSamplesDetailedExport_result = "CaseSamplesDetailedExport.result";

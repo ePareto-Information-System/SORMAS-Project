@@ -53,6 +53,8 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
+import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
@@ -416,6 +418,20 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		return new ArrayList<>(dtos);
 	}
 
+	private static YesNo yesNoUnknownToYesNo(YesNoUnknown value) {
+		if (value == null || value == YesNoUnknown.UNKNOWN) {
+			return null;
+		}
+		return YesNo.valueOf(value.name());
+	}
+
+	private static YesNoUnknown yesNoToYesNoUnknown(YesNo value) {
+		if (value == null) {
+			return null;
+		}
+		return YesNoUnknown.valueOf(value.name());
+	}
+
 	public static PathogenTestDto toDto(PathogenTest source) {
 		if (source == null) {
 			return null;
@@ -479,7 +495,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setLaboratoryCytologyLymph(source.getLaboratoryCytologyLymph());
 		target.setLaboratoryGram(source.getLaboratoryGram());
 		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
-		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());
+		target.setLaboratoryRdtPerformed(yesNoUnknownToYesNo(source.getLaboratoryRdtPerformed()));
 		target.setLaboratoryRdtResults(source.getLaboratoryRdtResults());
 		target.setLaboratoryLatex(source.getLaboratoryLatex());
 		target.setLaboratoryLatexOtherResults(source.getLaboratoryLatexOtherResults());
@@ -530,7 +546,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setSampleTestResultImmunoDate(source.getSampleTestResultImmunoDate());
 
 
-		target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
+		target.setVibrioCholeraeIdentifiedInStools(yesNoUnknownToYesNo(source.getVibrioCholeraeIdentifiedInStools()));
 		target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
 		target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
 
@@ -634,7 +650,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setLaboratoryCytologyLymph(source.getLaboratoryCytologyLymph());
 		target.setLaboratoryGram(source.getLaboratoryGram());
 		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
-		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());
+		target.setLaboratoryRdtPerformed(yesNoToYesNoUnknown(source.getLaboratoryRdtPerformed()));
 		target.setLaboratoryRdtResults(source.getLaboratoryRdtResults());
 		target.setLaboratoryLatex(source.getLaboratoryLatex());
 		target.setLaboratoryLatexOtherResults(source.getLaboratoryLatexOtherResults());
@@ -683,7 +699,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setSampleTestResultImmuno(source.getSampleTestResultImmuno());
 		target.setSampleTestResultImmunoDate(source.getSampleTestResultImmunoDate());
 
-		target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
+		target.setVibrioCholeraeIdentifiedInStools(yesNoToYesNoUnknown(source.getVibrioCholeraeIdentifiedInStools()));
 		target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
 		target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
 

@@ -61,6 +61,12 @@ public class CaseSamplesDetailedExportsGrid extends Grid<CaseSamplesDetailedExpo
 		getColumn(CaseSamplesDetailedExportDto.FILTER_SUMMARY).setMaximumWidth(320);
 		getColumn(CaseSamplesDetailedExportDto.FAILURE_MESSAGE).setMaximumWidth(240);
 
+		addColumn(this::buildProgressText)
+			.setId("progress")
+			.setCaption(I18nProperties.getCaption(Captions.caseSamplesDetailedExportProgress))
+			.setSortable(false)
+			.setWidth(150);
+
 		addComponentColumn(this::buildDownloadsButton)
 			.setId("downloads")
 			.setCaption(I18nProperties.getCaption(Captions.caseSamplesDetailedExportDownloads))
@@ -85,6 +91,22 @@ public class CaseSamplesDetailedExportsGrid extends Grid<CaseSamplesDetailedExpo
 			query -> (int) FacadeProvider.getCaseSamplesDetailedExportFacade().count());
 		setDataProvider(dataProvider);
 		setSelectionMode(SelectionMode.NONE);
+	}
+
+	private String buildProgressText(CaseSamplesDetailedExportDto export) {
+		if (export.getResult() == CaseSamplesDetailedExportResult.IN_PROGRESS) {
+			Integer rows = export.getProgressRowCount();
+			if (rows == null || rows == 0) {
+				return "—";
+			}
+			Long total = export.getTotalCaseCount();
+			if (total != null && total > 0) {
+				int pct = (int) Math.min(100L, rows * 100L / total);
+				return String.format("%,d rows (%d%%)", rows, pct);
+			}
+			return String.format("%,d rows", rows);
+		}
+		return "";
 	}
 
 	private Button buildDownloadsButton(CaseSamplesDetailedExportDto export) {

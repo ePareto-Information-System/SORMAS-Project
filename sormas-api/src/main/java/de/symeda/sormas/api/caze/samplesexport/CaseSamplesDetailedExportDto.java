@@ -21,12 +21,16 @@ public class CaseSamplesDetailedExportDto extends EntityDto {
 	public static final String EMAIL_SENT_DATE = "emailSentDate";
 	public static final String FAILURE_MESSAGE = "failureMessage";
 	public static final String DOWNLOAD_COUNT = "downloadCount";
+	public static final String PROGRESS_ROW_COUNT = "progressRowCount";
+	public static final String TOTAL_CASE_COUNT = "totalCaseCount";
 
 	private UserReferenceDto requestingUser;
 	private Date requestedDate;
 	private CaseSamplesDetailedExportResult result;
 	private String filterSummary;
 	private Integer exportedRowCount;
+	private Integer progressRowCount;
+	private Long totalCaseCount;
 	private String fileName;
 	private Date expiresAt;
 	private Date emailSentDate;
@@ -71,6 +75,22 @@ public class CaseSamplesDetailedExportDto extends EntityDto {
 
 	public void setExportedRowCount(Integer exportedRowCount) {
 		this.exportedRowCount = exportedRowCount;
+	}
+
+	public Integer getProgressRowCount() {
+		return progressRowCount;
+	}
+
+	public void setProgressRowCount(Integer progressRowCount) {
+		this.progressRowCount = progressRowCount;
+	}
+
+	public Long getTotalCaseCount() {
+		return totalCaseCount;
+	}
+
+	public void setTotalCaseCount(Long totalCaseCount) {
+		this.totalCaseCount = totalCaseCount;
 	}
 
 	public String getFileName() {

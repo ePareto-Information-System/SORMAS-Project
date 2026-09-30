@@ -33,6 +33,20 @@ public class CaseSamplesDetailedExportService extends BaseAdoService<CaseSamples
 		ensurePersisted(export);
 	}
 
+	/**
+	 * Updates progress counters in their own committed transaction so the change is immediately
+	 * visible to readers (e.g. the UI grid) without waiting for the outer export transaction to finish.
+	 */
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void updateProgress(String exportUuid, int processedRows, long totalCount) {
+		CaseSamplesDetailedExport export = getByUuid(exportUuid);
+		if (export != null && export.getResult() == CaseSamplesDetailedExportResult.IN_PROGRESS) {
+			export.setProgressRowCount(processedRows);
+			export.setTotalCaseCount(totalCount > 0 ? totalCount : null);
+			ensurePersisted(export);
+		}
+	}
+
 	public List<CaseSamplesDetailedExport> getStaleInProgressExports(Date olderThan) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<CaseSamplesDetailedExport> cq = cb.createQuery(getElementClass());

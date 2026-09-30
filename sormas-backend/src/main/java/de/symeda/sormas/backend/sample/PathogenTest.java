@@ -137,7 +137,7 @@ public class PathogenTest extends DeletableAdo {
 	private String laboratoryCytologyLymph;
 	private Gram laboratoryGram;
 	private String laboratoryGramOther;
-	private YesNo laboratoryRdtPerformed;
+	private YesNoUnknown laboratoryRdtPerformed;
 	private String laboratoryRdtResults;
 	private LatexCulture laboratoryLatex;
 	private String laboratoryLatexOtherResults;
@@ -192,7 +192,7 @@ public class PathogenTest extends DeletableAdo {
 	private String otherNotesAndObservations;
 	private Date dateSurveillanceSentResultsToDistrict;
 
-	private YesNo vibrioCholeraeIdentifiedInStools;
+	private YesNoUnknown vibrioCholeraeIdentifiedInStools;
 	private String drugsSensitiveToVibrioStrain;
 	private String drugsResistantToVibrioStrain;
 	private String thirdPathogenTested;
@@ -654,11 +654,11 @@ public class PathogenTest extends DeletableAdo {
 		this.laboratoryGramOther = laboratoryGramOther;
 	}
 
-	public YesNo getLaboratoryRdtPerformed() {
+	public YesNoUnknown getLaboratoryRdtPerformed() {
 		return laboratoryRdtPerformed;
 	}
 
-	public void setLaboratoryRdtPerformed(YesNo laboratoryRdtPerformed) {
+	public void setLaboratoryRdtPerformed(YesNoUnknown laboratoryRdtPerformed) {
 		this.laboratoryRdtPerformed = laboratoryRdtPerformed;
 	}
 
@@ -915,10 +915,10 @@ public class PathogenTest extends DeletableAdo {
 	public void setDateDistrictReceivedLabResults(Date dateDistrictReceivedLabResults) {
 		this.dateDistrictReceivedLabResults = dateDistrictReceivedLabResults;
 	}
-	public YesNo getVibrioCholeraeIdentifiedInStools() {
+	public YesNoUnknown getVibrioCholeraeIdentifiedInStools() {
 		return vibrioCholeraeIdentifiedInStools;
 	}
-	public void setVibrioCholeraeIdentifiedInStools(YesNo vibrioCholeraeIdentifiedInStools) {
+	public void setVibrioCholeraeIdentifiedInStools(YesNoUnknown vibrioCholeraeIdentifiedInStools) {
 		this.vibrioCholeraeIdentifiedInStools = vibrioCholeraeIdentifiedInStools;
 	}
 	public String getDrugsSensitiveToVibrioStrain() {

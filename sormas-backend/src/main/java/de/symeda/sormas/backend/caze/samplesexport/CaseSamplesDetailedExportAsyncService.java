@@ -111,13 +111,43 @@ public class CaseSamplesDetailedExportAsyncService {
 			AtomicInteger rowCount = new AtomicInteger(0);
 			Collection<String> selected = selectedRows != null ? selectedRows : new ArrayList<>();
 
+			// Determine total case count once so we can log a percentage every 1000 rows.
+			final long totalCaseCount;
+			if (!selected.isEmpty()) {
+				totalCaseCount = selected.size();
+			} else {
+				long counted = -1;
+				try {
+					counted = caseFacade.count(criteria != null ? criteria : new CaseCriteria(), false);
+				} catch (Exception e) {
+					LOGGER.warn("Export {}: could not determine total case count for progress logging", exportUuid, e);
+				}
+				totalCaseCount = counted;
+			}
+			LOGGER.info("Export {}: starting — {} cases in scope", exportUuid, totalCaseCount >= 0 ? totalCaseCount : "unknown");
+
+			final AtomicInteger lastLoggedThousand = new AtomicInteger(0);
+
 			try (OutputStream out = new FileOutputStream(exportFile)) {
 				CsvStreamUtils.writeCsvContentToStream(
 					CaseExportDetailedSampleDto.class,
 					(start, max) -> {
 						List<CaseExportDetailedSampleDto> rows = caseFacade
 							.getExportListDetailed(criteria, selected, exportType, start, max, exportConfiguration, userLanguage);
-						rowCount.addAndGet(rows.size());
+						int total = rowCount.addAndGet(rows.size());
+
+						int currentThousand = total / 1000;
+						if (currentThousand > lastLoggedThousand.get()) {
+							lastLoggedThousand.set(currentThousand);
+							if (totalCaseCount > 0) {
+								int pct = (int) Math.min(100L, start * 100L / totalCaseCount);
+								LOGGER.info("Export {}: {} rows written — {}% of cases dispatched", exportUuid, total, pct);
+							} else {
+								LOGGER.info("Export {}: {} rows written", exportUuid, total);
+							}
+							exportService.updateProgress(exportUuid, total, totalCaseCount);
+						}
+
 						return rows;
 					},
 					CaseSamplesDetailedExportAsyncService::captionProvider,
@@ -126,6 +156,7 @@ public class CaseSamplesDetailedExportAsyncService {
 					configFacade,
 					out);
 			}
+			LOGGER.info("Export {}: complete — {} rows written (100%)", exportUuid, rowCount.get());
 
 			Date expiresAt = DateHelper.addSeconds(new Date(), EXPORT_LINK_VALIDITY_HOURS * 3600);
 			export.setResult(CaseSamplesDetailedExportResult.SUCCESS);

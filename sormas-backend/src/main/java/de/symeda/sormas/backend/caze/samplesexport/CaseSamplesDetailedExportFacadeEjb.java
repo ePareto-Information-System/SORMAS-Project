@@ -312,6 +312,8 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 		dto.setResult(source.getResult());
 		dto.setFilterSummary(source.getFilterSummary());
 		dto.setExportedRowCount(source.getExportedRowCount());
+		dto.setProgressRowCount(source.getProgressRowCount());
+		dto.setTotalCaseCount(source.getTotalCaseCount());
 		dto.setFileName(source.getFileName());
 		dto.setExpiresAt(source.getExpiresAt());
 		dto.setEmailSentDate(source.getEmailSentDate());

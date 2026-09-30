@@ -15521,3 +15521,8 @@ ALTER TABLE casesamplesdetailedexportdownload OWNER TO sormas_user;
 CREATE INDEX idx_casesamplesdetailedexportdownload_export ON casesamplesdetailedexportdownload (export_id);
 
 INSERT INTO schema_version (version_number, comment) VALUES (667, 'Async detailed sample export audit and download log');
+
+ALTER TABLE casesamplesdetailedexport ADD COLUMN IF NOT EXISTS progressrowcount integer;
+ALTER TABLE casesamplesdetailedexport ADD COLUMN IF NOT EXISTS totalcasecount bigint;
+
+INSERT INTO schema_version (version_number, comment) VALUES (668, 'Add progress tracking columns to casesamplesdetailedexport');
