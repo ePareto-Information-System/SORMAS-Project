@@ -15535,3 +15535,27 @@ ALTER TABLE casesamplesdetailedexport ADD COLUMN IF NOT EXISTS ispartial boolean
 ALTER TABLE casesamplesdetailedexport ADD COLUMN IF NOT EXISTS lastprogressat timestamp without time zone;
 
 INSERT INTO schema_version (version_number, comment) VALUES (670, 'Add partial flag and last progress timestamp to casesamplesdetailedexport');
+
+-- Exposure fields were changed from YesNoUnknown to YesNo; legacy UNKNOWN values cannot be loaded by Hibernate
+DO $$
+DECLARE
+	col record;
+BEGIN
+	FOR col IN
+		SELECT c.table_name AS tbl, c.column_name AS colname
+		FROM information_schema.columns c
+		WHERE c.table_schema = 'public'
+		  AND c.table_name IN ('exposures', 'exposures_history')
+		  AND c.column_name IN (
+			'indoors', 'outdoors', 'wearingmask', 'wearingppe', 'otherprotectivemeasures',
+			'shortdistance', 'longfacetofacecontact', 'animalmarket', 'percutaneous',
+			'contacttobodyfluids', 'handlingsamples', 'eatingrawanimalproducts', 'handlinganimals',
+			'animalvaccinated', 'bodyofwater', 'prophylaxis', 'riskarea',
+			'physicalcontactduringpreparation', 'physicalcontactwithbody', 'deceasedpersonill',
+			'largeattendancenumber')
+	LOOP
+		EXECUTE format('UPDATE %I SET %I = NULL WHERE %I = %L', col.tbl, col.colname, col.colname, 'UNKNOWN');
+	END LOOP;
+END $$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (671, 'Clear legacy UNKNOWN values from YesNo exposure fields');
