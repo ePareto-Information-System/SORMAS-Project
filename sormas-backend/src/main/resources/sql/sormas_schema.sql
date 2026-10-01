@@ -15563,3 +15563,82 @@ INSERT INTO schema_version (version_number, comment) VALUES (671, 'Clear legacy 
 ALTER TABLE casesamplesdetailedexportdownload DROP COLUMN IF EXISTS clientaddress;
 
 INSERT INTO schema_version (version_number, comment) VALUES (672, 'Remove client address from detailed sample export download log');
+
+-- Fields that were changed from YesNoUnknown to YesNo may still hold UNKNOWN, which Hibernate cannot load.
+-- Base tables are cleaned before their _history tables because the versioning trigger copies the old row on update.
+DO $$
+DECLARE
+	targets text[] := ARRAY[
+		'cases.pregnant', 'cases.postpartum', 'containmentmeasures.regularbandaging',
+		'containmentmeasures.completelyextracted', 'contaminationsources.treatedwithabate',
+		'ebsalert.actioninitiated', 'ebsalert.alertissued', 'riskassessment.morbiditymortality',
+		'riskassessment.spreadprobability', 'riskassessment.controlmeasures', 'signalverification.verificationsent',
+		'triaging.supervisorreview', 'triaging.specificsignal', 'triaging.healthconcern',
+		'triaging.occurrencepreviously', 'triaging.potentialrisk', 'triaging.referred',
+		'epidata.exposuredetailsknown', 'epidata.activityascasedetailsknown', 'epidata.recenttraveloutbreak',
+		'epidata.contactsimilaroutbreak', 'epidata.contactsickanimals', 'epidata.areainfectedanimals',
+		'epidata.hightransmissionriskarea', 'epidata.largeoutbreaksarea', 'epidata.contactwithsourcecaseknown',
+		'epidata.receivedhealtheducation', 'epidata.patiententeredwatersource',
+		'epidata.previouslyvaccinatedagainstinfluenza', 'epidata.vistedplacesconfirmedpandemic',
+		'epidata.exposedtoriskfactor', 'epidata.intltravel', 'epidata.domestictravel', 'epidata.contactillperson',
+		'epidata.previouslyvaccinatedagainstcovid', 'epidata.contactdeadanimals',
+		'epidata.historyoftraveloutsidethevillagetowndistrict', 'epidata.patienttravelduringillness',
+		'epidata.waspatienthospitalized', 'epidata.didpatientconsulthealer',
+		'epidata.patientreceivetraditionalmedicine', 'epidata.patientattendfuneralceremonies',
+		'epidata.patienttravelanytimeperiodbeforeill', 'epidata.patientcontactknownsuspect',
+		'epidata.waterusedfordrinking', 'epidata.waterusednotfordrinking', 'epidata.fooditems', 'exposures.indoors',
+		'exposures.outdoors', 'exposures.wearingmask', 'exposures.wearingppe', 'exposures.otherprotectivemeasures',
+		'exposures.shortdistance', 'exposures.longfacetofacecontact', 'exposures.animalmarket',
+		'exposures.percutaneous', 'exposures.contacttobodyfluids', 'exposures.handlingsamples',
+		'exposures.eatingrawanimalproducts', 'exposures.handlinganimals', 'exposures.animalvaccinated',
+		'exposures.bodyofwater', 'exposures.physicalcontactduringpreparation', 'exposures.physicalcontactwithbody',
+		'exposures.deceasedpersonill', 'exposures.prophylaxis', 'exposures.riskarea',
+		'exposures.largeattendancenumber', 'foodhistory.breakfast', 'foodhistory.consumedatplace',
+		'foodhistory.lunch', 'foodhistory.consumedatplacel1', 'foodhistory.supper', 'foodhistory.consumedatplaces1',
+		'foodhistory.breakfast2', 'foodhistory.consumedatplace2', 'foodhistory.lunchl2',
+		'foodhistory.consumedatplacel2', 'foodhistory.suppers2', 'foodhistory.consumedatplaces2',
+		'foodhistory.breakfast3', 'foodhistory.consumedatplace3', 'foodhistory.lunchl3',
+		'foodhistory.consumedatplacel3', 'foodhistory.suppers3', 'foodhistory.consumedatplaces3',
+		'hospitalization.isolated', 'hospitalization.hospitalizedpreviously',
+		'hospitalization.admittedtohealthfacility', 'hospitalization.admittedtohealthfacilitynew',
+		'hospitalization.leftagainstadvice', 'hospitalization.intensivecareunit',
+		'hospitalization.soughtmedicalattention', 'hospitalization.labtestconducted',
+		'hospitalization.symptomsongoing', 'hospitalization.hospitalizationyesno',
+		'previoushospitalization.admittedtohealthfacility', 'previoushospitalization.isolated',
+		'previoushospitalization.intensivecareunit', 'person.applicable',
+		'person.placeofresidencesameasreportingvillage', 'riskfactor.drinkingwaterinfectedbyvibrio',
+		'riskfactor.nondrinkingwaterinfectedbyvibrio', 'riskfactor.fooditemsinfectedbyvibrio',
+		'riskfactor.threedayspriortodiseasewatersourceone', 'riskfactor.threedayspriortodiseasewatersourcetwo',
+		'riskfactor.threedayspriortodiseasewatersourcethree', 'riskfactor.threedayspriortodiseasewatersourcefour',
+		'riskfactor.threedayspriortodiseasewatersourcefive', 'riskfactor.threedayspriortodiseasefooditemsone',
+		'riskfactor.threedayspriortodiseasefooditemstwo', 'riskfactor.threedayspriortodiseasefooditemsthree',
+		'riskfactor.threedayspriortodiseasefooditemsfour', 'riskfactor.threedayspriortodiseasefooditemsfive',
+		'riskfactor.threedayspriortodiseaseattendanyfuneral',
+		'riskfactor.threedayspriortodiseaseattendanysocialevent', 'riskfactor.patientspoxvaccinationscarpresent',
+		'riskfactor.patienttravelledanywhere3weeksprior', 'riskfactor.patienttravelledperiodofillness',
+		'riskfactor.during3weekspatientcontactwithsimilarsymptoms', 'riskfactor.patienttouchdomesticwildanimal',
+		'samples.ipsamplesent', 'samples.csfsamplecollected', 'samples.rdtperformed', 'samples.samplesenttolab',
+		'samples.laboratoryrdtperformed', 'samples.w1', 'samples.w2', 'samples.w3', 'samples.sl1', 'samples.sl2',
+		'samples.sl3', 'samples.positiveviralculture', 'samples.positiverealtime', 'samples.fourfoldrise',
+		'samples.hassamplebeencollected', 'samples.specimensavedandpreservedinalcohol',
+		'samples.sentforconfirmationnational', 'samples.useofclothfilter', 'samples.confirmedasguineaworm',
+		'sixtyday.patientfound', 'sixtyday.paralysisweaknesspresent', 'sixtyday.paralysisweaknessfloppy',
+		'sixtyday.sensoryloss', 'symptoms.feverbodytempgreater', 'symptoms.paralysedlimbsensitivetopain',
+		'symptoms.injectionsitebeforeonsetparalysis', 'symptoms.trueafp', 'symptoms.symptomsongoing',
+		'symptoms.patienthavefever', 'symptoms.postpartum', 'symptoms.pregnant'
+	];
+	col record;
+BEGIN
+	FOR col IN
+		SELECT c.table_name AS tbl, c.column_name AS colname
+		FROM information_schema.columns c
+		WHERE c.table_schema = 'public'
+		  AND c.data_type IN ('character varying', 'text')
+		  AND regexp_replace(lower(c.table_name), '_history$', '') || '.' || lower(c.column_name) = ANY (targets)
+		ORDER BY (c.table_name LIKE '%\_history'), c.table_name, c.column_name
+	LOOP
+		EXECUTE format('UPDATE %I SET %I = NULL WHERE %I = %L', col.tbl, col.colname, col.colname, 'UNKNOWN');
+	END LOOP;
+END $$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (673, 'Clear legacy UNKNOWN values from all YesNo fields');
