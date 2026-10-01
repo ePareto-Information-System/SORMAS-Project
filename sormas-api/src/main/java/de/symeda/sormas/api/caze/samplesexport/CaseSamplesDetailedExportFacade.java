@@ -49,7 +49,7 @@ public interface CaseSamplesDetailedExportFacade {
 	 * @param downloadingUserName
 	 *            login name of the logged-in user, or null when anonymous
 	 */
-	void recordDownload(String exportUuid, String downloadingUserName, String clientAddress);
+	void recordDownload(String exportUuid, String downloadingUserName);
 
 	/**
 	 * Marks IN_PROGRESS exports older than 30 minutes as FAILED. Called from cron.
@@ -57,7 +57,7 @@ public interface CaseSamplesDetailedExportFacade {
 	void cleanupStaleInProgressExports();
 
 	/**
-	 * Deletes files whose expiry has passed. Called from cron.
+	 * Deletes files (complete or partial) whose expiry has passed. Called hourly from cron.
 	 */
 	void cleanupExpiredExports();
 }

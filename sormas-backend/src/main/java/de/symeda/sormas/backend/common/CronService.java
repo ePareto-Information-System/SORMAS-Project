@@ -163,7 +163,7 @@ public class CronService {
 		caseSamplesDetailedExportFacade.cleanupStaleInProgressExports();
 	}
 
-	@Schedule(hour = "1", minute = "12", second = "0", persistent = false)
+	@Schedule(hour = "*", minute = "12", second = "0", persistent = false)
 	public void cleanupExpiredCaseSampleDetailedExports() {
 		caseSamplesDetailedExportFacade.cleanupExpiredExports();
 	}

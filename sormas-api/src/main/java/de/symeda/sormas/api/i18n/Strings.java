@@ -974,7 +974,6 @@ public interface Strings {
 	String headingCaseSamplesDetailedExportStarted = "headingCaseSamplesDetailedExportStarted";
 	String headingCaseSamplesDetailedExportDownloads = "headingCaseSamplesDetailedExportDownloads";
 	String messageCaseSamplesDetailedExportStarted = "messageCaseSamplesDetailedExportStarted";
-	String messageCaseSamplesDetailedExportNoEmail = "messageCaseSamplesDetailedExportNoEmail";
 	String infoDeveloperOptions = "infoDeveloperOptions";
 	String infoDeveloperOptionsContactGeneration = "infoDeveloperOptionsContactGeneration";
 	String infoDeveloperOptionsSeedUsage = "infoDeveloperOptionsSeedUsage";

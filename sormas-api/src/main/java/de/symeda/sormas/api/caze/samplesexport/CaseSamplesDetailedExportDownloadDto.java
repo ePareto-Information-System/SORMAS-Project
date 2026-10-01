@@ -14,12 +14,10 @@ public class CaseSamplesDetailedExportDownloadDto implements Serializable {
 	public static final String DOWNLOADED_AT = "downloadedAt";
 	public static final String DOWNLOADING_USER = "downloadingUser";
 	public static final String NOT_LOGGED_IN_LABEL = "notLoggedInLabel";
-	public static final String CLIENT_ADDRESS = "clientAddress";
 
 	private Date downloadedAt;
 	private UserReferenceDto downloadingUser;
 	private String notLoggedInLabel;
-	private String clientAddress;
 
 	public Date getDownloadedAt() {
 		return downloadedAt;
@@ -43,14 +41,6 @@ public class CaseSamplesDetailedExportDownloadDto implements Serializable {
 
 	public void setNotLoggedInLabel(String notLoggedInLabel) {
 		this.notLoggedInLabel = notLoggedInLabel;
-	}
-
-	public String getClientAddress() {
-		return clientAddress;
-	}
-
-	public void setClientAddress(String clientAddress) {
-		this.clientAddress = clientAddress;
 	}
 
 	public String getDownloaderCaption() {

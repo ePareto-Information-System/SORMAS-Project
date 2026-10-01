@@ -150,7 +150,6 @@ public class CaseSamplesDetailedExportService extends BaseAdoService<CaseSamples
 		Root<CaseSamplesDetailedExport> root = cq.from(getElementClass());
 		cq.where(
 			cb.and(
-				cb.equal(root.get(CaseSamplesDetailedExport.RESULT), CaseSamplesDetailedExportResult.SUCCESS),
 				cb.isNotNull(root.get(CaseSamplesDetailedExport.FILE_PATH)),
 				cb.lessThan(root.get(CaseSamplesDetailedExport.EXPIRES_AT), now)));
 		return em.createQuery(cq).getResultList();

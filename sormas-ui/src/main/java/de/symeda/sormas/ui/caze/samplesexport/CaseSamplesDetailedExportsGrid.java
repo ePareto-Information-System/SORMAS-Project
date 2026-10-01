@@ -205,10 +205,6 @@ public class CaseSamplesDetailedExportsGrid extends Grid<CaseSamplesDetailedExpo
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(I18nProperties.getUserLanguage())));
 		downloadsGrid.addColumn(CaseSamplesDetailedExportDownloadDto::getDownloaderCaption)
 			.setCaption(I18nProperties.getPrefixCaption(CaseSamplesDetailedExportDownloadDto.I18N_PREFIX, "who"));
-		downloadsGrid.addColumn(CaseSamplesDetailedExportDownloadDto::getClientAddress)
-			.setCaption(
-				I18nProperties
-					.getPrefixCaption(CaseSamplesDetailedExportDownloadDto.I18N_PREFIX, CaseSamplesDetailedExportDownloadDto.CLIENT_ADDRESS));
 
 		ListDataProvider<CaseSamplesDetailedExportDownloadDto> provider =
 			DataProvider.ofCollection(FacadeProvider.getCaseSamplesDetailedExportFacade().getDownloads(export.getUuid()));

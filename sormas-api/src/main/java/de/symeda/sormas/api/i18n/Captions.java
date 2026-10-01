@@ -1778,7 +1778,6 @@ public interface Captions {
 	String CaseSamplesDetailedExport_downloadCount = "CaseSamplesDetailedExport.downloadCount";
 	String CaseSamplesDetailedExportDownload_downloadedAt = "CaseSamplesDetailedExportDownload.downloadedAt";
 	String CaseSamplesDetailedExportDownload_who = "CaseSamplesDetailedExportDownload.who";
-	String CaseSamplesDetailedExportDownload_clientAddress = "CaseSamplesDetailedExportDownload.clientAddress";
 	String CaseSamplesDetailedExportDownload_notLoggedInLabel = "CaseSamplesDetailedExportDownload.notLoggedInLabel";
 	String exportSelectSormasData = "exportSelectSormasData";
 	String exportSormasData = "exportSormasData";

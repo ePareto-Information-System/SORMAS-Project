@@ -23,12 +23,10 @@ public class CaseSamplesDetailedExportDownload extends AbstractDomainObject {
 	public static final String EXPORT = "export";
 	public static final String DOWNLOADED_AT = "downloadedAt";
 	public static final String DOWNLOADING_USER = "downloadingUser";
-	public static final String CLIENT_ADDRESS = "clientAddress";
 
 	private CaseSamplesDetailedExport export;
 	private Date downloadedAt;
 	private User downloadingUser;
-	private String clientAddress;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
@@ -57,14 +55,5 @@ public class CaseSamplesDetailedExportDownload extends AbstractDomainObject {
 
 	public void setDownloadingUser(User downloadingUser) {
 		this.downloadingUser = downloadingUser;
-	}
-
-	@Column(length = 255)
-	public String getClientAddress() {
-		return clientAddress;
-	}
-
-	public void setClientAddress(String clientAddress) {
-		this.clientAddress = clientAddress;
 	}
 }

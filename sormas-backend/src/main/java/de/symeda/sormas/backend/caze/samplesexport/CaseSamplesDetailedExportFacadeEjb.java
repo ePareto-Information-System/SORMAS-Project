@@ -43,7 +43,6 @@ import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
-import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
@@ -79,9 +78,6 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 		User currentUser = userService.getCurrentUser();
 		if (currentUser == null) {
 			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
-		}
-		if (StringUtils.isBlank(currentUser.getUserEmail())) {
-			throw new ValidationRuntimeException(I18nProperties.getString(Strings.messageCaseSamplesDetailedExportNoEmail));
 		}
 
 		String rawToken = CaseSamplesDetailedExportAsyncService.generateRawToken();
@@ -207,7 +203,7 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 
 	@Override
 	@PermitAll
-	public void recordDownload(String exportUuid, String downloadingUserName, String clientAddress) {
+	public void recordDownload(String exportUuid, String downloadingUserName) {
 		CaseSamplesDetailedExport export = exportService.getByUuid(exportUuid);
 		if (export == null) {
 			return;
@@ -221,7 +217,6 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 		download.setUuid(DataHelper.createUuid());
 		download.setExport(export);
 		download.setDownloadedAt(new Date());
-		download.setClientAddress(StringUtils.abbreviate(clientAddress, 255));
 		if (StringUtils.isNotBlank(downloadingUserName)
 			&& !"ANONYMOUS".equalsIgnoreCase(downloadingUserName)
 			&& !"SYSTEM".equalsIgnoreCase(downloadingUserName)) {
@@ -341,7 +336,6 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 		if (source.getDownloadingUser() == null) {
 			dto.setNotLoggedInLabel(I18nProperties.getCaption(Captions.caseSamplesDetailedExportNotLoggedIn));
 		}
-		dto.setClientAddress(source.getClientAddress());
 		return dto;
 	}
 

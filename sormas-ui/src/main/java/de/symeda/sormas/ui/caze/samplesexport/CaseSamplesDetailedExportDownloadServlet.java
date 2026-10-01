@@ -103,8 +103,7 @@ public class CaseSamplesDetailedExportDownloadServlet extends HttpServlet {
 
 		String downloadingUserName = resolveLoggedInUserName(req);
 		try {
-			FacadeProvider.getCaseSamplesDetailedExportFacade()
-				.recordDownload(fileDto.getExportUuid(), downloadingUserName, req.getRemoteAddr());
+			FacadeProvider.getCaseSamplesDetailedExportFacade().recordDownload(fileDto.getExportUuid(), downloadingUserName);
 		} catch (Exception e) {
 			LOGGER.warn("Failed to record download for export {}", fileDto.getExportUuid(), e);
 		}

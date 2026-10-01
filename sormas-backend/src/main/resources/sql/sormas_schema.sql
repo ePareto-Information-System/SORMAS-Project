@@ -15559,3 +15559,7 @@ BEGIN
 END $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (671, 'Clear legacy UNKNOWN values from YesNo exposure fields');
+
+ALTER TABLE casesamplesdetailedexportdownload DROP COLUMN IF EXISTS clientaddress;
+
+INSERT INTO schema_version (version_number, comment) VALUES (672, 'Remove client address from detailed sample export download log');
