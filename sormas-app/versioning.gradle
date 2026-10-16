@@ -34,6 +34,14 @@ ext {
 	 * @see https://blog.jayway.com/2015/03/11/automatic-versioncode-generation-in-android-gradle/
 	 */
 	buildVersionCode = {
+		// The 1.87.1 AHF recovery APK uses 1087020 while retaining versionName 1.87.1.
+		// This occupies the calculated 1.87.2-SNAPSHOT code; do not distribute another
+		// APK with that code. Subsequent 1.87.2 RC and final builds use higher codes.
+		def versionCodeOverride = project.findProperty('androidVersionCode')
+		if (versionCodeOverride != null) {
+			return versionCodeOverride.toInteger()
+		}
+
 		// The rules is as follows:
 		// -SNAPSHOT counts as 0
 		// -RC* counts as the RC number, i.e. 1 to 8

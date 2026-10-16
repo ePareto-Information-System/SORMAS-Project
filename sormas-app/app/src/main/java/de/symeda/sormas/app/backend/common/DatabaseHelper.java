@@ -251,7 +251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 410;
+	public static final int DATABASE_VERSION = 411;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -262,7 +262,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	private SyncLogDao syncLogDao = null;
 	private LbdsSyncDao lbdsSyncDao = null;
 
-	private DatabaseHelper(Context context, String databaseName) {
+	DatabaseHelper(Context context, String databaseName) {
 		super(context, databaseName, null, DATABASE_VERSION);//, R.raw.ormlite_config);
 		this.context = context;
 		// HACK to make sure database is initialized - otherwise we could run into problems caused by threads
@@ -4891,6 +4891,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN thirdPathogenTested VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN testResultForThirdPathogen VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN positiveSubtypes VARCHAR(255);");
+			case 410:
+				currentVersion = 410;
+				migrateLegacyAhfDisease(db);
 				break;
 
 			default:
@@ -4909,10 +4912,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	 * update snapshot rows because snapshots are stored in the same tables.
 	 */
 	static void migrateLegacyAhfDisease(SQLiteDatabase db) {
-		// Disease configurations are read-only on mobile. Merge their facility links
-		// before removing a redundant legacy configuration.
-		db.execSQL(
-			"INSERT INTO facility_diseaseConfiguration (facility_id, diseaseConfiguration_id) "
+		boolean startedTransaction = !db.inTransaction();
+		if (startedTransaction) {
+			db.beginTransaction();
+		}
+
+		try {
+			// Disease configurations are read-only on mobile. Merge their facility links
+			// before removing a redundant legacy configuration.
+			db.execSQL(
+				"INSERT INTO facility_diseaseConfiguration (facility_id, diseaseConfiguration_id) "
 				+ "SELECT DISTINCT legacy_link.facility_id, "
 				+ "(SELECT id FROM diseaseConfiguration WHERE disease = 'UNSPECIFIED_VHF' ORDER BY id LIMIT 1) "
 				+ "FROM facility_diseaseConfiguration legacy_link "
@@ -4922,38 +4931,49 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				+ "WHERE target_link.facility_id = legacy_link.facility_id "
 				+ "AND target_link.diseaseConfiguration_id = "
 				+ "(SELECT id FROM diseaseConfiguration WHERE disease = 'UNSPECIFIED_VHF' ORDER BY id LIMIT 1))");
-		db.execSQL(
-			"DELETE FROM facility_diseaseConfiguration "
+			db.execSQL(
+				"DELETE FROM facility_diseaseConfiguration "
 				+ "WHERE diseaseConfiguration_id IN (SELECT id FROM diseaseConfiguration WHERE disease = 'AHF') "
 				+ "AND EXISTS (SELECT 1 FROM diseaseConfiguration WHERE disease = 'UNSPECIFIED_VHF')");
-		db.execSQL(
-			"DELETE FROM diseaseConfiguration WHERE disease = 'AHF' "
+			db.execSQL(
+				"DELETE FROM diseaseConfiguration WHERE disease = 'AHF' "
 				+ "AND EXISTS (SELECT 1 FROM diseaseConfiguration WHERE disease = 'UNSPECIFIED_VHF')");
-		db.execSQL("UPDATE diseaseConfiguration SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE diseaseConfiguration SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
 
-		db.execSQL("UPDATE cases SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE clinicalVisit SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE contacts SET caseDisease = 'UNSPECIFIED_VHF' WHERE caseDisease = 'AHF'");
-		db.execSQL("UPDATE diseaseClassificationCriteria SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE forms SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE events SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE visits SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE featureConfiguration SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE immunization SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE aggregateReport SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE weeklyreportentry SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE outbreak SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
-		db.execSQL("UPDATE pathogenTest SET testedDisease = 'UNSPECIFIED_VHF' WHERE testedDisease = 'AHF'");
-		db.execSQL("UPDATE pathogenTest SET secondTestedDisease = 'UNSPECIFIED_VHF' WHERE secondTestedDisease = 'AHF'");
-		db.execSQL("UPDATE person SET causeOfDeathDisease = 'UNSPECIFIED_VHF' WHERE causeOfDeathDisease = 'AHF'");
-		db.execSQL("UPDATE samples SET suspectedDisease = 'UNSPECIFIED_VHF' WHERE suspectedDisease = 'AHF'");
-		db.execSQL("UPDATE users SET limitedDisease = 'UNSPECIFIED_VHF' WHERE limitedDisease = 'AHF'");
-		db.execSQL("UPDATE customizableEnumValue SET diseases = replace(diseases, 'AHF', 'UNSPECIFIED_VHF') WHERE diseases LIKE '%AHF%'");
+			db.execSQL("UPDATE cases SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE clinicalVisit SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE contacts SET caseDisease = 'UNSPECIFIED_VHF' WHERE caseDisease = 'AHF'");
+			db.execSQL("UPDATE diseaseClassificationCriteria SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE forms SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE events SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE visits SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE featureConfiguration SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE immunization SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE aggregateReport SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE weeklyreportentry SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE outbreak SET disease = 'UNSPECIFIED_VHF' WHERE disease = 'AHF'");
+			db.execSQL("UPDATE pathogenTest SET testedDisease = 'UNSPECIFIED_VHF' WHERE testedDisease = 'AHF'");
+			db.execSQL("UPDATE pathogenTest SET secondTestedDisease = 'UNSPECIFIED_VHF' WHERE secondTestedDisease = 'AHF'");
+			db.execSQL("UPDATE person SET causeOfDeathDisease = 'UNSPECIFIED_VHF' WHERE causeOfDeathDisease = 'AHF'");
+			db.execSQL("UPDATE samples SET suspectedDisease = 'UNSPECIFIED_VHF' WHERE suspectedDisease = 'AHF'");
+			db.execSQL("UPDATE users SET limitedDisease = 'UNSPECIFIED_VHF' WHERE limitedDisease = 'AHF'");
+			db.execSQL(
+				"UPDATE customizableEnumValue SET diseases = trim(replace(',' || diseases || ',', ',AHF,', ',UNSPECIFIED_VHF,'), ',') "
+					+ "WHERE ',' || diseases || ',' LIKE '%,AHF,%'");
 
-		// A device that only ever held the legacy configuration keeps its old uuid after
-		// the rename above, while the server has a different uuid for UNSPECIFIED_VHF.
-		// Forcing a re-pull lets the next sync converge instead of leaving two rows.
-		db.execSQL("UPDATE diseaseConfiguration SET changeDate = 0");
+			// A device that only ever held the legacy configuration keeps its old uuid after
+			// the rename above, while the server has a different uuid for UNSPECIFIED_VHF.
+			// Forcing a re-pull lets the next sync converge instead of leaving two rows.
+			db.execSQL("UPDATE diseaseConfiguration SET changeDate = 0");
+
+			if (startedTransaction) {
+				db.setTransactionSuccessful();
+			}
+		} finally {
+			if (startedTransaction) {
+				db.endTransaction();
+			}
+		}
 	}
 
 	private void fillJurisdictionLevels() throws SQLException {
