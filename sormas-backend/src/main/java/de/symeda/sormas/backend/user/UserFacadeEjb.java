@@ -55,6 +55,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import de.symeda.sormas.api.AuthProvider;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.InfrastructureDataReferenceDto;
@@ -73,8 +74,10 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.task.TaskContextIndexCriteria;
 import de.symeda.sormas.api.travelentry.TravelEntryReferenceDto;
+import de.symeda.sormas.api.user.AuthenticatedUserDto;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserCriteria;
+import de.symeda.sormas.api.user.UserCredentialsDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserFacade;
 import de.symeda.sormas.api.user.UserReferenceDto;
@@ -84,6 +87,7 @@ import de.symeda.sormas.api.user.UserRoleDto;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.user.UserSyncResult;
 import de.symeda.sormas.api.utils.AccessDeniedException;
+import de.symeda.sormas.api.utils.AuthenticationThrottledException;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DefaultEntityHelper;
 import de.symeda.sormas.api.utils.PasswordHelper;
@@ -143,10 +147,16 @@ import edu.vt.middleware.password.Rule;
 import edu.vt.middleware.password.RuleResult;
 import edu.vt.middleware.password.UppercaseCharacterRule;
 import edu.vt.middleware.password.WhitespaceRule;
+import de.symeda.sormas.backend.common.ConfigFacadeEjb;
 import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "UserFacade")
 public class UserFacadeEjb implements UserFacade {
+
+	/**
+	 * Seed used to spend roughly the same time hashing when no user matches the submitted user name.
+	 */
+	private static final String UNKNOWN_USER_SEED = "unknownuser";
 
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
@@ -179,6 +189,10 @@ public class UserFacadeEjb implements UserFacade {
 	private UserRoleFacadeEjbLocal userRoleFacade;
 	@EJB
 	private UserRoleService userRoleService;
+	@EJB
+	private ConfigFacadeEjb.ConfigFacadeEjbLocal configFacade;
+	@EJB
+	private AuthenticationThrottle authenticationThrottle;
 	@Inject
 	private Event<UserCreateEvent> userCreateEvent;
 	@Inject
@@ -865,6 +879,73 @@ public class UserFacadeEjb implements UserFacade {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Validates an end user's credentials on behalf of a trusted external system.
+	 * <p/>
+	 * Unlike {@link #getValidLoginRights(String, String)}, which backs the container's own Basic authentication, this is callable as a
+	 * regular operation. That makes it a credential testing oracle for whoever may call it, so it is guarded three ways: the caller needs
+	 * the dedicated {@link UserRight#USER_AUTHENTICATE} right, repeated failures for a user name are locked out by
+	 * {@link AuthenticationThrottle}, and the result never distinguishes an unknown user from a wrong password or a deactivated account.
+	 * <p/>
+	 * Annotated with {@link AuditIgnore} so that the submitted password is not written to the audit log along with the call parameters;
+	 * failed attempts are audited explicitly by the caller instead.
+	 *
+	 * @throws AccessDeniedException
+	 *             if SORMAS is not the configured authentication provider, in which case the stored password is not authoritative
+	 * @throws AuthenticationThrottledException
+	 *             if the user name is currently locked out after repeated failures
+	 */
+	@Override
+	@RightsAllowed(UserRight._USER_AUTHENTICATE)
+	@AuditIgnore
+	public AuthenticatedUserDto authenticateUser(@Valid UserCredentialsDto credentials) {
+
+		if (!AuthProvider.getProvider(configFacade).isDefaultProvider()) {
+			throw new AccessDeniedException(
+				"Validating credentials is only supported while SORMAS is the authentication provider; this server is configured to use "
+					+ configFacade.getAuthenticationProvider() + ".");
+		}
+
+		String userName = credentials.getUserName();
+		authenticationThrottle.verifyNotLockedOut(userName);
+
+		User user = userService.getByUserName(userName);
+		if (user == null) {
+			// hash anyway, so that an unknown user name does not answer measurably faster than a wrong password
+			PasswordHelper.encodePassword(credentials.getPassword(), UNKNOWN_USER_SEED);
+			authenticationThrottle.registerFailure(userName);
+			return null;
+		}
+
+		if (!user.isActive() || !DataHelper.equal(user.getPassword(), PasswordHelper.encodePassword(credentials.getPassword(), user.getSeed()))) {
+			authenticationThrottle.registerFailure(userName);
+			return null;
+		}
+
+		authenticationThrottle.registerSuccess(userName);
+
+		return toAuthenticatedUserDto(user);
+	}
+
+	private static AuthenticatedUserDto toAuthenticatedUserDto(User source) {
+
+		AuthenticatedUserDto target = new AuthenticatedUserDto();
+
+		target.setUuid(source.getUuid());
+		target.setUserName(source.getUserName());
+		target.setFirstName(source.getFirstName());
+		target.setLastName(source.getLastName());
+		target.setEmailAddress(source.getUserEmail());
+		target.setPhone(source.getPhone());
+		target.setRegion(RegionFacadeEjb.toReferenceDto(source.getRegion()));
+		target.setDistrict(DistrictFacadeEjb.toReferenceDto(source.getDistrict()));
+		target.setHealthFacility(FacilityFacadeEjb.toReferenceDto(source.getHealthFacility()));
+		target.setUserRoles(source.getUserRoles().stream().map(UserRoleFacadeEjb::toReferenceDto).collect(Collectors.toSet()));
+		target.setActive(source.isActive());
+
+		return target;
 	}
 
 	@Override
