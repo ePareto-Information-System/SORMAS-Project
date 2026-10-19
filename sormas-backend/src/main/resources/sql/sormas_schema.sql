@@ -15642,3 +15642,74 @@ BEGIN
 END $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (673, 'Clear legacy UNKNOWN values from all YesNo fields');
+
+-- Dedicated role for the NHIE app login handoff, following how schema version 660 created the
+-- Sormas Rest User role for the case entry API.
+--
+-- Kept deliberately separate from Sormas Rest User so that submitting cases and validating end user
+-- credentials are two different accounts. Either can then be revoked, rotated or audited on its own,
+-- and a leak of the case submission credential does not also allow testing passwords.
+DO $$
+DECLARE
+nhie_login_role_id bigint;
+BEGIN
+SELECT id INTO nhie_login_role_id
+FROM userroles
+WHERE caption = 'NHIE Login Service'
+    LIMIT 1;
+
+IF nhie_login_role_id IS NULL THEN
+        INSERT INTO userroles (
+            id,
+            uuid,
+            creationdate,
+            changedate,
+            caption,
+            description,
+            enabled,
+            hasoptionalhealthfacility,
+            hasassociateddistrictuser,
+            porthealthuser,
+            jurisdictionlevel
+        )
+        VALUES (
+            nextval('entity_seq'),
+            generate_base32_uuid(),
+            now(),
+            now(),
+            'NHIE Login Service',
+            'Validates end user credentials on behalf of the NHIE app. Holds no rights over case, person or infrastructure data.',
+            true,
+            false,
+            false,
+            false,
+            'NATION'
+        )
+        RETURNING id INTO nhie_login_role_id;
+END IF;
+
+INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT nhie_login_role_id, rights.userright_name, tstzrange(now(), null)
+FROM unnest(ARRAY[
+                'SORMAS_REST',
+            'USER_AUTHENTICATE'
+                ]) AS rights(userright_name)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM userroles_userrights
+    WHERE userrole_id = nhie_login_role_id
+      AND userroles_userrights.userright = rights.userright_name
+);
+END $$ LANGUAGE plpgsql;
+
+-- The case entry credential must not also be able to validate passwords.
+DELETE FROM userroles_userrights
+WHERE userright = 'USER_AUTHENTICATE'
+  AND userrole_id IN (
+        SELECT id
+        FROM userroles
+        WHERE linkeddefaultuserrole = 'REST_USER'
+           OR caption = 'Sormas Rest User'
+    );
+
+INSERT INTO schema_version (version_number, comment) VALUES (674, 'Add NHIE Login Service role for the NHIE app login handoff');

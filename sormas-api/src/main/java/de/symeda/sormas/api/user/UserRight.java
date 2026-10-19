@@ -321,6 +321,8 @@ public enum UserRight {
 	USER_CREATE(UserRightGroup.USER, UserRight._USER_VIEW),
 	USER_EDIT(UserRightGroup.USER, UserRight._USER_VIEW),
 
+	USER_AUTHENTICATE(UserRightGroup.USER),
+
 	USER_ROLE_VIEW(UserRightGroup.USER),
 	USER_ROLE_EDIT(UserRightGroup.USER, UserRight._USER_ROLE_VIEW),
 	USER_ROLE_DELETE(UserRightGroup.USER, UserRight._USER_ROLE_VIEW),
@@ -553,6 +555,7 @@ public enum UserRight {
 	public static final String _USER_CREATE = "USER_CREATE";
 	public static final String _USER_EDIT = "USER_EDIT";
 	public static final String _USER_VIEW = "USER_VIEW";
+	public static final String _USER_AUTHENTICATE = "USER_AUTHENTICATE";
 	public static final String _USER_ROLE_EDIT = "USER_ROLE_EDIT";
 	public static final String _USER_ROLE_DELETE = "USER_ROLE_DELETE";
 	public static final String _USER_ROLE_VIEW = "USER_ROLE_VIEW";

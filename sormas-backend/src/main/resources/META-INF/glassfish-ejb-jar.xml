@@ -478,6 +478,11 @@
     </security-role-mapping>
 
     <security-role-mapping>
+        <role-name>USER_AUTHENTICATE</role-name>
+        <group-name>USER_AUTHENTICATE</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
         <role-name>USER_ROLE_EDIT</role-name>
         <group-name>USER_ROLE_EDIT</group-name>
     </security-role-mapping>

@@ -133,6 +133,24 @@ public interface UserFacade {
 
 	Set<UserRight> getValidLoginRights(String userName, String password);
 
+	/**
+	 * Validates the credentials of an end user on behalf of a trusted external system and returns that user's authoritative profile.
+	 * <p/>
+	 * Intended for integrations that present their own login screen but must not keep a credential store of their own. The call itself is
+	 * made by an integration account, which needs {@link UserRight#USER_AUTHENTICATE}; the user being authenticated needs no particular
+	 * right, in particular not {@link UserRight#SORMAS_REST}.
+	 * <p/>
+	 * Only supported while SORMAS itself is the authentication provider, because only then is the password stored in the SORMAS database
+	 * authoritative.
+	 *
+	 * @param credentials
+	 *            the user name and password submitted by the end user
+	 * @return the profile of the authenticated user, or {@code null} if the user does not exist, is inactive or the password does not match
+	 * @throws de.symeda.sormas.api.utils.AuthenticationThrottledException
+	 *             if too many failed attempts have been made for this user name recently
+	 */
+	AuthenticatedUserDto authenticateUser(@Valid UserCredentialsDto credentials);
+
 	void removeUserAsSurveillanceAndContactOfficer(String userUuid);
 
 	UserSyncResult syncUser(String userUuid);
