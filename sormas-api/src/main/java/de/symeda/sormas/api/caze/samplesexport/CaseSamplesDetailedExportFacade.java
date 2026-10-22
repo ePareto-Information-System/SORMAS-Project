@@ -26,6 +26,14 @@ public interface CaseSamplesDetailedExportFacade {
 		ExportConfigurationDto exportConfiguration,
 		Language userLanguage);
 
+	/**
+	 * Starts an asynchronous export containing only fields applicable to the
+	 * single disease selected in {@code criteria}.
+	 *
+	 * @return uuid of the created export audit row
+	 */
+	String startDiseaseSpecificDetailedExport(CaseCriteria criteria, Collection<String> selectedRows, Language userLanguage);
+
 	List<CaseSamplesDetailedExportDto> getIndexList(Integer first, Integer max, List<SortProperty> sortProperties);
 
 	long count();

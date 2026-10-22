@@ -3,6 +3,7 @@ package de.symeda.sormas.ui.epidata;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
+import de.symeda.sormas.api.caze.samplesexport.DiseaseSpecificExportFieldConfiguration;
 
 import java.util.*;
 
@@ -39,7 +40,7 @@ public class EpiFormConfiguration {
     }
 
     public static Set<String> getDisabledFieldsForDisease(Disease disease) {
-        Set<String> disabledFields = new HashSet<>();
+        Set<String> disabledFields = new HashSet<>(DiseaseSpecificExportFieldConfiguration.getDisabledFields(EpiDataDto.class, disease));
         for (Map.Entry<String, Set<Disease>> entry : DISABLED_FIELDS_BY_DISEASE.entrySet()) {
             if (entry.getValue().contains(disease)) {
                 disabledFields.add(entry.getKey());

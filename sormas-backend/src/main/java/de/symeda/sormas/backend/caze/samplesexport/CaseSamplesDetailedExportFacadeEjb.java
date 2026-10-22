@@ -34,6 +34,7 @@ import de.symeda.sormas.api.caze.samplesexport.CaseSamplesDetailedExportDto;
 import de.symeda.sormas.api.caze.samplesexport.CaseSamplesDetailedExportFacade;
 import de.symeda.sormas.api.caze.samplesexport.CaseSamplesDetailedExportFileDto;
 import de.symeda.sormas.api.caze.samplesexport.CaseSamplesDetailedExportResult;
+import de.symeda.sormas.api.caze.samplesexport.DiseaseSpecificCaseExportSchema;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -102,6 +103,33 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 			userLanguage,
 			rawToken);
 
+		return export.getUuid();
+	}
+
+	@Override
+	@RightsAllowed(UserRight._CASE_EXPORT)
+	public String startDiseaseSpecificDetailedExport(CaseCriteria criteria, Collection<String> selectedRows, Language userLanguage) {
+		if (criteria == null || !DiseaseSpecificCaseExportSchema.isSupported(criteria.getDisease())) {
+			throw new IllegalArgumentException("Select one supported disease before starting a disease-specific export");
+		}
+
+		User currentUser = userService.getCurrentUser();
+		if (currentUser == null) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
+		}
+
+		String rawToken = CaseSamplesDetailedExportAsyncService.generateRawToken();
+		CaseSamplesDetailedExport export = new CaseSamplesDetailedExport();
+		export.setUuid(DataHelper.createUuid());
+		export.setRequestingUser(currentUser);
+		export.setRequestedDate(new Date());
+		export.setResult(CaseSamplesDetailedExportResult.IN_PROGRESS);
+		export.setFilterSummary("Disease-specific: " + buildFilterSummary(criteria, selectedRows));
+		export.setTokenHash(CaseSamplesDetailedExportAsyncService.hashToken(rawToken));
+		export.setDownloadCount(0);
+		exportService.persistNewExport(export);
+
+		asyncService.generateDiseaseSpecificAndNotify(export.getUuid(), criteria, selectedRows, userLanguage, rawToken);
 		return export.getUuid();
 	}
 

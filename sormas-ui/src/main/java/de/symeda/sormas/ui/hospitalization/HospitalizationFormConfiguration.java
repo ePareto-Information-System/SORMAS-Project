@@ -1,6 +1,7 @@
 package de.symeda.sormas.ui.hospitalization;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
+import de.symeda.sormas.api.caze.samplesexport.DiseaseSpecificExportFieldConfiguration;
 
 import java.util.*;
 
@@ -49,7 +50,7 @@ public class HospitalizationFormConfiguration {
     }
 
     public static Set<String> getDisabledFieldsForDisease(Disease disease) {
-        Set<String> disabledFields = new HashSet<>();
+        Set<String> disabledFields = new HashSet<>(DiseaseSpecificExportFieldConfiguration.getDisabledFields(HospitalizationDto.class, disease));
         for (Map.Entry<String, Set<Disease>> entry : DISABLED_FIELDS_BY_DISEASE.entrySet()) {
             if (entry.getValue().contains(disease)) {
                 disabledFields.add(entry.getKey());

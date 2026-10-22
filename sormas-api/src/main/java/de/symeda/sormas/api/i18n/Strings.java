@@ -969,11 +969,14 @@ public interface Strings {
 	String infoDefineOutbreaks = "infoDefineOutbreaks";
 	String infoDetailedExport = "infoDetailedExport";
 	String infoCaseSamplesDetailedExportAsync = "infoCaseSamplesDetailedExportAsync";
+	String infoCaseDiseaseSpecificExportAsync = "infoCaseDiseaseSpecificExportAsync";
+	String infoCaseDiseaseSpecificExportSelectDisease = "infoCaseDiseaseSpecificExportSelectDisease";
 	String infoCaseSamplesDetailedExportHistory = "infoCaseSamplesDetailedExportHistory";
 	String infoCaseSamplesDetailedExportDownloads = "infoCaseSamplesDetailedExportDownloads";
 	String headingCaseSamplesDetailedExportStarted = "headingCaseSamplesDetailedExportStarted";
 	String headingCaseSamplesDetailedExportDownloads = "headingCaseSamplesDetailedExportDownloads";
 	String messageCaseSamplesDetailedExportStarted = "messageCaseSamplesDetailedExportStarted";
+	String messageCaseDiseaseSpecificExportStarted = "messageCaseDiseaseSpecificExportStarted";
 	String infoDeveloperOptions = "infoDeveloperOptions";
 	String infoDeveloperOptionsContactGeneration = "infoDeveloperOptionsContactGeneration";
 	String infoDeveloperOptionsSeedUsage = "infoDeveloperOptionsSeedUsage";

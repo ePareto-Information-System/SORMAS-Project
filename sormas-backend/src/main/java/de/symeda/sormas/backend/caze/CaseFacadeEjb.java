@@ -18,6 +18,7 @@ package de.symeda.sormas.backend.caze;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.symeda.sormas.api.*;
 import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
+import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryDto;
 import de.symeda.sormas.api.caze.porthealthinfo.PortHealthInfoDto;
@@ -34,8 +35,11 @@ import de.symeda.sormas.api.dashboard.DashboardCaseDto;
 import de.symeda.sormas.api.deletionconfiguration.DeletionReference;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
+import de.symeda.sormas.api.epidata.ContainmentMeasureDto;
+import de.symeda.sormas.api.epidata.ContaminationSourceDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.epidata.EpiDataHelper;
+import de.symeda.sormas.api.epidata.PersonTravelHistoryDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.exposure.ExposureType;
@@ -48,7 +52,9 @@ import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.followup.FollowUpDto;
 import de.symeda.sormas.api.followup.FollowUpLogic;
 import de.symeda.sormas.api.followup.FollowUpPeriodDto;
+import de.symeda.sormas.api.foodhistory.AffectedPersonDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
+import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -69,6 +75,9 @@ import de.symeda.sormas.api.location.LocationReferenceDto;
 import de.symeda.sormas.api.messaging.ManualMessageLogDto;
 import de.symeda.sormas.api.messaging.MessageType;
 import de.symeda.sormas.api.person.*;
+import de.symeda.sormas.api.riskfactor.PatientSymptomsPrecedenceDto;
+import de.symeda.sormas.api.riskfactor.PatientTravelDetailsDuringDto;
+import de.symeda.sormas.api.riskfactor.PatientTravelDetailsPriorDto;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
@@ -97,6 +106,7 @@ import de.symeda.sormas.backend.afpimmunization.AfpImmunization;
 import de.symeda.sormas.backend.afpimmunization.AfpImmunizationFacadeEjb;
 import de.symeda.sormas.backend.afpimmunization.AfpImmunizationFacadeEjb.AfpImmunizationEjbLocal;
 import de.symeda.sormas.backend.caze.classification.CaseClassificationFacadeEjb.CaseClassificationFacadeEjbLocal;
+import de.symeda.sormas.backend.caze.samplesexport.DiseaseSpecificExportCaseData;
 import de.symeda.sormas.backend.caze.maternalhistory.MaternalHistoryFacadeEjb;
 import de.symeda.sormas.backend.caze.maternalhistory.MaternalHistoryFacadeEjb.MaternalHistoryFacadeEjbLocal;
 import de.symeda.sormas.backend.caze.porthealthinfo.PortHealthInfoFacadeEjb;
@@ -597,6 +607,132 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				district.get(District.DISTRICT_LONGITUDE)
 		);
 
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@RightsAllowed(UserRight._CASE_EXPORT)
+	public List<DiseaseSpecificExportCaseData> getDiseaseSpecificExportCases(
+		CaseCriteria caseCriteria,
+		Collection<String> selectedRows,
+		int first,
+		int max) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Case> cq = cb.createQuery(Case.class);
+		Root<Case> root = cq.from(Case.class);
+		CaseQueryContext queryContext = new CaseQueryContext(cb, cq, root);
+		// Keep conversion of the case page bounded to this query. All of these
+		// associations are to-one, so fetch joining them does not multiply rows or
+		// interfere with paging.
+		root.fetch(Case.PERSON, JoinType.LEFT);
+		root.fetch(Case.HOSPITALIZATION, JoinType.LEFT);
+		root.fetch(Case.SYMPTOMS, JoinType.LEFT);
+		root.fetch(Case.EPI_DATA, JoinType.LEFT);
+		root.fetch(Case.HEALTH_CONDITIONS, JoinType.LEFT);
+		root.fetch(Case.SIXTY_DAY, JoinType.LEFT);
+		root.fetch(Case.AFP_IMMUNIZATION, JoinType.LEFT);
+		root.fetch(Case.FOOD_HISTORY, JoinType.LEFT);
+		root.fetch(Case.RISK_FACTOR, JoinType.LEFT);
+		root.fetch(Case.INVESTIGATION_NOTES, JoinType.LEFT);
+
+		Predicate filter = service.createUserFilter(queryContext);
+		if (caseCriteria != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, service.createCriteriaFilter(caseCriteria, queryContext));
+		}
+		filter = CriteriaBuilderHelper.andInValues(selectedRows, filter, cb, root.get(Case.UUID));
+		if (filter != null) {
+			cq.where(filter);
+		}
+		cq.select(root).distinct(true);
+		cq.orderBy(cb.desc(root.get(Case.REPORT_DATE)), cb.desc(root.get(Case.ID)));
+
+		List<Case> cases = QueryHelper.getResultList(em, cq, first, max);
+		preloadDiseaseSpecificExportCollections(cases, caseCriteria != null ? caseCriteria.getDisease() : null);
+		List<Long> inJurisdictionIds = service.getInJurisdictionIds(cases);
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
+		List<DiseaseSpecificExportCaseData> result = new ArrayList<>(cases.size());
+
+		for (Case caze : cases) {
+			boolean inJurisdiction = inJurisdictionIds.contains(caze.getId());
+			CaseDataDto dto = toDto(caze);
+			pseudonymizeDto(caze, dto, pseudonymizer, inJurisdiction);
+
+			// These one-to-one disease tabs are part of the case aggregate, but are
+			// not covered by the historic case pseudonymization callback.
+			pseudonymizer.pseudonymizeDto(HospitalizationDto.class, dto.getHospitalization(), inJurisdiction, null);
+			pseudonymizer.pseudonymizeDto(SixtyDayDto.class, dto.getSixtyDay(), inJurisdiction, null);
+			pseudonymizer.pseudonymizeDto(AfpImmunizationDto.class, dto.getAfpImmunization(), inJurisdiction, null);
+			pseudonymizer.pseudonymizeDto(FoodHistoryDto.class, dto.getFoodHistory(), inJurisdiction, null);
+			pseudonymizer.pseudonymizeDto(RiskFactorDto.class, dto.getRiskFactor(), inJurisdiction, null);
+			pseudonymizer.pseudonymizeDto(InvestigationNotesDto.class, dto.getInvestigationNotes(), inJurisdiction, null);
+
+			if (dto.getEpiData() != null) {
+				pseudonymizer.pseudonymizeDtoCollection(
+					ActivityAsCaseDto.class, dto.getEpiData().getActivitiesAsCase(), ignored -> inJurisdiction, null);
+				pseudonymizer.pseudonymizeDtoCollection(
+					PersonTravelHistoryDto.class, dto.getEpiData().getPersonTravelHistories(), ignored -> inJurisdiction, null);
+				pseudonymizer.pseudonymizeDtoCollection(
+					ContaminationSourceDto.class, dto.getEpiData().getContaminationSources(), ignored -> inJurisdiction, null);
+				pseudonymizer.pseudonymizeDtoCollection(
+					ContainmentMeasureDto.class, dto.getEpiData().getContainmentMeasures(), ignored -> inJurisdiction, null);
+			}
+			if (dto.getFoodHistory() != null) {
+				pseudonymizer.pseudonymizeDtoCollection(
+					AffectedPersonDto.class, dto.getFoodHistory().getAffectedPersons(), ignored -> inJurisdiction, null);
+			}
+			if (dto.getRiskFactor() != null) {
+				pseudonymizer.pseudonymizeDtoCollection(
+					PatientSymptomsPrecedenceDto.class,
+					dto.getRiskFactor().getPatientSymptomsPrecedence(),
+					ignored -> inJurisdiction,
+					null);
+				pseudonymizer.pseudonymizeDtoCollection(
+					PatientTravelDetailsPriorDto.class,
+					dto.getRiskFactor().getPatientTravelDetailsPrior(),
+					ignored -> inJurisdiction,
+					null);
+				pseudonymizer.pseudonymizeDtoCollection(
+					PatientTravelDetailsDuringDto.class,
+					dto.getRiskFactor().getPatientTravelDetailsDuring(),
+					ignored -> inJurisdiction,
+					null);
+			}
+
+			result.add(new DiseaseSpecificExportCaseData(caze.getId(), dto));
+		}
+		return result;
+	}
+
+	private void preloadDiseaseSpecificExportCollections(List<Case> cases, Disease disease) {
+		if (cases.isEmpty()) {
+			return;
+		}
+		List<String> uuids = cases.stream().map(Case::getUuid).collect(Collectors.toList());
+		preloadDiseaseSpecificExportCollection(
+			"left join fetch c.hospitalization h left join fetch h.previousHospitalizations",
+			uuids);
+
+		if (disease != Disease.NEONATAL_TETANUS && disease != Disease.MONKEYPOX) {
+			preloadDiseaseSpecificExportCollection("left join fetch c.epiData e left join fetch e.exposures", uuids);
+			preloadDiseaseSpecificExportCollection("left join fetch c.epiData e left join fetch e.activitiesAsCase", uuids);
+			preloadDiseaseSpecificExportCollection("left join fetch c.epiData e left join fetch e.personTravelHistories", uuids);
+			preloadDiseaseSpecificExportCollection("left join fetch c.epiData e left join fetch e.contaminationSources", uuids);
+			preloadDiseaseSpecificExportCollection("left join fetch c.epiData e left join fetch e.containmentMeasures", uuids);
+		}
+		if (disease == Disease.MONKEYPOX) {
+			preloadDiseaseSpecificExportCollection("left join fetch c.riskFactor r left join fetch r.patientSymptomsPrecedence", uuids);
+			preloadDiseaseSpecificExportCollection("left join fetch c.riskFactor r left join fetch r.patientTravelDetailsPrior", uuids);
+			preloadDiseaseSpecificExportCollection("left join fetch c.riskFactor r left join fetch r.patientTravelDetailsDuring", uuids);
+		}
+		if (disease == Disease.FOODBORNE_ILLNESS) {
+			preloadDiseaseSpecificExportCollection("left join fetch c.foodHistory f left join fetch f.affectedPersons", uuids);
+		}
+	}
+
+	private void preloadDiseaseSpecificExportCollection(String joins, List<String> caseUuids) {
+		em.createQuery("select distinct c from cases c " + joins + " where c.uuid in :uuids", Case.class)
+			.setParameter("uuids", caseUuids)
+			.getResultList();
 	}
 
 	@Override

@@ -1757,6 +1757,7 @@ public interface Captions {
 	String exportNewExportConfiguration = "exportNewExportConfiguration";
 	String exportSamples = "exportSamples";
 	String exportCaseSamplesDetailed = "exportCaseSamplesDetailed";
+	String exportCaseDiseaseSpecificDetailed = "exportCaseDiseaseSpecificDetailed";
 	String caseSamplesDetailedExportHistory = "caseSamplesDetailedExportHistory";
 	String caseSamplesDetailedExportBackToCases = "caseSamplesDetailedExportBackToCases";
 	String caseSamplesDetailedExportDownloads = "caseSamplesDetailedExportDownloads";
@@ -3858,4 +3859,3 @@ public interface Captions {
     String dashboardPendingSignalVerification = "dashboardPendingSignalVerification";
 	String dashboardSignalVerificationOutcome = "dashboardSignalVerificationOutcome";
 }
-

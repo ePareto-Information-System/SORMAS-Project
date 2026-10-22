@@ -258,6 +258,34 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		super(Person.class, PersonDto.class, service);
 	}
 
+	/** Loads all person data used by the disease-specific case export in bounded batch queries. */
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public List<PersonDto> getDiseaseSpecificExportPersons(List<String> personUuids) {
+		if (personUuids == null || personUuids.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<Person> persons = em.createQuery(
+			"select distinct p from Person p left join fetch p.address where p.uuid in :uuids",
+			Person.class)
+			.setParameter("uuids", personUuids)
+			.getResultList();
+		// Fetch the two to-many associations separately to avoid a Cartesian
+		// product while still preventing one query per exported person.
+		em.createQuery(
+			"select distinct p from Person p left join fetch p.addresses where p.uuid in :uuids",
+			Person.class)
+			.setParameter("uuids", personUuids)
+			.getResultList();
+		em.createQuery(
+			"select distinct p from Person p left join fetch p.personContactDetails where p.uuid in :uuids",
+			Person.class)
+			.setParameter("uuids", personUuids)
+			.getResultList();
+
+		return toPseudonymizedDtos(persons);
+	}
+
 	public  PersonDto toDto(Person source) {
 
 		if (source == null) {

@@ -29,6 +29,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -76,6 +77,8 @@ public class CaseSamplesDetailedExportAsyncService {
 	private ConfigFacadeEjbLocal configFacade;
 	@EJB
 	private EmailService emailService;
+	@EJB
+	private DiseaseSpecificCaseExportService diseaseSpecificExportService;
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -166,7 +169,7 @@ public class CaseSamplesDetailedExportAsyncService {
 			// that would otherwise occur because updateProgress() bumped changeDate many
 			// times in separate REQUIRES_NEW sub-transactions.
 			Date expiresAt = DateHelper.addSeconds(new Date(), EXPORT_LINK_VALIDITY_HOURS * 3600);
-			sendSuccessEmail(recipientEmail, rawToken, fileName, expiresAt);
+			sendSuccessEmail(recipientEmail, rawToken, fileName, expiresAt, "detailed sample");
 			exportService.saveExportSuccess(exportUuid, fileName, exportFile.getAbsolutePath(), rowCount.get(), expiresAt, new Date());
 
 		} catch (Exception e) {
@@ -186,7 +189,81 @@ public class CaseSamplesDetailedExportAsyncService {
 			String failureStackTrace = StringUtils.abbreviate(ExceptionUtils.getStackTrace(e), 50000);
 			Date expiresAt = hasContent ? DateHelper.addSeconds(new Date(), EXPORT_LINK_VALIDITY_HOURS * 3600) : null;
 
-			sendFailureEmail(recipientEmail, e.getMessage());
+			sendFailureEmail(recipientEmail, e.getMessage(), "detailed sample");
+			exportService.saveExportFailed(
+				exportUuid,
+				failureMessage,
+				failureStackTrace,
+				hasContent ? fileName : null,
+				hasContent ? exportFile.getAbsolutePath() : null,
+				hasContent,
+				expiresAt,
+				new Date());
+		}
+	}
+
+	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void generateDiseaseSpecificAndNotify(
+		String exportUuid,
+		CaseCriteria criteria,
+		Collection<String> selectedRows,
+		Language userLanguage,
+		String rawToken) {
+
+		CaseSamplesDetailedExport export = exportService.getByUuid(exportUuid);
+		if (export == null) {
+			LOGGER.error("Disease-specific case export {} not found", exportUuid);
+			return;
+		}
+
+		User requestingUser = export.getRequestingUser();
+		String recipientEmail = requestingUser != null ? requestingUser.getUserEmail() : null;
+		File exportFile = null;
+		String fileName = null;
+		try {
+			Disease disease = criteria != null ? criteria.getDisease() : null;
+			String instanceName = DataHelper.cleanStringForFileName(configFacade.getSormasInstanceName().toLowerCase());
+			String exportDate = DateHelper.formatDateForExport(new Date());
+			String diseaseName = disease != null ? disease.name().toLowerCase() : "disease";
+			fileName = String.join(
+				"_",
+				instanceName,
+				"cases_disease_specific",
+				diseaseName,
+				exportDate,
+				exportUuid.substring(0, 8) + ".csv");
+
+			File exportDir = new File(configFacade.getGeneratedFilesPath(), "case_sample_exports");
+			if (!exportDir.exists() && !exportDir.mkdirs()) {
+				throw new IllegalStateException("Could not create export directory: " + exportDir.getAbsolutePath());
+			}
+			exportFile = new File(exportDir, fileName);
+
+			int rowCount;
+			try (OutputStream out = new FileOutputStream(exportFile)) {
+				rowCount = diseaseSpecificExportService.writeExport(exportUuid, criteria, selectedRows, userLanguage, out);
+			}
+			LOGGER.info("Disease-specific export {} complete — {} rows written", exportUuid, rowCount);
+
+			Date expiresAt = DateHelper.addSeconds(new Date(), EXPORT_LINK_VALIDITY_HOURS * 3600);
+			sendSuccessEmail(recipientEmail, rawToken, fileName, expiresAt, "disease-specific case");
+			exportService.saveExportSuccess(exportUuid, fileName, exportFile.getAbsolutePath(), rowCount, expiresAt, new Date());
+		} catch (Exception e) {
+			LOGGER.error("Failed to generate disease-specific case export {}", exportUuid, e);
+			boolean hasContent = exportFile != null && exportFile.exists() && exportFile.length() > 0;
+			if (!hasContent && exportFile != null) {
+				try {
+					Files.deleteIfExists(exportFile.toPath());
+				} catch (Exception deleteEx) {
+					LOGGER.warn("Could not delete failed export file {}", exportFile.getAbsolutePath(), deleteEx);
+				}
+			}
+
+			String failureMessage = StringUtils.abbreviate(e.getMessage(), 2000);
+			String failureStackTrace = StringUtils.abbreviate(ExceptionUtils.getStackTrace(e), 50000);
+			Date expiresAt = hasContent ? DateHelper.addSeconds(new Date(), EXPORT_LINK_VALIDITY_HOURS * 3600) : null;
+			sendFailureEmail(recipientEmail, e.getMessage(), "disease-specific case");
 			exportService.saveExportFailed(
 				exportUuid,
 				failureMessage,
@@ -224,15 +301,15 @@ public class CaseSamplesDetailedExportAsyncService {
 		return new String(out);
 	}
 
-	private void sendSuccessEmail(String recipientEmail, String rawToken, String fileName, Date expiresAt) {
+	private void sendSuccessEmail(String recipientEmail, String rawToken, String fileName, Date expiresAt, String exportLabel) {
 		if (StringUtils.isBlank(recipientEmail)) {
 			LOGGER.warn("Cannot send export success email: recipient has no email address");
 			return;
 		}
 		String uiUrl = StringUtils.removeEnd(StringUtils.defaultString(configFacade.getUiUrl()), "/");
 		String downloadUrl = uiUrl + "/export-downloads/" + rawToken;
-		String subject = "SORMAS detailed sample export ready";
-		String content = "Your detailed sample export is ready.\n\n"
+		String subject = "SORMAS " + exportLabel + " export ready";
+		String content = "Your " + exportLabel + " export is ready.\n\n"
 			+ "File: " + fileName + "\n"
 			+ "Download (valid for " + EXPORT_LINK_VALIDITY_HOURS + " hours, until "
 			+ DateHelper.formatLocalDateTime(expiresAt, Language.EN) + "):\n"
@@ -245,12 +322,12 @@ public class CaseSamplesDetailedExportAsyncService {
 		}
 	}
 
-	private void sendFailureEmail(String recipientEmail, String errorMessage) {
+	private void sendFailureEmail(String recipientEmail, String errorMessage, String exportLabel) {
 		if (StringUtils.isBlank(recipientEmail)) {
 			return;
 		}
-		String subject = "SORMAS detailed sample export failed";
-		String content = "Your detailed sample export could not be completed.\n\n"
+		String subject = "SORMAS " + exportLabel + " export failed";
+		String content = "Your " + exportLabel + " export could not be completed.\n\n"
 			+ "Please try again or contact an administrator.\n"
 			+ (StringUtils.isNotBlank(errorMessage) ? "\nDetails: " + StringUtils.abbreviate(errorMessage, 500) : "");
 		try {

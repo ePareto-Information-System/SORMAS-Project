@@ -63,6 +63,7 @@ import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseExportType;
 import de.symeda.sormas.api.caze.CaseIndexDto;
+import de.symeda.sormas.api.caze.samplesexport.DiseaseSpecificCaseExportSchema;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.common.CoreEntityType;
 import de.symeda.sormas.api.docgeneneration.DocumentWorkflow;
@@ -147,6 +148,7 @@ public class CasesView extends AbstractView {
 	private VerticalLayout moreLayout;
 	private Button showMapViewButton;
 	private Button showGridViewButton;
+	private Button diseaseSpecificExportButton;
 
 	private VerticalLayout gridLayout;
 	private HorizontalLayout firstFilterRowLayout;
@@ -495,6 +497,36 @@ public class CasesView extends AbstractView {
 					asyncSampleExportButton.setWidth(100, Unit.PERCENTAGE);
 					exportLayout.addComponent(asyncSampleExportButton);
 
+					diseaseSpecificExportButton = ButtonHelper.createIconButton(
+						Captions.exportCaseDiseaseSpecificDetailed,
+						VaadinIcons.FILE_TEXT,
+						e -> {
+							try {
+								FacadeProvider.getCaseSamplesDetailedExportFacade()
+									.startDiseaseSpecificDetailedExport(
+										grid.getCriteria(),
+										getSelectedRows(),
+										I18nProperties.getUserLanguage());
+								Notification notification = new Notification(
+									I18nProperties.getString(Strings.headingCaseSamplesDetailedExportStarted),
+									I18nProperties.getString(Strings.messageCaseDiseaseSpecificExportStarted),
+									Notification.Type.TRAY_NOTIFICATION,
+									true);
+								notification.setDelayMsec(8000);
+								notification.show(Page.getCurrent());
+							} catch (Exception ex) {
+								Notification.show(
+									I18nProperties.getString(Strings.headingExportFailed),
+									ex.getMessage() != null ? ex.getMessage() : I18nProperties.getString(Strings.messageExportFailed),
+									Notification.Type.ERROR_MESSAGE);
+							}
+							exportPopupButton.setPopupVisible(false);
+						},
+						ValoTheme.BUTTON_PRIMARY);
+					diseaseSpecificExportButton.setWidth(100, Unit.PERCENTAGE);
+					exportLayout.addComponent(diseaseSpecificExportButton);
+					updateDiseaseSpecificExportButton();
+
 					Button historyButton = ButtonHelper.createIconButton(
 						Captions.caseSamplesDetailedExportHistory,
 						VaadinIcons.LIST,
@@ -515,7 +547,10 @@ public class CasesView extends AbstractView {
 				exportLayout.addComponent(warningLabel);
 				warningLabel.setVisible(false);
 
-				exportPopupButton.addClickListener(e -> warningLabel.setVisible(!criteria.hasAnyFilterActive()));
+				exportPopupButton.addClickListener(e -> {
+					warningLabel.setVisible(!criteria.hasAnyFilterActive());
+					updateDiseaseSpecificExportButton();
+				});
 			}
 		}
 
@@ -689,6 +724,7 @@ public class CasesView extends AbstractView {
 			} else {
 				((AbstractCaseGrid<?>) grid).reload();
 			}
+			updateDiseaseSpecificExportButton();
 		});
 		filterLayout.addComponent(filterForm);
 
@@ -1055,8 +1091,21 @@ public class CasesView extends AbstractView {
 		}
 
 		filterForm.setValue(criteria);
+		updateDiseaseSpecificExportButton();
 
 		applyingCriteria = false;
+	}
+
+	private void updateDiseaseSpecificExportButton() {
+		if (diseaseSpecificExportButton == null) {
+			return;
+		}
+		CaseCriteria activeCriteria = grid != null ? grid.getCriteria() : criteria;
+		boolean supported = activeCriteria != null && DiseaseSpecificCaseExportSchema.isSupported(activeCriteria.getDisease());
+		diseaseSpecificExportButton.setEnabled(supported);
+		diseaseSpecificExportButton.setDescription(
+			I18nProperties.getString(
+				supported ? Strings.infoCaseDiseaseSpecificExportAsync : Strings.infoCaseDiseaseSpecificExportSelectDisease));
 	}
 
 	private void updateStatusButtons() {

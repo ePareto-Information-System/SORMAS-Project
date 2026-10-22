@@ -2,6 +2,7 @@ package de.symeda.sormas.ui.riskfactor;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
+import de.symeda.sormas.api.caze.samplesexport.DiseaseSpecificExportFieldConfiguration;
 
 import java.util.*;
 
@@ -56,7 +57,7 @@ public class RiskFactorFormConfiguration {
     }
 
     public static Set<String> getDisabledFieldsForDisease(Disease disease) {
-        Set<String> disabledFields = new HashSet<>();
+        Set<String> disabledFields = new HashSet<>(DiseaseSpecificExportFieldConfiguration.getDisabledFields(RiskFactorDto.class, disease));
         for (Map.Entry<String, Set<Disease>> entry : DISABLED_FIELDS_BY_DISEASE.entrySet()) {
             if (entry.getValue().contains(disease)) {
                 disabledFields.add(entry.getKey());

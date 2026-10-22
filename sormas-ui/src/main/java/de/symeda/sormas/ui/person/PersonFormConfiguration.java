@@ -2,6 +2,7 @@ package de.symeda.sormas.ui.person;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.samplesexport.DiseaseSpecificExportFieldConfiguration;
 import de.symeda.sormas.api.person.PersonDto;
 
 import java.util.*;
@@ -79,7 +80,7 @@ public class PersonFormConfiguration {
 
     }
     public static Set<String> getDisabledFieldsForDisease(Disease disease) {
-        Set<String> disabledFields = new HashSet<>();
+        Set<String> disabledFields = new HashSet<>(DiseaseSpecificExportFieldConfiguration.getDisabledFields(PersonDto.class, disease));
         for (Map.Entry<String, Set<Disease>> entry : DISABLED_FIELDS_BY_DISEASE.entrySet()) {
             if (entry.getValue().contains(disease)) {
                 disabledFields.add(entry.getKey());
