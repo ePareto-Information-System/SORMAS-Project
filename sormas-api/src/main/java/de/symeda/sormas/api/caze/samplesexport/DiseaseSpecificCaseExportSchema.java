@@ -214,9 +214,9 @@ public final class DiseaseSpecificCaseExportSchema {
 				|| excludedProperties.contains(field.getName())
 				|| TECHNICAL_PROPERTIES.contains(field.getName())
 				|| !isExportableType(field.getType())
-				|| !visibility.isVisible(dtoClass, field)
 				|| !DiseaseSpecificExportFieldConfiguration.isLayoutField(dtoClass, field.getName(), disease)
-				|| DiseaseSpecificExportFieldConfiguration.isDisabled(dtoClass, field.getName(), disease)) {
+				|| (DiseaseSpecificExportFieldConfiguration.applyAnnotationVisibility(dtoClass, disease)
+					&& !visibility.isVisible(dtoClass, field))) {
 				continue;
 			}
 			Method getter = findGetter(dtoClass, field);

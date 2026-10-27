@@ -17,7 +17,6 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.samplesexport.DiseaseSpecificCaseExportSchema;
-import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
@@ -38,14 +37,9 @@ public class DiseaseSpecificCaseExportWriterTest {
 
 		PersonDto person = PersonDto.build();
 		person.setUuid("PERSON-UUID");
+		person.setFirstName("Juma");
 		person.getAddress().setUuid("LOCATION-UUID");
-		LocationDto secondAddress = LocationDto.build();
-		secondAddress.setUuid("ADDRESS-B");
-		secondAddress.setCity("Second city");
-		LocationDto firstAddress = LocationDto.build();
-		firstAddress.setUuid("ADDRESS-A");
-		firstAddress.setCity("First, city");
-		person.setAddresses(Arrays.asList(secondAddress, firstAddress));
+		person.getAddress().setCity("Accra");
 
 		SampleDto sample = new SampleDto();
 		sample.setUuid("SAMPLE-UUID");
@@ -86,10 +80,10 @@ public class DiseaseSpecificCaseExportWriterTest {
 		assertEquals("PERSON-UUID", value(rows, "person.uuid"));
 		assertEquals("LOCATION-UUID", value(rows, "person.address.uuid"));
 		assertEquals("SAMPLE-UUID", value(rows, "sample.uuid"));
+		assertEquals("Juma", value(rows, "person.firstName"));
+		assertEquals("Accra", value(rows, "person.address.city"));
 		assertTrue(value(rows, "pathogenTests.testResult").contains(" | "));
 		assertEquals("first, \"quoted\"\nline | second", value(rows, "pathogenTests.otherNotesAndObservations"));
-		assertTrue(value(rows, "person.addresses").startsWith("uuid=ADDRESS-A"));
-		assertTrue(value(rows, "person.addresses").contains(" | uuid=ADDRESS-B"));
 		assertTrue(caption(rows, "sample.shipmentDate").contains("("));
 	}
 

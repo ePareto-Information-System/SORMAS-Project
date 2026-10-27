@@ -1,15 +1,20 @@
 package de.symeda.sormas.api.caze.samplesexport;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
@@ -21,6 +26,9 @@ import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
+import de.symeda.sormas.api.symptoms.SymptomsDto;
+import de.symeda.sormas.api.utils.SymptomGroup;
+import de.symeda.sormas.api.utils.SymptomGrouping;
 
 /** Shared disease-disabled DTO fields used by forms and disease exports. */
 public final class DiseaseSpecificExportFieldConfiguration {
@@ -30,6 +38,14 @@ public final class DiseaseSpecificExportFieldConfiguration {
 	private static final Map<Disease, Set<String>> SAMPLE_LAYOUT_FIELDS = new HashMap<>();
 	private static final Map<Disease, Set<String>> PATHOGEN_TEST_LAYOUT_FIELDS = new HashMap<>();
 	private static final Map<Class<?>, Map<Disease, Set<String>>> ENTITY_LAYOUT_FIELDS = new HashMap<>();
+	private static final Set<Disease> DEFAULT_SYMPTOM_LAYOUT_DISEASES = Collections.unmodifiableSet(
+		EnumSet.of(
+			Disease.YELLOW_FEVER,
+			Disease.CSM,
+			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
+			Disease.CORONAVIRUS,
+			Disease.NEW_INFLUENZA,
+			Disease.UNSPECIFIED_VHF));
 
 	static {
 		disable(CaseDataDto.class, CaseDataDto.CLASSIFICATION_DATE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX);
@@ -239,12 +255,20 @@ public final class DiseaseSpecificExportFieldConfiguration {
 
 	/**
 	 * Returns whether a DTO property occurs in the selected disease's explicit
-	 * form layout. A DTO without an explicit allow-list remains governed by its
-	 * disease annotations and disabled-field configuration.
+	 * form layout. Missing allow-lists exclude the field.
 	 */
 	public static boolean isLayoutField(Class<?> dtoClass, String property, Disease disease) {
 		Set<String> fields = getLayoutFields(dtoClass, disease);
-		return fields == null || fields.contains(property);
+		return fields != null && fields.contains(property);
+	}
+
+	public static boolean hasExplicitLayout(Class<?> dtoClass, Disease disease) {
+		return getLayoutFields(dtoClass, disease) != null;
+	}
+
+	/** Shared symptom-group HTML still needs @Diseases / country filtering. Dedicated layouts do not. */
+	public static boolean applyAnnotationVisibility(Class<?> dtoClass, Disease disease) {
+		return dtoClass == SymptomsDto.class && DEFAULT_SYMPTOM_LAYOUT_DISEASES.contains(disease);
 	}
 
 	/** Returns the zero-based form layout position, or {@code null} for DTOs without an explicit layout. */
@@ -281,6 +305,13 @@ public final class DiseaseSpecificExportFieldConfiguration {
 	}
 
 	private static void configureDiseaseEntityLayouts() {
+		configurePersonLayouts();
+		configureLocationLayouts();
+		configureHospitalizationLayouts();
+		configureSymptomsLayouts();
+		configureEpiDataLayouts();
+		configureRiskFactorAndAfpLayouts();
+
 		allowEntityFields(
 			SixtyDayDto.class,
 			Disease.AFP,
@@ -447,6 +478,182 @@ public final class DiseaseSpecificExportFieldConfiguration {
 			CaseDataDto.INVESTIGATION_OFFICER_ADDRESS,
 			CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE,
 			CaseDataDto.REPORTING_OFFICER_EMAIL);
+
+		allowCaseFields(Disease.MEASLES, ghanaCaseCore(
+			CaseDataDto.NOTIFIED_BY_LIST,
+			CaseDataDto.NOTIFIED_OTHER,
+			CaseDataDto.INVESTIGATION_STATUS,
+			CaseDataDto.INVESTIGATED_DATE,
+			CaseDataDto.REPORT_LAT,
+			CaseDataDto.REPORT_LON,
+			CaseDataDto.REPORT_LAT_LON_ACCURACY,
+			CaseDataDto.VACCINATION_TYPE,
+			CaseDataDto.NUMBER_OF_DOSES,
+			CaseDataDto.VACCINATION_ROUTINE,
+			CaseDataDto.VACCINATION_DATE,
+			CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT));
+
+		allowCaseFields(Disease.YELLOW_FEVER, ghanaCaseCore(
+			CaseDataDto.VACCINATION_TYPE,
+			CaseDataDto.NUMBER_OF_DOSES,
+			CaseDataDto.VACCINATION_DATE));
+		CASE_LAYOUT_FIELDS.get(Disease.YELLOW_FEVER).remove(CaseDataDto.REPORTING_OFFICER_NAME);
+
+		allowCaseFields(Disease.CSM, ghanaCaseCore(
+			CaseDataDto.VACCINE_TYPE,
+			CaseDataDto.NUMBER_OF_DOSES,
+			CaseDataDto.VACCINATION_DATE));
+		CASE_LAYOUT_FIELDS.get(Disease.CSM).remove(CaseDataDto.REPORTING_OFFICER_EMAIL);
+
+		allowCaseFields(Disease.CORONAVIRUS, ghanaCaseCore(
+			CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION,
+			CaseDataDto.NUMBER_OF_DOSES,
+			CaseDataDto.VACCINATION_DATE,
+			CaseDataDto.SECOND_VACCINATION_DATE));
+
+		allowCaseFields(
+			Disease.CHOLERA,
+			ghanaCaseCore(
+				CaseDataDto.VACCINATION_TYPE,
+				CaseDataDto.NUMBER_OF_DOSES,
+				CaseDataDto.VACCINATION_DATE,
+				CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS,
+				CaseDataDto.DATE_LATEST_UPDATE_RECORD,
+				CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD));
+
+		allowCaseFields(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, ghanaCaseCore(
+			CaseDataDto.NUMBER_OF_DOSES,
+			CaseDataDto.VACCINATION_DATE));
+		CASE_LAYOUT_FIELDS.get(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS).remove(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER);
+		CASE_LAYOUT_FIELDS.get(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS).remove(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE);
+		CASE_LAYOUT_FIELDS.get(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS).remove(CaseDataDto.REPORTING_OFFICER_EMAIL);
+
+		allowCaseFields(
+			Disease.AFP,
+			CaseDataDto.UUID,
+			CaseDataDto.REPORT_DATE,
+			CaseDataDto.REPORTING_USER,
+			CaseDataDto.CASE_CLASSIFICATION,
+			CaseDataDto.CLASSIFICATION_DATE,
+			CaseDataDto.CLASSIFICATION_USER,
+			CaseDataDto.INVESTIGATION_STATUS,
+			CaseDataDto.INVESTIGATED_DATE,
+			CaseDataDto.EPID_NUMBER,
+			CaseDataDto.DISEASE,
+			CaseDataDto.CASE_ORIGIN,
+			CaseDataDto.RESPONSIBLE_REGION,
+			CaseDataDto.RESPONSIBLE_DISTRICT,
+			CaseDataDto.RESPONSIBLE_COMMUNITY,
+			CaseDataDto.HEALTH_FACILITY,
+			CaseDataDto.HEALTH_FACILITY_DETAILS,
+			CaseDataDto.NOTIFIED_BY_LIST,
+			CaseDataDto.DATE_OF_NOTIFICATION,
+			CaseDataDto.DATE_OF_INVESTIGATION,
+			CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT);
+
+		allowCaseFields(
+			Disease.NEW_INFLUENZA,
+			CaseDataDto.UUID,
+			CaseDataDto.REPORT_DATE,
+			CaseDataDto.REPORTING_USER,
+			CaseDataDto.CASE_CLASSIFICATION,
+			CaseDataDto.CLASSIFICATION_DATE,
+			CaseDataDto.CLASSIFICATION_USER,
+			CaseDataDto.INVESTIGATION_STATUS,
+			CaseDataDto.INVESTIGATED_DATE,
+			CaseDataDto.EPID_NUMBER,
+			CaseDataDto.DISEASE,
+			CaseDataDto.CASE_ORIGIN,
+			CaseDataDto.RESPONSIBLE_REGION,
+			CaseDataDto.RESPONSIBLE_DISTRICT,
+			CaseDataDto.RESPONSIBLE_COMMUNITY,
+			CaseDataDto.HEALTH_FACILITY,
+			CaseDataDto.HEALTH_FACILITY_DETAILS,
+			CaseDataDto.VACCINATION_STATUS,
+			CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT);
+
+		allowCaseFields(
+			Disease.FOODBORNE_ILLNESS,
+			CaseDataDto.UUID,
+			CaseDataDto.REPORT_DATE,
+			CaseDataDto.REPORTING_USER,
+			CaseDataDto.CASE_CLASSIFICATION,
+			CaseDataDto.INVESTIGATION_STATUS,
+			CaseDataDto.INVESTIGATED_DATE,
+			CaseDataDto.EPID_NUMBER,
+			CaseDataDto.RESPONSIBLE_REGION,
+			CaseDataDto.RESPONSIBLE_DISTRICT,
+			CaseDataDto.RESPONSIBLE_COMMUNITY,
+			CaseDataDto.HEALTH_FACILITY,
+			CaseDataDto.HEALTH_FACILITY_DETAILS,
+			CaseDataDto.VACCINATION_STATUS,
+			CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT,
+			CaseDataDto.DATE_OF_INVESTIGATION);
+
+		allowCaseFields(
+			Disease.UNSPECIFIED_VHF,
+			CaseDataDto.UUID,
+			CaseDataDto.REPORT_DATE,
+			CaseDataDto.REPORTING_USER,
+			CaseDataDto.CASE_CLASSIFICATION,
+			CaseDataDto.CLASSIFICATION_DATE,
+			CaseDataDto.CLASSIFICATION_USER,
+			CaseDataDto.INVESTIGATION_STATUS,
+			CaseDataDto.INVESTIGATED_DATE,
+			CaseDataDto.EPID_NUMBER,
+			CaseDataDto.DISEASE,
+			CaseDataDto.CASE_ORIGIN,
+			CaseDataDto.RESPONSIBLE_REGION,
+			CaseDataDto.RESPONSIBLE_DISTRICT,
+			CaseDataDto.RESPONSIBLE_COMMUNITY,
+			CaseDataDto.HEALTH_FACILITY,
+			CaseDataDto.HEALTH_FACILITY_DETAILS,
+			CaseDataDto.NOTIFIED_BY_LIST,
+			CaseDataDto.DATE_OF_INVESTIGATION,
+			CaseDataDto.MOBILE_TEAM_NO,
+			CaseDataDto.INFORMATION_GIVEN_BY,
+			CaseDataDto.FAMILY_LINK_WITH_PATIENT,
+			CaseDataDto.NAME_OF_VILLAGE_PERSON_GOT_ILL,
+			CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT);
+
+		allowCaseFields(
+			Disease.NEONATAL_TETANUS,
+			CaseDataDto.UUID,
+			CaseDataDto.REPORT_DATE,
+			CaseDataDto.REPORTING_USER,
+			CaseDataDto.CASE_CLASSIFICATION,
+			CaseDataDto.CLASSIFICATION_DATE,
+			CaseDataDto.CLASSIFICATION_USER,
+			CaseDataDto.INVESTIGATION_STATUS,
+			CaseDataDto.INVESTIGATED_DATE,
+			CaseDataDto.EPID_NUMBER,
+			CaseDataDto.DISEASE,
+			CaseDataDto.CASE_ORIGIN,
+			CaseDataDto.RESPONSIBLE_REGION,
+			CaseDataDto.RESPONSIBLE_DISTRICT,
+			CaseDataDto.RESPONSIBLE_COMMUNITY,
+			CaseDataDto.HEALTH_FACILITY,
+			CaseDataDto.HEALTH_FACILITY_DETAILS,
+			CaseDataDto.NOTIFIED_BY,
+			CaseDataDto.DATE_OF_NOTIFICATION,
+			CaseDataDto.DATE_OF_INVESTIGATION,
+			CaseDataDto.MOTHER_VACCINATED_WITH_TT,
+			CaseDataDto.MOTHER_HAVE_CARD,
+			CaseDataDto.MOTHER_NUMBER_OF_DOSES,
+			CaseDataDto.MOTHER_VACCINATION_STATUS,
+			CaseDataDto.MOTHER_TT_DATE_ONE,
+			CaseDataDto.MOTHER_TT_DATE_TWO,
+			CaseDataDto.MOTHER_TT_DATE_THREE,
+			CaseDataDto.MOTHER_TT_DATE_FOUR,
+			CaseDataDto.MOTHER_TT_DATE_FIVE,
+			CaseDataDto.MOTHER_LAST_DOSE_DATE,
+			CaseDataDto.SEEN_IN_OPD,
+			CaseDataDto.ADMITTED_IN_OPD,
+			CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT,
+			CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT_DATE,
+			CaseDataDto.SUPPLEMENTAL_IMMUNIZATION,
+			CaseDataDto.SUPPLEMENTAL_IMMUNIZATION_DETAILS,
+			CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT);
 	}
 
 	private static void configureSampleLayouts() {
@@ -796,6 +1003,909 @@ public final class DiseaseSpecificExportFieldConfiguration {
 
 	private static void allowCaseFields(Disease disease, String... fields) {
 		CASE_LAYOUT_FIELDS.put(disease, setOf(fields));
+	}
+
+	private static String[] ghanaCaseCore(String... extraFields) {
+		List<String> fields = new ArrayList<>(
+			Arrays.asList(
+				CaseDataDto.UUID,
+				CaseDataDto.REPORT_DATE,
+				CaseDataDto.REPORTING_USER,
+				CaseDataDto.CASE_CLASSIFICATION,
+				CaseDataDto.CLASSIFICATION_DATE,
+				CaseDataDto.CLASSIFICATION_USER,
+				CaseDataDto.EPID_NUMBER,
+				CaseDataDto.DISEASE,
+				CaseDataDto.CASE_ORIGIN,
+				CaseDataDto.RESPONSIBLE_REGION,
+				CaseDataDto.RESPONSIBLE_DISTRICT,
+				CaseDataDto.RESPONSIBLE_COMMUNITY,
+				CaseDataDto.HEALTH_FACILITY,
+				CaseDataDto.HEALTH_FACILITY_DETAILS,
+				CaseDataDto.VACCINATION_STATUS,
+				CaseDataDto.REPORTING_OFFICER_NAME,
+				CaseDataDto.REPORTING_OFFICER_TITLE,
+				CaseDataDto.FUNCTION_OF_REPORTING_OFFICER,
+				CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE,
+				CaseDataDto.REPORTING_OFFICER_EMAIL));
+		fields.addAll(Arrays.asList(extraFields));
+		return fields.toArray(new String[0]);
+	}
+
+	private static String[] personCore(String... extraFields) {
+		List<String> fields = new ArrayList<>(
+			Arrays.asList(
+				PersonDto.UUID,
+				PersonDto.FIRST_NAME,
+				PersonDto.LAST_NAME,
+				PersonDto.OTHER_NAME,
+				PersonDto.BIRTH_DATE_YYYY,
+				PersonDto.BIRTH_DATE_MM,
+				PersonDto.BIRTH_DATE_DD,
+				PersonDto.APPROXIMATE_AGE,
+				PersonDto.APPROXIMATE_AGE_TYPE,
+				PersonDto.APPROXIMATE_AGE_REFERENCE_DATE,
+				PersonDto.SEX));
+		fields.addAll(Arrays.asList(extraFields));
+		return fields.toArray(new String[0]);
+	}
+
+	private static void configurePersonLayouts() {
+		allowEntityFields(
+			PersonDto.class,
+			Disease.GUINEA_WORM,
+			PersonDto.UUID,
+			PersonDto.FIRST_NAME,
+			PersonDto.LAST_NAME,
+			PersonDto.OTHER_NAME,
+			PersonDto.FATHERS_NAME,
+			PersonDto.APPROXIMATE_AGE,
+			PersonDto.APPROXIMATE_AGE_TYPE,
+			PersonDto.SEX,
+			PersonDto.PASSPORT_NUMBER,
+			PersonDto.OCCUPATION_DETAILS,
+			PersonDto.ETHNICITY,
+			PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE,
+			PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS,
+			PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION,
+			PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT,
+			PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY,
+			PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE,
+			PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE);
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
+			personCore(
+				PersonDto.TEL_NUMBER,
+				PersonDto.PASSPORT_NUMBER,
+				PersonDto.APPLICABLE,
+				PersonDto.MOTHERS_NAME,
+				PersonDto.FATHERS_NAME));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.CSM,
+			personCore(
+				PersonDto.MARRIAGE_STATUS,
+				PersonDto.PRESENT_CONDITION,
+				PersonDto.OCCUPATION_DETAILS,
+				PersonDto.MOTHERS_NAME,
+				PersonDto.FATHERS_NAME,
+				PersonDto.PERSON_CONTACT_DETAILS));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.YELLOW_FEVER,
+			personCore(
+				PersonDto.MARRIAGE_STATUS,
+				PersonDto.NATIONAL_HEALTH_ID,
+				PersonDto.GHANA_CARD,
+				PersonDto.EDUCATION_TYPE,
+				PersonDto.EDUCATION_DETAILS,
+				PersonDto.OCCUPATION_DETAILS,
+				PersonDto.MOTHERS_NAME,
+				PersonDto.FATHERS_NAME,
+				PersonDto.PERSON_CONTACT_DETAILS));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.MONKEYPOX,
+			personCore(
+				PersonDto.PASSPORT_NUMBER,
+				PersonDto.NATIONALITY,
+				PersonDto.ETHNICITY,
+				PersonDto.OCCUPATION_DETAILS));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.MEASLES,
+			personCore(PersonDto.MARRIAGE_STATUS, PersonDto.PERSON_CONTACT_DETAILS));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.CHOLERA,
+			personCore(PersonDto.MARRIAGE_STATUS, PersonDto.PRESENT_CONDITION, PersonDto.PERSON_CONTACT_DETAILS));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.CORONAVIRUS,
+			personCore(PersonDto.PRESENT_CONDITION, PersonDto.PERSON_CONTACT_DETAILS, PersonDto.OCCUPATION_TYPE, PersonDto.OCCUPATION_DETAILS));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.NEW_INFLUENZA,
+			personCore(
+				PersonDto.OCCUPATION_DETAILS,
+				PersonDto.PERSON_CONTACT_DETAILS,
+				PersonDto.INVESTIGATOR_NAME,
+				PersonDto.INVESTIGATOR_TITLE,
+				PersonDto.INVESTIGATOR_UNIT,
+				PersonDto.INVESTIGATOR_ADDRESS,
+				PersonDto.INVESTIGATOR_TEL));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.AFP,
+			personCore(
+				PersonDto.HOME_ADDRESS_RECREATIONAL,
+				PersonDto.PLACE,
+				PersonDto.DURATION_MONTHS,
+				PersonDto.DURATION_DAYS,
+				PersonDto.PLACE2,
+				PersonDto.DURATION_MONTHS2,
+				PersonDto.DURATION_DAYS2,
+				PersonDto.PLACE3,
+				PersonDto.DURATION_MONTHS3,
+				PersonDto.DURATION_DAYS3,
+				PersonDto.PLACE4,
+				PersonDto.DURATION_MONTHS4,
+				PersonDto.DURATION_DAYS4,
+				PersonDto.INVESTIGATOR_NAME,
+				PersonDto.INVESTIGATOR_TITLE,
+				PersonDto.INVESTIGATOR_UNIT,
+				PersonDto.INVESTIGATOR_ADDRESS,
+				PersonDto.INVESTIGATOR_TEL));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.FOODBORNE_ILLNESS,
+			personCore(PersonDto.TEL_NUMBER, PersonDto.OCCUPATION_DETAILS));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.UNSPECIFIED_VHF,
+			personCore(
+				PersonDto.HEAD_HOUSEHOLD,
+				PersonDto.ETHNICITY,
+				PersonDto.NATIONALITY,
+				PersonDto.PROFESSION_OF_PATIENT,
+				PersonDto.PROFESSION_OF_PATIENT_OTHER,
+				PersonDto.NAME_HEALTH_FACILITY,
+				PersonDto.SERVICE,
+				PersonDto.QUALIFICATION));
+
+		allowEntityFields(
+			PersonDto.class,
+			Disease.NEONATAL_TETANUS,
+			personCore(
+				PersonDto.LOCATION_OF_BIRTH,
+				PersonDto.BIRTH_IN_INSTITUTION,
+				PersonDto.PLACE_OF_BIRTH_REGION,
+				PersonDto.PLACE_OF_BIRTH_DISTRICT,
+				PersonDto.PLACE_OF_BIRTH_COMMUNITY,
+				PersonDto.PLACE_OF_BIRTH_FACILITY,
+				PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS,
+				PersonDto.RECEIVED_ANTENATAL_CARE,
+				PersonDto.PRENATAL_TOTAL_VISITS,
+				PersonDto.ATTENDED_BY_TRAINED_TBA,
+				PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME,
+				PersonDto.ATTENDED_BY_DOCTOR_NURSE,
+				PersonDto.CUT_CORD_WITH_STERILE_BLADE,
+				PersonDto.CORD_TREATED_WITH_ANYTHING,
+				PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE));
+	}
+
+	private static void configureLocationLayouts() {
+		allowEntityFields(
+			LocationDto.class,
+			Disease.GUINEA_WORM,
+			LocationDto.UUID,
+			LocationDto.VILLAGE,
+			LocationDto.ZONE,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.COMMUNITY,
+			LocationDto.AREA_TYPE,
+			LocationDto.LAND_MARK);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
+			LocationDto.UUID,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.COMMUNITY,
+			LocationDto.HOUSE_NUMBER,
+			LocationDto.AREA_TYPE);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.CSM,
+			LocationDto.UUID,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.COMMUNITY,
+			LocationDto.HOUSE_NUMBER,
+			LocationDto.POSTAL_CODE,
+			LocationDto.LAND_MARK,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE,
+			LocationDto.LAT_LON_ACCURACY);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.YELLOW_FEVER,
+			LocationDto.UUID,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.COMMUNITY,
+			LocationDto.HOUSE_NUMBER,
+			LocationDto.CITY,
+			LocationDto.AREA_TYPE,
+			LocationDto.POSTAL_CODE,
+			LocationDto.LAND_MARK,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.MONKEYPOX,
+			LocationDto.UUID,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.LOCALITY,
+			LocationDto.CITY,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.MEASLES,
+			LocationDto.UUID,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.COMMUNITY,
+			LocationDto.CITY,
+			LocationDto.AREA_TYPE,
+			LocationDto.POSTAL_CODE,
+			LocationDto.LAND_MARK,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE,
+			LocationDto.LAT_LON_ACCURACY);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.CHOLERA,
+			LocationDto.UUID,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.COMMUNITY,
+			LocationDto.POSTAL_CODE,
+			LocationDto.VILLAGE,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.CORONAVIRUS,
+			LocationDto.UUID,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.COMMUNITY,
+			LocationDto.POSTAL_CODE,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.NEW_INFLUENZA,
+			LocationDto.UUID,
+			LocationDto.LOCALITY,
+			LocationDto.CITY,
+			LocationDto.HOUSE_NUMBER,
+			LocationDto.ADDITIONAL_INFORMATION,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.AFP,
+			LocationDto.UUID,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.COMMUNITY,
+			LocationDto.ADDITIONAL_INFORMATION,
+			LocationDto.HOUSE_NUMBER,
+			LocationDto.CITY,
+			LocationDto.AREA_TYPE,
+			LocationDto.POSTAL_CODE,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.FOODBORNE_ILLNESS,
+			LocationDto.UUID,
+			LocationDto.LOCALITY,
+			LocationDto.HOUSE_NUMBER,
+			LocationDto.CITY,
+			LocationDto.AREA_TYPE,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.UNSPECIFIED_VHF,
+			LocationDto.UUID,
+			LocationDto.STREET,
+			LocationDto.HOUSE_NUMBER,
+			LocationDto.CITY,
+			LocationDto.LATITUDE,
+			LocationDto.LONGITUDE);
+
+		allowEntityFields(
+			LocationDto.class,
+			Disease.NEONATAL_TETANUS,
+			LocationDto.UUID,
+			LocationDto.REGION,
+			LocationDto.DISTRICT,
+			LocationDto.COMMUNITY,
+			LocationDto.POSTAL_CODE,
+			LocationDto.NEAREST_HEALTH_FACILITY_TO_VILLAGE);
+	}
+
+	private static void configureHospitalizationLayouts() {
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.GUINEA_WORM,
+			HospitalizationDto.UUID,
+			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY,
+			HospitalizationDto.HOSPITAL_RECORD_NUMBER,
+			HospitalizationDto.ADMISSION_DATE,
+			HospitalizationDto.DISCHARGE_DATE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.MEASLES,
+			HospitalizationDto.UUID,
+			HospitalizationDto.SELECT_INPATIENT_OUTPATIENT,
+			HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY,
+			HospitalizationDto.ADMISSION_DATE,
+			HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE,
+			HospitalizationDto.DISCHARGE_DATE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.MONKEYPOX,
+			HospitalizationDto.UUID,
+			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW,
+			HospitalizationDto.LOCATION_TYPE,
+			HospitalizationDto.SOUGHT_REGION,
+			HospitalizationDto.SOUGHT_DISTRICT,
+			HospitalizationDto.SOUGHT_COMMUNITY,
+			HospitalizationDto.NAME_OF_FACILITY,
+			HospitalizationDto.HOSPITAL_RECORD_NUMBER,
+			HospitalizationDto.ADMISSION_DATE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.CHOLERA,
+			HospitalizationDto.UUID,
+			HospitalizationDto.HOSPITAL_RECORD_NUMBER);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.YELLOW_FEVER,
+			HospitalizationDto.UUID,
+			HospitalizationDto.SELECT_INPATIENT_OUTPATIENT,
+			HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE,
+			HospitalizationDto.ADMISSION_DATE,
+			HospitalizationDto.DISCHARGE_DATE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.CSM,
+			HospitalizationDto.UUID,
+			HospitalizationDto.HOSPITAL_RECORD_NUMBER,
+			HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE,
+			HospitalizationDto.DISEASE_ONSET_DATE,
+			HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED,
+			HospitalizationDto.ADMISSION_DATE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.AFP,
+			HospitalizationDto.UUID,
+			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW,
+			HospitalizationDto.HOSPITAL_RECORD_NUMBER,
+			HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE,
+			HospitalizationDto.ADMISSION_DATE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.UNSPECIFIED_VHF,
+			HospitalizationDto.UUID,
+			HospitalizationDto.HOSPITAL_RECORD_NUMBER,
+			HospitalizationDto.ISOLATED,
+			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW,
+			HospitalizationDto.DATE_OF_DEATH,
+			HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT,
+			HospitalizationDto.ADMISSION_DATE,
+			HospitalizationDto.DISCHARGE_DATE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.NEW_INFLUENZA,
+			HospitalizationDto.UUID,
+			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW,
+			HospitalizationDto.ADMISSION_DATE,
+			HospitalizationDto.DISCHARGE_DATE,
+			HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY,
+			HospitalizationDto.INTENSIVE_CARE_UNIT);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.CORONAVIRUS,
+			HospitalizationDto.UUID,
+			HospitalizationDto.HOSPITAL_RECORD_NUMBER,
+			HospitalizationDto.PATIENT_VENTILATED,
+			HospitalizationDto.INTENSIVE_CARE_UNIT,
+			HospitalizationDto.HOSPITALIZED_PREVIOUSLY,
+			HospitalizationDto.PREVIOUS_HOSPITALIZATIONS,
+			HospitalizationDto.ISOLATED,
+			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY,
+			HospitalizationDto.ADMISSION_DATE,
+			HospitalizationDto.DISCHARGE_DATE,
+			HospitalizationDto.LEFT_AGAINST_ADVICE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.NEONATAL_TETANUS,
+			HospitalizationDto.UUID,
+			HospitalizationDto.HOSPITAL_RECORD_NUMBER,
+			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY,
+			HospitalizationDto.ADMISSION_DATE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
+			HospitalizationDto.UUID,
+			HospitalizationDto.SELECT_INPATIENT_OUTPATIENT,
+			HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE,
+			HospitalizationDto.ADMISSION_DATE,
+			HospitalizationDto.DISCHARGE_DATE);
+
+		allowEntityFields(
+			HospitalizationDto.class,
+			Disease.FOODBORNE_ILLNESS,
+			HospitalizationDto.UUID,
+			HospitalizationDto.SYMPTOMS_SELECTED,
+			HospitalizationDto.OTHER_SYMPTOM_SELECTED,
+			HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME,
+			HospitalizationDto.SYMPTOMS_ONGOING,
+			HospitalizationDto.DURATION_HOURS,
+			HospitalizationDto.SOUGHT_MEDICAL_ATTENTION,
+			HospitalizationDto.LOCATION_TYPE,
+			HospitalizationDto.SOUGHT_REGION,
+			HospitalizationDto.SOUGHT_DISTRICT,
+			HospitalizationDto.SOUGHT_COMMUNITY,
+			HospitalizationDto.NAME_OF_FACILITY,
+			HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
+			HospitalizationDto.HOSPITALIZATION_YES_NO,
+			HospitalizationDto.PHYSICIAN_NAME,
+			HospitalizationDto.PHYSICIAN_NUMBER,
+			HospitalizationDto.LAB_TEST_CONDUCTED,
+			HospitalizationDto.TYPE_OF_SAMPLE,
+			HospitalizationDto.AGENT_IDENTIFIED);
+	}
+
+	private static void configureSymptomsLayouts() {
+		allowEntityFields(
+			SymptomsDto.class,
+			Disease.MEASLES,
+			SymptomsDto.UUID,
+			SymptomsDto.FEVER,
+			SymptomsDto.GENERALIZED_RASH,
+			SymptomsDto.COUGH,
+			SymptomsDto.RUNNY_NOSE,
+			SymptomsDto.RED_EYES,
+			SymptomsDto.SWOLLEN_LYMPH_NODES_BEHIND_EARS,
+			SymptomsDto.JOINT_PAIN,
+			SymptomsDto.LESIONS_ONSET_DATE,
+			SymptomsDto.OTHER_COMPLICATIONS,
+			SymptomsDto.OTHER_COMPLICATIONS_TEXT,
+			SymptomsDto.OUTCOME);
+
+		allowEntityFields(
+			SymptomsDto.class,
+			Disease.CHOLERA,
+			SymptomsDto.UUID,
+			SymptomsDto.DIARRHEA,
+			SymptomsDto.VOMITING,
+			SymptomsDto.DEHYDRATION,
+			SymptomsDto.ABDOMINAL_PAIN,
+			SymptomsDto.ABDOMINAL_CRAMPS,
+			SymptomsDto.FEVER,
+			SymptomsDto.HEADACHE,
+			SymptomsDto.FATIGUE_WEAKNESS,
+			SymptomsDto.ONSET_SYMPTOM,
+			SymptomsDto.ONSET_DATE,
+			SymptomsDto.OUTCOME);
+
+		allowEntityFields(
+			SymptomsDto.class,
+			Disease.GUINEA_WORM,
+			SymptomsDto.UUID,
+			SymptomsDto.FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM,
+			SymptomsDto.FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS,
+			SymptomsDto.EMERGENCE_OF_GUINEA_WORM,
+			SymptomsDto.NUMBER_OF_WORMS,
+			SymptomsDto.FIRST_WORM_THIS_YEAR,
+			SymptomsDto.DATE_FIRST_WORM_EMERGENCE,
+			SymptomsDto.CASE_DETECTED_BEFORE_WORM_EMERGENCE);
+
+		allowEntityFields(
+			SymptomsDto.class,
+			Disease.NEONATAL_TETANUS,
+			SymptomsDto.UUID,
+			SymptomsDto.SEIZURES,
+			SymptomsDto.OTHER_COMPLICATIONS,
+			SymptomsDto.BABY_DIED,
+			SymptomsDto.OTHER_COMPLICATIONS_TEXT,
+			SymptomsDto.AGE_AT_DEATH_DAYS,
+			SymptomsDto.AGE_AT_ONSET_DAYS,
+			SymptomsDto.BABY_NORMAL_AT_BIRTH,
+			SymptomsDto.NORMAL_CRY_AND_SUCK,
+			SymptomsDto.STOPPED_SUCKING_AFTER_TWO_DAYS,
+			SymptomsDto.BACKACHE,
+			SymptomsDto.STIFFNESS,
+			SymptomsDto.SYMPTOMS_COMMENTS,
+			SymptomsDto.ONSET_SYMPTOM,
+			SymptomsDto.ONSET_DATE,
+			SymptomsDto.OUTCOME);
+
+		allowEntityFields(
+			SymptomsDto.class,
+			Disease.AFP,
+			SymptomsDto.UUID,
+			SymptomsDto.FEVER_ONSET_PARALYSIS,
+			SymptomsDto.PROGRESSIVE_PARALYSIS,
+			SymptomsDto.PROGRESSIVE_FLACID_ACUTE,
+			SymptomsDto.ASSYMETRIC,
+			SymptomsDto.DATE_ONSET_PARALYSIS,
+			SymptomsDto.SITE_OF_PARALYSIS,
+			SymptomsDto.PARALYSED_LIMB_SENSITIVE_TO_PAIN,
+			SymptomsDto.INJECTION_SITE_BEFORE_ONSET_PARALYSIS,
+			SymptomsDto.INJECTION_SITE,
+			SymptomsDto.PROVISONAL_DIAGNOSIS,
+			SymptomsDto.TRUEAFP);
+
+		allowEntityFields(
+			SymptomsDto.class,
+			Disease.MONKEYPOX,
+			SymptomsDto.UUID,
+			SymptomsDto.SYMPTOMS_SELECTED,
+			SymptomsDto.SYMPTOMS_SELECTED_OTHER,
+			SymptomsDto.ONSET_DATE,
+			SymptomsDto.DATE_OF_ONSET_RASH,
+			SymptomsDto.RASH_SYMPTOMS,
+			SymptomsDto.RASH_SYMPTOMS_OTHER_AREAS,
+			SymptomsDto.ARE_LESIONS_IN_SAME_STATE,
+			SymptomsDto.ARE_LESIONS_SAME_SIZE,
+			SymptomsDto.ARE_LESIONS_DEEP,
+			SymptomsDto.ARE_ULCERS_AMONG_LESIONS,
+			SymptomsDto.TYPE_OF_RASH,
+			SymptomsDto.OUTCOME,
+			SymptomsDto.DATE_OF_DEATH,
+			SymptomsDto.PLACE_OF_DEATH);
+
+		allowDefaultSymptomLayout(Disease.YELLOW_FEVER, SymptomsDto.TEMPERATURE, SymptomsDto.TEMPERATURE_SOURCE);
+		allowDefaultSymptomLayout(Disease.CSM);
+		allowDefaultSymptomLayout(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS);
+		allowDefaultSymptomLayout(
+			Disease.CORONAVIRUS,
+			SymptomsDto.TEMPERATURE,
+			SymptomsDto.TEMPERATURE_SOURCE,
+			SymptomsDto.PREGNANT,
+			SymptomsDto.POSTPARTUM,
+			SymptomsDto.DIABETES,
+			SymptomsDto.HIV,
+			SymptomsDto.HIV_ART,
+			SymptomsDto.CHRONIC_LIVER_DISEASE,
+			SymptomsDto.CHRONIC_KIDNEY_DISEASE,
+			SymptomsDto.CARDIOVASCULAR_DISEASE_INCLUDING_HYPERTENSION,
+			SymptomsDto.LUNG_DISEASE,
+			SymptomsDto.STROKE,
+			SymptomsDto.CANCER);
+		allowDefaultSymptomLayout(
+			Disease.NEW_INFLUENZA,
+			SymptomsDto.FEVER_BODY_TEMP_GREATER,
+			SymptomsDto.TEMPERATURE,
+			SymptomsDto.TEMPERATURE_SOURCE,
+			SymptomsDto.DATE_OF_ONSET,
+			SymptomsDto.OUTCOME_OTHER);
+		allowDefaultSymptomLayout(
+			Disease.UNSPECIFIED_VHF,
+			SymptomsDto.PATIENT_HAVE_FEVER,
+			SymptomsDto.DATE_OF_ONSET,
+			SymptomsDto.OUTCOME_DATE,
+			SymptomsDto.OUTCOME_PLACE_COMM_VILLAGE,
+			SymptomsDto.HOSPITAL_NAME_SERVICE,
+			SymptomsDto.PLACE_OF_FUNERAL_NAME_VILLAGE);
+	}
+
+	private static void allowDefaultSymptomLayout(Disease disease, String... extraFields) {
+		Set<String> fields = new LinkedHashSet<>();
+		fields.add(EntityDto.UUID);
+		fields.add(SymptomsDto.ONSET_DATE);
+		fields.add(SymptomsDto.ONSET_SYMPTOM);
+		fields.add(SymptomsDto.OUTCOME);
+		fields.add(SymptomsDto.SYMPTOMS_COMMENTS);
+		for (Field field : SymptomsDto.class.getDeclaredFields()) {
+			SymptomGrouping grouping = field.getAnnotation(SymptomGrouping.class);
+			if (grouping == null) {
+				continue;
+			}
+			SymptomGroup group = grouping.value();
+			if (group == SymptomGroup.GENERAL
+				|| group == SymptomGroup.RESPIRATORY
+				|| group == SymptomGroup.GASTROINTESTINAL
+				|| group == SymptomGroup.OTHER) {
+				fields.add(field.getName());
+			}
+		}
+		fields.addAll(Arrays.asList(extraFields));
+		allowEntityFields(SymptomsDto.class, disease, fields.toArray(new String[0]));
+	}
+
+	private static void configureEpiDataLayouts() {
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.MEASLES,
+			EpiDataDto.UUID,
+			EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
+			EpiDataDto.HISTORY_OF_TRAVEL_REGION,
+			EpiDataDto.HISTORY_OF_TRAVEL_DISTRICT,
+			EpiDataDto.HISTORY_OF_TRAVEL_SUB_DISTRICT,
+			EpiDataDto.HISTORY_OF_TRAVEL_VILLAGE);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.CORONAVIRUS,
+			EpiDataDto.UUID,
+			EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR,
+			EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE,
+			EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO,
+			EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE,
+			EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR,
+			EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE,
+			EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO,
+			EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE,
+			EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR,
+			EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY,
+			EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI,
+			EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS,
+			EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE,
+			EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS,
+			EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.CHOLERA,
+			EpiDataDto.UUID,
+			EpiDataDto.EXPOSED_TO_RISK_FACTOR,
+			EpiDataDto.WATER_USED_FOR_DRINKING,
+			EpiDataDto.WATER_USED_NOT_FOR_DRINKING,
+			EpiDataDto.FOOD_ITEMS,
+			EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.GUINEA_WORM,
+			EpiDataDto.UUID,
+			EpiDataDto.PERSON_TRAVEL_HISTORY,
+			EpiDataDto.CONTAMINATION_SOURCES,
+			EpiDataDto.CONTAINMENT_MEASURES,
+			EpiDataDto.RECEIVED_HEALTH_EDUCATION,
+			EpiDataDto.PATIENT_ENTERED_WATER_SOURCE,
+			EpiDataDto.PLACE_MANAGED);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.NEW_INFLUENZA,
+			EpiDataDto.UUID,
+			EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA,
+			EpiDataDto.NAME_OF_VACCINE,
+			EpiDataDto.YEAR_OF_VACCINATION,
+			EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_COVID,
+			EpiDataDto.NAME_OF_VACCINE_FOR_COVID,
+			EpiDataDto.YEAR_OF_VACCINATION_FOR_COVID,
+			EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC,
+			EpiDataDto.PLACES_VISITED_PAST_7DAYS,
+			EpiDataDto.RISK_FACTORS_SEVERE_DISEASE,
+			EpiDataDto.OTHER_SPECIFY,
+			EpiDataDto.CONTACT_SICK_ANIMALS,
+			EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL,
+			EpiDataDto.CONTACT_DEAD_WILD_ANIMALS,
+			EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL,
+			EpiDataDto.CONTACT_SIMILAR_SYMPTOMS,
+			EpiDataDto.RECENT_TRAVEL_OUTBREAK);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.YELLOW_FEVER,
+			EpiDataDto.UUID,
+			EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN,
+			EpiDataDto.ACTIVITIES_AS_CASE);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,
+			EpiDataDto.UUID,
+			EpiDataDto.CONTACT_SICK_ANIMALS,
+			EpiDataDto.CONTACT_SIMILAR_SYMPTOMS,
+			EpiDataDto.RECENT_TRAVEL_OUTBREAK);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.CSM,
+			EpiDataDto.UUID,
+			EpiDataDto.CONTACT_SIMILAR_SYMPTOMS,
+			EpiDataDto.EXPOSURE_DETAILS_KNOWN,
+			EpiDataDto.EXPOSURES);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.AFP,
+			EpiDataDto.UUID,
+			EpiDataDto.CONTACT_SIMILAR_SYMPTOMS,
+			EpiDataDto.RECENT_TRAVEL_OUTBREAK);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.FOODBORNE_ILLNESS,
+			EpiDataDto.UUID,
+			EpiDataDto.INTL_TRAVEL,
+			EpiDataDto.SPECIFY_COUNTRIES,
+			EpiDataDto.DATE_OF_DEPARTURE,
+			EpiDataDto.DATE_OF_ARRIVAL,
+			EpiDataDto.DOMESTIC_TRAVEL,
+			EpiDataDto.SPECIFY_LOCATION,
+			EpiDataDto.DATE_OF_DEPARTURE2,
+			EpiDataDto.DATE_OF_ARRIVAL2,
+			EpiDataDto.CONTACT_ILL_PERSON,
+			EpiDataDto.CONTACT_DATE,
+			EpiDataDto.SPECIFY_ILLNESS);
+
+		allowEntityFields(
+			EpiDataDto.class,
+			Disease.UNSPECIFIED_VHF,
+			EpiDataDto.UUID,
+			EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS,
+			EpiDataDto.COMM1,
+			EpiDataDto.HEALTH_CENTER1,
+			EpiDataDto.COUNTRY1,
+			EpiDataDto.COMM2,
+			EpiDataDto.HEALTH_CENTER2,
+			EpiDataDto.COUNTRY2,
+			EpiDataDto.WAS_PATIENT_HOSPITALIZED,
+			EpiDataDto.IF_YES_WHERE,
+			EpiDataDto.HOSPITALIZED_DATE1,
+			EpiDataDto.HOSPITALIZED_DATE2,
+			EpiDataDto.DID_PATIENT_CONSULT_HEALER,
+			EpiDataDto.IF_YES_NAME_HEALER,
+			EpiDataDto.COMMUNITY,
+			EpiDataDto.COUNTRY,
+			EpiDataDto.WHEN_WHERE_CONTACT_TAKE_PLACE,
+			EpiDataDto.DATE_OF_CONTACT,
+			EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE,
+			EpiDataDto.IF_YES_EXPLAIN,
+			EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES,
+			EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL,
+			EpiDataDto.IF_TRAVEL_YES_WHERE,
+			EpiDataDto.IF_TRAVEL_START_DATE,
+			EpiDataDto.IF_YES_END_DATE,
+			EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT,
+			EpiDataDto.SUSPECT_LAST_NAME,
+			EpiDataDto.SUSPECT_NAME,
+			EpiDataDto.ID_CASE,
+			EpiDataDto.DURING_CONTACT_SUSPECT_CASE,
+			EpiDataDto.DATE_OF_DEATH,
+			EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE,
+			EpiDataDto.CONTACT_SICK_ANIMALS,
+			EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL,
+			EpiDataDto.CONTACT_DEAD_WILD_ANIMALS,
+			EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL,
+			EpiDataDto.IF_YES_WILD_ANIMAL_LOCATION,
+			EpiDataDto.IF_YES_WILD_ANIMAL_DATE,
+			EpiDataDto.CONTACT_SIMILAR_SYMPTOMS,
+			EpiDataDto.RECENT_TRAVEL_OUTBREAK);
+	}
+
+	private static void configureRiskFactorAndAfpLayouts() {
+		allowEntityFields(
+			RiskFactorDto.class,
+			Disease.CHOLERA,
+			RiskFactorDto.UUID,
+			RiskFactorDto.WATER_USED_FOR_DRINKING,
+			RiskFactorDto.DRINKING_WATER_SOURCE_ONE,
+			RiskFactorDto.DRINKING_WATER_SOURCE_TWO,
+			RiskFactorDto.DRINKING_WATER_SOURCE_THREE,
+			RiskFactorDto.DRINKING_WATER_SOURCE_FOUR,
+			RiskFactorDto.NON_DRINKING_WATER_SOURCE_ONE,
+			RiskFactorDto.NON_DRINKING_WATER_SOURCE_TWO,
+			RiskFactorDto.NON_DRINKING_WATER_SOURCE_THREE,
+			RiskFactorDto.NON_DRINKING_WATER_SOURCE_FOUR,
+			RiskFactorDto.FOOD_ITEMS_ONE,
+			RiskFactorDto.FOOD_ITEMS_TWO,
+			RiskFactorDto.FOOD_ITEMS_THREE,
+			RiskFactorDto.FOOD_ITEMS_FOUR,
+			RiskFactorDto.FOOD_ITEMS_FIVE,
+			RiskFactorDto.FOOD_ITEMS_SIX,
+			RiskFactorDto.FOOD_ITEMS_SEVEN,
+			RiskFactorDto.FOOD_ITEMS_EIGHT,
+			RiskFactorDto.DRINKING_WATER_INFECTED_BY_VIBRIO,
+			RiskFactorDto.NON_DRINKING_WATER_INFECTED_BY_VIBRIO,
+			RiskFactorDto.FOOD_ITEMS_INFECTED_BY_VIBRIO,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_ONE,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_TWO,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_THREE,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_FOUR,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_FIVE,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_FOOD_ITEMS_ONE,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_FOOD_ITEMS_TWO,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_FOOD_ITEMS_THREE,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_FOOD_ITEMS_FOUR,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_FOOD_ITEMS_FIVE,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_FUNERAL,
+			RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_SOCIAL_EVENT,
+			RiskFactorDto.OTHER_SOCIAL_EVENT_DETAILS);
+
+		allowEntityFields(
+			RiskFactorDto.class,
+			Disease.MONKEYPOX,
+			RiskFactorDto.UUID,
+			RiskFactorDto.PATIENT_SPOX_VACCINATION_SCAR_PRESENT,
+			RiskFactorDto.PATIENT_TRAVELLED_ANYWHERE_3WEEKS_PRIOR,
+			RiskFactorDto.PATIENT_TRAVEL_DETAILS_PRIOR,
+			RiskFactorDto.PATIENT_TRAVELLED_PERIOD_OF_ILLNESS,
+			RiskFactorDto.PATIENT_TRAVEL_DETAILS_DURING,
+			RiskFactorDto.OTHER_PLACES,
+			RiskFactorDto.DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS,
+			RiskFactorDto.PATIENT_SYMPTOMS_PRECEDENCE,
+			RiskFactorDto.DATE_OF_CONTACT_WITH_ILL_PERSON,
+			RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL,
+			RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES);
+
+		allowEntityFields(
+			AfpImmunizationDto.class,
+			Disease.AFP,
+			AfpImmunizationDto.UUID,
+			AfpImmunizationDto.TOTAL_NUMBER_DOSES,
+			AfpImmunizationDto.OPV_DOSE_AT_BIRTH,
+			AfpImmunizationDto.SECOND,
+			AfpImmunizationDto.FOURTH,
+			AfpImmunizationDto.FIRST,
+			AfpImmunizationDto.THIRD,
+			AfpImmunizationDto.LAST_DOSE,
+			AfpImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_SIA,
+			AfpImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_RI,
+			AfpImmunizationDto.DATE_LAST_OPV_DOSES_RECEIVED_THROUGH_SIA,
+			AfpImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_SIA,
+			AfpImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_RI,
+			AfpImmunizationDto.DATE_LAST_IPV_DOSES_RECEIVED_THROUGH_SIA,
+			AfpImmunizationDto.SOURCE_RI_VACCINATION_INFORMATION);
 	}
 
 	private static void allowPathogenTestFields(Disease disease, String... fields) {

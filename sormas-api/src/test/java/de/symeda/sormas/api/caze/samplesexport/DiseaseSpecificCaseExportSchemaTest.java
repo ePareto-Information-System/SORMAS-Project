@@ -167,6 +167,90 @@ public class DiseaseSpecificCaseExportSchemaTest {
 	}
 
 	@Test
+	public void testLiveFormFieldsAreExportedAndOffFormFieldsAreNot() {
+		Set<String> measlesPaths = paths(Disease.MEASLES);
+		assertTrue(measlesPaths.contains("reportDate"));
+		assertTrue(measlesPaths.contains("notifiedByList"));
+		assertTrue(measlesPaths.contains("reportLat"));
+		assertTrue(measlesPaths.contains("person.firstName"));
+		assertTrue(measlesPaths.contains("person.marriageStatus"));
+		assertTrue(measlesPaths.contains("person.address.region"));
+		assertTrue(measlesPaths.contains("person.address.landMark"));
+		assertTrue(measlesPaths.contains("hospitalization.selectInpatientOutpatient"));
+		assertTrue(measlesPaths.contains("hospitalization.seenAtAHealthFacility"));
+		assertTrue(measlesPaths.contains("symptoms.fever"));
+		assertTrue(measlesPaths.contains("symptoms.generalizedRash"));
+		assertTrue(measlesPaths.contains("epiData.historyOfTravelOutsideTheVillageTownDistrict"));
+		assertTrue(measlesPaths.contains("notifiedOther"));
+		assertTrue(measlesPaths.contains("districtLevelDate"));
+		assertFalse(measlesPaths.contains("dateOfInvestigation"));
+		assertFalse(measlesPaths.contains("person.salutation"));
+		assertFalse(measlesPaths.contains("person.occupationType"));
+		assertFalse(measlesPaths.contains("quarantine"));
+		assertFalse(measlesPaths.contains("followUpStatus"));
+		assertFalse(measlesPaths.contains("symptoms.diarrhea"));
+		assertFalse(measlesPaths.contains("hospitalization.place"));
+		assertFalse(measlesPaths.contains("epiData.exposures"));
+
+		Set<String> choleraPaths = paths(Disease.CHOLERA);
+		assertTrue(choleraPaths.contains("hospitalization.hospitalRecordNumber"));
+		assertTrue(choleraPaths.contains("symptoms.diarrhea"));
+		assertTrue(choleraPaths.contains("epiData.exposedToRiskFactor"));
+		assertTrue(choleraPaths.contains("riskFactor.drinkingWaterSourceOne"));
+		assertTrue(choleraPaths.contains("otherNotesAndObservations"));
+		assertTrue(choleraPaths.contains("numberOfPeopleInSameHousehold"));
+		assertFalse(choleraPaths.contains("symptoms.generalizedRash"));
+		assertFalse(choleraPaths.contains("hospitalization.selectInpatientOutpatient"));
+
+		Set<String> nntPaths = paths(Disease.NEONATAL_TETANUS);
+		assertTrue(nntPaths.contains("motherVaccinatedWithTT"));
+		assertTrue(nntPaths.contains("person.receivedAntenatalCare"));
+		assertTrue(nntPaths.contains("symptoms.babyDied"));
+		assertFalse(nntPaths.contains("vaccinationStatus"));
+		assertFalse(nntPaths.contains("epiData.uuid"));
+		assertFalse(nntPaths.contains("sample.uuid"));
+
+		Set<String> guineaWormPaths = paths(Disease.GUINEA_WORM);
+		assertTrue(guineaWormPaths.contains("reportingVillage"));
+		assertTrue(guineaWormPaths.contains("person.placeOfResidenceSameAsReportingVillage"));
+		assertTrue(guineaWormPaths.contains("person.address.village"));
+		assertTrue(guineaWormPaths.contains("symptoms.emergenceOfGuineaWorm"));
+		assertFalse(guineaWormPaths.contains("person.birthdateYYYY"));
+
+		Set<String> mpoxPaths = paths(Disease.MONKEYPOX);
+		assertTrue(mpoxPaths.contains("dateOfNotification"));
+		assertTrue(mpoxPaths.contains("person.ethnicity"));
+		assertTrue(mpoxPaths.contains("hospitalization.admittedToHealthFacilityNew"));
+		assertTrue(mpoxPaths.contains("symptoms.symptomsSelected"));
+		assertTrue(mpoxPaths.contains("riskFactor.patientSpoxVaccinationScarPresent"));
+		assertFalse(mpoxPaths.contains("epiData.uuid"));
+		assertFalse(mpoxPaths.contains("symptoms.fever"));
+
+		Set<String> afpPaths = paths(Disease.AFP);
+		assertTrue(afpPaths.contains("person.place"));
+		assertTrue(afpPaths.contains("symptoms.feverOnsetParalysis"));
+		assertTrue(afpPaths.contains("afpImmunization.totalNumberDoses"));
+		assertFalse(afpPaths.contains("reportingOfficerName"));
+		assertFalse(afpPaths.contains("symptoms.fever"));
+
+		assertTrue(paths(Disease.YELLOW_FEVER).contains("symptoms.temperature"));
+		assertTrue(paths(Disease.YELLOW_FEVER).contains("reportingOfficerTitle"));
+		assertFalse(paths(Disease.YELLOW_FEVER).contains("symptoms.emergenceOfGuineaWorm"));
+		assertFalse(paths(Disease.YELLOW_FEVER).contains("reportingOfficerName"));
+		assertTrue(paths(Disease.CSM).contains("epiData.exposures"));
+		assertFalse(paths(Disease.CSM).contains("reportLat"));
+		assertFalse(paths(Disease.CSM).contains("reportingOfficerEmail"));
+		assertTrue(paths(Disease.CORONAVIRUS).contains("epiData.patientTravelledTwoWeeksPrior"));
+		assertTrue(paths(Disease.CORONAVIRUS).contains("caseTransmissionClassification"));
+		assertTrue(paths(Disease.FOODBORNE_ILLNESS).contains("hospitalization.soughtMedicalAttention"));
+		assertFalse(paths(Disease.FOODBORNE_ILLNESS).contains("caseOrigin"));
+		assertTrue(paths(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS).contains("person.applicable"));
+		assertFalse(paths(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS).contains("functionOfReportingOfficer"));
+		assertTrue(paths(Disease.NEW_INFLUENZA).contains("epiData.previouslyVaccinatedAgainstInfluenza"));
+		assertFalse(paths(Disease.NEW_INFLUENZA).contains("reportingOfficerName"));
+	}
+
+	@Test
 	public void testUnsupportedDiseaseIsRejected() {
 		assertThrows(IllegalArgumentException.class, () -> DiseaseSpecificCaseExportSchema.build(Disease.RABIES, "en-GH"));
 	}
