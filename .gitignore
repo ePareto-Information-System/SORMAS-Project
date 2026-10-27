@@ -55,3 +55,4 @@ sormas-e2e-ui-tests/gradlew.bat
 /sormas-e2e-tests/logs
 /sormas-e2e-ui-tests/settings
 .DS_Store
+/support_files/
