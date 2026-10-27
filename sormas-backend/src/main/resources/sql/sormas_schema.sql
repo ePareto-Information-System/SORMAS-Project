@@ -15713,3 +15713,36 @@ WHERE userright = 'USER_AUTHENTICATE'
     );
 
 INSERT INTO schema_version (version_number, comment) VALUES (674, 'Add NHIE Login Service role for the NHIE app login handoff');
+
+-- Shared field configuration for disease-specific detailed case exports.
+CREATE TABLE diseasespecificexportfield (
+	id bigint NOT NULL,
+	uuid character varying(36) NOT NULL UNIQUE,
+	changedate timestamp without time zone NOT NULL,
+	creationdate timestamp without time zone NOT NULL,
+	change_user_id bigint,
+	disease character varying(255) NOT NULL,
+	propertypath character varying(255) NOT NULL,
+	displayorder integer NOT NULL,
+	active boolean NOT NULL DEFAULT true,
+	sys_period tstzrange NOT NULL,
+	PRIMARY KEY (id),
+	CONSTRAINT fk_diseasespecificexportfield_changeuser FOREIGN KEY (change_user_id) REFERENCES users(id),
+	CONSTRAINT uq_diseasespecificexportfield_disease_path UNIQUE (disease, propertypath),
+	CONSTRAINT uq_diseasespecificexportfield_disease_order UNIQUE (disease, displayorder)
+);
+ALTER TABLE diseasespecificexportfield OWNER TO sormas_user;
+CREATE INDEX idx_diseasespecificexportfield_active_order
+	ON diseasespecificexportfield (disease, active, displayorder);
+
+CREATE TABLE diseasespecificexportfield_history (LIKE diseasespecificexportfield);
+ALTER TABLE diseasespecificexportfield_history OWNER TO sormas_user;
+
+CREATE TRIGGER versioning_trigger
+	BEFORE INSERT OR UPDATE ON diseasespecificexportfield
+	FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'diseasespecificexportfield_history', true);
+CREATE TRIGGER delete_history_trigger
+	AFTER DELETE ON diseasespecificexportfield
+	FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('diseasespecificexportfield_history', 'id');
+
+INSERT INTO schema_version (version_number, comment) VALUES (675, 'Add disease-specific export field configuration');

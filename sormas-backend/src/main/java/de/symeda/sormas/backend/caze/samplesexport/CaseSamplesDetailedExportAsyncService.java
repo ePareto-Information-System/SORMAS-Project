@@ -209,7 +209,8 @@ public class CaseSamplesDetailedExportAsyncService {
 		CaseCriteria criteria,
 		Collection<String> selectedRows,
 		Language userLanguage,
-		String rawToken) {
+		String rawToken,
+		List<String> activePropertyPaths) {
 
 		CaseSamplesDetailedExport export = exportService.getByUuid(exportUuid);
 		if (export == null) {
@@ -242,7 +243,13 @@ public class CaseSamplesDetailedExportAsyncService {
 
 			int rowCount;
 			try (OutputStream out = new FileOutputStream(exportFile)) {
-				rowCount = diseaseSpecificExportService.writeExport(exportUuid, criteria, selectedRows, userLanguage, out);
+				rowCount = diseaseSpecificExportService.writeExport(
+					exportUuid,
+					criteria,
+					selectedRows,
+					userLanguage,
+					activePropertyPaths,
+					out);
 			}
 			LOGGER.info("Disease-specific export {} complete — {} rows written", exportUuid, rowCount);
 

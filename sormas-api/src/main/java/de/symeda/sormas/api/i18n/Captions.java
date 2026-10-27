@@ -1758,6 +1758,7 @@ public interface Captions {
 	String exportSamples = "exportSamples";
 	String exportCaseSamplesDetailed = "exportCaseSamplesDetailed";
 	String exportCaseDiseaseSpecificDetailed = "exportCaseDiseaseSpecificDetailed";
+	String diseaseSpecificExportFieldsDisease = "diseaseSpecificExportFieldsDisease";
 	String caseSamplesDetailedExportHistory = "caseSamplesDetailedExportHistory";
 	String caseSamplesDetailedExportBackToCases = "caseSamplesDetailedExportBackToCases";
 	String caseSamplesDetailedExportDownloads = "caseSamplesDetailedExportDownloads";

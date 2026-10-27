@@ -1758,6 +1758,13 @@ public interface Strings {
 	String years = "years";
 	String yes = "yes";
 	String yesterday = "yesterday";
+	String validationDiseaseSpecificExportAtLeastOneField = "validationDiseaseSpecificExportAtLeastOneField";
+	String errorDiseaseSpecificExportConfigurationMissing = "errorDiseaseSpecificExportConfigurationMissing";
+	String messageDiseaseSpecificExportFieldConfigurationSaved = "messageDiseaseSpecificExportFieldConfigurationSaved";
+	String messageDiseaseSpecificExportFieldConfigurationImported = "messageDiseaseSpecificExportFieldConfigurationImported";
+	String errorDiseaseSpecificExportFieldConfigurationImport = "errorDiseaseSpecificExportFieldConfigurationImport";
+	String infoDiseaseSpecificExportFieldConfiguration = "infoDiseaseSpecificExportFieldConfiguration";
+	String diseaseSpecificExportActiveFieldCount = "diseaseSpecificExportActiveFieldCount";
 	String messageFormHasErrorsPathogenTest = "messageFormHasErrorsPathogenTest";
     String messageContinentsArchivingNotPossible = "messageContinentsArchivingNotPossible";
 	String messageSubcontinentsArchivingNotPossible = "messageContinentsArchivingNotPossible";

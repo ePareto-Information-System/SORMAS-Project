@@ -12,7 +12,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.symeda.sormas.api.Disease;
@@ -178,6 +180,54 @@ public final class DiseaseSpecificCaseExportSchema {
 			}
 		}
 		return Collections.unmodifiableList(columns);
+	}
+
+	/**
+	 * Resolves an ordered snapshot of configured property paths against the complete
+	 * disease catalog. The configured order is authoritative for export output.
+	 */
+	public static List<Column> build(Disease disease, String countryLocale, Collection<String> orderedPropertyPaths) {
+		if (!isSupported(disease)) {
+			throw new IllegalArgumentException("Unsupported disease for disease-specific export: " + disease);
+		}
+		if (orderedPropertyPaths == null || orderedPropertyPaths.isEmpty()) {
+			throw new IllegalArgumentException("At least one disease-specific export field must be active");
+		}
+
+		Map<String, Column> catalog = new LinkedHashMap<>();
+		for (Column column : buildAllFields(countryLocale)) {
+			catalog.put(column.getPropertyPath(), column);
+		}
+
+		List<Column> columns = new ArrayList<>();
+		Set<String> paths = new HashSet<>();
+		for (String path : orderedPropertyPaths) {
+			if (!paths.add(path)) {
+				throw new IllegalArgumentException("Duplicate disease-specific export property path: " + path);
+			}
+			Column column = catalog.get(path);
+			if (column == null) {
+				throw new IllegalArgumentException("Unknown disease-specific export property path: " + path);
+			}
+			columns.add(column);
+		}
+
+		return Collections.unmodifiableList(columns);
+	}
+
+	/**
+	 * Returns the complete field catalog discovered across all supported disease
+	 * layouts. Every disease configuration uses this catalog; its imported seed CSV
+	 * determines which of these fields are initially active.
+	 */
+	public static List<Column> buildAllFields(String countryLocale) {
+		Map<String, Column> catalog = new LinkedHashMap<>();
+		for (Disease disease : SUPPORTED_DISEASES) {
+			for (Column column : build(disease, countryLocale)) {
+				catalog.putIfAbsent(column.getPropertyPath(), column);
+			}
+		}
+		return Collections.unmodifiableList(new ArrayList<>(catalog.values()));
 	}
 
 	private static Set<String> union(Set<String> first, Set<String> second) {

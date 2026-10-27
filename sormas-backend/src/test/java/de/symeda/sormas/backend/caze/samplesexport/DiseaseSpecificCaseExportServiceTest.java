@@ -13,7 +13,9 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,7 @@ import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.caze.samplesexport.DiseaseSpecificCaseExportSchema;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
@@ -68,7 +71,15 @@ public class DiseaseSpecificCaseExportServiceTest {
 		when(caseFacade.count(criteria, false)).thenReturn(1L);
 
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		assertEquals(1, service.writeExport("EXPORT", criteria, Collections.<String>emptyList(), Language.EN, output));
+		assertEquals(
+			1,
+			service.writeExport(
+				"EXPORT",
+				criteria,
+				Collections.<String>emptyList(),
+				Language.EN,
+				activePaths(Disease.NEONATAL_TETANUS),
+				output));
 		assertEquals(4, readRowCount(output));
 		verify(sampleFacade, never()).getByCaseUuids(any());
 		verify(pathogenTestFacade, never()).getBySampleUuids(any());
@@ -88,7 +99,7 @@ public class DiseaseSpecificCaseExportServiceTest {
 
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		Set<String> selectedRows = Collections.singleton(caze.getUuid());
-		assertEquals(2, service.writeExport("EXPORT", criteria, selectedRows, Language.EN, output));
+		assertEquals(2, service.writeExport("EXPORT", criteria, selectedRows, Language.EN, activePaths(Disease.MEASLES), output));
 		assertEquals(5, readRowCount(output));
 		verify(caseFacade).getDiseaseSpecificExportCases(criteria, selectedRows, 0, 100);
 	}
@@ -120,5 +131,12 @@ public class DiseaseSpecificCaseExportServiceTest {
 		try (CSVReader reader = new CSVReader(new StringReader(new String(output.toByteArray(), StandardCharsets.UTF_8)))) {
 			return reader.readAll().size();
 		}
+	}
+
+	private List<String> activePaths(Disease disease) {
+		return DiseaseSpecificCaseExportSchema.build(disease, "en-GH")
+			.stream()
+			.map(DiseaseSpecificCaseExportSchema.Column::getPropertyPath)
+			.collect(Collectors.toList());
 	}
 }

@@ -255,6 +255,42 @@ public class DiseaseSpecificCaseExportSchemaTest {
 		assertThrows(IllegalArgumentException.class, () -> DiseaseSpecificCaseExportSchema.build(Disease.RABIES, "en-GH"));
 	}
 
+	@Test
+	public void testConfiguredPathsControlSelectionAndOrder() {
+		List<String> configuredPaths = java.util.Arrays.asList("person.firstName", "country", "sample.uuid");
+		List<Column> columns = DiseaseSpecificCaseExportSchema.build(Disease.MEASLES, "en-GH", configuredPaths);
+		assertEquals(configuredPaths, columns.stream().map(Column::getPropertyPath).collect(Collectors.toList()));
+		assertThrows(
+			IllegalArgumentException.class,
+			() -> DiseaseSpecificCaseExportSchema.build(Disease.MEASLES, "en-GH", java.util.Collections.<String>emptyList()));
+		assertThrows(
+			IllegalArgumentException.class,
+			() -> DiseaseSpecificCaseExportSchema.build(Disease.MEASLES, "en-GH", java.util.Collections.singletonList("unknown.path")));
+		assertThrows(
+			IllegalArgumentException.class,
+			() -> DiseaseSpecificCaseExportSchema.build(Disease.RABIES, "en-GH", configuredPaths));
+	}
+
+	@Test
+	public void testEveryDiseaseCanResolveFieldsFromTheFullCatalog() {
+		List<String> configuredPaths = java.util.Arrays.asList(
+			"foodHistory.affectedPersons",
+			"afpImmunization.totalNumberDoses",
+			"sample.labLocal",
+			"country");
+		List<Column> columns = DiseaseSpecificCaseExportSchema.build(Disease.MEASLES, "en-GH", configuredPaths);
+
+		assertEquals(configuredPaths, columns.stream().map(Column::getPropertyPath).collect(Collectors.toList()));
+		Set<String> allPaths = DiseaseSpecificCaseExportSchema.buildAllFields("en-GH")
+			.stream()
+			.map(Column::getPropertyPath)
+			.collect(Collectors.toSet());
+		assertEquals(DiseaseSpecificCaseExportSchema.buildAllFields("en-GH").size(), allPaths.size());
+		for (Disease disease : DiseaseSpecificCaseExportSchema.getSupportedDiseases()) {
+			assertTrue(allPaths.containsAll(paths(disease)), "Full catalog is missing fields for " + disease);
+		}
+	}
+
 	private Set<Block> blocks(Disease disease) {
 		return DiseaseSpecificCaseExportSchema.build(disease, "en-GH").stream().map(Column::getBlock).collect(Collectors.toSet());
 	}

@@ -53,6 +53,7 @@ public class DiseaseSpecificCaseExportService {
 		CaseCriteria criteria,
 		Collection<String> selectedRows,
 		Language language,
+		List<String> activePropertyPaths,
 		OutputStream outputStream) throws Exception {
 
 		Disease disease = criteria != null ? criteria.getDisease() : null;
@@ -62,7 +63,7 @@ public class DiseaseSpecificCaseExportService {
 
 		String countryLocale = configFacade.getCountryLocale();
 		List<de.symeda.sormas.api.caze.samplesexport.DiseaseSpecificCaseExportSchema.Column> columns =
-			DiseaseSpecificCaseExportSchema.build(disease, countryLocale);
+			DiseaseSpecificCaseExportSchema.build(disease, countryLocale, activePropertyPaths);
 		Collection<String> selected = selectedRows != null ? selectedRows : Collections.<String>emptyList();
 		long totalCases = selected.isEmpty() ? caseFacade.count(criteria, false) : selected.size();
 		int rowCount = 0;

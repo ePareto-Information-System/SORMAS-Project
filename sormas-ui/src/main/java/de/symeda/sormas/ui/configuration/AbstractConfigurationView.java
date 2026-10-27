@@ -104,6 +104,10 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 		navigator.addView(FormBuildersView.VIEW_NAME, FormBuildersView.class);
 		navigator.addView(FormFieldsView.VIEW_NAME, FormFieldsView.class);
 
+		if (UserProvider.getCurrent().hasUserRight(UserRight.MANAGE_PUBLIC_EXPORT_CONFIGURATION)) {
+			navigator.addView(DiseaseSpecificExportFieldsView.VIEW_NAME, DiseaseSpecificExportFieldsView.class);
+		}
+
 		if (FacadeProvider.getConfigFacade().isDevMode() && UserProvider.getCurrent().hasUserRight(UserRight.DEV_MODE)) {
 			navigator.addView(DevModeView.VIEW_NAME, DevModeView.class);
 		}
@@ -239,6 +243,17 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 				I18nProperties.getPrefixCaption("View", FormFieldsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
 				null,
 				false);
+
+		if (UserProvider.getCurrent().hasUserRight(UserRight.MANAGE_PUBLIC_EXPORT_CONFIGURATION)) {
+			menu.addView(
+				DiseaseSpecificExportFieldsView.VIEW_NAME,
+				I18nProperties.getPrefixCaption(
+					"View",
+					DiseaseSpecificExportFieldsView.VIEW_NAME.replaceAll("/", ".") + ".short",
+					""),
+				null,
+				false);
+		}
 	}
 
 	protected ComboBox addCountryFilter(Layout layout, Consumer<CountryReferenceDto> changeHandler, ComboBox regionFilter) {

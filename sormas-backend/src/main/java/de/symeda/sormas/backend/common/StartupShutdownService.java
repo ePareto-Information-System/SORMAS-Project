@@ -79,6 +79,7 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DefaultEntityHelper;
 import de.symeda.sormas.api.utils.PasswordHelper;
 import de.symeda.sormas.backend.audit.AuditLoggerEjb;
+import de.symeda.sormas.backend.caze.samplesexport.DiseaseSpecificExportFieldService;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.contact.ContactService;
@@ -145,6 +146,8 @@ public class StartupShutdownService {
 	private UserService userService;
 	@EJB
 	private ContactService contactService;
+	@EJB
+	private DiseaseSpecificExportFieldService diseaseSpecificExportFieldService;
 	@EJB
 	private RegionService regionService;
 	@EJB
@@ -217,7 +220,7 @@ public class StartupShutdownService {
 
 		logger.info("Initiating automatic database update of main database...");
 		updateDatabase(UpdateQueryTransactionWrapper.TargetDb.SORMAS, em, SORMAS_SCHEMA);
-
+		diseaseSpecificExportFieldService.seedFromCsvResources();
 
 		logger.info("Initiating automatic database update of audit database...");
 		updateDatabase(UpdateQueryTransactionWrapper.TargetDb.AUDIT, emAudit, AUDIT_SCHEMA);

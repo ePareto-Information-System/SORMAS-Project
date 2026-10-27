@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,6 +66,8 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 	@EJB
 	private CaseSamplesDetailedExportAsyncService asyncService;
 	@EJB
+	private DiseaseSpecificExportFieldService diseaseSpecificExportFieldService;
+	@EJB
 	private UserService userService;
 
 	@Override
@@ -118,6 +121,12 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
 		}
 
+		List<String> activePropertyPaths = diseaseSpecificExportFieldService.getActivePropertyPaths(criteria.getDisease());
+		if (activePropertyPaths.isEmpty()) {
+			throw new IllegalStateException(I18nProperties.getString(Strings.errorDiseaseSpecificExportConfigurationMissing));
+		}
+		List<String> fieldSnapshot = Collections.unmodifiableList(new ArrayList<>(activePropertyPaths));
+
 		String rawToken = CaseSamplesDetailedExportAsyncService.generateRawToken();
 		CaseSamplesDetailedExport export = new CaseSamplesDetailedExport();
 		export.setUuid(DataHelper.createUuid());
@@ -129,7 +138,7 @@ public class CaseSamplesDetailedExportFacadeEjb implements CaseSamplesDetailedEx
 		export.setDownloadCount(0);
 		exportService.persistNewExport(export);
 
-		asyncService.generateDiseaseSpecificAndNotify(export.getUuid(), criteria, selectedRows, userLanguage, rawToken);
+		asyncService.generateDiseaseSpecificAndNotify(export.getUuid(), criteria, selectedRows, userLanguage, rawToken, fieldSnapshot);
 		return export.getUuid();
 	}
 
