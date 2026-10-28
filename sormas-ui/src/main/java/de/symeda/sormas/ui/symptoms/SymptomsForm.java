@@ -1165,7 +1165,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			createLabel(I18nProperties.getString(Strings.headingPatientStatus), H3, PATIENT_STATUS);
 //            setVisible(false, OUTCOME);
             symptomsHeadingLabel.setVisible(true);
-			setVisible(true, ONSET_DATE);
+			onsetDateField.setVisible(true);
+			onsetDateField.setEnabled(true);
             tickSymptomField.setVisible(true);
 
 			TextField symptomsSelectedOther = addField(SYMPTOMS_SELECTED_OTHER, TextField.class);
@@ -1332,6 +1333,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS_ALL_OVER_BODY), lesionsFieldIds, Arrays.asList(Boolean.TRUE), disease);
 
 		addListenerForOnsetFields(onsetSymptom, onsetDateField);
+		if (disease == Disease.MONKEYPOX) {
+			onsetDateField.setVisible(true);
+			onsetDateField.setEnabled(true);
+		}
 
 		clearAllButton = ButtonHelper.createButton(Captions.actionClearAll, event -> {
 			for (Object symptomId : unconditionalSymptomFieldIds) {
@@ -1678,7 +1683,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					onsetDateField.setEnabled(true);
 				} else {
 					onsetSymptom.removeItem(sourceField.getCaption());
-					boolean isOnsetDateFieldEnabled = isAnySymptomSetToYes(getFieldGroup(), allPropertyIds, Arrays.asList(SymptomState.YES));
+					boolean isOnsetDateFieldEnabled = disease == Disease.MONKEYPOX
+						|| isAnySymptomSetToYes(getFieldGroup(), allPropertyIds, Arrays.asList(SymptomState.YES));
 					onsetDateField.setEnabled(isOnsetDateFieldEnabled);
 					Date onsetDate = getValue().getOnsetDate();
 					if (onsetDate != null) {
@@ -1692,7 +1698,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 		onsetSymptom.setEnabled(true); // will be updated by listener if needed
 		boolean anySymptomYes = isAnySymptomSetToYes(getFieldGroup(), allPropertyIds, Arrays.asList(SymptomState.YES));
-		onsetDateField.setEnabled(anySymptomYes); // will be updated by listener if needed
+		onsetDateField.setEnabled(disease == Disease.MONKEYPOX || anySymptomYes);
 	}
 
 
