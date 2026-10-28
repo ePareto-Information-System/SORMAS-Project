@@ -475,8 +475,9 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 	public void setVisible(boolean visible, String... fieldOrPropertyIds) {
 
 		for (String propertyId : fieldOrPropertyIds) {
-			if (!visible || isVisibleAllowed(propertyId)) {
-				getField(propertyId).setVisible(visible);
+			Field<?> field = getField(propertyId);
+			if (field != null && (!visible || isVisibleAllowed(propertyId))) {
+				field.setVisible(visible);
 			}
 		}
 	}
