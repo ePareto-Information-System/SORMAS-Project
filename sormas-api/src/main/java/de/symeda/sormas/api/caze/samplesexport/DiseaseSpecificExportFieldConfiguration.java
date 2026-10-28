@@ -83,7 +83,7 @@ public final class DiseaseSpecificExportFieldConfiguration {
 		disable(CaseDataDto.class, CaseDataDto.POSTPARTUM, Disease.YELLOW_FEVER, Disease.CSM, Disease.MEASLES, Disease.MONKEYPOX);
 		disable(CaseDataDto.class, CaseDataDto.VACCINATION_STATUS, Disease.UNSPECIFIED_VHF, Disease.AFP);
 		disable(CaseDataDto.class, CaseDataDto.NUMBER_OF_DOSES, Disease.YELLOW_FEVER, Disease.UNSPECIFIED_VHF, Disease.AFP, Disease.CSM, Disease.NEW_INFLUENZA, Disease.MEASLES, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX);
-		disable(CaseDataDto.class, CaseDataDto.VACCINATION_DATE, Disease.YELLOW_FEVER, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS);
+		disable(CaseDataDto.class, CaseDataDto.VACCINATION_DATE, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS);
 		disable(CaseDataDto.class, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, Disease.MONKEYPOX);
 		disable(CaseDataDto.class, CaseDataDto.SURVEILLANCE_OFFICER, Disease.MEASLES);
 		disable(CaseDataDto.class, CaseDataDto.REPORTING_OFFICER_NAME, Disease.YELLOW_FEVER, Disease.AFP, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS);

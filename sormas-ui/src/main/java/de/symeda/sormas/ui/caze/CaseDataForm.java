@@ -1750,7 +1750,22 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             switch (disease) {
                 case YELLOW_FEVER:
-                    setVaccinatedByCardOrHistoryVisibility();
+                    vaccinatedByCardOrHistory.setVisible(true);
+                    FieldHelper.setVisibleWhen(
+                            vaccinationStatus,
+                            Arrays.asList(vaccinatedByCardOrHistory, cardDateField),
+                            Arrays.asList(VaccinationStatus.VACCINATED),
+                            true);
+                    vaccinationStatus.addValueChangeListener(vaccinationStatusChange -> {
+                        boolean vaccinated = VaccinationStatus.VACCINATED.equals(vaccinationStatusChange.getProperty().getValue());
+                        cardDateField.setVisible(vaccinated);
+                        cardDateField.setEnabled(vaccinated);
+                    });
+                    vaccinatedByCardOrHistory.addValueChangeListener(cardOrHistoryChange -> {
+                        boolean vaccinated = VaccinationStatus.VACCINATED.equals(vaccinationStatus.getValue());
+                        cardDateField.setVisible(vaccinated);
+                        cardDateField.setEnabled(vaccinated);
+                    });
                     outcome.setVisible(false);
                     vaccinationStatus.setRequired(true);
                     break;
