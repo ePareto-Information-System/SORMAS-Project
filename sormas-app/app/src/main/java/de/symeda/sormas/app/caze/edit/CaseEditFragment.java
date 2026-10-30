@@ -1218,14 +1218,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			CardOrHistory t = (CardOrHistory) b.caseDataVaccinationType.getValue();
 			if (t == CardOrHistory.CARD) {
 				b.caseDataVaccinationDate.setVisibility(VISIBLE);
-				b.caseDataLastVaccinationDate.setVisibility(VISIBLE);
-			} else if (t == CardOrHistory.HISTORY) {
-				b.caseDataVaccinationDate.setVisibility(GONE);
-				b.caseDataLastVaccinationDate.setVisibility(VISIBLE);
 			} else {
 				b.caseDataVaccinationDate.setVisibility(GONE);
-				b.caseDataLastVaccinationDate.setVisibility(GONE);
 			}
+			b.caseDataLastVaccinationDate.setVisibility(GONE);
 		} else {
 			b.caseDataNumberOfDoses.setVisibility(GONE);
 			b.caseDataVaccinationType.setVisibility(GONE);
@@ -1302,14 +1298,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			CardOrHistory t = (CardOrHistory) b.caseDataVaccinationType.getValue();
 			if (t == CardOrHistory.CARD) {
 				b.caseDataVaccinationDate.setVisibility(VISIBLE);
-				b.caseDataLastVaccinationDate.setVisibility(GONE);
-			} else if (t == CardOrHistory.HISTORY) {
-				b.caseDataVaccinationDate.setVisibility(GONE);
-				b.caseDataLastVaccinationDate.setVisibility(VISIBLE);
 			} else {
 				b.caseDataVaccinationDate.setVisibility(GONE);
-				b.caseDataLastVaccinationDate.setVisibility(GONE);
 			}
+			b.caseDataLastVaccinationDate.setVisibility(GONE);
 		} else {
 			b.caseDataVaccinationRoutine.setVisibility(GONE);
 			b.caseDataNumberOfDoses.setVisibility(GONE);

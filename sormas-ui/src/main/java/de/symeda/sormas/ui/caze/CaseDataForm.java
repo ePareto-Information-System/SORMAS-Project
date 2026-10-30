@@ -1173,7 +1173,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         vaccinationStatus.addValueChangeListener(e -> {
             boolean isVaccinated = VaccinationStatus.VACCINATED.equals(e.getProperty().getValue());
             vaccinatedByCardOrHistory.setRequired(isVaccinated);
-            cardDateField.setRequired(isVaccinated);
+            if (disease != Disease.YELLOW_FEVER && disease != Disease.MEASLES) {
+                cardDateField.setRequired(isVaccinated);
+            } else if (!isVaccinated) {
+                cardDateField.setRequired(false);
+            }
         });
 
         FieldHelper.setEnabledWhen(
@@ -1750,22 +1754,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             switch (disease) {
                 case YELLOW_FEVER:
-                    vaccinatedByCardOrHistory.setVisible(true);
-                    FieldHelper.setVisibleWhen(
-                            vaccinationStatus,
-                            Arrays.asList(vaccinatedByCardOrHistory, cardDateField),
-                            Arrays.asList(VaccinationStatus.VACCINATED),
-                            true);
-                    vaccinationStatus.addValueChangeListener(vaccinationStatusChange -> {
-                        boolean vaccinated = VaccinationStatus.VACCINATED.equals(vaccinationStatusChange.getProperty().getValue());
-                        cardDateField.setVisible(vaccinated);
-                        cardDateField.setEnabled(vaccinated);
-                    });
-                    vaccinatedByCardOrHistory.addValueChangeListener(cardOrHistoryChange -> {
-                        boolean vaccinated = VaccinationStatus.VACCINATED.equals(vaccinationStatus.getValue());
-                        cardDateField.setVisible(vaccinated);
-                        cardDateField.setEnabled(vaccinated);
-                    });
+                    applyCardOrHistoryVaccinationDateRules();
                     outcome.setVisible(false);
                     vaccinationStatus.setRequired(true);
                     break;
@@ -1822,10 +1811,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
                         vaccinatedByCardOrHistory
                 ), false);
-                FieldHelper.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
                 lastVaccinationDate.setVisible(false);
 
-                setVaccinatedByCardOrHistoryVisibility();
+                applyCardOrHistoryVaccinationDateRules();
                 //if vaccinated by card or history is card, then number of doses is required
                 FieldHelper.setRequiredWhen(getFieldGroup(), vaccinationStatus, Arrays.asList(CaseDataDto.NUMBER_OF_DOSES), Arrays.asList(VaccinationStatus.VACCINATED));
 
@@ -1967,6 +1955,36 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 .setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory, numberOfDoses), Arrays.asList(VaccinationStatus.VACCINATED), true);
         FieldHelper
                 .setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
+    }
+
+    private void applyCardOrHistoryVaccinationDateRules() {
+        vaccinatedByCardOrHistory.setVisible(true);
+        FieldHelper.setVisibleWhen(
+                vaccinationStatus,
+                Arrays.asList(vaccinatedByCardOrHistory),
+                Arrays.asList(VaccinationStatus.VACCINATED),
+                true);
+        FieldHelper.setVisibleWhen(
+                vaccinatedByCardOrHistory,
+                Arrays.asList(cardDateField),
+                Arrays.asList(CardOrHistory.CARD),
+                true);
+
+        vaccinationStatus.addValueChangeListener(e -> updateCardOrHistoryVaccinationDateRequirement());
+        vaccinatedByCardOrHistory.addValueChangeListener(e -> updateCardOrHistoryVaccinationDateRequirement());
+        updateCardOrHistoryVaccinationDateRequirement();
+    }
+
+    private void updateCardOrHistoryVaccinationDateRequirement() {
+        boolean vaccinated = VaccinationStatus.VACCINATED.equals(vaccinationStatus.getValue());
+        boolean card = CardOrHistory.CARD.equals(vaccinatedByCardOrHistory.getValue());
+        boolean showAndRequireDate = vaccinated && card;
+        cardDateField.setVisible(showAndRequireDate);
+        cardDateField.setEnabled(showAndRequireDate);
+        cardDateField.setRequired(showAndRequireDate);
+        if (!showAndRequireDate && cardDateField.getValue() != null) {
+            cardDateField.clear();
+        }
     }
 
     public void hideFieldsForSelectedDisease(Disease disease) {
